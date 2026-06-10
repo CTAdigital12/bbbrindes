@@ -93,3 +93,22 @@ Onde paramos / proximo passo:
 - Mergear chore/rollback-deploy-pages na master. O push dispara o workflow.
 - Com o repo publico, habilitar Pages: Settings > Pages > Source = GitHub Actions (o configure-pages tenta habilitar sozinho; em repo publico costuma funcionar). Se a primeira run falhar so no Pages, re-rodar apos habilitar.
 - URL: https://ctadigital12.github.io/bbbrindes/
+
+---
+
+## 10/06/2026 17:12 BRT (quarta) -- integracao com o Trello
+
+Deploy do Pages confirmado no ar (apos liberar Workflow permissions = Read and write e Pages Source = GitHub Actions).
+
+Feito nesta sessao:
+- Criado script scripts/trello-sync.mjs (Node, sem dependencias): le os cards das sprints (docs/sprints/**/S*.md), cria listas por status (A Fazer, Em Andamento, Concluido) e cria cada card com descricao e checklist. Idempotente na criacao (nao duplica pelo codigo S00-xx). Por ora e create-only (nao atualiza card existente).
+- Script trello:sync no package.json raiz (node --env-file=.env).
+- .env local criado (gitignored) para o responsavel preencher TRELLO_API_KEY e TRELLO_TOKEN. .env.example atualizado com a secao Trello e DATABASE_URI ajustado para Supabase/Postgres.
+- Parsing dos cards validado contra os arquivos reais (codigo, status, descricao e checklist corretos).
+- Board: https://trello.com/b/dAiTB3Ff/bbbrindesproject (TRELLO_BOARD_ID=dAiTB3Ff).
+
+Sobre cadastro de SKUs (discutido): nao sao 1200 cards. SKUs sao dado, importados via script na Sprint 2 a partir de planilha/export ou, em ultimo caso, scrape do site atual. Aguardando o responsavel confirmar a fonte dos dados do catalogo.
+
+Onde paramos / proximo passo:
+- Responsavel preenche TRELLO_API_KEY e TRELLO_TOKEN no .env e roda pnpm trello:sync (ou eu rodo na proxima sessao apos o .env preenchido).
+- Abrir PR de feature/trello-sync para master.
