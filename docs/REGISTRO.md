@@ -46,3 +46,19 @@ Onde paramos / proximo passo:
 
 Pendencias com o responsavel:
 - Identidade git oficial (nome/email) antes do primeiro commit. Git ainda nao inicializado, sem push.
+
+---
+
+## 10/06/2026 13:19 BRT (quarta) -- repositorio publicado
+
+Feito nesta sessao:
+- Git inicializado. Identidade do repo: fabio / fabio.ferreira@raizhe.com.br.
+- Branch base definida como master (a pedido do responsavel). Branch de trabalho feature/sprint-00-wireframe.
+- Tres commits: estrutura inicial e governanca, sprint 0 wireframe, .gitattributes (normalizacao de fim de linha).
+- gh CLI 2.93.0 instalado via winget (fora do PATH desta sessao; em C:\Program Files\GitHub CLI). Nao foi usado para auth; push via Git Credential Manager.
+- Remote origin: https://github.com/CTAdigital12/bbbrindes.git
+- Push de master e feature/sprint-00-wireframe concluido.
+
+Onde paramos / proximo passo:
+- Abrir o PR de feature/sprint-00-wireframe para master no GitHub: https://github.com/CTAdigital12/bbbrindes/pull/new/feature/sprint-00-wireframe
+- Pela regra 5 do CLAUDE.md, master so recebe a Sprint 0 via merge do PR.
