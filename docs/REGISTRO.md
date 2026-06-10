@@ -77,3 +77,19 @@ Feito nesta sessao:
 Onde paramos / proximo passo:
 - Abrir PR de chore/deploy-vercel para master e mergear.
 - Na Vercel: importar CTAdigital12/bbbrindes, Root Directory = frontend, deploy. A URL *.vercel.app vai para o cliente. Dominio proprio (os ja existentes no time) fica opcional para depois.
+
+---
+
+## 10/06/2026 15:40 BRT (quarta) -- rollback para o GitHub Pages
+
+Decisao do responsavel: deixar a Vercel em standby e publicar agora pelo GitHub Pages. O repo foi tornado publico, o que destrava o Pages no plano free.
+
+Feito nesta sessao:
+- Restaurado o estado de deploy do Pages a partir do commit 86db521: workflow .github/workflows/deploy.yml (com o fix do pnpm) e frontend/next.config.mjs com output: export e basePath /bbbrindes via env.
+- README revertido para o estado pre-Vercel.
+- A branch chore/deploy-vercel fica preservada no remoto para retomar a Vercel quando o cliente aprovar (ai entra o dominio proprio e o modo SSR).
+
+Onde paramos / proximo passo:
+- Mergear chore/rollback-deploy-pages na master. O push dispara o workflow.
+- Com o repo publico, habilitar Pages: Settings > Pages > Source = GitHub Actions (o configure-pages tenta habilitar sozinho; em repo publico costuma funcionar). Se a primeira run falhar so no Pages, re-rodar apos habilitar.
+- URL: https://ctadigital12.github.io/bbbrindes/

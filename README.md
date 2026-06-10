@@ -39,20 +39,6 @@ corepack pnpm@9.12.0 --filter frontend dev
 
 Para habilitar o pnpm global de vez (Windows, requer admin): `corepack enable`.
 
-## Deploy (Vercel)
-
-O preview do cliente roda na Vercel (repo privado, URL gratuita `*.vercel.app`).
-Configuracao do projeto na Vercel:
-
-1. Importar o repositorio CTAdigital12/bbbrindes (autorizar o app da Vercel no GitHub).
-2. Root Directory: `frontend`.
-3. Framework: Next.js (deteccao automatica). Gerenciador: pnpm (pelo packageManager).
-4. Production Branch: `master`.
-
-Nao e preciso dominio pago: cada deploy ganha uma URL `*.vercel.app`. O export
-estatico do Next fica desligado por padrao (build nativo, pronto para SSR). Para
-gerar export estatico, usar `STATIC_EXPORT=true` (e `PAGES_BASE_PATH` se sob subpath).
-
 ## Estado atual
 
 Sprint 0 (wireframe navegavel para aprovacao do cliente). Acompanhe em [docs/sprints/sprint-00/README.md](docs/sprints/sprint-00/README.md) e [docs/REGISTRO.md](docs/REGISTRO.md).
