@@ -1,17 +1,18 @@
 /** @type {import('next').NextConfig} */
 
-// Deploy padrao (Vercel): Next nativo, servido na raiz, pronto para SSR nas
-// proximas sprints. O export estatico so e ligado quando STATIC_EXPORT=true
-// (ex.: hospedagem estatica tipo GitHub Pages), com basePath opcional.
-const staticExport = process.env.STATIC_EXPORT === "true";
+// Em GitHub Pages o site fica sob /<repo>. O basePath vem por env no CI.
+// Em dev/local (sem a env) o site roda na raiz normalmente.
 const basePath = process.env.PAGES_BASE_PATH || "";
 
 const nextConfig = {
   reactStrictMode: true,
-  ...(staticExport ? { output: "export", trailingSlash: true } : {}),
+  // Export estatico: gera HTML/CSS/JS prontos para hospedar no Pages.
+  output: "export",
   basePath: basePath || undefined,
   assetPrefix: basePath || undefined,
+  trailingSlash: true,
   images: { unoptimized: true },
+  // Expoe o basePath para o client (links/wa.me e assets manuais, se preciso).
   env: { NEXT_PUBLIC_BASE_PATH: basePath },
 };
 
