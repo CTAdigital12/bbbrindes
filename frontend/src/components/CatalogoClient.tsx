@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import type { Produto } from "@/lib/types";
 import { categorias } from "@/data/categorias";
 import { aplicacoes, faixaPrecoLabels, materiais, produtos } from "@/data/produtos";
@@ -18,16 +19,18 @@ type Filtros = {
 
 const coresFiltro = ["Branco", "Preto", "Azul", "Verde", "Vermelho", "Amarelo", "Laranja", "Natural"];
 
-export default function CatalogoClient({ inicial }: { inicial: Partial<Filtros> }) {
-  const [f, setF] = useState<Filtros>({
-    q: inicial.q ?? "",
-    categoria: inicial.categoria ?? "",
-    material: inicial.material ?? "",
-    aplicacao: inicial.aplicacao ?? "",
-    faixa: inicial.faixa ?? "",
-    cor: inicial.cor ?? "",
-    somentePersonalizavel: inicial.somentePersonalizavel ?? false,
-  });
+export default function CatalogoClient() {
+  // Le os filtros iniciais da query string (ex.: /catalogo?categoria=ecologicos).
+  const sp = useSearchParams();
+  const [f, setF] = useState<Filtros>(() => ({
+    q: sp.get("q") ?? "",
+    categoria: sp.get("categoria") ?? "",
+    material: sp.get("material") ?? "",
+    aplicacao: sp.get("aplicacao") ?? "",
+    faixa: sp.get("faixa") ?? "",
+    cor: sp.get("cor") ?? "",
+    somentePersonalizavel: false,
+  }));
 
   const resultados = useMemo(() => filtrar(produtos, f), [f]);
 
