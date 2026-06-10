@@ -1,0 +1,16 @@
+{
+  "name": "bbbrindes",
+  "private": true,
+  "version": "0.0.0",
+  "description": "Plataforma B2B de brindes corporativos: catalogo, orcamento e area de revendedor.",
+  "scripts": {
+    "dev": "pnpm --filter frontend dev",
+    "build": "pnpm --filter frontend build",
+    "start": "pnpm --filter frontend start",
+    "lint": "pnpm --filter frontend lint"
+  },
+  "packageManager": "pnpm@9.12.0",
+  "engines": {
+    "node": ">=20"
+  }
+}
