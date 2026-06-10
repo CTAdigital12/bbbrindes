@@ -109,6 +109,8 @@ Feito nesta sessao:
 
 Sobre cadastro de SKUs (discutido): nao sao 1200 cards. SKUs sao dado, importados via script na Sprint 2 a partir de planilha/export ou, em ultimo caso, scrape do site atual. Aguardando o responsavel confirmar a fonte dos dados do catalogo.
 
+Sync executado: 11 cards da Sprint 0 criados no board, na lista Concluido 🎉, com checklist. Ajuste: o match de listas passou a normalizar nome (sem acento/emoji) para usar as listas que ja existem no board (Backlog, Design, A Fazer, Em andamento, Revisao de codigo, Fase de teste, Concluido 🎉) em vez de criar duplicata. Uma lista duplicada criada por engano foi arquivada e os cards movidos para a correta.
+
 Onde paramos / proximo passo:
-- Responsavel preenche TRELLO_API_KEY e TRELLO_TOKEN no .env e roda pnpm trello:sync (ou eu rodo na proxima sessao apos o .env preenchido).
 - Abrir PR de feature/trello-sync para master.
+- Decidir a fonte da verdade de status (Trello x arquivos) antes de evoluir o script para update.

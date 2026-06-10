@@ -10,7 +10,8 @@ import { readdir, readFile } from "node:fs/promises";
 import { join } from "node:path";
 
 const KEY = process.env.TRELLO_API_KEY;
-const TOKEN = process.env.TRELLO_TOKEN;
+// Aceita TRELLO_TOKEN ou TRELLO_API_TOKEN (nomes usados no .env).
+const TOKEN = process.env.TRELLO_TOKEN || process.env.TRELLO_API_TOKEN;
 const BOARD = process.env.TRELLO_BOARD_ID || "dAiTB3Ff";
 const API = "https://api.trello.com/1";
 
@@ -20,7 +21,8 @@ if (!KEY || !TOKEN) {
 }
 
 const SPRINTS_DIR = "docs/sprints";
-const STATUS_LISTS = ["A Fazer", "Em Andamento", "Concluido"];
+// Nome de exibicao usado so se a lista nao existir no board (criacao).
+const STATUS_DISPLAY = { "a fazer": "A Fazer", "em andamento": "Em andamento", concluido: "Concluido" };
 
 async function trello(method, path, params = {}) {
   const qs = new URLSearchParams({ key: KEY, token: TOKEN, ...params });
@@ -31,11 +33,21 @@ async function trello(method, path, params = {}) {
   return res.json();
 }
 
-function listForStatus(status) {
+// Normaliza nome de lista: sem acento, sem emoji, minusculo (para casar nomes do board).
+function norm(s) {
+  return s
+    .normalize("NFD")
+    .replace(/[̀-ͯ]/g, "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, " ")
+    .trim();
+}
+
+function statusKey(status) {
   const s = (status || "").toLowerCase();
-  if (s.includes("concl")) return "Concluido";
-  if (s.includes("andamento")) return "Em Andamento";
-  return "A Fazer";
+  if (s.includes("concl")) return "concluido";
+  if (s.includes("andamento")) return "em andamento";
+  return "a fazer";
 }
 
 function parseCard(md) {
@@ -71,15 +83,17 @@ async function listarArquivosDeCard() {
 async function main() {
   console.log(`Board: ${BOARD}`);
 
-  // Garante as listas de status.
+  // Listas existentes do board. Casamos por nome normalizado para nao duplicar
+  // (ex.: "Concluido" casa com "Concluido 🎉"). So cria se nao houver match.
   const lists = await trello("GET", `/boards/${BOARD}/lists`);
-  const listByName = new Map(lists.map((l) => [l.name.toLowerCase(), l]));
-  for (const nome of STATUS_LISTS) {
-    if (!listByName.has(nome.toLowerCase())) {
-      const nova = await trello("POST", `/boards/${BOARD}/lists`, { name: nome });
-      listByName.set(nome.toLowerCase(), nova);
-      console.log(`Lista criada: ${nome}`);
+  async function resolveLista(key) {
+    let l = lists.find((x) => norm(x.name) === key);
+    if (!l) {
+      l = await trello("POST", `/boards/${BOARD}/lists`, { name: STATUS_DISPLAY[key] || key });
+      lists.push(l);
+      console.log(`Lista criada: ${STATUS_DISPLAY[key] || key}`);
     }
+    return l;
   }
 
   // Cards existentes, para nao duplicar (match pelo codigo S00-01 no inicio do nome).
@@ -102,7 +116,7 @@ async function main() {
       continue;
     }
 
-    const lista = listByName.get(listForStatus(card.status).toLowerCase());
+    const lista = await resolveLista(statusKey(card.status));
     const novo = await trello("POST", "/cards", {
       idList: lista.id,
       name: card.title,
@@ -121,7 +135,7 @@ async function main() {
 
     codigosExistentes.add(card.code);
     criados++;
-    console.log(`Criado: ${card.code} -> ${listForStatus(card.status)} (${card.items.length} itens)`);
+    console.log(`Criado: ${card.code} -> ${lista.name} (${card.items.length} itens)`);
   }
 
   console.log(`\nResumo: ${criados} criado(s), ${pulados} pulado(s).`);
