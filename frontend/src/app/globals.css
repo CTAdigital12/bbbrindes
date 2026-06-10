@@ -1,0 +1,65 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: light;
+}
+
+body {
+  background-color: theme("colors.wf.bg");
+  color: theme("colors.wf.text");
+  font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+}
+
+@layer components {
+  /* Componentes do tema de wireframe (visual neutro, sem identidade final) */
+  .wf-container {
+    @apply mx-auto w-full max-w-screen-xl px-4;
+  }
+
+  .wf-card {
+    @apply rounded-lg border border-wf-line bg-wf-surface;
+  }
+
+  .wf-btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-md border border-wf-line px-4 py-2 text-sm font-medium transition-colors;
+  }
+
+  .wf-btn-primary {
+    @apply wf-btn border-wf-accent bg-wf-accent text-white hover:opacity-90;
+  }
+
+  .wf-btn-ghost {
+    @apply wf-btn bg-wf-surface text-wf-ink hover:bg-wf-bg;
+  }
+
+  /* Placeholder de imagem: caixa cinza com diagonal, padrao de wireframe */
+  .wf-img {
+    @apply flex items-center justify-center bg-wf-bg text-xs uppercase tracking-wide text-wf-muted;
+    background-image: linear-gradient(
+      135deg,
+      transparent 47%,
+      theme("colors.wf.line") 47%,
+      theme("colors.wf.line") 53%,
+      transparent 53%
+    );
+    background-size: 28px 28px;
+  }
+
+  .wf-input {
+    @apply w-full rounded-md border border-wf-line bg-wf-surface px-3 py-2 text-sm text-wf-ink outline-none focus:border-wf-accent;
+  }
+
+  .wf-label {
+    @apply mb-1 block text-xs font-medium text-wf-text;
+  }
+
+  .wf-chip {
+    @apply inline-flex items-center rounded-full border border-wf-line bg-wf-surface px-3 py-1 text-xs text-wf-text;
+  }
+
+  .wf-tag {
+    @apply inline-flex items-center rounded border border-dashed border-wf-muted px-2 py-0.5 text-[10px] uppercase tracking-wide text-wf-muted;
+  }
+}
