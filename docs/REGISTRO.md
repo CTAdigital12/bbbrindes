@@ -46,3 +46,19 @@ Onde paramos / proximo passo:
 
 Pendencias com o responsavel:
 - Identidade git oficial (nome/email) antes do primeiro commit. Git ainda nao inicializado, sem push.
+
+---
+
+## 10/06/2026 13:29 BRT (quarta) -- publicacao e deploy via GitHub Actions
+
+Feito nesta sessao:
+- Repositorio publicado em https://github.com/CTAdigital12/bbbrindes (branch base master). Sprint 0 mergeada na master via PR #1.
+- Configurado deploy do wireframe por GitHub Actions no GitHub Pages.
+- Frontend ajustado para export estatico (output: export): catalogo passou a ler a query string no client (useSearchParams + Suspense), basePath /bbbrindes para o Pages, trailingSlash e images.unoptimized.
+- Workflow .github/workflows/deploy.yml: build do export e deploy no Pages a cada push na master (e manual via workflow_dispatch).
+- Verificacao: build de export ok (30 rotas, Exporting 3/3), basePath /bbbrindes aplicado nos assets.
+
+Onde paramos / proximo passo:
+- Abrir PR de chore/deploy-github-pages para master. Apos o merge, o Actions publica.
+- URL prevista: https://ctadigital12.github.io/bbbrindes/
+- Acao manual no GitHub (uma vez): em Settings > Pages, definir Source = GitHub Actions (o workflow tenta habilitar automaticamente via configure-pages enablement; se a org bloquear, fazer manual).
