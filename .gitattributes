@@ -1,0 +1,8 @@
+# Normaliza fim de linha: LF no repositorio, conversao automatica no checkout.
+* text=auto eol=lf
+
+# Lockfile e binarios nao sofrem normalizacao.
+pnpm-lock.yaml -text
+*.png binary
+*.jpg binary
+*.pdf binary
