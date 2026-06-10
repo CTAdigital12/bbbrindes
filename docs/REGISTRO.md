@@ -62,3 +62,18 @@ Onde paramos / proximo passo:
 - Abrir PR de chore/deploy-github-pages para master. Apos o merge, o Actions publica.
 - URL prevista: https://ctadigital12.github.io/bbbrindes/
 - Acao manual no GitHub (uma vez): em Settings > Pages, definir Source = GitHub Actions (o workflow tenta habilitar automaticamente via configure-pages enablement; se a org bloquear, fazer manual).
+
+---
+
+## 10/06/2026 15:23 BRT (quarta) -- troca do deploy para a Vercel
+
+Contexto: o GitHub Pages no plano free exige repo publico, e o repo e privado. Decidido (com o responsavel) publicar na Vercel, que aceita repo privado, da URL gratuita *.vercel.app e ja serve para SSR nas proximas sprints. Time pago da Vercel ja existente.
+
+Feito nesta sessao:
+- output: export do Next passou a ser condicional (so com STATIC_EXPORT=true). Build padrao volta a ser Next nativo, servido na raiz (sem basePath). Verificado: build ok, rotas estaticas/SSG.
+- Removido o workflow .github/workflows/deploy.yml (deploy do Pages), que ficaria falhando a cada push na master.
+- README com o passo a passo do deploy na Vercel (Root Directory = frontend, branch de producao master).
+
+Onde paramos / proximo passo:
+- Abrir PR de chore/deploy-vercel para master e mergear.
+- Na Vercel: importar CTAdigital12/bbbrindes, Root Directory = frontend, deploy. A URL *.vercel.app vai para o cliente. Dominio proprio (os ja existentes no time) fica opcional para depois.
