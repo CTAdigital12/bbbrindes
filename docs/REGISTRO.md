@@ -93,3 +93,19 @@ Onde paramos / proximo passo:
 - Mergear chore/rollback-deploy-pages na master. O push dispara o workflow.
 - Com o repo publico, habilitar Pages: Settings > Pages > Source = GitHub Actions (o configure-pages tenta habilitar sozinho; em repo publico costuma funcionar). Se a primeira run falhar so no Pages, re-rodar apos habilitar.
 - URL: https://ctadigital12.github.io/bbbrindes/
+
+---
+
+## 12/06/2026 11:58 BRT (sexta) -- area do lojista no wireframe (S00-12)
+
+Ainda na fase de wireframe (sem apresentar ao cliente). Adicionada a opcao do lojista cadastrar produto.
+
+Feito nesta sessao:
+- Area do lojista (mock, sem auth/backend): pagina /gestao com lista de produtos mostrando origem (Importado x Manual) e botao Adicionar produto; pagina /gestao/novo com formulario amigavel (nome, categoria, material, descricao, aplicacoes, variacoes de cor, faixa de preco, personalizavel, imagens placeholder).
+- Produtos manuais persistem em localStorage (frontend/src/lib/lojista.ts), aparecem na lista e podem ser removidos. Aviso explicito de que import nao apaga manuais.
+- Acesso pelo rodape (link Area do lojista). Card S00-12 criado.
+- Build ok (32 rotas, /gestao e /gestao/novo estaticas).
+
+Onde paramos / proximo passo:
+- Abrir PR de feature/wireframe-gestao-produtos para master (apos merge, o deploy do Pages atualiza, se a branch do Trello e esta entrarem na master).
+- Decisoes de arquitetura do catalogo real (origem unica com marcacao, gestao via Payload, nopCommerce so como fonte de import) seguem pendentes para a Sprint 1/2, fora do escopo do wireframe.
