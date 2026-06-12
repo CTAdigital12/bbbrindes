@@ -106,7 +106,7 @@ export default function PainelRevendedorPage() {
                       </td>
                       <td className="p-3 text-right">
                         <button type="button" onClick={() => addPedido(p.slug)} className="wf-btn-ghost">
-                          Adicionar
+                          Adicionar ao pedido
                         </button>
                       </td>
                     </tr>
