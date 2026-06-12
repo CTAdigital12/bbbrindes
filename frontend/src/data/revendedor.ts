@@ -19,6 +19,12 @@ export function precoRevendedor(slug: string): RevendedorPreco | undefined {
   return tabelaRevendedor.find((t) => t.produtoSlug === slug);
 }
 
+// Preco de revenda por faixa, usado para produtos cadastrados na administracao
+// que ainda nao tem preco tabelado proprio (wireframe).
+export function precoPorFaixa(faixa: string): number {
+  return precoBaseFaixa[faixa] ?? 0;
+}
+
 // Historico de pedidos mockado para o painel.
 export const historicoRevendedor: PedidoRevendedor[] = [
   { numero: "REV-1042", data: "2026-06-02", itens: 4, total: 1860.0, status: "faturado" },

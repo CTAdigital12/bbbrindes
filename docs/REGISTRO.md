@@ -109,3 +109,19 @@ Feito nesta sessao:
 Onde paramos / proximo passo:
 - Abrir PR de feature/wireframe-gestao-produtos para master (apos merge, o deploy do Pages atualiza, se a branch do Trello e esta entrarem na master).
 - Decisoes de arquitetura do catalogo real (origem unica com marcacao, gestao via Payload, nopCommerce so como fonte de import) seguem pendentes para a Sprint 1/2, fora do escopo do wireframe.
+
+---
+
+## 12/06/2026 16:19 BRT (sexta) -- ajuste de papeis das areas (admin x revendedor)
+
+Pedido do responsavel: deixar claro que a area antes chamada "lojista" e a administracao do site todo (cadastra produtos e SKUs), e que a area do revendedor puxa esses produtos e SKUs da lista geral do site.
+
+Feito nesta sessao:
+- Botao da tabela do revendedor renomeado para "Adicionar ao pedido" (era so "Adicionar", ambiguo).
+- Area /gestao renomeada para "Administracao do site" / "Produtos e SKUs" (cabecalho, formulario, link do rodape "Admin do site"). Variacoes de cor rotuladas como SKU.
+- Painel do revendedor passou a puxar o catalogo unificado: produtos do catalogo geral mais os cadastrados na administracao (marcados como Novo, com preco por faixa). A aba Pedido usa esse catalogo unificado. Isso demonstra o vinculo admin -> lista geral -> revendedor.
+- Build ok (32 rotas).
+
+Onde paramos / proximo passo:
+- Branch fix/clareza-revendedor-pedido reune o ajuste de rotulo e o ajuste de papeis. Abrir/atualizar o PR para master.
+- Seguem pendentes os merges do PR do Trello e a decisao de fonte dos dados do catalogo (Sprint 1/2).

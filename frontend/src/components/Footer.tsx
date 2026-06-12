@@ -60,7 +60,7 @@ export default function Footer() {
           <span>2026 bbbrindes. Wireframe para aprovacao. Dados ficticios.</span>
           <div className="flex items-center gap-4">
             <Link href="/gestao" className="hover:text-wf-accent">
-              Area do lojista
+              Admin do site
             </Link>
             <Link href="/sac" className="hover:text-wf-accent">
               Politica de Privacidade

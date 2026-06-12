@@ -1,14 +1,16 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { produtos } from "@/data/produtos";
 import {
   historicoRevendedor,
+  precoPorFaixa,
   precoRevendedor,
   revendedorMock,
   tabelaRevendedor,
 } from "@/data/revendedor";
+import { listarManuais, type ProdutoManual } from "@/lib/lojista";
 
 type Aba = "tabela" | "pedido" | "historico" | "cadastro" | "arquivos";
 
@@ -20,23 +22,54 @@ const statusLabel: Record<string, string> = {
   faturado: "Faturado",
 };
 
+type ItemCatalogo = { key: string; nome: string; preco: number; estoque: number | null; novo: boolean };
+
 export default function PainelRevendedorPage() {
   const [aba, setAba] = useState<Aba>("tabela");
   const [pedido, setPedido] = useState<Record<string, number>>({});
+  const [manuais, setManuais] = useState<ProdutoManual[]>([]);
+
+  // Catalogo do revendedor puxado da lista geral do site: produtos do catalogo
+  // mais os cadastrados na administracao (marcados como "novo"). Wireframe: os
+  // manuais vem do localStorage; na producao viriam da mesma base do Payload.
+  useEffect(() => setManuais(listarManuais()), []);
+
+  const catalogo: ItemCatalogo[] = useMemo(
+    () => [
+      ...produtos.map((p) => ({
+        key: p.slug,
+        nome: p.nome,
+        preco: precoRevendedor(p.slug)?.precoUnitario ?? 0,
+        estoque: tabelaRevendedor.find((t) => t.produtoSlug === p.slug)?.estoque ?? 0,
+        novo: false,
+      })),
+      ...manuais.map((m) => ({
+        key: m.id,
+        nome: m.nome,
+        preco: precoPorFaixa(m.faixaPreco),
+        estoque: null,
+        novo: true,
+      })),
+    ],
+    [manuais],
+  );
+
+  const itemDe = (key: string) => catalogo.find((c) => c.key === key);
 
   const itensPedido = useMemo(
     () => Object.entries(pedido).filter(([, q]) => q > 0),
     [pedido],
   );
-  const totalPedido = itensPedido.reduce((acc, [slug, q]) => {
-    return acc + (precoRevendedor(slug)?.precoUnitario ?? 0) * q;
-  }, 0);
+  const totalPedido = itensPedido.reduce(
+    (acc, [key, q]) => acc + (itemDe(key)?.preco ?? 0) * q,
+    0,
+  );
 
-  function addPedido(slug: string) {
-    setPedido((p) => ({ ...p, [slug]: (p[slug] ?? 0) + 1 }));
+  function addPedido(key: string) {
+    setPedido((p) => ({ ...p, [key]: (p[key] ?? 0) + 1 }));
   }
-  function setQtd(slug: string, q: number) {
-    setPedido((p) => ({ ...p, [slug]: Math.max(0, q) }));
+  function setQtd(key: string, q: number) {
+    setPedido((p) => ({ ...p, [key]: Math.max(0, q) }));
   }
 
   return (
@@ -82,38 +115,48 @@ export default function PainelRevendedorPage() {
 
       <div className="wf-container py-6">
         {aba === "tabela" && (
-          <div className="wf-card overflow-x-auto">
-            <table className="w-full text-sm">
-              <thead className="bg-wf-bg text-left text-xs uppercase text-wf-muted">
-                <tr>
-                  <th className="p-3">Produto</th>
-                  <th className="p-3">Preco unit.</th>
-                  <th className="p-3">Estoque</th>
-                  <th className="p-3"></th>
-                </tr>
-              </thead>
-              <tbody>
-                {produtos.map((p) => {
-                  const tr = tabelaRevendedor.find((t) => t.produtoSlug === p.slug);
-                  return (
-                    <tr key={p.slug} className="border-t border-wf-line">
-                      <td className="p-3 font-medium text-wf-ink">{p.nome}</td>
-                      <td className="p-3">{brl(tr?.precoUnitario ?? 0)}</td>
+          <div className="space-y-3">
+            <p className="text-sm text-wf-text">
+              Catalogo puxado da lista geral do site (produtos e SKUs cadastrados na administracao).
+              Itens marcados como Novo foram adicionados na administracao do site.
+            </p>
+            <div className="wf-card overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead className="bg-wf-bg text-left text-xs uppercase text-wf-muted">
+                  <tr>
+                    <th className="p-3">Produto</th>
+                    <th className="p-3">Preco unit.</th>
+                    <th className="p-3">Estoque</th>
+                    <th className="p-3"></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {catalogo.map((item) => (
+                    <tr key={item.key} className="border-t border-wf-line">
+                      <td className="p-3 font-medium text-wf-ink">
+                        {item.nome}
+                        {item.novo && <span className="wf-tag ml-2">Novo</span>}
+                      </td>
+                      <td className="p-3">{brl(item.preco)}</td>
                       <td className="p-3">
-                        <span className={tr && tr.estoque < 100 ? "text-red-600" : "text-wf-text"}>
-                          {tr?.estoque ?? 0} un
-                        </span>
+                        {item.estoque === null ? (
+                          <span className="text-wf-muted">--</span>
+                        ) : (
+                          <span className={item.estoque < 100 ? "text-red-600" : "text-wf-text"}>
+                            {item.estoque} un
+                          </span>
+                        )}
                       </td>
                       <td className="p-3 text-right">
-                        <button type="button" onClick={() => addPedido(p.slug)} className="wf-btn-ghost">
+                        <button type="button" onClick={() => addPedido(item.key)} className="wf-btn-ghost">
                           Adicionar ao pedido
                         </button>
                       </td>
                     </tr>
-                  );
-                })}
-              </tbody>
-            </table>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
         )}
 
@@ -125,20 +168,19 @@ export default function PainelRevendedorPage() {
                   Nenhum item no pedido. Adicione na aba Precos e estoque.
                 </p>
               ) : (
-                itensPedido.map(([slug, q]) => {
-                  const prod = produtos.find((p) => p.slug === slug);
-                  const preco = precoRevendedor(slug)?.precoUnitario ?? 0;
+                itensPedido.map(([key, q]) => {
+                  const item = itemDe(key);
                   return (
-                    <div key={slug} className="flex items-center gap-3 p-3">
-                      <div className="flex-1 text-sm font-medium text-wf-ink">{prod?.nome}</div>
+                    <div key={key} className="flex items-center gap-3 p-3">
+                      <div className="flex-1 text-sm font-medium text-wf-ink">{item?.nome}</div>
                       <input
                         type="number"
                         min={0}
                         value={q}
-                        onChange={(e) => setQtd(slug, Number(e.target.value) || 0)}
+                        onChange={(e) => setQtd(key, Number(e.target.value) || 0)}
                         className="wf-input w-20"
                       />
-                      <div className="w-24 text-right text-sm">{brl(preco * q)}</div>
+                      <div className="w-24 text-right text-sm">{brl((item?.preco ?? 0) * q)}</div>
                     </div>
                   );
                 })

@@ -39,8 +39,8 @@ export default function GestaoPage() {
       <div className="border-b border-wf-line bg-wf-ink text-white">
         <div className="wf-container flex flex-wrap items-center justify-between gap-2 py-3">
           <div>
-            <span className="text-xs uppercase tracking-wide text-wf-muted">Area do lojista</span>
-            <h1 className="text-lg font-semibold">Gestao de produtos</h1>
+            <span className="text-xs uppercase tracking-wide text-wf-muted">Administracao do site</span>
+            <h1 className="text-lg font-semibold">Produtos e SKUs</h1>
           </div>
           <div className="flex items-center gap-2">
             <Link href="/gestao/novo" className="wf-btn-primary">
@@ -55,9 +55,9 @@ export default function GestaoPage() {
 
       <div className="wf-container py-6">
         <div className="wf-card mb-4 p-4 text-sm text-wf-text">
-          Aqui convivem os produtos vindos do catalogo da empresa (Importado) e os que voce
-          adiciona manualmente (Manual). Uma nova importacao nunca apaga os produtos manuais.
-          (Wireframe: dados de exemplo, sem backend.)
+          Cadastro dos produtos e SKUs do site. Convivem os produtos vindos do catalogo da
+          empresa (Importado) e os cadastrados aqui (Manual). Uma nova importacao nunca apaga os
+          produtos manuais. (Wireframe: dados de exemplo, sem backend.)
         </div>
 
         <div className="mb-3 flex items-center justify-between">
