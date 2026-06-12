@@ -56,7 +56,7 @@ export default function NovoProdutoPage() {
       <div className="border-b border-wf-line bg-wf-ink text-white">
         <div className="wf-container flex items-center justify-between py-3">
           <div>
-            <span className="text-xs uppercase tracking-wide text-wf-muted">Area do lojista</span>
+            <span className="text-xs uppercase tracking-wide text-wf-muted">Administracao do site</span>
             <h1 className="text-lg font-semibold">Adicionar produto</h1>
           </div>
           <Link href="/gestao" className="wf-btn-ghost text-wf-ink">
@@ -123,7 +123,7 @@ export default function NovoProdutoPage() {
 
             {/* Variacoes de cor */}
             <div className="wf-card space-y-3 p-4">
-              <span className="wf-label">Variacoes de cor</span>
+              <span className="wf-label">Variacoes de cor (cada cor e um SKU)</span>
               <div className="flex flex-wrap items-end gap-2">
                 <input
                   className="wf-input w-40"

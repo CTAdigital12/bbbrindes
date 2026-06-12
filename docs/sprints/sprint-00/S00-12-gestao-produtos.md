@@ -1,4 +1,4 @@
-# S00-12 Area do lojista: gestao de produtos (wireframe)
+# S00-12 Administracao do site: produtos e SKUs (wireframe)
 
 Status: concluido
 Frente: frontend
@@ -6,7 +6,7 @@ Prioridade: P1
 Atualizado: 12/06/2026 BRT
 
 ## Descricao
-Wireframe da area do lojista (dono da loja), separada do visitante, para gerir o catalogo. Mostra os produtos com a marcacao de origem (Importado x Manual) e permite adicionar um produto novo manualmente, de forma amigavel. Tudo mock client-side (localStorage), sem backend e sem auth real. Na producao isso vira a coleção Produtos no Payload, com origem "manual" convivendo com a "import" (um import nunca apaga os manuais).
+Wireframe da administracao do site (admin do site todo), separada do visitante, para cadastrar produtos e SKUs. Mostra os produtos com a marcacao de origem (Importado x Manual) e permite adicionar um produto novo manualmente, de forma amigavel. A area do revendedor puxa esses produtos e SKUs da lista geral do site (os cadastrados aqui aparecem la marcados como Novo). Tudo mock client-side (localStorage), sem backend e sem auth real. Na producao isso vira a coleção Produtos no Payload, com origem "manual" convivendo com a "import" (um import nunca apaga os manuais).
 
 ## Checklist
 - [x] Pagina /gestao com cabecalho distinto e lista de produtos
