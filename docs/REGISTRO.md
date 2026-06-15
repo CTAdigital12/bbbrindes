@@ -96,6 +96,27 @@ Onde paramos / proximo passo:
 
 ---
 
+## 10/06/2026 17:12 BRT (quarta) -- integracao com o Trello
+
+Deploy do Pages confirmado no ar (apos liberar Workflow permissions = Read and write e Pages Source = GitHub Actions).
+
+Feito nesta sessao:
+- Criado script scripts/trello-sync.mjs (Node, sem dependencias): le os cards das sprints (docs/sprints/**/S*.md), cria listas por status (A Fazer, Em Andamento, Concluido) e cria cada card com descricao e checklist. Idempotente na criacao (nao duplica pelo codigo S00-xx). Por ora e create-only (nao atualiza card existente).
+- Script trello:sync no package.json raiz (node --env-file=.env).
+- .env local criado (gitignored) para o responsavel preencher TRELLO_API_KEY e TRELLO_TOKEN. .env.example atualizado com a secao Trello e DATABASE_URI ajustado para Supabase/Postgres.
+- Parsing dos cards validado contra os arquivos reais (codigo, status, descricao e checklist corretos).
+- Board: https://trello.com/b/dAiTB3Ff/bbbrindesproject (TRELLO_BOARD_ID=dAiTB3Ff).
+
+Sobre cadastro de SKUs (discutido): nao sao 1200 cards. SKUs sao dado, importados via script na Sprint 2 a partir de planilha/export ou, em ultimo caso, scrape do site atual. Aguardando o responsavel confirmar a fonte dos dados do catalogo.
+
+Sync executado: 11 cards da Sprint 0 criados no board, na lista Concluido 🎉, com checklist. Ajuste: o match de listas passou a normalizar nome (sem acento/emoji) para usar as listas que ja existem no board (Backlog, Design, A Fazer, Em andamento, Revisao de codigo, Fase de teste, Concluido 🎉) em vez de criar duplicata. Uma lista duplicada criada por engano foi arquivada e os cards movidos para a correta.
+
+Onde paramos / proximo passo:
+- Abrir PR de feature/trello-sync para master.
+- Decidir a fonte da verdade de status (Trello x arquivos) antes de evoluir o script para update.
+
+---
+
 ## 12/06/2026 11:58 BRT (sexta) -- area do lojista no wireframe (S00-12)
 
 Ainda na fase de wireframe (sem apresentar ao cliente). Adicionada a opcao do lojista cadastrar produto.
