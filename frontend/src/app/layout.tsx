@@ -3,7 +3,6 @@ import "./globals.css";
 import { CartProvider } from "@/lib/cart";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import WireframeBadge from "@/components/WireframeBadge";
 
 export const metadata: Metadata = {
   title: {
@@ -22,7 +21,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <Header />
           <main className="flex-1">{children}</main>
           <Footer />
-          <WireframeBadge />
         </CartProvider>
       </body>
     </html>
