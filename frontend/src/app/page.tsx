@@ -33,18 +33,18 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Categorias visuais */}
+      {/* Categorias estilo iFood: faixa unica na Home, sem moldura (S01-02) */}
       <section className="wf-container py-6">
         <h2 className="mb-3 text-lg font-semibold text-wf-ink">Categorias</h2>
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
+        <div className="grid grid-cols-3 gap-2 sm:grid-cols-4 md:grid-cols-5">
           {categorias.map((c) => (
             <Link
               key={c.slug}
               href={`/catalogo?categoria=${c.slug}`}
-              className="wf-card flex flex-col items-center gap-2 p-3 text-center hover:shadow-md"
+              className="flex flex-col items-center gap-2 rounded-lg p-2 text-center hover:bg-wf-surface"
             >
-              <span className="wf-img h-16 w-16 rounded-full" />
-              <span className="text-xs font-medium text-wf-ink">{c.nome}</span>
+              <span className="wf-img h-16 w-16 rounded-full" aria-hidden="true" />
+              <span className="text-xs font-medium leading-tight text-wf-ink">{c.nome}</span>
             </Link>
           ))}
         </div>

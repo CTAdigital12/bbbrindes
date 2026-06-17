@@ -191,6 +191,9 @@ Verificacao:
 - Smoke HTTP no dev server: 200 em /, /cases, /clipping, /catalogo, /quem-somos.
 - Pendente: validacao visual interativa no browser (abrir o submenu da logo, conferir as 2 linhas das categorias e o rodape) antes do merge.
 
+Ajuste pos-revisao do Fabio (mesma sessao):
+- O Fabio apontou que a barra de categorias estilo iFood (S01-02) ficou redundante com a secao "Categorias" do corpo da Home (ambas icone + label, alem do submenu da logo). Decisao: a faixa estilo iFood fica so na Home; a barra global saiu do Header e o CategoryMenu.tsx foi removido. A secao da Home virou o estilo iFood sem moldura. Categorias em outras paginas ficam no submenu da logo (S01-11) e nos filtros do catalogo. Build de export ok apos o ajuste.
+
 Onde paramos / proximo passo:
-- Branch feature/sprint-01-navegacao com o grupo Navegacao. Falta commit; PR para master e push aguardam autorizacao do Fabio.
+- Branch feature/sprint-01-navegacao com o grupo Navegacao (commit do grupo + commit do ajuste da Home). PR para master e push aguardam autorizacao do Fabio.
 - Proximo grupo: Conteudo (S01-08 cases, S01-09 clipping, S01-10 institucional reforcado), que preenche o conteudo real das paginas placeholder. Depois PDP (S01-13). Fechar a sprint em 0.2.0.

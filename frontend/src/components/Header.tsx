@@ -4,7 +4,6 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useCart } from "@/lib/cart";
-import CategoryMenu from "@/components/CategoryMenu";
 import LogoMenu from "@/components/LogoMenu";
 
 export default function Header() {
@@ -49,8 +48,6 @@ export default function Header() {
           </Link>
         </nav>
       </div>
-
-      <CategoryMenu />
     </header>
   );
 }
