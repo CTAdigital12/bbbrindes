@@ -197,3 +197,25 @@ Ajuste pos-revisao do Fabio (mesma sessao):
 Onde paramos / proximo passo:
 - Branch feature/sprint-01-navegacao com o grupo Navegacao (commit do grupo + commit do ajuste da Home). PR para master e push aguardam autorizacao do Fabio.
 - Proximo grupo: Conteudo (S01-08 cases, S01-09 clipping, S01-10 institucional reforcado), que preenche o conteudo real das paginas placeholder. Depois PDP (S01-13). Fechar a sprint em 0.2.0.
+
+---
+
+## 17/06/2026 19:01 BRT (quarta) -- fechamento do dia: Navegacao mergeada
+
+Grupo Navegacao revisado pelo Fabio no browser e mergeado na master via PR #15 (commits 6736b95 e a0af3f1). O push na master dispara o deploy do Pages.
+
+Resumo do dia (Sprint 1):
+- Grupo Home ja estava mergeado (PR #13) no inicio do dia.
+- Grupo Navegacao concluido e mergeado: S01-02 categorias estilo iFood sem scroll (consolidada so na Home apos a revisao, barra global do Header removida e CategoryMenu deletado), S01-11 LogoMenu com submenu acessivel (Escape, clique fora) levando o institucional ao topo, S01-12 rodape em grupos Institucional/Revenda/Imprensa. Paginas placeholder /cases e /clipping criadas para nao quebrar os links do rodape.
+- Incidente resolvido: o erro "Cannot find module './888.js'" no dev era cache stale do .next (dev server orfao no Windows somado a builds de export por cima da mesma pasta). Corrigido limpando .next/out e reiniciando o dev. Licao registrada para nao repetir.
+
+Verificacao: build de export ok (46 rotas, lint e tipos validos, Exporting 3/3); smoke HTTP 200 em /, /cases, /clipping, /catalogo; _not-found serve 404 corretamente.
+
+Pendencias para 18/06 (amanha):
+- Grupo Conteudo: S01-08 cases (depoimentos, logos de clientes, resultados), S01-09 clipping (materias com veiculo, data e link), S01-10 institucional reforcado (forca do Grupo BB). Preenche os placeholders /cases e /clipping. Branch a partir da master atualizada.
+- Depois: grupo PDP (S01-13 video, trocar cor muda imagem, remover personalizavel e aplicacoes). S01-14 identidade visual segue BLOQUEADO ate o catalogo 2026/27 do Plinio.
+- Trello: mover S01-02, S01-11 e S01-12 para Concluido e marcar o checklist (depende das credenciais TRELLO_API_KEY/TOKEN no .env; o sync e create-only).
+- Ao fechar a sprint, bump de versao para 0.2.0.
+- Opcional: podar branches locais ja mergeadas (sprint-00, sprint-01-home, chore antigos) quando autorizado.
+
+Onde paramos: master em 348011c, grupo Navegacao mergeado. Proximo passo amanha: iniciar o grupo Conteudo a partir da master atualizada.
