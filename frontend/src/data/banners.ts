@@ -1,6 +1,7 @@
 import type { Banner } from "@/lib/types";
 
-// Banners de campanha (editaveis via CMS na Sprint 5). Espelham as campanhas do site atual.
+// Banners do carrossel rotativo do topo (editaveis via CMS na Sprint 5).
+// Cada um trabalha uma estrategia diferente.
 export const banners: Banner[] = [
   {
     id: "copa-2026",
@@ -11,7 +12,7 @@ export const banners: Banner[] = [
   },
   {
     id: "ecologicos",
-    titulo: "Brindes Ecologicos",
+    titulo: "Linha Green",
     subtitulo: "Industria sustentavel, produtos livres de BPA e cores inovadoras.",
     cta: "Conhecer Linha Green",
     href: "/catalogo?categoria=ecologicos",
@@ -23,27 +24,42 @@ export const banners: Banner[] = [
     cta: "Ver ofertas",
     href: "/catalogo?faixa=ate-3-99",
   },
+  {
+    id: "datas",
+    titulo: "Campanhas do mes",
+    subtitulo: "Datas comemorativas e sazonais prontas para sua marca.",
+    cta: "Ver campanhas",
+    href: "/cases",
+  },
 ];
 
-// Blocos de diferenciais (nove pilares do site atual).
-export const diferenciais: string[] = [
-  "Industria Brasileira",
-  "Melhor custo-beneficio",
-  "Entrega garantida",
-  "Industria Sustentavel",
-  "Atoxidade Certificada",
-  "Cores Inovadoras",
-  "Qualidade Certificada",
-  "Livre de BPA",
-  "Uso em Microondas e Lava-loucas",
+// Banners secundarios (estaticos, tamanhos menores) ao lado do carrossel.
+export const miniBanners: Banner[] = [
+  {
+    id: "infantil",
+    titulo: "Linha Infantil",
+    subtitulo: "Livre de BPA",
+    cta: "Ver linha",
+    href: "/catalogo?categoria=infantil",
+  },
+  {
+    id: "to-go",
+    titulo: "To go e Viagem",
+    subtitulo: "Garrafas e squeezes",
+    cta: "Ver linha",
+    href: "/catalogo?categoria=to-go-viagem",
+  },
 ];
 
-// Linhas visuais de produto destacadas na home.
-export const linhasVisuais: { nome: string; href: string }[] = [
-  { nome: "Linha Green", href: "/catalogo?categoria=ecologicos" },
-  { nome: "Casa e Escritorio", href: "/catalogo?categoria=escritorio" },
-  { nome: "Dia a Dia", href: "/catalogo" },
-  { nome: "Festa", href: "/catalogo?categoria=copos-tacas" },
-  { nome: "Infantil", href: "/catalogo?categoria=infantil" },
-  { nome: "Datas Comemorativas", href: "/catalogo?categoria=datas-comemorativas" },
+// Diferenciais (cada um vira link para o destino relacionado).
+export const diferenciais: { nome: string; href: string }[] = [
+  { nome: "Industria Brasileira", href: "/quem-somos" },
+  { nome: "Melhor custo-beneficio", href: "/catalogo?faixa=ate-3-99" },
+  { nome: "Entrega garantida", href: "/quem-somos" },
+  { nome: "Industria Sustentavel", href: "/catalogo?categoria=ecologicos" },
+  { nome: "Atoxidade Certificada", href: "/quem-somos" },
+  { nome: "Cores Inovadoras", href: "/catalogo" },
+  { nome: "Qualidade Certificada", href: "/quem-somos" },
+  { nome: "Livre de BPA", href: "/catalogo?categoria=infantil" },
+  { nome: "Uso em Microondas e Lava-loucas", href: "/catalogo" },
 ];

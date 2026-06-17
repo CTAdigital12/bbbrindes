@@ -1,9 +1,11 @@
 import Link from "next/link";
 import type { Produto } from "@/lib/types";
 import { nomeCategoria } from "@/data/categorias";
+import { tagsDoProduto } from "@/data/produtos";
 
 // Card de produto reutilizado na home e no catalogo. Sem preco na visao B2B publica.
 export default function ProductCard({ produto }: { produto: Produto }) {
+  const tags = tagsDoProduto(produto);
   return (
     <Link
       href={`/produto/${produto.slug}`}
@@ -27,7 +29,7 @@ export default function ProductCard({ produto }: { produto: Produto }) {
               />
             ))}
           </div>
-          {produto.personalizavel && <span className="wf-tag">Personalizavel</span>}
+          {tags.length > 0 && <span className="wf-tag">{tags[0]}</span>}
         </div>
       </div>
     </Link>

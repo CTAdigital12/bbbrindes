@@ -14,7 +14,6 @@ type Filtros = {
   aplicacao: string;
   faixa: string;
   cor: string;
-  somentePersonalizavel: boolean;
 };
 
 const coresFiltro = ["Branco", "Preto", "Azul", "Verde", "Vermelho", "Amarelo", "Laranja", "Natural"];
@@ -29,7 +28,6 @@ export default function CatalogoClient() {
     aplicacao: sp.get("aplicacao") ?? "",
     faixa: sp.get("faixa") ?? "",
     cor: sp.get("cor") ?? "",
-    somentePersonalizavel: false,
   }));
 
   const resultados = useMemo(() => filtrar(produtos, f), [f]);
@@ -39,7 +37,7 @@ export default function CatalogoClient() {
   }
 
   function limpar() {
-    setF({ q: "", categoria: "", material: "", aplicacao: "", faixa: "", cor: "", somentePersonalizavel: false });
+    setF({ q: "", categoria: "", material: "", aplicacao: "", faixa: "", cor: "" });
   }
 
   return (
@@ -79,15 +77,6 @@ export default function CatalogoClient() {
 
           <Select label="Cor" valor={f.cor} onChange={(v) => set("cor", v)}
             opcoes={coresFiltro.map((c) => ({ valor: c, rotulo: c }))} />
-
-          <label className="flex items-center gap-2 text-sm text-wf-text">
-            <input
-              type="checkbox"
-              checked={f.somentePersonalizavel}
-              onChange={(e) => set("somentePersonalizavel", e.target.checked)}
-            />
-            Somente personalizaveis
-          </label>
 
           <button type="button" onClick={limpar} className="wf-btn-ghost w-full">
             Limpar filtros
@@ -148,7 +137,6 @@ function filtrar(lista: Produto[], f: Filtros): Produto[] {
     if (f.aplicacao && !p.aplicacoes.includes(f.aplicacao)) return false;
     if (f.faixa && p.faixaPreco !== f.faixa) return false;
     if (f.cor && !p.cores.some((c) => c.nome === f.cor)) return false;
-    if (f.somentePersonalizavel && !p.personalizavel) return false;
     return true;
   });
 }
