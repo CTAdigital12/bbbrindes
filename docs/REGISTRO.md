@@ -146,3 +146,18 @@ Feito nesta sessao:
 Onde paramos / proximo passo:
 - Branch fix/clareza-revendedor-pedido reune o ajuste de rotulo e o ajuste de papeis. Abrir/atualizar o PR para master.
 - Seguem pendentes os merges do PR do Trello e a decisao de fonte dos dados do catalogo (Sprint 1/2).
+
+---
+
+## 17/06/2026 14:32 BRT (quarta) -- MARCO: revisao do Plinio (bbbrindes) sobre o wireframe
+
+Marco de referencia. A apresentacao ao cliente ocorreu em 15/06; o Plinio (representante da bbbrindes) revisou e enviou comentarios em 17/06. Removido o selo flutuante de wireframe (PR #10). Adicionada ao CLAUDE.md a regra de registro de tempo (secao "Registro de tempo", itens 24 a 26).
+
+Resumo dos pedidos do Plinio (detalhe completo vai para o plano da v2 do wireframe):
+- Home: banners rotativos (3+, tamanhos variados); barra de categorias sem scroll horizontal (estilo iFood, 2 linhas); destaques em 1 linha de 4 + "ver todos", itens randomicos (pool de 12); remover tag "Personalizavel" (todos sao); remover secao "Linhas de produto" (replica categorias) e por no lugar secao sazonal/campanhas (~12 itens, destino de LP); manter beneficios e blog; tirar o destaque grande do revendedor e mandar para o rodape; adicionar Cases/prova social e clipping de imprensa; reforcar institucional (forca do Grupo BB).
+- Navegacao: logo clicavel abrindo submenu com a arvore (institucional, quem somos, categorias, resumo da home); acesso ao institucional no topo, nao so no rodape. Rodape com quem somos, blog, catalogos, revendedores, area do revendedor, contato, cases, clipping.
+- PDP: adicionar video; trocar cor muda imagem; remover "personalizavel" e provavelmente "aplicacoes"; manter descricao, categoria, cores, quantidade e adicionar ao orcamento.
+- Identidade visual: alinhar ao catalogo 2026/27 (Plinio enviara o catalogo final apos revisao interna); a versao visual revisada do site sai depois disso. Por ora, mudancas estruturais com tema neutro.
+
+Onde paramos / proximo passo:
+- Entrar em plan mode e detalhar o plano da v2 do wireframe incorporando a revisao.

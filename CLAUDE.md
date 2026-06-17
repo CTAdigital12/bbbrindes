@@ -68,6 +68,11 @@ Itens marcados como "a definir" devem ser registrados aqui assim que decididos.
 22. A regra de pontuacao vale apenas para o texto informativo das respostas. Proibido nesse texto: emojis, travessao e hifen usados como pontuacao ou estilo, incluindo bullets iniciados por hifen. Usar listas numeradas, asteriscos ou prosa.
 23. Codigo, caminhos, nomes de branch, flags e identificadores seguem normais e sem restricao. Hifens nesses tokens nao contam como estilo.
 
+### Registro de tempo
+24. O tempo e fator determinante. Marcar pontos no tempo sempre em horario de Brasilia (BRT, UTC-3), com data e hora.
+25. Manter docs/REGISTRO.md atualizado a cada sessao: o que foi feito, onde paramos e o proximo passo, com carimbo de data e hora BRT. Converter datas relativas em absolutas.
+26. Registrar marcos relevantes (entregas, revisoes do cliente, decisoes) com data e hora BRT, para servirem de referencia futura.
+
 ## Checklist antes de implementar
 
 1. Conferir o estado do git e a branch atual.
