@@ -57,7 +57,10 @@ export default function Footer() {
 
       <div className="border-t border-wf-line">
         <div className="wf-container flex flex-col gap-2 py-4 text-xs text-wf-muted sm:flex-row sm:items-center sm:justify-between">
-          <span>2026 bbbrindes. Wireframe para aprovacao. Dados ficticios.</span>
+          <span>
+            2026 bbbrindes. Wireframe para aprovacao. Dados ficticios.{" "}
+            {`v${process.env.NEXT_PUBLIC_APP_VERSION ?? ""}`}
+          </span>
           <div className="flex items-center gap-4">
             <Link href="/gestao" className="hover:text-wf-accent">
               Admin do site
