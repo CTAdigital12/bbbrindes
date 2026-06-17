@@ -176,3 +176,21 @@ Feito nesta sessao:
 Onde paramos / proximo passo:
 - PR feature/sprint-01-home (inclui os cards da sprint + grupo Home) para master.
 - Proximos grupos em sequencia: Navegacao (S01-02, 11, 12), Conteudo (S01-08, 09, 10), PDP (S01-13). Bump para 0.2.0 ao fechar.
+
+---
+
+## 17/06/2026 17:02 BRT (quarta) -- Sprint 1: grupo Navegacao
+
+Feito nesta sessao (cards S01-02, S01-11, S01-12, todos concluidos):
+- S01-02 barra de categorias sem scroll: CategoryMenu reescrito como grid estilo iFood (icone placeholder + label), ate 2 linhas no desktop (md:grid-cols-6) e menos colunas no mobile, sem overflow-x.
+- S01-11 logo com submenu: novo componente client LogoMenu com dropdown acessivel (aria-expanded/haspopup, fecha no Escape com retorno de foco ao botao e no clique fora). Arvore: pagina inicial, grupo Institucional (quem somos, revendedores, catalogos, blog, contato, sac) e grupo Categorias. Header passou a usar LogoMenu no lugar do link fixo. Institucional agora acessivel no topo, nao so no rodape.
+- S01-12 rodape reorganizado: grupos Institucional, Revenda (inclui area do revendedor) e Imprensa (cases, clipping), mantendo contato e versao. Criadas paginas placeholder /cases e /clipping para os links nao quebrarem; o conteudo real fica nos cards S01-08 e S01-09 (grupo Conteudo).
+
+Verificacao:
+- Build de export ok (46 rotas, agora com /cases e /clipping; lint e tipos validos; Exporting 3/3).
+- Smoke HTTP no dev server: 200 em /, /cases, /clipping, /catalogo, /quem-somos.
+- Pendente: validacao visual interativa no browser (abrir o submenu da logo, conferir as 2 linhas das categorias e o rodape) antes do merge.
+
+Onde paramos / proximo passo:
+- Branch feature/sprint-01-navegacao com o grupo Navegacao. Falta commit; PR para master e push aguardam autorizacao do Fabio.
+- Proximo grupo: Conteudo (S01-08 cases, S01-09 clipping, S01-10 institucional reforcado), que preenche o conteudo real das paginas placeholder. Depois PDP (S01-13). Fechar a sprint em 0.2.0.

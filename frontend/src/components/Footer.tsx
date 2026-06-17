@@ -1,48 +1,66 @@
 import Link from "next/link";
 
-const linksInstitucionais = [
-  { href: "/quem-somos", label: "Quem Somos" },
-  { href: "/blog", label: "Blog" },
-  { href: "/catalogos", label: "Catalogos" },
-  { href: "/revendedores", label: "Revendedores" },
-  { href: "/sac", label: "SAC" },
-  { href: "/contato", label: "Contato" },
+// Rodape reorganizado conforme a revisao do Plinio (S01-12): institucional,
+// revenda e imprensa (cases e clipping) agrupados, mantendo versao e contato.
+const colunas: { titulo: string; links: { href: string; label: string }[] }[] = [
+  {
+    titulo: "Institucional",
+    links: [
+      { href: "/quem-somos", label: "Quem Somos" },
+      { href: "/blog", label: "Blog" },
+      { href: "/catalogos", label: "Catalogos" },
+      { href: "/contato", label: "Contato" },
+      { href: "/sac", label: "SAC" },
+    ],
+  },
+  {
+    titulo: "Revenda",
+    links: [
+      { href: "/revendedores", label: "Revendedores" },
+      { href: "/revendedor/login", label: "Area do revendedor" },
+    ],
+  },
+  {
+    titulo: "Imprensa",
+    links: [
+      { href: "/cases", label: "Cases" },
+      { href: "/clipping", label: "Clipping" },
+    ],
+  },
 ];
 
 export default function Footer() {
   return (
     <footer className="mt-12 border-t border-wf-line bg-wf-surface">
-      <div className="wf-container grid gap-8 py-10 sm:grid-cols-2 lg:grid-cols-4">
-        <div>
+      <div className="wf-container grid gap-8 py-10 sm:grid-cols-2 lg:grid-cols-5">
+        <div className="lg:col-span-2">
           <div className="text-lg font-bold text-wf-ink">
             bb<span className="text-wf-accent">brindes</span>
           </div>
-          <p className="mt-2 text-sm text-wf-text">
+          <p className="mt-2 max-w-sm text-sm text-wf-text">
             Industria 100% brasileira de brindes corporativos. Catalogo, orcamento e revenda.
           </p>
+          <div className="mt-4 text-sm text-wf-text">
+            <p>WhatsApp: (71) 99999-9999</p>
+            <p>contato@bbbrindes.com.br</p>
+            <p>Lauro de Freitas / BA</p>
+          </div>
         </div>
 
-        <div>
-          <h3 className="mb-2 text-sm font-semibold text-wf-ink">Institucional</h3>
-          <ul className="space-y-1 text-sm text-wf-text">
-            {linksInstitucionais.map((l) => (
-              <li key={l.href}>
-                <Link href={l.href} className="hover:text-wf-accent">
-                  {l.label}
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </div>
-
-        <div>
-          <h3 className="mb-2 text-sm font-semibold text-wf-ink">Contato</h3>
-          <ul className="space-y-1 text-sm text-wf-text">
-            <li>WhatsApp: (71) 99999-9999</li>
-            <li>contato@bbbrindes.com.br</li>
-            <li>Lauro de Freitas / BA</li>
-          </ul>
-        </div>
+        {colunas.map((col) => (
+          <div key={col.titulo}>
+            <h3 className="mb-2 text-sm font-semibold text-wf-ink">{col.titulo}</h3>
+            <ul className="space-y-1 text-sm text-wf-text">
+              {col.links.map((l) => (
+                <li key={l.href}>
+                  <Link href={l.href} className="hover:text-wf-accent">
+                    {l.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))}
 
         <div>
           <h3 className="mb-2 text-sm font-semibold text-wf-ink">Redes</h3>

@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useCart } from "@/lib/cart";
 import CategoryMenu from "@/components/CategoryMenu";
+import LogoMenu from "@/components/LogoMenu";
 
 export default function Header() {
   const { totalItens } = useCart();
@@ -20,9 +21,7 @@ export default function Header() {
   return (
     <header className="border-b border-wf-line bg-wf-surface">
       <div className="wf-container flex items-center gap-4 py-3">
-        <Link href="/" className="shrink-0 text-lg font-bold text-wf-ink">
-          bb<span className="text-wf-accent">brindes</span>
-        </Link>
+        <LogoMenu />
 
         <form onSubmit={submeterBusca} className="flex flex-1 items-center" role="search">
           <input
