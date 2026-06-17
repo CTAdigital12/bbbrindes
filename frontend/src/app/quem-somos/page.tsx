@@ -29,9 +29,9 @@ export default function QuemSomosPage() {
       <h2 className="mt-10 text-lg font-semibold text-wf-ink">Nossos diferenciais</h2>
       <div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-3">
         {diferenciais.map((d) => (
-          <div key={d} className="wf-card flex items-center gap-3 p-3">
+          <div key={d.nome} className="wf-card flex items-center gap-3 p-3">
             <span className="wf-img h-9 w-9 rounded-full" />
-            <span className="text-sm font-medium text-wf-ink">{d}</span>
+            <span className="text-sm font-medium text-wf-ink">{d.nome}</span>
           </div>
         ))}
       </div>

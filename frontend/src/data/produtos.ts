@@ -168,6 +168,15 @@ export function produtoPorSlug(slug: string): Produto | undefined {
   return produtos.find((p) => p.slug === slug);
 }
 
+// Tags que diferenciam de verdade (ex.: Ecologico). No wireframe sao derivadas;
+// na producao virao explicitas do Payload. "Personalizavel" nao e tag (todos sao).
+export function tagsDoProduto(p: Produto): string[] {
+  const tags = p.tags ? [...p.tags] : [];
+  const eco = p.categoria === "ecologicos" || p.material === "Bambu" || /ecolog/i.test(p.nome);
+  if (eco && !tags.includes("Ecologico")) tags.push("Ecologico");
+  return tags;
+}
+
 export function produtosPorDestaque(tipo: Produto["destaques"][number]): Produto[] {
   return produtos.filter((p) => p.destaques.includes(tipo));
 }

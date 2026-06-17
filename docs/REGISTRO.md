@@ -161,3 +161,18 @@ Resumo dos pedidos do Plinio (detalhe completo vai para o plano da v2 do wirefra
 
 Onde paramos / proximo passo:
 - Entrar em plan mode e detalhar o plano da v2 do wireframe incorporando a revisao.
+
+---
+
+## 17/06/2026 16:17 BRT (quarta) -- Sprint 1 iniciada: cards + grupo Home
+
+Plano da v2 aprovado. Versionamento SemVer adotado (master em 0.1.2; Sprint 1 fecha em 0.2.0). Credencial git resolvida por repositorio (useHttpPath + usuario na URL do remote).
+
+Feito nesta sessao:
+- Criados os 14 cards da Sprint 1 (docs/sprints/sprint-01, S01-01 a S01-14, um por topico do Plinio) e sincronizados ao board do Trello (lista A Fazer).
+- Grupo Home implementado (cards S01-01, 03, 04, 05, 06, 07): carrossel de banners rotativo (BannerCarousel), destaques em 1 linha randomica de um pool de 12 (DestaquesRandom), remocao da tag e do filtro "Personalizavel" e exibicao de tags reais (Ecologico via tagsDoProduto), secao de campanhas sazonais (~12, com landing /campanha/[slug]) no lugar de "Linhas de produto", diferenciais viraram links, e remocao da faixa grande de revendedor da home.
+- Build ok. Tema neutro mantido (identidade visual 2026/27 segue pendente do catalogo, card S01-14 bloqueado).
+
+Onde paramos / proximo passo:
+- PR feature/sprint-01-home (inclui os cards da sprint + grupo Home) para master.
+- Proximos grupos em sequencia: Navegacao (S01-02, 11, 12), Conteudo (S01-08, 09, 10), PDP (S01-13). Bump para 0.2.0 ao fechar.

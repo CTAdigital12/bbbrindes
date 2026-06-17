@@ -21,6 +21,8 @@ export type Produto = {
   personalizavel: boolean;
   faixaPreco: "ate-3-99" | "4-a-15" | "acima-de-15";
   destaques: ("destaque" | "mais-vendido" | "lancamento")[];
+  // Tags que diferenciam de verdade (ex.: Ecologico). Opcional; ver tagsDoProduto.
+  tags?: string[];
 };
 
 export type Banner = {
