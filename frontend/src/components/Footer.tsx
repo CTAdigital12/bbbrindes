@@ -1,7 +1,7 @@
 import Link from "next/link";
 
 // Rodape reorganizado conforme a revisao do Plinio (S01-12): institucional,
-// revenda e imprensa (cases e clipping) agrupados, mantendo versao e contato.
+// revenda e a coluna de cases/imprensa, mantendo versao e contato.
 const colunas: { titulo: string; links: { href: string; label: string }[] }[] = [
   {
     titulo: "Institucional",
@@ -21,10 +21,10 @@ const colunas: { titulo: string; links: { href: string; label: string }[] }[] = 
     ],
   },
   {
-    titulo: "Imprensa",
+    titulo: "Cases e imprensa",
     links: [
       { href: "/cases", label: "Cases" },
-      { href: "/clipping", label: "Clipping" },
+      { href: "/imprensa", label: "Imprensa" },
     ],
   },
 ];

@@ -41,6 +41,26 @@ export type Post = {
   conteudo: string;
 };
 
+// Cases / prova social (S01-08): cliente, segmento e depoimento opcional.
+export type Case = {
+  slug: string;
+  cliente: string;
+  segmento: string;
+  titulo: string;
+  resumo: string;
+  depoimento?: { texto: string; autor: string };
+};
+
+// Materia de imprensa / clipping (S01-09).
+export type Materia = {
+  id: string;
+  veiculo: string;
+  data: string; // ISO
+  titulo: string;
+  resumo: string;
+  url: string;
+};
+
 // Visao exclusiva do revendedor (preco e estoque por produto).
 export type RevendedorPreco = {
   produtoSlug: string;

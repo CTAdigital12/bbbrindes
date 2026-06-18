@@ -4,6 +4,8 @@ import { campanhas } from "@/data/campanhas";
 import { categorias } from "@/data/categorias";
 import { posts } from "@/data/blog";
 import { produtos } from "@/data/produtos";
+import { cases } from "@/data/cases";
+import { materias } from "@/data/imprensa";
 import BannerCarousel from "@/components/BannerCarousel";
 import DestaquesRandom from "@/components/DestaquesRandom";
 
@@ -82,6 +84,53 @@ export default function HomePage() {
               </span>
             </Link>
           ))}
+        </div>
+      </section>
+
+      {/* Cases / prova social (S01-08) */}
+      <section className="wf-container py-8">
+        <div className="mb-3 flex items-center justify-between">
+          <h2 className="text-lg font-semibold text-wf-ink">Cases e prova social</h2>
+          <Link href="/cases" className="text-sm text-wf-accent hover:underline">
+            Ver cases
+          </Link>
+        </div>
+        <div className="grid gap-3 sm:grid-cols-3">
+          {cases.slice(0, 3).map((c) => (
+            <Link key={c.slug} href="/cases" className="wf-card overflow-hidden hover:shadow-md">
+              <div className="wf-img flex aspect-[16/9] w-full items-center justify-center text-sm font-semibold text-wf-ink">
+                {c.cliente}
+              </div>
+              <div className="p-3">
+                <p className="text-xs uppercase tracking-wide text-wf-muted">{c.segmento}</p>
+                <h3 className="text-sm font-medium text-wf-ink">{c.titulo}</h3>
+              </div>
+            </Link>
+          ))}
+        </div>
+      </section>
+
+      {/* Na imprensa (S01-09) */}
+      <section className="border-y border-wf-line bg-wf-surface">
+        <div className="wf-container py-8">
+          <div className="mb-3 flex items-center justify-between">
+            <h2 className="text-lg font-semibold text-wf-ink">Na imprensa</h2>
+            <Link href="/imprensa" className="text-sm text-wf-accent hover:underline">
+              Ver imprensa
+            </Link>
+          </div>
+          <ul className="grid gap-3 sm:grid-cols-3">
+            {materias.slice(0, 3).map((m) => (
+              <li key={m.id}>
+                <Link href="/imprensa" className="block">
+                  <p className="text-xs font-semibold uppercase tracking-wide text-wf-muted">
+                    {m.veiculo}
+                  </p>
+                  <p className="text-sm font-medium text-wf-ink hover:text-wf-accent">{m.titulo}</p>
+                </Link>
+              </li>
+            ))}
+          </ul>
         </div>
       </section>
 
