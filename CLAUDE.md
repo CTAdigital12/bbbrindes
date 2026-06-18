@@ -73,6 +73,9 @@ Itens marcados como "a definir" devem ser registrados aqui assim que decididos.
 25. Manter docs/REGISTRO.md atualizado a cada sessao: o que foi feito, onde paramos e o proximo passo, com carimbo de data e hora BRT. Converter datas relativas em absolutas.
 26. Registrar marcos relevantes (entregas, revisoes do cliente, decisoes) com data e hora BRT, para servirem de referencia futura.
 
+### Validacao de UI antes do PR
+27. Mudanca de frontend ou UI exige validacao visual no navegador pelo responsavel antes de abrir ou sugerir o PR. A IA roda o app localmente (ou explica como rodar), aponta o que testar e so prepara push ou PR apos o aceite explicito do teste de UI. Build, lint e smoke verdes nao substituem esse teste.
+
 ## Checklist antes de implementar
 
 1. Conferir o estado do git e a branch atual.
