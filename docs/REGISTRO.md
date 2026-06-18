@@ -256,3 +256,21 @@ Onde paramos / proximo passo:
 - Branch feature/sprint-01-pdp com o grupo PDP. PR e push aguardam autorizacao do Fabio.
 - Com a PDP mergeada, fecha-se a Sprint 1 (todos os grupos, exceto S01-14 identidade visual, BLOQUEADO ate o catalogo 2026/27). Proposto bump de versao para 0.2.0 ao fechar.
 - Trello: mover Navegacao, Conteudo e PDP para Concluido quando houver credenciais.
+
+---
+
+## 18/06/2026 14:17 BRT (quinta) -- Sprint 1 fechada: bump 0.2.0
+
+PDP mergeada na master (PR #18). Todos os grupos da revisao do Plinio estao na master: Home (PR #13), Navegacao (PR #15), Conteudo (PR #17) e PDP (PR #18).
+
+Feito nesta sessao (fechamento):
+- Bump de versao 0.1.2 para 0.2.0 em package.json (raiz e frontend). O rodape passa a mostrar v0.2.0 (next.config le pkg.version do frontend).
+- CHANGELOG.md: secao [0.2.0] datada (2026-06-18) e revisada (corrigido "Clipping" para "Imprensa", incluido o institucional reforcado e os detalhes da PDP).
+- Build de export ok com frontend@0.2.0 (Exporting 3/3).
+
+Escopo concluido da Sprint 1: banners rotativos, categorias estilo iFood na home, destaques randomicos, campanhas sazonais, logo com submenu acessivel, rodape reorganizado, paginas Cases e Imprensa, institucional reforcado e PDP revisada. Unico card em aberto: S01-14 identidade visual, BLOQUEADO ate o Plinio enviar o catalogo 2026/27.
+
+Onde paramos / proximo passo:
+- Branch chore/fechamento-sprint-01 com o bump. PR para master para o Fabio mergear; apos o merge, master em 0.2.0 e Sprint 1 oficialmente fechada.
+- Trello: mover os cards de Navegacao, Conteudo e PDP para Concluido (depende das credenciais TRELLO_API_KEY/TOKEN).
+- Sprint 2 a alinhar com o Fabio: provavel inicio do backend (Payload CMS + Supabase) e a identidade visual quando vier o catalogo 2026/27.
