@@ -4,12 +4,15 @@ Versionamento segue SemVer (MAJOR.MINOR.PATCH). MAJOR fica em 0 enquanto o proje
 e pre-producao (wireframe). MINOR sobe a cada conjunto de funcionalidades; PATCH
 para ajustes pontuais. A versao atual aparece no rodape do site.
 
-## [0.2.0] - em desenvolvimento
+## [0.2.0] - 2026-06-18
 
-Revisao do Plinio (Sprint 1). Banners rotativos, barra de categorias sem scroll,
-destaques em uma linha randomicos, secao de campanhas sazonais, paginas de Cases e
-Clipping, logo com submenu, rodape reorganizado e PDP revisada. Identidade visual
-2026/27 pendente do catalogo final.
+Revisao do Plinio (Sprint 1). Banners rotativos, barra de categorias sem scroll
+estilo iFood consolidada na home, destaques em uma linha randomicos, secao de
+campanhas sazonais, logo com submenu acessivel e rodape reorganizado. Paginas de
+Cases e Imprensa com teasers na home, e institucional (Quem Somos) reforcado com a
+forca do Grupo BB. PDP revisada: galeria com video, troca de cor muda a imagem e
+remocao de "personalizavel" e "aplicacoes". Identidade visual 2026/27 (S01-14)
+pendente do catalogo final.
 
 ## [0.1.2] - 2026-06-12
 
