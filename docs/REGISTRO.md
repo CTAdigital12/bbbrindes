@@ -238,3 +238,21 @@ Onde paramos / proximo passo:
 - Branch feature/sprint-01-conteudo com o grupo Conteudo. Falta commit; PR para master e push aguardam autorizacao do Fabio.
 - Ultimo grupo da sprint: PDP (S01-13). Ao fechar, bump de versao para 0.2.0. S01-14 identidade visual segue bloqueado ate o catalogo 2026/27.
 - Trello: mover Navegacao (S01-02/11/12) e Conteudo (S01-08/09/10) para Concluido quando houver credenciais.
+
+---
+
+## 18/06/2026 12:03 BRT (quinta) -- Sprint 1: grupo PDP (S01-13)
+
+Grupo PDP implementado na branch feature/sprint-01-pdp (a partir da master cc64225, com o grupo Conteudo ja mergeado no PR #17).
+
+Feito nesta sessao (card S01-13 concluido):
+- PDP revisada conforme o Plinio. Galeria e selecao de cor unificadas no novo componente client ProdutoView (compartilham o estado da cor); o ProdutoCompra foi absorvido e removido.
+- Galeria com opcao de video: thumbs de imagem e de video; o thumb de video troca a midia principal para um placeholder de video. Trocar a cor muda a imagem principal (no wireframe, cor solida da variacao com o rotulo da cor).
+- Removidos "personalizavel" e "aplicacoes" da PDP. Mantidos descricao, categoria, material, cores, quantidade e adicionar ao orcamento.
+
+Verificacao: build de export ok (lint e tipos validos, Exporting 3/3). Smoke HTTP no dev: 200 em / e nas paginas de produto. Dev server deixado no ar para o Fabio testar a interacao (cor e video); sera encerrado com a arvore de node ao terminar.
+
+Onde paramos / proximo passo:
+- Branch feature/sprint-01-pdp com o grupo PDP. PR e push aguardam autorizacao do Fabio.
+- Com a PDP mergeada, fecha-se a Sprint 1 (todos os grupos, exceto S01-14 identidade visual, BLOQUEADO ate o catalogo 2026/27). Proposto bump de versao para 0.2.0 ao fechar.
+- Trello: mover Navegacao, Conteudo e PDP para Concluido quando houver credenciais.
