@@ -219,3 +219,22 @@ Pendencias para 18/06 (amanha):
 - Opcional: podar branches locais ja mergeadas (sprint-00, sprint-01-home, chore antigos) quando autorizado.
 
 Onde paramos: master em 348011c, grupo Navegacao mergeado. Proximo passo amanha: iniciar o grupo Conteudo a partir da master atualizada.
+
+---
+
+## 18/06/2026 11:19 BRT (quinta) -- Sprint 1: grupo Conteudo
+
+Grupo Conteudo implementado na branch feature/sprint-01-conteudo (a partir da master 59fbad7, que ja inclui o registro de fechamento mergeado no PR #16).
+
+Feito nesta sessao (cards S01-08, S01-09, S01-10, todos concluidos):
+- S01-08 Cases: pagina /cases real (galeria por cliente/segmento, secao de depoimentos, CTA para orcamento/contato) com mock em data/cases.ts (exemplos ilustrativos: Coca-Cola, Ambev, Natura, Sicredi, Localiza, Prefeitura). Teaser na home e link no rodape e no submenu da logo.
+- S01-09 Imprensa: a rota /clipping (placeholder do grupo Navegacao) foi renomeada para /imprensa (o card pede /imprensa e e melhor para SEO em PT). Pagina /imprensa real (materias com veiculo, data e resumo) com mock em data/imprensa.ts. Teaser na home e link no rodape (label "Imprensa") e no submenu da logo. /clipping passou a retornar 404.
+- S01-10 Institucional: /quem-somos reforcada com bloco da forca do Grupo BB, numeros de autoridade, bloco de sustentabilidade e chamadas para Cases e Imprensa, mantendo os diferenciais e o tema neutro.
+- Tipos Case e Materia adicionados em lib/types.ts.
+
+Verificacao: build de export ok (lint e tipos validos, Exporting 3/3). Smoke HTTP no dev: 200 em /, /cases, /imprensa, /quem-somos; /clipping retorna 404. Dev server encerrado e arvore de node finalizada (porta 3000 livre), seguindo a licao do cache .next.
+
+Onde paramos / proximo passo:
+- Branch feature/sprint-01-conteudo com o grupo Conteudo. Falta commit; PR para master e push aguardam autorizacao do Fabio.
+- Ultimo grupo da sprint: PDP (S01-13). Ao fechar, bump de versao para 0.2.0. S01-14 identidade visual segue bloqueado ate o catalogo 2026/27.
+- Trello: mover Navegacao (S01-02/11/12) e Conteudo (S01-08/09/10) para Concluido quando houver credenciais.

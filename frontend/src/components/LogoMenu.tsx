@@ -11,6 +11,8 @@ const institucional = [
   { href: "/revendedores", label: "Revendedores" },
   { href: "/catalogos", label: "Catalogos" },
   { href: "/blog", label: "Blog" },
+  { href: "/cases", label: "Cases" },
+  { href: "/imprensa", label: "Imprensa" },
   { href: "/contato", label: "Contato" },
   { href: "/sac", label: "SAC" },
 ];
