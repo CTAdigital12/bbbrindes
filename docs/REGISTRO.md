@@ -274,3 +274,20 @@ Onde paramos / proximo passo:
 - Branch chore/fechamento-sprint-01 com o bump. PR para master para o Fabio mergear; apos o merge, master em 0.2.0 e Sprint 1 oficialmente fechada.
 - Trello: mover os cards de Navegacao, Conteudo e PDP para Concluido (depende das credenciais TRELLO_API_KEY/TOKEN).
 - Sprint 2 a alinhar com o Fabio: provavel inicio do backend (Payload CMS + Supabase) e a identidade visual quando vier o catalogo 2026/27.
+
+---
+
+## 23/06/2026 21:02 BRT (terca) -- Home: ajustes da nova revisao do Plinio
+
+Branch feature/home-ajustes-plinio a partir da master atualizada (origin/master c17af4e). Aplicado o retorno do Plinio sobre a Home (arquivo de anotacoes no Obsidian).
+
+Feito nesta sessao:
+- Menu da logo (LogoMenu) em 2 colunas no desktop: coluna 1 Pagina inicial + Institucional, coluna 2 Categorias. Colapsa para 1 coluna no mobile (divisor vira borda superior), atendendo o pedido de cuidado com responsividade.
+- Secao "Destaques" renomeada para "Lancamentos" (DestaquesRandom), agora com 6 produtos e imagens menores (ProductCard ganhou modo compacto com aspect 4/3; catalogo segue aspect-square).
+- Nova faixa "Linha Ecologica" logo abaixo de Campanhas e datas, reusando ProductRow. Filtro por produto eco extraido para o helper ehEcologico/produtosEcologicos em data/produtos.ts (mesma regra ja usada nas tags).
+
+Verificacao: tsc --noEmit ok e next lint sem warnings. Falta validacao visual no browser antes do PR (regra do projeto).
+
+Onde paramos / proximo passo:
+- Commit local na branch. PR e push aguardam autorizacao do Fabio e a validacao da UI no browser.
+- Ponto em aberto para confirmar com o Plinio: a "Linha Ecologica" foi interpretada como nova faixa de produtos eco abaixo de campanhas; se a intencao era so reposicionar os selos/diferenciais, ajustar.

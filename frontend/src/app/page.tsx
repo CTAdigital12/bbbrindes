@@ -3,11 +3,12 @@ import { banners, diferenciais, miniBanners } from "@/data/banners";
 import { campanhas } from "@/data/campanhas";
 import { categorias } from "@/data/categorias";
 import { posts } from "@/data/blog";
-import { produtos } from "@/data/produtos";
+import { produtos, produtosEcologicos } from "@/data/produtos";
 import { cases } from "@/data/cases";
 import { materias } from "@/data/imprensa";
 import BannerCarousel from "@/components/BannerCarousel";
 import DestaquesRandom from "@/components/DestaquesRandom";
+import ProductRow from "@/components/ProductRow";
 
 export default function HomePage() {
   return (
@@ -52,7 +53,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Destaques: 1 linha randomica + ver todos */}
+      {/* Lancamentos: 1 linha randomica de 6 produtos + ver todos */}
       <DestaquesRandom produtos={produtos} />
 
       {/* Campanhas e datas comemorativas (substitui "Linhas de produto") */}
@@ -72,6 +73,13 @@ export default function HomePage() {
           ))}
         </div>
       </section>
+
+      {/* Linha Ecologica: faixa de produtos eco logo abaixo de Campanhas (revisao Plinio) */}
+      <ProductRow
+        titulo="Linha Ecologica"
+        produtos={produtosEcologicos()}
+        href="/catalogo?categoria=ecologicos"
+      />
 
       {/* Diferenciais (cada um vira link) */}
       <section className="border-y border-wf-line bg-wf-surface">
