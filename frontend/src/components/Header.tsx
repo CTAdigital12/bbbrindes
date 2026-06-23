@@ -19,24 +19,32 @@ export default function Header() {
 
   return (
     <header className="border-b border-wf-line bg-wf-surface">
-      <div className="wf-container flex items-center gap-4 py-3">
-        <LogoMenu />
+      {/* flex-wrap: no mobile a busca vai para uma 2a linha full-width (catalogo
+          precisa da busca sempre visivel); no desktop tudo fica em 1 linha. */}
+      <div className="wf-container flex flex-wrap items-center gap-x-4 gap-y-3 py-3">
+        <div className="order-1">
+          <LogoMenu />
+        </div>
 
-        <form onSubmit={submeterBusca} className="flex flex-1 items-center" role="search">
+        <form
+          onSubmit={submeterBusca}
+          className="order-3 flex w-full items-center sm:order-2 sm:w-auto sm:flex-1"
+          role="search"
+        >
           <input
             type="search"
             value={busca}
             onChange={(e) => setBusca(e.target.value)}
             placeholder="Buscar produtos, categorias, palavras-chave..."
-            className="wf-input rounded-r-none"
+            className="wf-input min-w-0 flex-1 rounded-r-none"
             aria-label="Buscar produtos"
           />
-          <button type="submit" className="wf-btn-primary rounded-l-none">
+          <button type="submit" className="wf-btn-primary shrink-0 rounded-l-none">
             Buscar
           </button>
         </form>
 
-        <nav className="flex shrink-0 items-center gap-2">
+        <nav className="order-2 ml-auto flex shrink-0 items-center gap-2 sm:order-3 sm:ml-0">
           <Link href="/revendedor/login" className="wf-btn-ghost hidden sm:inline-flex">
             Revendedor
           </Link>

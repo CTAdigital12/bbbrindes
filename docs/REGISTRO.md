@@ -291,3 +291,5 @@ Verificacao: tsc --noEmit ok e next lint sem warnings. Falta validacao visual no
 Onde paramos / proximo passo:
 - Commit local na branch. PR e push aguardam autorizacao do Fabio e a validacao da UI no browser.
 - Ponto em aberto para confirmar com o Plinio: a "Linha Ecologica" foi interpretada como nova faixa de produtos eco abaixo de campanhas; se a intencao era so reposicionar os selos/diferenciais, ajustar.
+
+Ajuste adicional (mesma sessao): busca do Header quebrava no mobile (input espremido a zero ao lado do botao Buscar). Corrigido com flex-wrap + order: no mobile a busca vai para uma 2a linha full-width (sempre visivel, sem lupinha que exige toque extra), no desktop segue inline em 1 linha. Input ganhou flex-1 min-w-0 e o botao Buscar shrink-0. Validado visualmente pelo Plinio/Fabio.
