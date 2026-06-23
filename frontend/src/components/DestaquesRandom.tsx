@@ -14,27 +14,27 @@ function embaralhar<T>(arr: T[]): T[] {
   return a;
 }
 
-// Uma linha de 4 destaques randomicos a partir de um pool (12). Comeca
+// Uma linha de 6 lancamentos randomicos a partir do pool. Comeca
 // deterministico (igual ao export estatico) e embaralha apos montar, evitando
 // mismatch de hidratacao.
 export default function DestaquesRandom({ produtos }: { produtos: Produto[] }) {
-  const [lista, setLista] = useState<Produto[]>(() => produtos.slice(0, 4));
+  const [lista, setLista] = useState<Produto[]>(() => produtos.slice(0, 6));
 
   useEffect(() => {
-    setLista(embaralhar(produtos).slice(0, 4));
+    setLista(embaralhar(produtos).slice(0, 6));
   }, [produtos]);
 
   return (
     <section className="wf-container py-6">
       <div className="mb-3 flex items-center justify-between">
-        <h2 className="text-lg font-semibold text-wf-ink">Destaques</h2>
+        <h2 className="text-lg font-semibold text-wf-ink">Lancamentos</h2>
         <Link href="/catalogo" className="text-sm text-wf-accent hover:underline">
           Ver todos
         </Link>
       </div>
-      <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
         {lista.map((p) => (
-          <ProductCard key={p.slug} produto={p} />
+          <ProductCard key={p.slug} produto={p} compacto />
         ))}
       </div>
     </section>

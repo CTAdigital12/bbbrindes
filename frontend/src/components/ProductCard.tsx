@@ -4,14 +4,21 @@ import { nomeCategoria } from "@/data/categorias";
 import { tagsDoProduto } from "@/data/produtos";
 
 // Card de produto reutilizado na home e no catalogo. Sem preco na visao B2B publica.
-export default function ProductCard({ produto }: { produto: Produto }) {
+// compacto: imagem mais baixa (4/3), usada na faixa de Lancamentos da home.
+export default function ProductCard({
+  produto,
+  compacto = false,
+}: {
+  produto: Produto;
+  compacto?: boolean;
+}) {
   const tags = tagsDoProduto(produto);
   return (
     <Link
       href={`/produto/${produto.slug}`}
       className="wf-card group flex flex-col overflow-hidden transition-shadow hover:shadow-md"
     >
-      <div className="wf-img aspect-square w-full">Imagem</div>
+      <div className={`wf-img w-full ${compacto ? "aspect-[4/3]" : "aspect-square"}`}>Imagem</div>
       <div className="flex flex-1 flex-col gap-2 p-3">
         <span className="text-xs text-wf-muted">{nomeCategoria(produto.categoria)}</span>
         <h3 className="line-clamp-2 text-sm font-medium text-wf-ink group-hover:text-wf-accent">

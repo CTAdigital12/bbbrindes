@@ -76,25 +76,32 @@ export default function LogoMenu() {
       {aberto && (
         <div
           id="logo-submenu"
-          className="absolute left-0 top-full z-30 mt-2 w-72 rounded-lg border border-wf-line bg-wf-surface p-2 shadow-lg"
+          className="absolute left-0 top-full z-30 mt-2 w-72 rounded-lg border border-wf-line bg-wf-surface p-2 shadow-lg sm:w-[34rem]"
         >
-          <nav aria-label="Navegacao principal">
-            <Link href="/" onClick={fechar} className={`${itemClasse} font-medium text-wf-ink`}>
-              Pagina inicial
-            </Link>
+          {/* 2 colunas no desktop (Pagina inicial/Institucional | Categorias);
+              colapsa para 1 coluna no mobile para nao quebrar (S01 revisao Plinio). */}
+          <nav
+            aria-label="Navegacao principal"
+            className="grid grid-cols-1 gap-x-2 sm:grid-cols-2"
+          >
+            <div>
+              <Link href="/" onClick={fechar} className={`${itemClasse} font-medium text-wf-ink`}>
+                Pagina inicial
+              </Link>
 
-            <div className="mt-1 border-t border-wf-line pt-1">
-              <p className="px-2 pb-1 pt-1 text-xs font-semibold uppercase tracking-wide text-wf-muted">
-                Institucional
-              </p>
-              {institucional.map((l) => (
-                <Link key={l.href} href={l.href} onClick={fechar} className={itemClasse}>
-                  {l.label}
-                </Link>
-              ))}
+              <div className="mt-1 border-t border-wf-line pt-1">
+                <p className="px-2 pb-1 pt-1 text-xs font-semibold uppercase tracking-wide text-wf-muted">
+                  Institucional
+                </p>
+                {institucional.map((l) => (
+                  <Link key={l.href} href={l.href} onClick={fechar} className={itemClasse}>
+                    {l.label}
+                  </Link>
+                ))}
+              </div>
             </div>
 
-            <div className="mt-1 border-t border-wf-line pt-1">
+            <div className="mt-1 border-t border-wf-line pt-1 sm:mt-0 sm:border-t-0 sm:border-l sm:pl-2 sm:pt-0">
               <p className="px-2 pb-1 pt-1 text-xs font-semibold uppercase tracking-wide text-wf-muted">
                 Categorias
               </p>
