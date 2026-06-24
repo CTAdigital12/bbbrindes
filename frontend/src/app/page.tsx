@@ -56,11 +56,12 @@ export default function HomePage() {
       {/* Lancamentos: 1 linha randomica de 6 produtos + ver todos */}
       <DestaquesRandom produtos={produtos} />
 
-      {/* Campanhas e datas comemorativas (substitui "Linhas de produto") */}
+      {/* Campanhas e datas comemorativas (substitui "Linhas de produto").
+          Limita a um numero par para nao sobrar tile na grade de 6 colunas. */}
       <section className="wf-container py-6">
         <h2 className="mb-3 text-lg font-semibold text-wf-ink">Campanhas e datas</h2>
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
-          {campanhas.map((c) => (
+          {campanhas.slice(0, campanhas.length - (campanhas.length % 2)).map((c) => (
             <Link
               key={c.slug}
               href={`/campanha/${c.slug}`}
