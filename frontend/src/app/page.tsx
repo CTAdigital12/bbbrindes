@@ -8,7 +8,7 @@ import { cases } from "@/data/cases";
 import { materias } from "@/data/imprensa";
 import BannerCarousel from "@/components/BannerCarousel";
 import DestaquesRandom from "@/components/DestaquesRandom";
-import ProductRow from "@/components/ProductRow";
+import ProductCard from "@/components/ProductCard";
 
 export default function HomePage() {
   return (
@@ -56,11 +56,12 @@ export default function HomePage() {
       {/* Lancamentos: 1 linha randomica de 6 produtos + ver todos */}
       <DestaquesRandom produtos={produtos} />
 
-      {/* Campanhas e datas comemorativas (substitui "Linhas de produto") */}
+      {/* Campanhas e datas comemorativas (substitui "Linhas de produto").
+          Limita a um numero par para nao sobrar tile na grade de 6 colunas. */}
       <section className="wf-container py-6">
         <h2 className="mb-3 text-lg font-semibold text-wf-ink">Campanhas e datas</h2>
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
-          {campanhas.map((c) => (
+          {campanhas.slice(0, campanhas.length - (campanhas.length % 2)).map((c) => (
             <Link
               key={c.slug}
               href={`/campanha/${c.slug}`}
@@ -74,12 +75,22 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Linha Ecologica: faixa de produtos eco logo abaixo de Campanhas (revisao Plinio) */}
-      <ProductRow
-        titulo="Linha Ecologica"
-        produtos={produtosEcologicos()}
-        href="/catalogo?categoria=ecologicos"
-      />
+      {/* Brindes Ecologicos: sessao tipo Lancamentos, 5 produtos, sem cores no card (revisao Plinio 2) */}
+      <section className="wf-container py-6">
+        <div className="mb-3 flex items-center justify-between">
+          <h2 className="text-lg font-semibold text-wf-ink">Brindes Ecologicos</h2>
+          <Link href="/catalogo?categoria=ecologicos" className="text-sm text-wf-accent hover:underline">
+            Ver todos
+          </Link>
+        </div>
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
+          {produtosEcologicos()
+            .slice(0, 5)
+            .map((p) => (
+              <ProductCard key={p.slug} produto={p} compacto ocultarCores />
+            ))}
+        </div>
+      </section>
 
       {/* Diferenciais (cada um vira link) */}
       <section className="border-y border-wf-line bg-wf-surface">
