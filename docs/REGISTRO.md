@@ -293,3 +293,23 @@ Onde paramos / proximo passo:
 - Ponto em aberto para confirmar com o Plinio: a "Linha Ecologica" foi interpretada como nova faixa de produtos eco abaixo de campanhas; se a intencao era so reposicionar os selos/diferenciais, ajustar.
 
 Ajuste adicional (mesma sessao): busca do Header quebrava no mobile (input espremido a zero ao lado do botao Buscar). Corrigido com flex-wrap + order: no mobile a busca vai para uma 2a linha full-width (sempre visivel, sem lupinha que exige toque extra), no desktop segue inline em 1 linha. Input ganhou flex-1 min-w-0 e o botao Buscar shrink-0. Validado visualmente pelo Plinio/Fabio.
+
+---
+
+## 24/06/2026 18:43 BRT (quarta) -- Home: 2a rodada de ajustes do Plinio
+
+PR #21 (1a rodada) mergeado na master (commit 044adbd). Plinio validou a faixa ecologica como sessao tipo Lancamentos e pediu nova rodada. Branch feature/home-revisao-plinio-2 a partir da master atualizada.
+
+Feito nesta sessao:
+- Lancamentos e Brindes Ecologicos com 5 produtos cada (era 6 no Lancamentos; eco era ProductRow com 4). Grids em lg:grid-cols-5.
+- Faixa "Linha Ecologica" renomeada para "Brindes Ecologicos". Passou de ProductRow para sessao inline na home, no mesmo estilo de Lancamentos (compacto). ProductRow deixou de ser usado.
+- Regra ehEcologico ampliada para incluir material "Fibra natural", o que leva o catalogo eco a 5 itens (entrou o cordao de fibra natural). Mesma regra alimenta a tag "Ecologico".
+- Cores removidas dos cards na home (Lancamentos e Brindes Ecologicos) via nova prop ocultarCores no ProductCard. No catalogo e na PDP as cores seguem.
+- Menu da logo agora com 3 colunas no desktop: Institucional | Categorias | Datas comemorativas. A coluna de datas lista Carnaval, Dia da Mulher, Dia das Maes, Dia dos Pais e Dia do Cliente, com link para a LP de cada campanha. Colapsa para 1 coluna no mobile.
+- Adicionada a campanha "Dia da Mulher" (Marco) em data/campanhas.ts, para a LP existir e o link do menu funcionar. Efeito colateral: a faixa "Campanhas e datas" da home passou de 12 para 13 itens.
+
+Verificacao: tsc --noEmit ok, next lint sem warnings, home 200, /campanha/dia-da-mulher 200. Falta validacao visual no browser antes do PR.
+
+Onde paramos / proximo passo:
+- Commit local na branch. PR e push aguardam o aceite visual e a autorizacao do Fabio.
+- Ponto a decidir: a faixa "Campanhas e datas" da home ficou com 13 tiles (sobra 1 na grade de 6 colunas no desktop). Confirmar se mantem todas ou limita a um numero par.

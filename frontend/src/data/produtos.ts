@@ -170,9 +170,14 @@ export function produtoPorSlug(slug: string): Produto | undefined {
 
 // Tags que diferenciam de verdade (ex.: Ecologico). No wireframe sao derivadas;
 // na producao virao explicitas do Payload. "Personalizavel" nao e tag (todos sao).
-// Regra unica de "produto ecologico", reusada nas tags e na faixa da Linha Ecologica.
+// Regra unica de "produto ecologico", reusada nas tags e na faixa de Brindes Ecologicos.
 export function ehEcologico(p: Produto): boolean {
-  return p.categoria === "ecologicos" || p.material === "Bambu" || /ecolog/i.test(p.nome);
+  return (
+    p.categoria === "ecologicos" ||
+    p.material === "Bambu" ||
+    p.material === "Fibra natural" ||
+    /ecolog/i.test(p.nome)
+  );
 }
 
 export function tagsDoProduto(p: Produto): string[] {

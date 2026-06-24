@@ -4,13 +4,16 @@ import { nomeCategoria } from "@/data/categorias";
 import { tagsDoProduto } from "@/data/produtos";
 
 // Card de produto reutilizado na home e no catalogo. Sem preco na visao B2B publica.
-// compacto: imagem mais baixa (4/3), usada na faixa de Lancamentos da home.
+// compacto: imagem mais baixa (4/3), usada nas faixas da home.
+// ocultarCores: esconde as bolinhas de cor (na home as cores ficam so na PDP).
 export default function ProductCard({
   produto,
   compacto = false,
+  ocultarCores = false,
 }: {
   produto: Produto;
   compacto?: boolean;
+  ocultarCores?: boolean;
 }) {
   const tags = tagsDoProduto(produto);
   return (
@@ -26,16 +29,20 @@ export default function ProductCard({
         </h3>
 
         <div className="mt-auto flex items-center justify-between pt-2">
-          <div className="flex gap-1" aria-label="Cores disponiveis">
-            {produto.cores.slice(0, 5).map((c) => (
-              <span
-                key={c.nome}
-                title={c.nome}
-                className="h-4 w-4 rounded-full border border-wf-line"
-                style={{ backgroundColor: c.hex }}
-              />
-            ))}
-          </div>
+          {ocultarCores ? (
+            <span aria-hidden="true" />
+          ) : (
+            <div className="flex gap-1" aria-label="Cores disponiveis">
+              {produto.cores.slice(0, 5).map((c) => (
+                <span
+                  key={c.nome}
+                  title={c.nome}
+                  className="h-4 w-4 rounded-full border border-wf-line"
+                  style={{ backgroundColor: c.hex }}
+                />
+              ))}
+            </div>
+          )}
           {tags.length > 0 && <span className="wf-tag">{tags[0]}</span>}
         </div>
       </div>

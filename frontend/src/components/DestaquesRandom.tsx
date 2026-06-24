@@ -14,14 +14,14 @@ function embaralhar<T>(arr: T[]): T[] {
   return a;
 }
 
-// Uma linha de 6 lancamentos randomicos a partir do pool. Comeca
+// Uma linha de 5 lancamentos randomicos a partir do pool. Comeca
 // deterministico (igual ao export estatico) e embaralha apos montar, evitando
 // mismatch de hidratacao.
 export default function DestaquesRandom({ produtos }: { produtos: Produto[] }) {
-  const [lista, setLista] = useState<Produto[]>(() => produtos.slice(0, 6));
+  const [lista, setLista] = useState<Produto[]>(() => produtos.slice(0, 5));
 
   useEffect(() => {
-    setLista(embaralhar(produtos).slice(0, 6));
+    setLista(embaralhar(produtos).slice(0, 5));
   }, [produtos]);
 
   return (
@@ -32,9 +32,9 @@ export default function DestaquesRandom({ produtos }: { produtos: Produto[] }) {
           Ver todos
         </Link>
       </div>
-      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
         {lista.map((p) => (
-          <ProductCard key={p.slug} produto={p} compacto />
+          <ProductCard key={p.slug} produto={p} compacto ocultarCores />
         ))}
       </div>
     </section>

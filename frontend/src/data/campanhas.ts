@@ -8,6 +8,7 @@ export type Campanha = {
 // landing page / anuncio ("campanha do mes"). Editaveis via CMS na Sprint 5.
 export const campanhas: Campanha[] = [
   { slug: "carnaval", nome: "Carnaval", mes: "Fevereiro" },
+  { slug: "dia-da-mulher", nome: "Dia da Mulher", mes: "Marco" },
   { slug: "pascoa", nome: "Pascoa", mes: "Marco" },
   { slug: "dia-das-maes", nome: "Dia das Maes", mes: "Maio" },
   { slug: "festa-junina", nome: "Festa Junina", mes: "Junho" },
