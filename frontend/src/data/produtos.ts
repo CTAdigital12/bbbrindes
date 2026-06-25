@@ -21,7 +21,7 @@ export const produtos: Produto[] = [
   {
     slug: "squeeze-eco-500ml",
     nome: "Squeeze Ecologico 500ml",
-    categoria: "squeeze",
+    categoria: "green-plasticaria",
     descricao: "Squeeze sustentavel para personalizacao, ideal para acoes de marca com pegada ecologica.",
     material: "Plastico",
     aplicacoes: ["Bebidas", "Esportes"],
@@ -45,7 +45,7 @@ export const produtos: Produto[] = [
   {
     slug: "copo-bambu-400ml",
     nome: "Copo de Bambu 400ml",
-    categoria: "ecologicos",
+    categoria: "green-fibras",
     descricao: "Copo de fibra de bambu reutilizavel, leve e resistente.",
     material: "Bambu",
     aplicacoes: ["Bebidas", "Casa"],
@@ -81,7 +81,7 @@ export const produtos: Produto[] = [
   {
     slug: "taca-acrilica-300ml",
     nome: "Taca Acrilica 300ml",
-    categoria: "copos-tacas",
+    categoria: "copos",
     descricao: "Taca de acrilico resistente para eventos e brindes.",
     material: "Plastico",
     aplicacoes: ["Bebidas", "Eventos"],
@@ -117,7 +117,7 @@ export const produtos: Produto[] = [
   {
     slug: "cordao-personalizado",
     nome: "Cordao Personalizado para Cracha",
-    categoria: "cordoes",
+    categoria: "cordoes-costurados",
     descricao: "Cordao de poliester com impressao da marca, para eventos e empresas.",
     material: "Fibra natural",
     aplicacoes: ["Eventos", "Escritorio"],
@@ -129,7 +129,7 @@ export const produtos: Produto[] = [
   {
     slug: "kit-natal-caneca",
     nome: "Caneca Edicao Datas Comemorativas",
-    categoria: "datas-comemorativas",
+    categoria: "canecas-xicaras",
     descricao: "Caneca tematica para campanhas sazonais (Natal, dia das maes e outras).",
     material: "Ceramica",
     aplicacoes: ["Bebidas", "Eventos"],
@@ -141,7 +141,7 @@ export const produtos: Produto[] = [
   {
     slug: "squeeze-aluminio-600ml",
     nome: "Squeeze de Aluminio 600ml",
-    categoria: "squeeze",
+    categoria: "squeezes",
     descricao: "Squeeze leve de aluminio com mosquetao, ideal para esportes.",
     material: "Inox",
     aplicacoes: ["Bebidas", "Esportes"],
@@ -173,7 +173,8 @@ export function produtoPorSlug(slug: string): Produto | undefined {
 // Regra unica de "produto ecologico", reusada nas tags e na faixa de Brindes Ecologicos.
 export function ehEcologico(p: Produto): boolean {
   return (
-    p.categoria === "ecologicos" ||
+    p.categoria === "green-plasticaria" ||
+    p.categoria === "green-fibras" ||
     p.material === "Bambu" ||
     p.material === "Fibra natural" ||
     /ecolog/i.test(p.nome)

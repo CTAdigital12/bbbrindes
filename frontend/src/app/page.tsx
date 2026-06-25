@@ -79,7 +79,7 @@ export default function HomePage() {
       <section className="wf-container py-6">
         <div className="mb-3 flex items-center justify-between">
           <h2 className="text-lg font-semibold text-wf-ink">Brindes Ecologicos</h2>
-          <Link href="/catalogo?categoria=ecologicos" className="text-sm text-wf-accent hover:underline">
+          <Link href="/catalogo?categoria=green-plasticaria" className="text-sm text-wf-accent hover:underline">
             Ver todos
           </Link>
         </div>

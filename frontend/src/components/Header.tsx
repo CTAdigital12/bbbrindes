@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useCart } from "@/lib/cart";
 import LogoMenu from "@/components/LogoMenu";
 
@@ -10,6 +10,15 @@ export default function Header() {
   const { totalItens } = useCart();
   const router = useRouter();
   const [busca, setBusca] = useState("");
+  const [encolhido, setEncolhido] = useState(false);
+
+  // Header fixo que encolhe um pouco ao rolar, em vez de sumir (pedido Fabio).
+  useEffect(() => {
+    const onScroll = () => setEncolhido(window.scrollY > 8);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
   function submeterBusca(e: React.FormEvent) {
     e.preventDefault();
@@ -18,10 +27,18 @@ export default function Header() {
   }
 
   return (
-    <header className="border-b border-wf-line bg-wf-surface">
+    <header
+      className={`sticky top-0 z-40 border-b border-wf-line bg-wf-surface transition-shadow ${
+        encolhido ? "shadow-sm" : ""
+      }`}
+    >
       {/* flex-wrap: no mobile a busca vai para uma 2a linha full-width (catalogo
           precisa da busca sempre visivel); no desktop tudo fica em 1 linha. */}
-      <div className="wf-container flex flex-wrap items-center gap-x-4 gap-y-3 py-3">
+      <div
+        className={`wf-container flex flex-wrap items-center gap-x-4 gap-y-3 transition-all duration-200 ${
+          encolhido ? "py-1.5" : "py-3"
+        }`}
+      >
         <div className="order-1">
           <LogoMenu />
         </div>

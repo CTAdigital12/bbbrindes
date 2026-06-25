@@ -313,3 +313,22 @@ Verificacao: tsc --noEmit ok, next lint sem warnings, home 200, /campanha/dia-da
 Onde paramos / proximo passo:
 - Commit local na branch. PR e push aguardam o aceite visual e a autorizacao do Fabio.
 - Ponto a decidir: a faixa "Campanhas e datas" da home ficou com 13 tiles (sobra 1 na grade de 6 colunas no desktop). Confirmar se mantem todas ou limita a um numero par.
+
+---
+
+## 25/06/2026 18:44 BRT (quinta) -- Categorias novas, cards sem tag/categoria e header fixo
+
+PR #22 (2a rodada) mergeado na master (e53aa77). Nova rodada do Plinio, com referencia ao site plusbrindes.com.br. Branch feature/categorias-cards-header-plinio a partir da master.
+
+Feito nesta sessao:
+1. Reestruturacao das categorias para as 15 novas: Green Plasticaria, Green Fibras, Copos, Canecas e Xicaras, Chaveiros, Casa e Decoracao, Medalhas e Trofeus, Escritorio, Squeezes, Bowls Baldes e Potes, To Go / Viagem, Infantil, Cordoes e Costurados, In Mold Label, Projetos Especiais. "Datas Comemorativas" saiu da lista de categorias (segue como campanhas). Produtos mock remapeados aos slugs novos; ehEcologico passou a olhar green-plasticaria/green-fibras (mais material/nome). Links que apontavam para categoria=ecologicos foram para green-plasticaria.
+2. Cards de produto sem tag (ECOLOGICO) e sem a categoria no topo, deixando so a imagem e o nome (referencia plusbrindes). Na home as cores tambem ficam ocultas (ja era assim); no catalogo as cores seguem. ProductCard nao usa mais tagsDoProduto/nomeCategoria.
+3. Header fixo (sticky top-0) que encolhe um pouco no scroll em vez de sumir (pedido Fabio), com leve sombra ao rolar. Listener de scroll no Header (ja era client component).
+
+Decisao tomada (faixa eco): mantida a faixa "Brindes Ecologicos" na home, agora reunindo as duas linhas Green (e demais itens eco por material/nome). O print do Plinio confirmou que a mudanca era nos cards, nao na faixa.
+
+Verificacao: tsc --noEmit ok, next lint sem warnings, home 200, catalogo por green-fibras 200, produto remapeado 200, tag ECOLOGICO zerada nos cards. Falta validacao visual no browser antes do PR (em especial o comportamento do header no scroll e no mobile).
+
+Onde paramos / proximo passo:
+- 3 commits locais na branch (categorias, cards, header). PR e push aguardam aceite visual e autorizacao do Fabio.
+- Pontos a confirmar com o Plinio/Fabio: (a) categoria removida tambem dos cards do catalogo, nao so da home; (b) categorias In Mold Label, Chaveiros, Casa e Decoracao, Medalhas e Trofeus e Projetos Especiais ficam sem produtos no mock ate vir o catalogo real; (c) os links "Linha Green"/eco apontam para Green Plasticaria, pois o catalogo filtra uma categoria por vez (nao ha filtro combinando as duas Green).
