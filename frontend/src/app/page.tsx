@@ -98,17 +98,26 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Diferenciais (cada um vira link) */}
+      {/* Diferenciais (cada um vira link). Se a contagem for impar, o ultimo
+          ocupa as 2 colunas no celular para nao ficar orfao. */}
       <section className="border-y border-wf-line bg-wf-surface">
         <div className="wf-container grid grid-cols-2 gap-3 py-8 sm:grid-cols-3">
-          {diferenciais.map((d) => (
-            <Link key={d.nome} href={d.href} className="group flex items-center gap-3">
-              <span className="wf-img h-9 w-9 rounded-full" />
-              <span className="text-sm font-medium text-wf-ink group-hover:text-wf-accent">
-                {d.nome}
-              </span>
-            </Link>
-          ))}
+          {diferenciais.map((d, i) => {
+            const ultimoImpar =
+              diferenciais.length % 2 === 1 && i === diferenciais.length - 1;
+            return (
+              <Link
+                key={d.nome}
+                href={d.href}
+                className={`group flex items-center gap-3 ${ultimoImpar ? "max-sm:col-span-2" : ""}`}
+              >
+                <span className="wf-img h-9 w-9 rounded-full" />
+                <span className="text-sm font-medium text-wf-ink group-hover:text-wf-accent">
+                  {d.nome}
+                </span>
+              </Link>
+            );
+          })}
         </div>
       </section>
 
