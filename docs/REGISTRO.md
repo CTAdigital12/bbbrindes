@@ -332,3 +332,18 @@ Verificacao: tsc --noEmit ok, next lint sem warnings, home 200, catalogo por gre
 Onde paramos / proximo passo:
 - 3 commits locais na branch (categorias, cards, header). PR e push aguardam aceite visual e autorizacao do Fabio.
 - Pontos a confirmar com o Plinio/Fabio: (a) categoria removida tambem dos cards do catalogo, nao so da home; (b) categorias In Mold Label, Chaveiros, Casa e Decoracao, Medalhas e Trofeus e Projetos Especiais ficam sem produtos no mock ate vir o catalogo real; (c) os links "Linha Green"/eco apontam para Green Plasticaria, pois o catalogo filtra uma categoria por vez (nao ha filtro combinando as duas Green).
+
+---
+
+## 26/06/2026 14:43 BRT (sexta) -- Faixas da home: 6 no celular, 5 no PC
+
+PR #23 mergeado e deployado no Pages (https://ctadigital12.github.io/bbbrindes/). Fabio apontou card orfao no celular (faixa com 5 vira 2+2+1). Branch feature/faixas-6-mobile-5-pc.
+
+Feito nesta sessao:
+- Faixas Lancamentos e Brindes Ecologicos passam a renderizar 6 cards: 6 no celular/tablet (grade par) e 5 no desktop (o 6o card recebe lg:hidden). ProductCard ganhou prop className para isso.
+- Adicionado um 6o produto eco no mock (Ecobag de Algodao Cru, green-fibras) para a faixa eco ter 6 no celular.
+
+Verificacao: tsc --noEmit ok, next lint sem warnings, home 200. Falta validacao visual no celular (modo responsivo) antes do PR.
+
+Onde paramos / proximo passo:
+- Commit local na branch. PR, merge e deploy aguardam o aceite visual no mobile.

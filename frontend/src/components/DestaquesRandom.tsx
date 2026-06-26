@@ -14,14 +14,14 @@ function embaralhar<T>(arr: T[]): T[] {
   return a;
 }
 
-// Uma linha de 5 lancamentos randomicos a partir do pool. Comeca
-// deterministico (igual ao export estatico) e embaralha apos montar, evitando
-// mismatch de hidratacao.
+// Faixa de lancamentos randomicos. Mostra 6 no celular/tablet (grade par, sem
+// card orfao) e 5 no desktop (o 6o card fica oculto em lg). Comeca deterministico
+// (igual ao export estatico) e embaralha apos montar, evitando mismatch de hidratacao.
 export default function DestaquesRandom({ produtos }: { produtos: Produto[] }) {
-  const [lista, setLista] = useState<Produto[]>(() => produtos.slice(0, 5));
+  const [lista, setLista] = useState<Produto[]>(() => produtos.slice(0, 6));
 
   useEffect(() => {
-    setLista(embaralhar(produtos).slice(0, 5));
+    setLista(embaralhar(produtos).slice(0, 6));
   }, [produtos]);
 
   return (
@@ -33,8 +33,14 @@ export default function DestaquesRandom({ produtos }: { produtos: Produto[] }) {
         </Link>
       </div>
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
-        {lista.map((p) => (
-          <ProductCard key={p.slug} produto={p} compacto ocultarCores />
+        {lista.map((p, i) => (
+          <ProductCard
+            key={p.slug}
+            produto={p}
+            compacto
+            ocultarCores
+            className={i === 5 ? "lg:hidden" : ""}
+          />
         ))}
       </div>
     </section>

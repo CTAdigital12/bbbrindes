@@ -85,9 +85,15 @@ export default function HomePage() {
         </div>
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
           {produtosEcologicos()
-            .slice(0, 5)
-            .map((p) => (
-              <ProductCard key={p.slug} produto={p} compacto ocultarCores />
+            .slice(0, 6)
+            .map((p, i) => (
+              <ProductCard
+                key={p.slug}
+                produto={p}
+                compacto
+                ocultarCores
+                className={i === 5 ? "lg:hidden" : ""}
+              />
             ))}
         </div>
       </section>
