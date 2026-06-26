@@ -85,19 +85,26 @@ export default function HomePage() {
         </div>
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
           {produtosEcologicos()
-            .slice(0, 5)
-            .map((p) => (
-              <ProductCard key={p.slug} produto={p} compacto ocultarCores />
+            .slice(0, 6)
+            .map((p, i) => (
+              <ProductCard
+                key={p.slug}
+                produto={p}
+                compacto
+                ocultarCores
+                className={i === 5 ? "lg:hidden" : ""}
+              />
             ))}
         </div>
       </section>
 
-      {/* Diferenciais (cada um vira link) */}
+      {/* Diferenciais (cada um vira link). 3 colunas em qualquer tela: os 9
+          selos fecham 3 linhas de 3, sem item orfao. */}
       <section className="border-y border-wf-line bg-wf-surface">
-        <div className="wf-container grid grid-cols-2 gap-3 py-8 sm:grid-cols-3">
+        <div className="wf-container grid grid-cols-3 gap-3 py-8">
           {diferenciais.map((d) => (
             <Link key={d.nome} href={d.href} className="group flex items-center gap-3">
-              <span className="wf-img h-9 w-9 rounded-full" />
+              <span className="wf-img h-9 w-9 shrink-0 rounded-full" />
               <span className="text-sm font-medium text-wf-ink group-hover:text-wf-accent">
                 {d.nome}
               </span>

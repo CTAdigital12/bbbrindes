@@ -9,15 +9,17 @@ export default function ProductCard({
   produto,
   compacto = false,
   ocultarCores = false,
+  className = "",
 }: {
   produto: Produto;
   compacto?: boolean;
   ocultarCores?: boolean;
+  className?: string;
 }) {
   return (
     <Link
       href={`/produto/${produto.slug}`}
-      className="wf-card group flex flex-col overflow-hidden transition-shadow hover:shadow-md"
+      className={`wf-card group flex flex-col overflow-hidden transition-shadow hover:shadow-md ${className}`}
     >
       <div className={`wf-img w-full ${compacto ? "aspect-[4/3]" : "aspect-square"}`}>Imagem</div>
       <div className="flex flex-1 flex-col gap-2 p-3">

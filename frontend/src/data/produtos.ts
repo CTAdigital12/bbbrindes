@@ -162,6 +162,18 @@ export const produtos: Produto[] = [
     faixaPreco: "4-a-15",
     destaques: ["lancamento"],
   },
+  {
+    slug: "ecobag-algodao-cru",
+    nome: "Ecobag de Algodao Cru",
+    categoria: "green-fibras",
+    descricao: "Sacola reutilizavel de algodao cru, alternativa sustentavel a sacola plastica.",
+    material: "Fibra natural",
+    aplicacoes: ["Eventos", "Casa"],
+    cores: [C.natural, C.verde],
+    personalizavel: true,
+    faixaPreco: "ate-3-99",
+    destaques: ["lancamento"],
+  },
 ];
 
 export function produtoPorSlug(slug: string): Produto | undefined {
