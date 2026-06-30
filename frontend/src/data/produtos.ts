@@ -187,6 +187,7 @@ export function ehEcologico(p: Produto): boolean {
   return (
     p.categoria === "green-plasticaria" ||
     p.categoria === "green-fibras" ||
+    p.categoria === "medalhas-trofeus" ||
     p.material === "Bambu" ||
     p.material === "Fibra natural" ||
     /ecolog/i.test(p.nome)

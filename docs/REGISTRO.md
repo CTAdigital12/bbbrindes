@@ -347,3 +347,30 @@ Verificacao: tsc --noEmit ok, next lint sem warnings, home 200. Falta validacao 
 
 Onde paramos / proximo passo:
 - Commit local na branch. PR, merge e deploy aguardam o aceite visual no mobile.
+
+---
+
+## 30/06/2026 14:32 BRT (terca) -- Categorias agrupadas em Ecologicos; home finalizada
+
+PR #24 mergeado e deployado. Branch feature/categorias-grupo-ecologicos.
+
+Feito nesta sessao:
+- Green Plasticaria, Green Fibras e Medalhas e Trofeus passam a ser a familia "Ecologicos": nome com prefixo "Ecologicos - ..." e agrupadas no topo da lista de categorias. ehEcologico passou a considerar tambem medalhas-trofeus.
+- Com isso, o Plinio deu a home como finalizada.
+
+Heads-up registrado (ainda NAO implementar): o Plinio tem consideracoes para a pagina do produto (PDP). Ele esta preparando os materiais dos produtos tagueados (imagens, identificacao) e vai trazer uma descricao direta e uma mais longa para apoiar SEO. Modelo de conteudo proposto por ele para a PDP:
+  1. Nome do produto
+  2. Subtitulo (frase que reforca o principal diferencial)
+  3. Descricao curta
+  4. Descricao completa
+  5. Principais beneficios
+  6. Ideal para
+  7. Diferenciais BB brindes no produto
+Aguardar o material do Plinio antes de mexer na PDP. Isso implica estender o tipo Produto (campos novos: subtitulo, descricaoCurta/descricaoCompleta, beneficios, idealPara, diferenciaisProduto) e o layout do ProdutoView.
+
+Verificacao: tsc --noEmit ok, next lint sem warnings. Falta validacao visual da home (labels mais longos nas categorias) antes do PR.
+
+Onde paramos / proximo passo:
+- Commit local na branch (ajuste de categorias). PR, merge e deploy aguardam aceite visual.
+- A pendir confirmacao: "Medalhas e Trofeus" entrou como linha ecologica (agrupada em Ecologicos) conforme a mensagem; confirmar se e isso mesmo.
+- Proxima frente: PDP, quando chegar o material do Plinio.
