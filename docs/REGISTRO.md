@@ -389,3 +389,19 @@ Feito nesta sessao:
 Onde paramos / proximo passo:
 - Mudancas do repo (cards do Sprint 2 e o sync idempotente) commitadas na branch chore/sprint-02-trello-sync. PR e push aguardam autorizacao.
 - Proxima frente de codigo: backend (Payload/Supabase) para o painel de produtos e a PDP, quando chegar o material do Plinio e a definicao do ERP.
+
+---
+
+## 09/07/2026 13:48 BRT (quinta) -- Arquitetura de backend fechada e Sprint 3 planejada
+
+Branch chore/sprint-02-trello-sync (segue acumulando os docs de planejamento desta fase).
+
+Feito nesta sessao:
+- docs/arquitetura-backend.md: decisoes fechadas com o Fabio. Postgres Supabase Pro na producao; imagens no Cloudflare R2 com otimizacao no upload via Payload/sharp (Cloudinary descartado; o cliente sobe qualquer imagem e o codigo gera a versao leve); hospedagem Cloudflare. Custo: ~US$ 0 em dev, ~US$ 25-30/mes em producao.
+- docs/sprints/sprint-03: fundacao do backend. README + 8 cards (S03-01 scaffold Payload+Supabase+R2, S03-02 modelagem das colecoes, S03-03 auth e login, S03-04 front consumindo Payload, S03-05 migration do catalogo, S03-06 captura de leads, S03-07 SEO estrutural, S03-08 infra e deploy). Tudo que da para fazer sem depender de design, ERP, material do Plinio ou provedores de CRM/e-mail.
+- Board do Trello: 8 cards do Sprint 3 criados em A Fazer via pnpm trello:sync.
+- Comunicacao: enviado ao CS o panorama por etapa (itens de backend como "em andamento") e o aviso de custo.
+
+Onde paramos / proximo passo:
+- Comecar a implementacao pela S03-01 (scaffold do backend) e S03-02 (colecoes), que destravam o resto.
+- Aguardando terceiros: identidade visual (design), definicao do ERP, material do catalogo do Plinio, provedores de CRM/e-mail.
