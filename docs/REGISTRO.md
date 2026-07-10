@@ -405,3 +405,43 @@ Feito nesta sessao:
 Onde paramos / proximo passo:
 - Comecar a implementacao pela S03-01 (scaffold do backend) e S03-02 (colecoes), que destravam o resto.
 - Aguardando terceiros: identidade visual (design), definicao do ERP, material do catalogo do Plinio, provedores de CRM/e-mail.
+
+---
+
+## 10/07/2026 19:58 BRT (sexta) -- S03-01: scaffold do backend (Payload + Postgres + R2)
+
+Os docs de planejamento acumulados (Sprint 2, arquitetura de backend, plano da
+Sprint 3, modelo de importacao) foram mergeados na master pelo PR #26. Branch de
+codigo feature/sprint-03-scaffold-backend criada a partir da master atualizada.
+
+Feito nesta sessao (card S03-01):
+- Pasta backend/ com Payload CMS 3.86 embutido em Next 15.4 (mesmo padrao do
+  template blank oficial na tag v3.86.0). O create-payload-app exige TTY e nao roda
+  neste ambiente; o scaffold foi montado a mao a partir dos arquivos exatos da tag.
+- Versoes fixadas dentro do range de peers do @payloadcms/next@3.86.0: next 15.4.11
+  (fica no major 15 do projeto, em vez do 16 que o template puxaria), react 19.2.6.
+- Adapter Postgres via DATABASE_URI (alvo Supabase). Storage S3/R2 condicional: so
+  ativa com S3_BUCKET no env; sem credenciais em dev, cai no disco local e o painel
+  segue utilizavel.
+- Colecao Media converte todo upload para WebP e gera tamanhos responsivos
+  (thumbnail 300, card 640, large 1200) no upload via sharp, conforme a arquitetura.
+- Colecoes base Users (auth) e Media. payload-types.ts gerado.
+- backend/.env.example com Postgres, PAYLOAD_SECRET e R2, sem segredos reais
+  (CLAUDE.md regra 14). Raiz: pnpm.onlyBuiltDependencies (sharp, esbuild) e script
+  dev:backend.
+
+Verificacao: pnpm install ok (45s, sharp e esbuild compilados), payload
+generate:types ok (colecoes users e media reconhecidas, media com os 3 sizes),
+typecheck tsc --noEmit verde. Commit 12407d6 na branch (sem push).
+
+Pendente para fechar o S03-01 (depende do Fabio): criar um projeto Supabase free de
+dev e me passar a connection string para o backend/.env local. So com ela o painel
+/admin sobe e da para criar o primeiro usuario admin (ultimos 2 itens do checklist).
+R2 tambem fica pendente de bucket/credenciais, mas nao bloqueia dev (disco local).
+
+Onde paramos / proximo passo:
+- Aguardando a connection string do Supabase dev para bootar /admin e validar.
+- Em paralelo, seguir para o S03-02 (modelagem das colecoes: Produtos com os campos
+  de PDP do Plinio, Categorias, Banners, Campanhas, Blog, Cases, Imprensa,
+  Revendedores), que tambem nao depende de terceiros.
+- PR do S03-01 so apos bootar o /admin (validacao), sem push ate autorizacao.
