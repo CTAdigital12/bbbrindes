@@ -1,14 +1,17 @@
 // Sincroniza os cards das sprints (docs/sprints/**/S*.md) com o board do Trello.
-// Cria listas por status (A Fazer, Em Andamento, Concluido), cria cada card com
-// descricao e checklist, e nao duplica (pula cards cujo codigo ja existe).
+// Cria card novo com descricao e checklist, e mantem o card existente na lista
+// que corresponde ao Status do .md (move entre A Fazer / Em andamento / Concluido).
+// O .md e a fonte da verdade; o script reconcilia o board com ele.
 //
 // Uso (a partir da raiz do repo):
-//   node --env-file=.env scripts/trello-sync.mjs
+//   node --env-file=.env scripts/trello-sync.mjs            aplica no board
+//   node --env-file=.env scripts/trello-sync.mjs --dry-run  so simula, nao escreve
 // Requer TRELLO_API_KEY, TRELLO_TOKEN e TRELLO_BOARD_ID no .env.
 
 import { readdir, readFile } from "node:fs/promises";
 import { join } from "node:path";
 
+const DRY = process.argv.includes("--dry-run");
 const KEY = process.env.TRELLO_API_KEY;
 // Aceita TRELLO_TOKEN ou TRELLO_API_TOKEN (nomes usados no .env).
 const TOKEN = process.env.TRELLO_TOKEN || process.env.TRELLO_API_TOKEN;
@@ -81,7 +84,7 @@ async function listarArquivosDeCard() {
 }
 
 async function main() {
-  console.log(`Board: ${BOARD}`);
+  console.log(`Board: ${BOARD}${DRY ? "  [DRY-RUN: nada sera escrito]" : ""}`);
 
   // Listas existentes do board. Casamos por nome normalizado para nao duplicar
   // (ex.: "Concluido" casa com "Concluido 🎉"). So cria se nao houver match.
@@ -89,40 +92,63 @@ async function main() {
   async function resolveLista(key) {
     let l = lists.find((x) => norm(x.name) === key);
     if (!l) {
-      l = await trello("POST", `/boards/${BOARD}/lists`, { name: STATUS_DISPLAY[key] || key });
+      const nome = STATUS_DISPLAY[key] || key;
+      if (DRY) {
+        console.log(`[dry] criaria lista: ${nome}`);
+        return { id: `dry:${key}`, name: nome };
+      }
+      l = await trello("POST", `/boards/${BOARD}/lists`, { name: nome });
       lists.push(l);
-      console.log(`Lista criada: ${STATUS_DISPLAY[key] || key}`);
+      console.log(`Lista criada: ${nome}`);
     }
     return l;
   }
 
-  // Cards existentes, para nao duplicar (match pelo codigo S00-01 no inicio do nome).
-  const existentes = await trello("GET", `/boards/${BOARD}/cards`, { fields: "name" });
-  const codigosExistentes = new Set(
-    existentes.map((c) => c.name.trim().split(/\s+/)[0]),
-  );
+  // Cards existentes: mapeia codigo (S00-01 no inicio do nome) -> { id, idList }.
+  const existentes = await trello("GET", `/boards/${BOARD}/cards`, { fields: "name,idList" });
+  const porCodigo = new Map();
+  for (const c of existentes) {
+    const code = c.name.trim().split(/\s+/)[0];
+    if (!porCodigo.has(code)) porCodigo.set(code, { id: c.id, idList: c.idList });
+  }
 
   const arquivos = await listarArquivosDeCard();
   let criados = 0;
-  let pulados = 0;
+  let movidos = 0;
+  let inalterados = 0;
 
   for (const { path } of arquivos) {
     const md = await readFile(path, "utf8");
     const card = parseCard(md);
+    const lista = await resolveLista(statusKey(card.status));
+    const existente = porCodigo.get(card.code);
 
-    if (codigosExistentes.has(card.code)) {
-      pulados++;
-      console.log(`Pulado (ja existe): ${card.code}`);
+    if (existente) {
+      if (existente.idList === lista.id) {
+        inalterados++;
+        continue;
+      }
+      if (DRY) {
+        console.log(`[dry] moveria: ${card.code} -> ${lista.name}`);
+      } else {
+        await trello("PUT", `/cards/${existente.id}`, { idList: lista.id });
+        console.log(`Movido: ${card.code} -> ${lista.name}`);
+      }
+      movidos++;
       continue;
     }
 
-    const lista = await resolveLista(statusKey(card.status));
+    if (DRY) {
+      console.log(`[dry] criaria: ${card.code} -> ${lista.name} (${card.items.length} itens)`);
+      criados++;
+      continue;
+    }
+
     const novo = await trello("POST", "/cards", {
       idList: lista.id,
       name: card.title,
       desc: card.desc,
     });
-
     if (card.items.length > 0) {
       const cl = await trello("POST", "/checklists", { idCard: novo.id, name: "Checklist" });
       for (const it of card.items) {
@@ -132,13 +158,13 @@ async function main() {
         });
       }
     }
-
-    codigosExistentes.add(card.code);
     criados++;
     console.log(`Criado: ${card.code} -> ${lista.name} (${card.items.length} itens)`);
   }
 
-  console.log(`\nResumo: ${criados} criado(s), ${pulados} pulado(s).`);
+  console.log(
+    `\nResumo${DRY ? " (dry-run)" : ""}: ${criados} a criar/criado(s), ${movidos} a mover/movido(s), ${inalterados} inalterado(s).`,
+  );
 }
 
 main().catch((err) => {
