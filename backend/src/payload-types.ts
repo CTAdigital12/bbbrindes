@@ -67,8 +67,16 @@ export interface Config {
   };
   blocks: {};
   collections: {
-    users: User;
+    produtos: Produto;
+    categorias: Categoria;
+    banners: Banner;
+    campanhas: Campanha;
+    posts: Post;
+    cases: Case;
+    imprensa: Imprensa;
+    revendedores: Revendedore;
     media: Media;
+    users: User;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -76,8 +84,16 @@ export interface Config {
   };
   collectionsJoins: {};
   collectionsSelect: {
-    users: UsersSelect<false> | UsersSelect<true>;
+    produtos: ProdutosSelect<false> | ProdutosSelect<true>;
+    categorias: CategoriasSelect<false> | CategoriasSelect<true>;
+    banners: BannersSelect<false> | BannersSelect<true>;
+    campanhas: CampanhasSelect<false> | CampanhasSelect<true>;
+    posts: PostsSelect<false> | PostsSelect<true>;
+    cases: CasesSelect<false> | CasesSelect<true>;
+    imprensa: ImprensaSelect<false> | ImprensaSelect<true>;
+    revendedores: RevendedoresSelect<false> | RevendedoresSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
+    users: UsersSelect<false> | UsersSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -119,28 +135,113 @@ export interface UserAuthOperations {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "users".
+ * via the `definition` "produtos".
  */
-export interface User {
+export interface Produto {
   id: number;
-  updatedAt: string;
-  createdAt: string;
-  email: string;
-  resetPasswordToken?: string | null;
-  resetPasswordExpiration?: string | null;
-  salt?: string | null;
-  hash?: string | null;
-  loginAttempts?: number | null;
-  lockUntil?: string | null;
-  sessions?:
+  /**
+   * Chave de integracao com o ERP. Nao e sobrescrita pelo import de conteudo.
+   */
+  sku: string;
+  nome: string;
+  /**
+   * URL amigavel em kebab-case. Gerado a partir do nome se ficar vazio.
+   */
+  slug: string;
+  /**
+   * Frase curta que reforca o principal diferencial (modelo Plinio).
+   */
+  subtitulo?: string | null;
+  descricaoCurta?: string | null;
+  descricaoCompleta?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  beneficios?: string[] | null;
+  idealPara?: string[] | null;
+  diferenciaisProduto?: string[] | null;
+  categoria: number | Categoria;
+  material?: string | null;
+  aplicacoes?: string[] | null;
+  cores?:
     | {
-        id: string;
-        createdAt?: string | null;
-        expiresAt: string;
+        nome: string;
+        /**
+         * Cor em hexadecimal, ex.: #1a2b3c.
+         */
+        hex: string;
+        id?: string | null;
       }[]
     | null;
-  password?: string | null;
-  collection: 'users';
+  /**
+   * Galeria do produto. A primeira e a imagem principal.
+   */
+  imagens?: (number | Media)[] | null;
+  /**
+   * Opcional. Link de video exibido na PDP (pedido do Plinio).
+   */
+  videoUrl?: string | null;
+  /**
+   * Faixa exibida no catalogo publico. O B2B nao mostra preco exato.
+   */
+  faixaPreco?: ('ate-3-99' | '4-a-15' | 'acima-de-15') | null;
+  /**
+   * Faixas da home onde o produto aparece.
+   */
+  destaques?: ('destaque' | 'mais-vendido' | 'lancamento')[] | null;
+  tags?: 'ecologico'[] | null;
+  /**
+   * Origem: ERP. Placeholder ate a integracao (S03 nao sobrescreve). Nao editar como fonte da verdade.
+   */
+  erp?: {
+    /**
+     * Preco unitario (BRL). Alimentado pelo ERP.
+     */
+    preco?: number | null;
+    /**
+     * Saldo em estoque. Alimentado pelo ERP.
+     */
+    estoque?: number | null;
+  };
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "categorias".
+ */
+export interface Categoria {
+  id: number;
+  nome: string;
+  /**
+   * URL amigavel em kebab-case. Gerado a partir do nome se ficar vazio.
+   */
+  slug: string;
+  /**
+   * Ecologicos ficam agrupadas no topo da lista.
+   */
+  grupo: 'ecologicos' | 'geral';
+  /**
+   * Ordem de exibicao (menor primeiro).
+   */
+  ordem?: number | null;
+  /**
+   * Icone da categoria (grade estilo iFood na home).
+   */
+  icone?: (number | null) | Media;
+  updatedAt: string;
+  createdAt: string;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -189,6 +290,186 @@ export interface Media {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "banners".
+ */
+export interface Banner {
+  id: number;
+  titulo: string;
+  subtitulo?: string | null;
+  cta?: string | null;
+  href?: string | null;
+  imagem?: (number | null) | Media;
+  posicao: 'carrossel' | 'mini';
+  ativo?: boolean | null;
+  ordem?: number | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "campanhas".
+ */
+export interface Campanha {
+  id: number;
+  nome: string;
+  /**
+   * URL amigavel em kebab-case. Gerado a partir do nome se ficar vazio.
+   */
+  slug: string;
+  /**
+   * Mes ou periodo, ex.: Maio.
+   */
+  mes?: string | null;
+  chamada?: string | null;
+  imagem?: (number | null) | Media;
+  /**
+   * Conteudo da landing page da campanha.
+   */
+  conteudo?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  /**
+   * Produtos em destaque na campanha.
+   */
+  produtos?: (number | Produto)[] | null;
+  ativo?: boolean | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "posts".
+ */
+export interface Post {
+  id: number;
+  titulo: string;
+  /**
+   * URL amigavel em kebab-case. Gerado a partir do nome se ficar vazio.
+   */
+  slug: string;
+  resumo?: string | null;
+  data: string;
+  autor?: string | null;
+  capa?: (number | null) | Media;
+  conteudo?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "cases".
+ */
+export interface Case {
+  id: number;
+  cliente: string;
+  titulo: string;
+  /**
+   * URL amigavel em kebab-case. Gerado a partir do nome se ficar vazio.
+   */
+  slug: string;
+  segmento?: string | null;
+  resumo?: string | null;
+  /**
+   * Logo do cliente.
+   */
+  logo?: (number | null) | Media;
+  imagem?: (number | null) | Media;
+  depoimento?: {
+    texto?: string | null;
+    autor?: string | null;
+  };
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "imprensa".
+ */
+export interface Imprensa {
+  id: number;
+  titulo: string;
+  veiculo: string;
+  data: string;
+  resumo?: string | null;
+  url?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "revendedores".
+ */
+export interface Revendedore {
+  id: number;
+  empresa: string;
+  responsavel?: string | null;
+  cnpj?: string | null;
+  telefone?: string | null;
+  email?: string | null;
+  enderecoEntrega?: {
+    logradouro?: string | null;
+    bairro?: string | null;
+    cidade?: string | null;
+    uf?: string | null;
+    cep?: string | null;
+  };
+  notas?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "users".
+ */
+export interface User {
+  id: number;
+  updatedAt: string;
+  createdAt: string;
+  email: string;
+  resetPasswordToken?: string | null;
+  resetPasswordExpiration?: string | null;
+  salt?: string | null;
+  hash?: string | null;
+  loginAttempts?: number | null;
+  lockUntil?: string | null;
+  sessions?:
+    | {
+        id: string;
+        createdAt?: string | null;
+        expiresAt: string;
+      }[]
+    | null;
+  password?: string | null;
+  collection: 'users';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv".
  */
 export interface PayloadKv {
@@ -212,12 +493,44 @@ export interface PayloadLockedDocument {
   id: number;
   document?:
     | ({
-        relationTo: 'users';
-        value: number | User;
+        relationTo: 'produtos';
+        value: number | Produto;
+      } | null)
+    | ({
+        relationTo: 'categorias';
+        value: number | Categoria;
+      } | null)
+    | ({
+        relationTo: 'banners';
+        value: number | Banner;
+      } | null)
+    | ({
+        relationTo: 'campanhas';
+        value: number | Campanha;
+      } | null)
+    | ({
+        relationTo: 'posts';
+        value: number | Post;
+      } | null)
+    | ({
+        relationTo: 'cases';
+        value: number | Case;
+      } | null)
+    | ({
+        relationTo: 'imprensa';
+        value: number | Imprensa;
+      } | null)
+    | ({
+        relationTo: 'revendedores';
+        value: number | Revendedore;
       } | null)
     | ({
         relationTo: 'media';
         value: number | Media;
+      } | null)
+    | ({
+        relationTo: 'users';
+        value: number | User;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -263,25 +576,158 @@ export interface PayloadMigration {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "users_select".
+ * via the `definition` "produtos_select".
  */
-export interface UsersSelect<T extends boolean = true> {
-  updatedAt?: T;
-  createdAt?: T;
-  email?: T;
-  resetPasswordToken?: T;
-  resetPasswordExpiration?: T;
-  salt?: T;
-  hash?: T;
-  loginAttempts?: T;
-  lockUntil?: T;
-  sessions?:
+export interface ProdutosSelect<T extends boolean = true> {
+  sku?: T;
+  nome?: T;
+  slug?: T;
+  subtitulo?: T;
+  descricaoCurta?: T;
+  descricaoCompleta?: T;
+  beneficios?: T;
+  idealPara?: T;
+  diferenciaisProduto?: T;
+  categoria?: T;
+  material?: T;
+  aplicacoes?: T;
+  cores?:
     | T
     | {
+        nome?: T;
+        hex?: T;
         id?: T;
-        createdAt?: T;
-        expiresAt?: T;
       };
+  imagens?: T;
+  videoUrl?: T;
+  faixaPreco?: T;
+  destaques?: T;
+  tags?: T;
+  erp?:
+    | T
+    | {
+        preco?: T;
+        estoque?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "categorias_select".
+ */
+export interface CategoriasSelect<T extends boolean = true> {
+  nome?: T;
+  slug?: T;
+  grupo?: T;
+  ordem?: T;
+  icone?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "banners_select".
+ */
+export interface BannersSelect<T extends boolean = true> {
+  titulo?: T;
+  subtitulo?: T;
+  cta?: T;
+  href?: T;
+  imagem?: T;
+  posicao?: T;
+  ativo?: T;
+  ordem?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "campanhas_select".
+ */
+export interface CampanhasSelect<T extends boolean = true> {
+  nome?: T;
+  slug?: T;
+  mes?: T;
+  chamada?: T;
+  imagem?: T;
+  conteudo?: T;
+  produtos?: T;
+  ativo?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "posts_select".
+ */
+export interface PostsSelect<T extends boolean = true> {
+  titulo?: T;
+  slug?: T;
+  resumo?: T;
+  data?: T;
+  autor?: T;
+  capa?: T;
+  conteudo?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "cases_select".
+ */
+export interface CasesSelect<T extends boolean = true> {
+  cliente?: T;
+  titulo?: T;
+  slug?: T;
+  segmento?: T;
+  resumo?: T;
+  logo?: T;
+  imagem?: T;
+  depoimento?:
+    | T
+    | {
+        texto?: T;
+        autor?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "imprensa_select".
+ */
+export interface ImprensaSelect<T extends boolean = true> {
+  titulo?: T;
+  veiculo?: T;
+  data?: T;
+  resumo?: T;
+  url?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "revendedores_select".
+ */
+export interface RevendedoresSelect<T extends boolean = true> {
+  empresa?: T;
+  responsavel?: T;
+  cnpj?: T;
+  telefone?: T;
+  email?: T;
+  enderecoEntrega?:
+    | T
+    | {
+        logradouro?: T;
+        bairro?: T;
+        cidade?: T;
+        uf?: T;
+        cep?: T;
+      };
+  notas?: T;
+  updatedAt?: T;
+  createdAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -333,6 +779,28 @@ export interface MediaSelect<T extends boolean = true> {
               filesize?: T;
               filename?: T;
             };
+      };
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "users_select".
+ */
+export interface UsersSelect<T extends boolean = true> {
+  updatedAt?: T;
+  createdAt?: T;
+  email?: T;
+  resetPasswordToken?: T;
+  resetPasswordExpiration?: T;
+  salt?: T;
+  hash?: T;
+  loginAttempts?: T;
+  lockUntil?: T;
+  sessions?:
+    | T
+    | {
+        id?: T;
+        createdAt?: T;
+        expiresAt?: T;
       };
 }
 /**

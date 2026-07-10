@@ -6,6 +6,9 @@ const toWebp = { format: 'webp' as const, options: { quality: 80 } }
 
 export const Media: CollectionConfig = {
   slug: 'media',
+  admin: {
+    group: 'Sistema',
+  },
   access: {
     read: () => true,
   },
