@@ -5,7 +5,9 @@
   "description": "Plataforma B2B de brindes corporativos: catalogo, orcamento e area de revendedor.",
   "scripts": {
     "dev": "pnpm --filter frontend dev",
+    "dev:backend": "pnpm --filter backend dev",
     "build": "pnpm --filter frontend build",
+    "build:backend": "pnpm --filter backend build",
     "start": "pnpm --filter frontend start",
     "lint": "pnpm --filter frontend lint",
     "trello:sync": "node --env-file=.env scripts/trello-sync.mjs"
@@ -13,5 +15,11 @@
   "packageManager": "pnpm@9.12.0",
   "engines": {
     "node": ">=20"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "sharp",
+      "esbuild"
+    ]
   }
 }
