@@ -445,3 +445,49 @@ Onde paramos / proximo passo:
   de PDP do Plinio, Categorias, Banners, Campanhas, Blog, Cases, Imprensa,
   Revendedores), que tambem nao depende de terceiros.
 - PR do S03-01 so apos bootar o /admin (validacao), sem push ate autorizacao.
+
+---
+
+## 10/07/2026 20:25 BRT (sexta) -- S03-02: modelagem das colecoes
+
+Mesma sessao, mesma branch feature/sprint-03-scaffold-backend. Transformado o mock
+do front (data/*.ts) em colecoes reais do Payload.
+
+Feito nesta sessao (card S03-02):
+- Produtos: sku (chave unica, indexada; origem ERP, nao sobrescrita pelo import),
+  nome, slug, e o modelo de PDP do Plinio (subtitulo, descricaoCurta,
+  descricaoCompleta em richtext, beneficios, idealPara, diferenciaisProduto),
+  categoria (relationship), material, aplicacoes, cores (array nome+hex), imagens
+  (galeria -> media), videoUrl, faixaPreco (filtro publico, sem preco exato no B2B),
+  destaques e tags. Grupo `erp` (preco, estoque) marcado como origem ERP, placeholder
+  ate a integracao.
+- Categorias: nome, slug, grupo (ecologicos|geral, agrupa no topo), ordem, icone.
+  Cobre as 15 categorias validadas.
+- Conteudo: Banners (carrossel principal e mini banner unificados pelo campo
+  posicao, evitando duas colecoes), Campanhas (LP sazonal com produtos em destaque),
+  Posts (blog), Cases (com depoimento), Imprensa (materias veiculo/data/link).
+- Revendedores: empresa, responsavel, CNPJ, telefone, email, endereco de entrega e
+  notas. So o modelo de dados; a auth vira na S03-03. PII sem leitura publica (LGPD).
+- Helper slugField/slugify sem dependencia externa (remove acento, kebab-case),
+  reaproveitado nas colecoes com slug.
+- Colecoes publicas com read aberto; agrupadas no admin (Catalogo, Conteudo, Revenda,
+  Sistema). payload-types.ts regenerado com as 10 colecoes.
+
+Decisoes: (1) Banners e Mini banners numa colecao so com campo posicao, em vez de
+duas quase iguais (lente MVP, menos manutencao). (2) faixaPreco fica publica para
+filtro no catalogo, mas o preco exato vive no grupo erp e nao e exibido no B2B, so na
+area do revendedor. (3) SEO por pagina (meta) fica para a S03-07; aqui ja existem
+slug e descricoes que alimentam isso.
+
+Verificacao: payload generate:types e typecheck (tsc --noEmit) verdes; slugify
+testado com acentos ("Caneca Termica" e "Ecologicos Green"). Commit 0dacaf3 na branch
+(sem push). Boot do /admin segue pendente da connection string do Supabase dev.
+
+Onde paramos / proximo passo:
+- Ainda aguardando a connection string do Supabase dev para bootar o /admin, criar o
+  primeiro admin e ver as colecoes no painel (fecha S03-01 e valida S03-02 de ponta a
+  ponta).
+- Proximos cards possiveis sem terceiros: S03-03 (auth e login, torna Revendedores
+  colecao auth) e S03-04 (front consumindo o Payload em vez do mock). S03-06 (captura
+  de leads) tambem independe de provedores para a persistencia.
+- PR da Sprint 3 e push seguem pendentes de autorizacao e do boot/validacao do painel.
