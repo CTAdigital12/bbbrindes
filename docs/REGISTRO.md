@@ -491,3 +491,51 @@ Onde paramos / proximo passo:
   colecao auth) e S03-04 (front consumindo o Payload em vez do mock). S03-06 (captura
   de leads) tambem independe de provedores para a persistencia.
 - PR da Sprint 3 e push seguem pendentes de autorizacao e do boot/validacao do painel.
+
+---
+
+## 14/07/2026 18:10 BRT (terca) -- MARCO: reuniao Julien x Plinio (integracao e modelo de produto validados)
+
+Reuniao apresentou ao Plinio o status do site e do banco. Cliente validou a estrutura
+de dados de produtos e fechou a arquitetura de integracao. Cruzei a ata com o que ja
+esta implementado (S03-01/S03-02 na branch feature/sprint-03-scaffold-backend, sem
+push) para ver o que casa e as controversias.
+
+Decisoes fechadas na reuniao:
+- Integracao: Site -> CRM (Leads2b) -> ERP. O site e o painel de revenda conversam SO
+  com o CRM; o CRM se alimenta do ERP. Sem integracao direta site-ERP.
+- Estrutura de produto validada, com campos novos: dois codigos (codigo do site tipo
+  "MV 01" + codigo Cigan integrador, chave do CRM/ERP), headline (chamada), palavra
+  chave e meta description (SEO), argumento comercial (interno, treino do agente), 3
+  categorias por produto (multipla), tag ecologico sim/nao. Codigos sendo unificados
+  pelo Plinio (por isso a planilha atrasa).
+- UTM + GA do site vao alimentar o lead scoring no CRM.
+- Cronograma: wireframe ~95%, design aguardando, descricoes SEO pendentes.
+
+Batimento com o nosso schema (Produtos.ts): casam nome, subtitulo, as duas descricoes
+SEO, beneficios, diferenciais, cores, imagens, video. Mudam: sku unico vira dois
+codigos; categoria unica vira multipla; tag ecologico vira boolean; SEO de produto sai
+do S03-07 e entra no produto; grupo `erp` reenquadrado para CRM. Faltam headline,
+palavra chave, meta description e argumento comercial.
+
+Decisoes do Fabio nesta sessao:
+- NAO mexer no schema do Payload agora. Esperar a planilha final do Plinio (com os
+  codigos unificados) para evitar retrabalho. So atualizar os docs de arquitetura.
+- Categorias: quando executar, modelar como relacao multipla com a primeira como
+  principal (URL, breadcrumb, filtro).
+
+Feito nesta sessao (so documentacao, sem tocar em codigo do app):
+- docs/arquitetura-backend.md: corrigido o fluxo de integracao (era "ERP casa por
+  SKU"; agora Site -> CRM -> ERP) e adicionada a secao "Integracao Site x CRM x ERP".
+- docs/modelo-produto.md (novo): modelo de produto validado, delta vs o schema atual
+  do Payload e vs o template de importacao (modelo-produtos.csv), decisoes e
+  pendencias. Especificacao para executar quando a planilha fechar.
+
+Onde paramos / proximo passo:
+- Bloqueado para revisar o schema: aguardando a planilha final do Plinio e a
+  confirmacao com o Julien de que ela atende o banco.
+- Bloqueado para integracao real: aguardando URL/credencial/doc da API Leads2b (painel
+  de revenda e envio de leads) e a pauta com o Leonardo para a ponte CRM-ERP.
+- Sem depender de terceiros, ainda da para avancar em: S03-03 (auth/login), S03-04
+  (front consumindo o Payload), S03-06 (persistencia de leads) e a captura UTM+GA.
+- Segue pendente a connection string do Supabase dev para bootar o /admin.
