@@ -1,9 +1,9 @@
 # S03-02 Modelagem das colecoes (schema)
 
-Status: a fazer
+Status: em andamento
 Frente: backend
 Prioridade: P0
-Atualizado: 09/07/2026 BRT
+Atualizado: 15/07/2026 BRT
 
 ## Descricao
 Transformar o mock de hoje (data/*.ts) em colecoes reais no Payload. Inclui os
@@ -20,4 +20,14 @@ e estoque), estes marcados como origem ERP e nao sobrescritos pelo cadastro.
 
 ## Observacoes
 O conteudo editorial/SEO (subtitulo, descricoes, beneficios) vive aqui e nao vem do
-ERP. SKU e a chave que o ERP casa depois. Ver docs/arquitetura-backend.md.
+ERP. O codigo Cigan e a chave que casa com CRM/ERP. Ver docs/arquitetura-backend.md.
+
+## Atualizacao 15/07/2026 (reuniao Julien x Plinio)
+A primeira versao das colecoes foi implementada (backend/src/collections, commit
+0dacaf3) antes da reuniao. O cliente validou a estrutura de produto e ela muda: dois
+codigos (site + Cigan) no lugar de um sku; headline; palavra chave e meta description;
+argumento comercial (interno); ate 3 categorias por produto (relacao multipla, a
+primeira principal); ecologico como boolean; e o grupo `erp` reenquadrado como
+integracao via CRM (Leads2b), nao ERP direto. Decisao do Fabio: NAO mexer no schema
+ate a planilha final do Plinio (codigos em unificacao), para evitar retrabalho. O
+delta completo esta em docs/modelo-produto.md. Card congelado ate la.

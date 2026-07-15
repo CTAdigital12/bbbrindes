@@ -3,12 +3,13 @@
 Status: a fazer
 Frente: fullstack
 Prioridade: P0
-Atualizado: 09/07/2026 BRT
+Atualizado: 15/07/2026 BRT
 
 ## Descricao
 Login real usando a auth nativa do Payload. Substitui o login mock do wireframe.
 Cobre o acesso do revendedor a area logada e o acesso do admin ao painel. Nao
-depende do ERP (o ERP entra so para preco e estoque).
+depende da integracao (preco, estoque e pedido vem depois do CRM Leads2b, ver
+S03-09).
 
 ## Checklist
 - [ ] Auth do Payload configurada (revendedor e admin)
@@ -20,4 +21,5 @@ depende do ERP (o ERP entra so para preco e estoque).
 
 ## Observacoes
 A area do revendedor ja esta desenhada no wireframe; aqui ela ganha login de
-verdade. Preco e estoque continuam placeholder ate a integracao do ERP.
+verdade. Preco e estoque continuam placeholder ate a integracao do CRM Leads2b
+(S03-09). A colecao Revendedores (S03-02) vira colecao auth aqui.

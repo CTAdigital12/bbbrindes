@@ -539,3 +539,33 @@ Onde paramos / proximo passo:
 - Sem depender de terceiros, ainda da para avancar em: S03-03 (auth/login), S03-04
   (front consumindo o Payload), S03-06 (persistencia de leads) e a captura UTM+GA.
 - Segue pendente a connection string do Supabase dev para bootar o /admin.
+
+---
+
+## 15/07/2026 13:59 BRT (quarta) -- nova realidade incorporada ao plano da Sprint 3
+
+Assumido, ate ter retorno, que "Cigan" e o ERP (decisao do Fabio; nome mantido nas
+docs). Incorporada a nova realidade da reuniao ao plano central e aos cards.
+
+Feito nesta sessao (so documentacao):
+- README da Sprint 3: secao "Atualizacao 15/07" com a arquitetura de integracao (Site
+  -> CRM Leads2b -> ERP/Cigan) e o modelo de produto validado (schema congelado ate a
+  planilha). Lista "o que fica de fora" ajustada (planilha do Plinio; API Leads2b;
+  e-mail; design). Tres cards novos adicionados a lista.
+- Cards existentes atualizados: S03-02 (em andamento, congelado ate a planilha, com o
+  delta), S03-03 (preco/estoque vem do CRM, nao do ERP; Revendedores vira colecao
+  auth), S03-04 (sequenciar: conteudo primeiro, Produtos/PDP so apos o schema fechar),
+  S03-05 (upsert por codigo Cigan; reconciliar template com a planilha), S03-06 (CRM
+  destino e o Leads2b; adapter real no S03-09; lead carrega UTM), S03-07 (SEO de
+  produto vive no produto; este card faz o estrutural).
+- Cards novos: S03-09 (integracao Leads2b, P0 bloqueado ate a API: revenda e envio de
+  leads), S03-10 (UTM + GA para lead scoring, P1), S03-11 (simular os campos novos na
+  PDP do wireframe, P1, acao da ata @Fabio).
+
+Onde paramos / proximo passo:
+- Trello: os 3 cards novos e as mudancas de status (S03-02 em andamento) sincronizam
+  com `pnpm trello:sync` quando o Fabio autorizar (toca o board externo).
+- Frentes sem terceiros: S03-03 (auth/login), S03-04 so nas colecoes de conteudo,
+  S03-06 (captura de leads com adapter stub), S03-10 (captura de UTM). Produto e PDP
+  seguem congelados ate a planilha; integracao real congelada ate a API Leads2b.
+- Segue pendente a connection string do Supabase dev para bootar o /admin.
