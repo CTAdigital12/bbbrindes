@@ -3,7 +3,7 @@
 Status: em andamento
 Frente: backend
 Prioridade: P0
-Atualizado: 15/07/2026 BRT
+Atualizado: 16/07/2026 BRT
 
 ## Descricao
 Transformar o mock de hoje (data/*.ts) em colecoes reais no Payload. Inclui os
@@ -31,3 +31,23 @@ primeira principal); ecologico como boolean; e o grupo `erp` reenquadrado como
 integracao via CRM (Leads2b), nao ERP direto. Decisao do Fabio: NAO mexer no schema
 ate a planilha final do Plinio (codigos em unificacao), para evitar retrabalho. O
 delta completo esta em docs/modelo-produto.md. Card congelado ate la.
+
+## Atualizacao 16/07/2026 (planilha real analisada)
+A planilha do cliente chegou (versao 06.2026, ~190 produtos, 50 colunas) e foi
+analisada linha a linha. Ela destrava a maior parte do modelo, mas o card SEGUE
+congelado por tres bloqueios (detalhe em docs/modelo-produto.md):
+1. Granularidade: o codigo CIGAM descarta o sufixo de variacao do codigo do site
+   (233 CL e 233 PB sao dois produtos no site com o mesmo CIGAM MV01233). Como o CIGAM
+   e a chave que traz preco/estoque do CRM, nao da para marcar como unique ate decidir
+   se e variacao de um produto ou dois produtos no mesmo item do ERP.
+2. Imagens: a planilha nao tem coluna de imagem, arquivo ou link.
+3. Cores/variacoes: a planilha nao tem coluna de cor. Provavel que os ~1200 SKUs do
+   escopo sejam ~190 produtos x cores, ou seja, o import teria que gerar as variacoes.
+
+Alem do delta ja registrado, a planilha revelou 26 colunas nao citadas na ata que
+tambem entram neste card: 13 selos por produto (livre de BPA, 100% reciclado,
+logistica reversa, fibra natural etc.), 8 campos de logistica (NCM, peso, caixa
+master) e 5 de impressao (metodos e areas). Mais 7 flags de canal (SITE, BRINDICE,
+FREESHOP, brindes.com, CATALOGO, TABELA REVENDA, TABELA B2B), que viram visibilidade
+do produto. Resolvido de graca: "Medalhas e Trofeus" nao e linha ecologica (o
+`ecologico=sim` so aparece nas linhas Green).

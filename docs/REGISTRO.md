@@ -569,3 +569,68 @@ Onde paramos / proximo passo:
   S03-06 (captura de leads com adapter stub), S03-10 (captura de UTM). Produto e PDP
   seguem congelados ate a planilha; integracao real congelada ate a API Leads2b.
 - Segue pendente a connection string do Supabase dev para bootar o /admin.
+
+Trello sincronizado na mesma sessao: S03-02 movido para Em andamento; S03-09, S03-10 e
+S03-11 criados em A Fazer com checklist; 41 cards inalterados.
+
+---
+
+## 16/07/2026 14:55 BRT (quinta) -- MARCO: planilha real de produtos recebida e analisada
+
+O Fabio trouxe a planilha do cliente ("Planilha de produtos e suas especificacoes
+_06.2026", aba Especificacoes) junto com print e transcricao da gravacao do Plinio.
+Analisada linha a linha e cruzada com a ata de 14/07 e com o schema ja implementado.
+Confirma que valeu congelar o S03-02: a planilha tem 26 colunas que a ata nao citou.
+
+A planilha: ~190 produtos, 50 colunas em quatro blocos (7 flags de canal, 17 de
+conteudo/classificacao, 13 selos, 8 de logistica, 5 de impressao).
+
+Achados principais (spec completa reescrita em docs/modelo-produto.md):
+- CORRECAO: os dois codigos estavam invertidos na ata. `Codigo site` = 109 (comercial)
+  e `Codigo CIGAM` = MV01109 (integrador). "MV 01" e prefixo do CIGAM, nao do codigo do
+  site. O Plinio confirma na gravacao. O CIGAM embute o codigo do site (MV01+109
+  tradicional, MV02+109G Green, MV10+2003 IML).
+- BLOQUEIO NOVO: site e ERP nao tem a mesma granularidade. O CIGAM descarta o sufixo de
+  variacao do codigo do site: `233 CL` e `233 PB` sao dois produtos no site com o mesmo
+  CIGAM `MV01233`. Como o CIGAM e a chave de preco/estoque do CRM, nao da para marcar
+  como unique ate decidir se e variacao de um produto ou dois produtos no mesmo item do
+  ERP.
+- FALTAM na planilha, e nao foram citados na ata: imagens (nenhuma coluna), cores e
+  variacoes (nenhuma coluna) e video. Sao os bloqueios mais serios.
+- Isso reconcilia os 1200 SKUs: ~190 produtos x cores da a ordem de 1200. Produto nao e
+  SKU, e o import teria que gerar as variacoes.
+- BLOCOS NOVOS: 13 selos por produto (livre de BPA, 100% reciclado, logistica reversa,
+  fibra natural etc.), 8 campos de logistica (NCM, peso, caixa master) e 5 de impressao
+  (metodos e areas). Mudam a PDP e o filtro do catalogo.
+- A planilha e mestre de varios canais (SITE, BRINDICE, FREESHOP, brindes.com,
+  CATALOGO, TABELA REVENDA, TABELA B2B), nao so do nosso site. As flags viram
+  visibilidade do produto. A coluna SITE nao e boolean limpo: mistura `ok`,
+  `ok (370 ml)`, `S/COD` e `COD. 280`.
+- Categoria 1 mistura linha e funcao: nos Green/IML a categoria 1 e a LINHA e a funcao
+  cai para a 2 (Squeeze Green Fibras = Green Fibras / Squeezes / Infantil). Confirma a
+  necessidade das 3 categorias.
+- RESOLVIDO de graca: "Medalhas e Trofeus" NAO e linha ecologica (pendencia aberta
+  desde 30/06). O `ecologico=sim` so aparece nas linhas Green. O agrupamento do
+  wireframe e a regra `ehEcologico` do front estao errados e devem ser desfeitos.
+- Divergencia de volume entre nome e nota: 135 "Copo Roma Cristal 400mL" marcado como
+  370 ml; 406 "Super Bowl 500mL" como 475 ml. Afeta titulo e SEO.
+
+Feito nesta sessao (so documentacao, sem tocar em codigo do app):
+- docs/modelo-produto.md reescrito como spec completa (14 secoes), com a estrutura real
+  da planilha, os bloqueios, o delta vs o schema e vs o template de importacao.
+- Cards atualizados: S03-02 (segue congelado, agora por granularidade/imagens/cores, e
+  ganhou selos/logistica/impressao/flags de canal), S03-05 (template superado, chave de
+  upsert nao resolvida, regras de parsing), S03-11 (os 3 blocos novos mudam o escopo da
+  simulacao da PDP).
+- Texto de retorno tecnico preparado para o Fabio postar no Slack.
+
+Onde paramos / proximo passo:
+- Schema e migration seguem BLOQUEADOS: granularidade CL/PB, imagens, cores, confirmar
+  produto x cor e se a planilha 06.2026 e completa ou recorte.
+- Sem depender de terceiros, da para avancar em: S03-03 (auth/login), S03-04 nas
+  colecoes de conteudo (banners, categorias, campanhas, blog, cases, imprensa), S03-06
+  (captura de leads com adapter stub) e S03-10 (captura de UTM).
+- Segue pendente a connection string do Supabase dev para bootar o /admin (fecha o
+  S03-01 e valida o S03-02 de ponta a ponta).
+- Nada pushado. Branch feature/sprint-03-scaffold-backend acumula scaffold + colecoes +
+  docs.
