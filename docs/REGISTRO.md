@@ -634,3 +634,37 @@ Onde paramos / proximo passo:
   S03-01 e valida o S03-02 de ponta a ponta).
 - Nada pushado. Branch feature/sprint-03-scaffold-backend acumula scaffold + colecoes +
   docs.
+
+## 17/07/2026 12:44 BRT (sexta) -- DECISAO DO BANCO DE DEV ADIADA PARA 20/07 (segunda)
+
+Sessao curta, de verificacao. Nenhuma linha de codigo do app tocada.
+
+Verificado no repo (nao de memoria) se o projeto Supabase de dev ja existia. NAO EXISTE,
+e nunca foi criado. Evidencias:
+- backend/.env nao existe; so o .env.example, com a URI ficticia db.xxxxxxxx.supabase.co.
+- O .env da raiz (o do Trello) declara DATABASE_URI mas o valor esta vazio.
+- REGISTRO.md registra "pendente a connection string do Supabase dev" em cinco entradas.
+- S03-01 e S03-08 tem o item "projeto Supabase de dev (free) provisionado" desmarcado.
+O que esta documentado e a DECISAO de usar Supabase (docs/arquitetura-backend.md: free em
+dev, Pro US$ 25/mes na producao), nao a execucao dela.
+
+Ambiente: Docker instalado (29.5.2) mas com o daemon parado. Nenhum psql local.
+
+DECISAO EM ABERTO, o Fabio retoma na segunda 20/07/2026 (hoje ele esta em outro projeto
+atrasado). As tres opcoes na mesa, na ordem em que recomendo:
+1. Criar o projeto Supabase free de dev e me passar a connection string (Project Settings
+   > Database > Connection string, modo URI). Mesmo esforco do Docker e, alem de validar
+   o schema, FECHA o S03-01. Eu monto o backend/.env local (gitignored), boto o /admin de
+   pe e valido as 10 colecoes do S03-02 de ponta a ponta.
+2. Subir o Docker Desktop e eu rodo um Postgres 16 em container. Valida o schema do
+   S03-02, mas o S03-01 continua aberto e o boot teria que ser refeito no Supabase.
+3. Seguir sem banco no S03-10 (captura de UTM). Front puro, testavel no browser, mas
+   S03-01 e S03-02 seguem sem validacao.
+
+Onde paramos / proximo passo:
+- Retomar a decisao acima na segunda 20/07/2026. Tudo o mais do backend depende dela.
+- Schema e migration seguem BLOQUEADOS por terceiros: granularidade CL/PB, imagens,
+  cores (ver docs/modelo-produto.md). Integracao S03-09 sem a API do Leads2b. Design
+  S01-14 sem o brandbook.
+- Nada pushado. Branch feature/sprint-03-scaffold-backend acumula scaffold + colecoes +
+  docs.
