@@ -18,6 +18,111 @@ export const aplicacoes = ["Bebidas", "Escritorio", "Casa", "Eventos", "Infantil
 
 // Catalogo mockado. Na producao virao ~1200 SKUs do Payload.
 export const produtos: Produto[] = [
+  // Produto-modelo da PDP (S03-11), Versao A honesta de docs/pdp-modelo-squeeze.md.
+  // So este produto tem `detalhe` preenchido; serve para o cliente ver a estrutura
+  // da pagina antes do design final. Campos [PLINIO] ficam em detalhe.pendencias.
+  {
+    slug: "squeeze-300ml-personalizado",
+    nome: "Squeeze 300ml Personalizado",
+    categoria: "squeezes",
+    descricao:
+      "Squeeze de 300 mL em polietileno atoxico e livre de BPA, com personalizacao da sua logomarca. Pedidos a partir de 500 unidades.",
+    material: "Polietileno (PEAD + PEBD)",
+    aplicacoes: ["Bebidas", "Esportes", "Eventos"],
+    cores: [C.branco, C.azul, C.verde, C.vermelho, C.preto],
+    personalizavel: true,
+    faixaPreco: "4-a-15",
+    destaques: ["destaque"],
+    detalhe: {
+      linhaCurta:
+        "Squeeze de 300 mL em polietileno atóxico e livre de BPA, com personalização da sua logomarca. Pedidos a partir de 500 unidades.",
+      abertura:
+        "O Squeeze 300 mL é um brinde promocional prático, leve e funcional, ideal para empresas que querem incentivar hábitos saudáveis enquanto fortalecem a presença da marca no dia a dia de clientes e colaboradores. Fabricado em polietileno atóxico e livre de BPA, oferece alta durabilidade, excelente acabamento e ampla área para personalização, uma solução versátil para campanhas corporativas, eventos e ações de relacionamento.",
+      especificacoes: [
+        { rotulo: "Material", valor: "Polietileno (PEAD + PEBD), atóxico e livre de BPA" },
+        { rotulo: "Capacidade", valor: "300 mL" },
+        { rotulo: "Dimensões", valor: "7 (L) × 7 (C) × 13,5 (A) cm" },
+        { rotulo: "Peso unitário", valor: "33 g" },
+        { rotulo: "Impressão", valor: "Heat transfer e serigrafia cilíndrica" },
+        { rotulo: "Área de impressão (transfer)", valor: "1 lado 75 × 50 mm · 2 lados 226 × 50 mm" },
+        { rotulo: "Área de impressão (serigrafia)", valor: "1 lado 90 × 48 mm · 2 lados 200 × 48 mm" },
+        { rotulo: "Quantidade por caixa", valor: "100 unidades" },
+        { rotulo: "NCM", valor: "3924.90.00" },
+      ],
+      beneficios: [
+        "Polietileno atóxico e livre de BPA",
+        "Reutilizável, com longa vida útil",
+        "Incentiva hábitos saudáveis e hidratação",
+        "Design leve, compacto e ergonômico",
+        "Excelente área para personalização",
+        "Alta resistência para uso diário",
+        "Produção nacional com qualidade premium",
+        "Excelente custo-benefício para campanhas promocionais",
+      ],
+      idealPara: [
+        "Campanhas de qualidade de vida",
+        "SIPAT e programas de saúde ocupacional",
+        "Academias e eventos esportivos",
+        "Onboarding de colaboradores",
+        "Endomarketing e programas de reconhecimento",
+        "Convenções e treinamentos",
+        "Feiras e congressos",
+      ],
+      descricaoCompleta: [
+        "Pequenos gestos geram grandes conexões. O Squeeze 300 mL foi desenvolvido para transformar um hábito simples, como manter-se hidratado, em uma oportunidade permanente de aproximação entre a sua marca e as pessoas.",
+        "Compacto, resistente e fácil de transportar, acompanha a rotina de trabalho, atividades físicas, viagens, eventos e momentos de lazer. A capacidade de 300 mL oferece praticidade para o uso diário, o que faz dele uma opção forte para ações promocionais voltadas à saúde, qualidade de vida e bem-estar.",
+        "Fabricado em polietileno atóxico e livre de BPA, o squeeze entrega resistência ao uso contínuo, longa vida útil e excelente acabamento. O design ergonômico facilita o manuseio, e a ampla área de personalização garante visibilidade da marca durante toda a vida útil do produto.",
+        "Por ser reutilizável, o Squeeze 300 mL reduz o consumo de embalagens descartáveis e alinha a sua empresa a práticas de consumo consciente. É um brinde que entrega utilidade, valor percebido e presença constante da marca.",
+        "Produzido pela BB Brindes, indústria nacional com fábrica própria e mais de 25 anos de mercado, o produto reúne qualidade premium, fabricação nacional e capacidade de atendimento para projetos de qualquer porte.",
+      ],
+      diferenciais: [
+        "Fabricação própria, indústria nacional",
+        "Personalização de alta qualidade",
+        "Produção para pequenos e grandes volumes",
+        "Mais de 25 anos de experiência em brindes promocionais",
+        "Desenvolvimento de projetos especiais sob demanda",
+      ],
+      selos: ["Livre de BPA", "Uso permanente", "Produto reciclável"],
+      faq: [
+        {
+          pergunta: "Qual o pedido mínimo do Squeeze 300 mL?",
+          resposta: "O pedido mínimo é de 500 unidades.",
+          aConfirmar: true,
+        },
+        {
+          pergunta: "De que material é feito o Squeeze 300 mL?",
+          resposta:
+            "O Squeeze 300 mL é fabricado em polietileno (PEAD + PEBD), atóxico e livre de BPA.",
+          aConfirmar: true,
+        },
+        {
+          pergunta: "Como é feita a personalização com a logomarca?",
+          resposta:
+            "A personalização é feita por heat transfer ou serigrafia cilíndrica. A área de impressão é de 75 × 50 mm em um lado, ou 226 × 50 mm em dois lados. Desenvolvemos o layout com a sua logomarca e enviamos para aprovação antes de iniciar a produção.",
+        },
+        {
+          pergunta: "O Squeeze 300 mL pode ir na lava-louças ou no microondas?",
+          resposta:
+            "Não. Este produto não tem indicação para lava-louças nem para microondas. Recomendamos lavagem manual com água e detergente neutro.",
+        },
+        {
+          pergunta: "Quanto tempo leva a produção?",
+          resposta: "Prazo de produção por faixa de volume.",
+          aConfirmar: true,
+        },
+        {
+          pergunta: "Quantas unidades vêm por caixa?",
+          resposta:
+            "Cada caixa master leva 100 unidades e pesa 3,76 kg, com dimensões de 37 × 37 × 56,5 cm.",
+        },
+      ],
+      pendencias: [
+        "Material: a planilha registra PEAD + PEBD, mas o texto comercial diz PP. As duas versões não podem coexistir; o cliente confirma qual é o correto.",
+        "Pedido mínimo: 500 vs. 100 unidades.",
+        "Prazo real de produção por faixa de volume.",
+      ],
+    },
+  },
   {
     slug: "squeeze-eco-500ml",
     nome: "Squeeze Ecologico 500ml",

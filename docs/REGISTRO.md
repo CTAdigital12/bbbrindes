@@ -668,3 +668,34 @@ Onde paramos / proximo passo:
   S01-14 sem o brandbook.
 - Nada pushado. Branch feature/sprint-03-scaffold-backend acumula scaffold + colecoes +
   docs.
+
+## 21/07/2026 19:24 BRT (terca) -- S03-11: PDP-modelo simulada no wireframe (Squeeze 300 mL, Versao A)
+
+Frente de aparencia, front puro, sem depender do banco. O Fabio trouxe o doc de conteudo
+da pagina de produto (renomeado para docs/pdp-modelo-squeeze.md) e, na sequencia, o
+fluxograma de estrutura da PDP. Escolhida a Versao A (honesta), coerente com o doc e com
+desfazer o "Medalhas = ecologico".
+
+Feito:
+- types.ts: tipo ProdutoDetalhe opcional no Produto (so o produto-modelo preenche no
+  wireframe; na producao vira schema do Payload).
+- produtos.ts: novo produto squeeze-300ml-personalizado com o conteudo da Versao A.
+- ProdutoDetalheView.tsx (novo): blocos abertura, Especificacoes, Beneficios, Ideal para,
+  Descricao completa com "ver mais", Diferenciais, Selos, FAQ e box de pendencias.
+- ProdutoView.tsx: linha curta sob o H1.
+- produto/[slug]/page.tsx: pluga o bloco e liga title tag/meta description da Versao A.
+- Os 3 itens [PLINIO] (material PEAD+PEBD vs PP, MOQ 500 vs 100, prazo) marcados
+  "a confirmar" no FAQ e no box de pendencias.
+
+Typecheck e lint verdes. Fabio validou no browser (regra 27 satisfeita) e autorizou o
+push. Nada mergeado na master ainda (segue o fluxo branch > PR > merge).
+
+Pendencia aberta do cliente (reuniao 21/07, Julien e Plinio): o CODIGO DO SITE tem que
+aparecer na PDP e o codigo CIGAM (integrador do CRM) fica escondido. O build atual NAO
+mostra o codigo do site ainda; falta o campo codigoSite visivel e o valor do Squeeze.
+Proximo passo dessa frente.
+
+Onde paramos / proximo passo:
+- Adicionar codigoSite visivel na PDP (CIGAM escondido) quando o Fabio passar o codigo.
+- Decisao do banco de dev (Supabase free vs Postgres local vs seguir sem banco) segue
+  em aberto, e trava todo o resto do backend (S03-01, S03-02, schema do S03-11).

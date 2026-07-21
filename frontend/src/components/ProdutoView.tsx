@@ -86,9 +86,12 @@ export default function ProdutoView({ produto }: { produto: Produto }) {
         <div>
           <span className="text-xs text-wf-muted">{nomeCategoria(produto.categoria)}</span>
           <h1 className="text-2xl font-bold text-wf-ink">{produto.nome}</h1>
+          {produto.detalhe && (
+            <p className="mt-1 text-sm text-wf-muted">{produto.detalhe.linhaCurta}</p>
+          )}
         </div>
 
-        <p className="text-sm text-wf-text">{produto.descricao}</p>
+        {!produto.detalhe && <p className="text-sm text-wf-text">{produto.descricao}</p>}
 
         <dl className="text-sm">
           <dt className="text-wf-muted">Material</dt>
