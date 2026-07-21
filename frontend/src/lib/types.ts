@@ -23,6 +23,26 @@ export type Produto = {
   destaques: ("destaque" | "mais-vendido" | "lancamento")[];
   // Tags que diferenciam de verdade (ex.: Ecologico). Opcional; ver tagsDoProduto.
   tags?: string[];
+  // Detalhamento da PDP (S03-11). Opcional: so os produtos-modelo preenchem no
+  // wireframe. Na producao virao do Payload (docs/pdp-modelo-squeeze.md, Versao A).
+  detalhe?: ProdutoDetalhe;
+};
+
+// Blocos da pagina de produto simulados no wireframe (S03-11). Espelham a
+// estrutura de docs/pdp-modelo-squeeze.md. Campos "a confirmar" com o cliente
+// ficam em pendencias, exibidos com marca visivel para nao publicar dado errado.
+export type ProdutoDetalhe = {
+  linhaCurta: string; // subtitulo que cita o produto
+  abertura: string; // paragrafo de abertura visivel
+  especificacoes: { rotulo: string; valor: string }[];
+  beneficios: string[];
+  idealPara: string[];
+  descricaoCompleta: string[]; // paragrafos atras do "Ver mais"
+  diferenciais: string[];
+  selos: string[];
+  faq: { pergunta: string; resposta: string; aConfirmar?: boolean }[];
+  // Itens que dependem de confirmacao do cliente antes de publicar.
+  pendencias?: string[];
 };
 
 export type Banner = {

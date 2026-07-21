@@ -405,3 +405,297 @@ Feito nesta sessao:
 Onde paramos / proximo passo:
 - Comecar a implementacao pela S03-01 (scaffold do backend) e S03-02 (colecoes), que destravam o resto.
 - Aguardando terceiros: identidade visual (design), definicao do ERP, material do catalogo do Plinio, provedores de CRM/e-mail.
+
+---
+
+## 10/07/2026 19:58 BRT (sexta) -- S03-01: scaffold do backend (Payload + Postgres + R2)
+
+Os docs de planejamento acumulados (Sprint 2, arquitetura de backend, plano da
+Sprint 3, modelo de importacao) foram mergeados na master pelo PR #26. Branch de
+codigo feature/sprint-03-scaffold-backend criada a partir da master atualizada.
+
+Feito nesta sessao (card S03-01):
+- Pasta backend/ com Payload CMS 3.86 embutido em Next 15.4 (mesmo padrao do
+  template blank oficial na tag v3.86.0). O create-payload-app exige TTY e nao roda
+  neste ambiente; o scaffold foi montado a mao a partir dos arquivos exatos da tag.
+- Versoes fixadas dentro do range de peers do @payloadcms/next@3.86.0: next 15.4.11
+  (fica no major 15 do projeto, em vez do 16 que o template puxaria), react 19.2.6.
+- Adapter Postgres via DATABASE_URI (alvo Supabase). Storage S3/R2 condicional: so
+  ativa com S3_BUCKET no env; sem credenciais em dev, cai no disco local e o painel
+  segue utilizavel.
+- Colecao Media converte todo upload para WebP e gera tamanhos responsivos
+  (thumbnail 300, card 640, large 1200) no upload via sharp, conforme a arquitetura.
+- Colecoes base Users (auth) e Media. payload-types.ts gerado.
+- backend/.env.example com Postgres, PAYLOAD_SECRET e R2, sem segredos reais
+  (CLAUDE.md regra 14). Raiz: pnpm.onlyBuiltDependencies (sharp, esbuild) e script
+  dev:backend.
+
+Verificacao: pnpm install ok (45s, sharp e esbuild compilados), payload
+generate:types ok (colecoes users e media reconhecidas, media com os 3 sizes),
+typecheck tsc --noEmit verde. Commit 12407d6 na branch (sem push).
+
+Pendente para fechar o S03-01 (depende do Fabio): criar um projeto Supabase free de
+dev e me passar a connection string para o backend/.env local. So com ela o painel
+/admin sobe e da para criar o primeiro usuario admin (ultimos 2 itens do checklist).
+R2 tambem fica pendente de bucket/credenciais, mas nao bloqueia dev (disco local).
+
+Onde paramos / proximo passo:
+- Aguardando a connection string do Supabase dev para bootar /admin e validar.
+- Em paralelo, seguir para o S03-02 (modelagem das colecoes: Produtos com os campos
+  de PDP do Plinio, Categorias, Banners, Campanhas, Blog, Cases, Imprensa,
+  Revendedores), que tambem nao depende de terceiros.
+- PR do S03-01 so apos bootar o /admin (validacao), sem push ate autorizacao.
+
+---
+
+## 10/07/2026 20:25 BRT (sexta) -- S03-02: modelagem das colecoes
+
+Mesma sessao, mesma branch feature/sprint-03-scaffold-backend. Transformado o mock
+do front (data/*.ts) em colecoes reais do Payload.
+
+Feito nesta sessao (card S03-02):
+- Produtos: sku (chave unica, indexada; origem ERP, nao sobrescrita pelo import),
+  nome, slug, e o modelo de PDP do Plinio (subtitulo, descricaoCurta,
+  descricaoCompleta em richtext, beneficios, idealPara, diferenciaisProduto),
+  categoria (relationship), material, aplicacoes, cores (array nome+hex), imagens
+  (galeria -> media), videoUrl, faixaPreco (filtro publico, sem preco exato no B2B),
+  destaques e tags. Grupo `erp` (preco, estoque) marcado como origem ERP, placeholder
+  ate a integracao.
+- Categorias: nome, slug, grupo (ecologicos|geral, agrupa no topo), ordem, icone.
+  Cobre as 15 categorias validadas.
+- Conteudo: Banners (carrossel principal e mini banner unificados pelo campo
+  posicao, evitando duas colecoes), Campanhas (LP sazonal com produtos em destaque),
+  Posts (blog), Cases (com depoimento), Imprensa (materias veiculo/data/link).
+- Revendedores: empresa, responsavel, CNPJ, telefone, email, endereco de entrega e
+  notas. So o modelo de dados; a auth vira na S03-03. PII sem leitura publica (LGPD).
+- Helper slugField/slugify sem dependencia externa (remove acento, kebab-case),
+  reaproveitado nas colecoes com slug.
+- Colecoes publicas com read aberto; agrupadas no admin (Catalogo, Conteudo, Revenda,
+  Sistema). payload-types.ts regenerado com as 10 colecoes.
+
+Decisoes: (1) Banners e Mini banners numa colecao so com campo posicao, em vez de
+duas quase iguais (lente MVP, menos manutencao). (2) faixaPreco fica publica para
+filtro no catalogo, mas o preco exato vive no grupo erp e nao e exibido no B2B, so na
+area do revendedor. (3) SEO por pagina (meta) fica para a S03-07; aqui ja existem
+slug e descricoes que alimentam isso.
+
+Verificacao: payload generate:types e typecheck (tsc --noEmit) verdes; slugify
+testado com acentos ("Caneca Termica" e "Ecologicos Green"). Commit 0dacaf3 na branch
+(sem push). Boot do /admin segue pendente da connection string do Supabase dev.
+
+Onde paramos / proximo passo:
+- Ainda aguardando a connection string do Supabase dev para bootar o /admin, criar o
+  primeiro admin e ver as colecoes no painel (fecha S03-01 e valida S03-02 de ponta a
+  ponta).
+- Proximos cards possiveis sem terceiros: S03-03 (auth e login, torna Revendedores
+  colecao auth) e S03-04 (front consumindo o Payload em vez do mock). S03-06 (captura
+  de leads) tambem independe de provedores para a persistencia.
+- PR da Sprint 3 e push seguem pendentes de autorizacao e do boot/validacao do painel.
+
+---
+
+## 14/07/2026 18:10 BRT (terca) -- MARCO: reuniao Julien x Plinio (integracao e modelo de produto validados)
+
+Reuniao apresentou ao Plinio o status do site e do banco. Cliente validou a estrutura
+de dados de produtos e fechou a arquitetura de integracao. Cruzei a ata com o que ja
+esta implementado (S03-01/S03-02 na branch feature/sprint-03-scaffold-backend, sem
+push) para ver o que casa e as controversias.
+
+Decisoes fechadas na reuniao:
+- Integracao: Site -> CRM (Leads2b) -> ERP. O site e o painel de revenda conversam SO
+  com o CRM; o CRM se alimenta do ERP. Sem integracao direta site-ERP.
+- Estrutura de produto validada, com campos novos: dois codigos (codigo do site tipo
+  "MV 01" + codigo Cigan integrador, chave do CRM/ERP), headline (chamada), palavra
+  chave e meta description (SEO), argumento comercial (interno, treino do agente), 3
+  categorias por produto (multipla), tag ecologico sim/nao. Codigos sendo unificados
+  pelo Plinio (por isso a planilha atrasa).
+- UTM + GA do site vao alimentar o lead scoring no CRM.
+- Cronograma: wireframe ~95%, design aguardando, descricoes SEO pendentes.
+
+Batimento com o nosso schema (Produtos.ts): casam nome, subtitulo, as duas descricoes
+SEO, beneficios, diferenciais, cores, imagens, video. Mudam: sku unico vira dois
+codigos; categoria unica vira multipla; tag ecologico vira boolean; SEO de produto sai
+do S03-07 e entra no produto; grupo `erp` reenquadrado para CRM. Faltam headline,
+palavra chave, meta description e argumento comercial.
+
+Decisoes do Fabio nesta sessao:
+- NAO mexer no schema do Payload agora. Esperar a planilha final do Plinio (com os
+  codigos unificados) para evitar retrabalho. So atualizar os docs de arquitetura.
+- Categorias: quando executar, modelar como relacao multipla com a primeira como
+  principal (URL, breadcrumb, filtro).
+
+Feito nesta sessao (so documentacao, sem tocar em codigo do app):
+- docs/arquitetura-backend.md: corrigido o fluxo de integracao (era "ERP casa por
+  SKU"; agora Site -> CRM -> ERP) e adicionada a secao "Integracao Site x CRM x ERP".
+- docs/modelo-produto.md (novo): modelo de produto validado, delta vs o schema atual
+  do Payload e vs o template de importacao (modelo-produtos.csv), decisoes e
+  pendencias. Especificacao para executar quando a planilha fechar.
+
+Onde paramos / proximo passo:
+- Bloqueado para revisar o schema: aguardando a planilha final do Plinio e a
+  confirmacao com o Julien de que ela atende o banco.
+- Bloqueado para integracao real: aguardando URL/credencial/doc da API Leads2b (painel
+  de revenda e envio de leads) e a pauta com o Leonardo para a ponte CRM-ERP.
+- Sem depender de terceiros, ainda da para avancar em: S03-03 (auth/login), S03-04
+  (front consumindo o Payload), S03-06 (persistencia de leads) e a captura UTM+GA.
+- Segue pendente a connection string do Supabase dev para bootar o /admin.
+
+---
+
+## 15/07/2026 13:59 BRT (quarta) -- nova realidade incorporada ao plano da Sprint 3
+
+Assumido, ate ter retorno, que "Cigan" e o ERP (decisao do Fabio; nome mantido nas
+docs). Incorporada a nova realidade da reuniao ao plano central e aos cards.
+
+Feito nesta sessao (so documentacao):
+- README da Sprint 3: secao "Atualizacao 15/07" com a arquitetura de integracao (Site
+  -> CRM Leads2b -> ERP/Cigan) e o modelo de produto validado (schema congelado ate a
+  planilha). Lista "o que fica de fora" ajustada (planilha do Plinio; API Leads2b;
+  e-mail; design). Tres cards novos adicionados a lista.
+- Cards existentes atualizados: S03-02 (em andamento, congelado ate a planilha, com o
+  delta), S03-03 (preco/estoque vem do CRM, nao do ERP; Revendedores vira colecao
+  auth), S03-04 (sequenciar: conteudo primeiro, Produtos/PDP so apos o schema fechar),
+  S03-05 (upsert por codigo Cigan; reconciliar template com a planilha), S03-06 (CRM
+  destino e o Leads2b; adapter real no S03-09; lead carrega UTM), S03-07 (SEO de
+  produto vive no produto; este card faz o estrutural).
+- Cards novos: S03-09 (integracao Leads2b, P0 bloqueado ate a API: revenda e envio de
+  leads), S03-10 (UTM + GA para lead scoring, P1), S03-11 (simular os campos novos na
+  PDP do wireframe, P1, acao da ata @Fabio).
+
+Onde paramos / proximo passo:
+- Trello: os 3 cards novos e as mudancas de status (S03-02 em andamento) sincronizam
+  com `pnpm trello:sync` quando o Fabio autorizar (toca o board externo).
+- Frentes sem terceiros: S03-03 (auth/login), S03-04 so nas colecoes de conteudo,
+  S03-06 (captura de leads com adapter stub), S03-10 (captura de UTM). Produto e PDP
+  seguem congelados ate a planilha; integracao real congelada ate a API Leads2b.
+- Segue pendente a connection string do Supabase dev para bootar o /admin.
+
+Trello sincronizado na mesma sessao: S03-02 movido para Em andamento; S03-09, S03-10 e
+S03-11 criados em A Fazer com checklist; 41 cards inalterados.
+
+---
+
+## 16/07/2026 14:55 BRT (quinta) -- MARCO: planilha real de produtos recebida e analisada
+
+O Fabio trouxe a planilha do cliente ("Planilha de produtos e suas especificacoes
+_06.2026", aba Especificacoes) junto com print e transcricao da gravacao do Plinio.
+Analisada linha a linha e cruzada com a ata de 14/07 e com o schema ja implementado.
+Confirma que valeu congelar o S03-02: a planilha tem 26 colunas que a ata nao citou.
+
+A planilha: ~190 produtos, 50 colunas em quatro blocos (7 flags de canal, 17 de
+conteudo/classificacao, 13 selos, 8 de logistica, 5 de impressao).
+
+Achados principais (spec completa reescrita em docs/modelo-produto.md):
+- CORRECAO: os dois codigos estavam invertidos na ata. `Codigo site` = 109 (comercial)
+  e `Codigo CIGAM` = MV01109 (integrador). "MV 01" e prefixo do CIGAM, nao do codigo do
+  site. O Plinio confirma na gravacao. O CIGAM embute o codigo do site (MV01+109
+  tradicional, MV02+109G Green, MV10+2003 IML).
+- BLOQUEIO NOVO: site e ERP nao tem a mesma granularidade. O CIGAM descarta o sufixo de
+  variacao do codigo do site: `233 CL` e `233 PB` sao dois produtos no site com o mesmo
+  CIGAM `MV01233`. Como o CIGAM e a chave de preco/estoque do CRM, nao da para marcar
+  como unique ate decidir se e variacao de um produto ou dois produtos no mesmo item do
+  ERP.
+- FALTAM na planilha, e nao foram citados na ata: imagens (nenhuma coluna), cores e
+  variacoes (nenhuma coluna) e video. Sao os bloqueios mais serios.
+- Isso reconcilia os 1200 SKUs: ~190 produtos x cores da a ordem de 1200. Produto nao e
+  SKU, e o import teria que gerar as variacoes.
+- BLOCOS NOVOS: 13 selos por produto (livre de BPA, 100% reciclado, logistica reversa,
+  fibra natural etc.), 8 campos de logistica (NCM, peso, caixa master) e 5 de impressao
+  (metodos e areas). Mudam a PDP e o filtro do catalogo.
+- A planilha e mestre de varios canais (SITE, BRINDICE, FREESHOP, brindes.com,
+  CATALOGO, TABELA REVENDA, TABELA B2B), nao so do nosso site. As flags viram
+  visibilidade do produto. A coluna SITE nao e boolean limpo: mistura `ok`,
+  `ok (370 ml)`, `S/COD` e `COD. 280`.
+- Categoria 1 mistura linha e funcao: nos Green/IML a categoria 1 e a LINHA e a funcao
+  cai para a 2 (Squeeze Green Fibras = Green Fibras / Squeezes / Infantil). Confirma a
+  necessidade das 3 categorias.
+- RESOLVIDO de graca: "Medalhas e Trofeus" NAO e linha ecologica (pendencia aberta
+  desde 30/06). O `ecologico=sim` so aparece nas linhas Green. O agrupamento do
+  wireframe e a regra `ehEcologico` do front estao errados e devem ser desfeitos.
+- Divergencia de volume entre nome e nota: 135 "Copo Roma Cristal 400mL" marcado como
+  370 ml; 406 "Super Bowl 500mL" como 475 ml. Afeta titulo e SEO.
+
+Feito nesta sessao (so documentacao, sem tocar em codigo do app):
+- docs/modelo-produto.md reescrito como spec completa (14 secoes), com a estrutura real
+  da planilha, os bloqueios, o delta vs o schema e vs o template de importacao.
+- Cards atualizados: S03-02 (segue congelado, agora por granularidade/imagens/cores, e
+  ganhou selos/logistica/impressao/flags de canal), S03-05 (template superado, chave de
+  upsert nao resolvida, regras de parsing), S03-11 (os 3 blocos novos mudam o escopo da
+  simulacao da PDP).
+- Texto de retorno tecnico preparado para o Fabio postar no Slack.
+
+Onde paramos / proximo passo:
+- Schema e migration seguem BLOQUEADOS: granularidade CL/PB, imagens, cores, confirmar
+  produto x cor e se a planilha 06.2026 e completa ou recorte.
+- Sem depender de terceiros, da para avancar em: S03-03 (auth/login), S03-04 nas
+  colecoes de conteudo (banners, categorias, campanhas, blog, cases, imprensa), S03-06
+  (captura de leads com adapter stub) e S03-10 (captura de UTM).
+- Segue pendente a connection string do Supabase dev para bootar o /admin (fecha o
+  S03-01 e valida o S03-02 de ponta a ponta).
+- Nada pushado. Branch feature/sprint-03-scaffold-backend acumula scaffold + colecoes +
+  docs.
+
+## 17/07/2026 12:44 BRT (sexta) -- DECISAO DO BANCO DE DEV ADIADA PARA 20/07 (segunda)
+
+Sessao curta, de verificacao. Nenhuma linha de codigo do app tocada.
+
+Verificado no repo (nao de memoria) se o projeto Supabase de dev ja existia. NAO EXISTE,
+e nunca foi criado. Evidencias:
+- backend/.env nao existe; so o .env.example, com a URI ficticia db.xxxxxxxx.supabase.co.
+- O .env da raiz (o do Trello) declara DATABASE_URI mas o valor esta vazio.
+- REGISTRO.md registra "pendente a connection string do Supabase dev" em cinco entradas.
+- S03-01 e S03-08 tem o item "projeto Supabase de dev (free) provisionado" desmarcado.
+O que esta documentado e a DECISAO de usar Supabase (docs/arquitetura-backend.md: free em
+dev, Pro US$ 25/mes na producao), nao a execucao dela.
+
+Ambiente: Docker instalado (29.5.2) mas com o daemon parado. Nenhum psql local.
+
+DECISAO EM ABERTO, o Fabio retoma na segunda 20/07/2026 (hoje ele esta em outro projeto
+atrasado). As tres opcoes na mesa, na ordem em que recomendo:
+1. Criar o projeto Supabase free de dev e me passar a connection string (Project Settings
+   > Database > Connection string, modo URI). Mesmo esforco do Docker e, alem de validar
+   o schema, FECHA o S03-01. Eu monto o backend/.env local (gitignored), boto o /admin de
+   pe e valido as 10 colecoes do S03-02 de ponta a ponta.
+2. Subir o Docker Desktop e eu rodo um Postgres 16 em container. Valida o schema do
+   S03-02, mas o S03-01 continua aberto e o boot teria que ser refeito no Supabase.
+3. Seguir sem banco no S03-10 (captura de UTM). Front puro, testavel no browser, mas
+   S03-01 e S03-02 seguem sem validacao.
+
+Onde paramos / proximo passo:
+- Retomar a decisao acima na segunda 20/07/2026. Tudo o mais do backend depende dela.
+- Schema e migration seguem BLOQUEADOS por terceiros: granularidade CL/PB, imagens,
+  cores (ver docs/modelo-produto.md). Integracao S03-09 sem a API do Leads2b. Design
+  S01-14 sem o brandbook.
+- Nada pushado. Branch feature/sprint-03-scaffold-backend acumula scaffold + colecoes +
+  docs.
+
+## 21/07/2026 19:24 BRT (terca) -- S03-11: PDP-modelo simulada no wireframe (Squeeze 300 mL, Versao A)
+
+Frente de aparencia, front puro, sem depender do banco. O Fabio trouxe o doc de conteudo
+da pagina de produto (renomeado para docs/pdp-modelo-squeeze.md) e, na sequencia, o
+fluxograma de estrutura da PDP. Escolhida a Versao A (honesta), coerente com o doc e com
+desfazer o "Medalhas = ecologico".
+
+Feito:
+- types.ts: tipo ProdutoDetalhe opcional no Produto (so o produto-modelo preenche no
+  wireframe; na producao vira schema do Payload).
+- produtos.ts: novo produto squeeze-300ml-personalizado com o conteudo da Versao A.
+- ProdutoDetalheView.tsx (novo): blocos abertura, Especificacoes, Beneficios, Ideal para,
+  Descricao completa com "ver mais", Diferenciais, Selos, FAQ e box de pendencias.
+- ProdutoView.tsx: linha curta sob o H1.
+- produto/[slug]/page.tsx: pluga o bloco e liga title tag/meta description da Versao A.
+- Os 3 itens [PLINIO] (material PEAD+PEBD vs PP, MOQ 500 vs 100, prazo) marcados
+  "a confirmar" no FAQ e no box de pendencias.
+
+Typecheck e lint verdes. Fabio validou no browser (regra 27 satisfeita) e autorizou o
+push. Nada mergeado na master ainda (segue o fluxo branch > PR > merge).
+
+Pendencia aberta do cliente (reuniao 21/07, Julien e Plinio): o CODIGO DO SITE tem que
+aparecer na PDP e o codigo CIGAM (integrador do CRM) fica escondido. O build atual NAO
+mostra o codigo do site ainda; falta o campo codigoSite visivel e o valor do Squeeze.
+Proximo passo dessa frente.
+
+Onde paramos / proximo passo:
+- Adicionar codigoSite visivel na PDP (CIGAM escondido) quando o Fabio passar o codigo.
+- Decisao do banco de dev (Supabase free vs Postgres local vs seguir sem banco) segue
+  em aberto, e trava todo o resto do backend (S03-01, S03-02, schema do S03-11).

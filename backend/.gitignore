@@ -1,0 +1,20 @@
+# deps
+node_modules
+
+# next / build
+.next/
+build/
+dist/
+
+# env (nunca commitar segredos; .env.example fica versionado)
+.env
+.env.*
+!.env.example
+
+# uploads locais (storage de disco em dev; em prod vao pro R2)
+/media/
+/uploads/
+
+# logs / os
+*.log
+.DS_Store

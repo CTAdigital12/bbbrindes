@@ -3,7 +3,7 @@
 Status: a fazer
 Frente: frontend
 Prioridade: P1
-Atualizado: 09/07/2026 BRT
+Atualizado: 15/07/2026 BRT
 
 ## Descricao
 Colocar a base tecnica de SEO que e so codigo e depende das rotas que ja existem:
@@ -21,3 +21,9 @@ com o ambiente de producao.
 ## Observacoes
 Multiplos dominios/LPs (~70) e estrutura para midia paga ficam para quando houver o
 dominio de producao. Ver docs/arquitetura-backend.md.
+
+## Atualizacao 15/07/2026
+Divisao de responsabilidade: o SEO por produto (palavra chave, meta description,
+descricoes) vive na colecao Produtos (S03-02, validado com o cliente). Este card
+consome esses campos e cuida do SEO estrutural do site (sitemap, robots, JSON-LD,
+Open Graph, canonical). Ver docs/modelo-produto.md.

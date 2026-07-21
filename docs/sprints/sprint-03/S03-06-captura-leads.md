@@ -3,7 +3,7 @@
 Status: a fazer
 Frente: backend
 Prioridade: P0
-Atualizado: 09/07/2026 BRT
+Atualizado: 15/07/2026 BRT
 
 ## Descricao
 Backend que recebe, valida e persiste os leads dos dois formularios (orcamento B2B e
@@ -22,3 +22,9 @@ os provedores forem definidos.
 ## Observacoes
 LGPD: coletar o minimo, nunca logar PII completa. O envio real ao CRM e o e-mail sao
 Sprint seguinte, quando os provedores estiverem definidos.
+
+## Atualizacao 15/07/2026
+O CRM destino e o Leads2b (confirmado na reuniao). Este card faz a captura, a
+validacao, a persistencia e a interface de envio (adapter com stub). O adapter real do
+Leads2b fica no S03-09 (aguarda a API). O lead deve carregar os dados de origem
+(UTM/GA) para o lead scoring no CRM, capturados no S03-10.

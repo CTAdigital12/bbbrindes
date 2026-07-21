@@ -15,8 +15,29 @@ Imagens enviadas pelo Plinio e hospedadas por nos; carga inicial via migration.
    dinamico".
 3. Banco: Postgres. Metadado de produto e pequeno (poucos MB para 1200 SKUs).
 4. Imagens: object storage dedicado, pelo adapter de storage do Payload.
-5. Chave de integracao: SKU. O cadastro no painel cria o produto; o ERP casa por
-   SKU so para preco e estoque; o import nao sobrescreve o conteudo editorial/SEO.
+5. Integracao: o site conversa somente com o CRM (Leads2b), que se alimenta do ERP.
+   Nao ha integracao direta site-ERP (ver secao "Integracao Site x CRM x ERP"). O
+   cadastro no painel cria o conteudo editorial/SEO; a integracao nao o sobrescreve.
+
+## Integracao Site x CRM x ERP (fechado 14/07/2026)
+
+Definido em reuniao (Julien + Plinio; base validada antes com Leonardo Libona e
+Thiago). Fluxo oficial e unico:
+
+1. Site -> CRM (Leads2b) -> ERP. O site e o painel de revenda conversam SOMENTE com
+   o CRM (Leads2b). O CRM se alimenta do ERP. Nao implementar integracao direta
+   site-ERP.
+2. O que vem do CRM: preco, estoque, fechamento de pedido e historico do painel de
+   revenda; e o destino dos leads dos formularios do site (orcamento, SAC, contato).
+3. Chave de integracao: o codigo Cigan (integrador), o mesmo do CRM/ERP. O produto
+   tem ainda um codigo do site (comercial/visual, ex.: "MV 01"). O Plinio esta
+   unificando os codigos para que um so sirva site, CRM e ERP (por isso a planilha
+   atrasa). Ver docs/modelo-produto.md.
+4. Captura de interacoes: UTM e tagueamento GA do site vao alimentar o lead scoring
+   no CRM.
+5. Pendencias: a URL/credencial e a doc da API Leads2b ainda nao chegaram; sem elas o
+   painel de revenda e o envio de leads seguem mock. Falta a pauta formal com o
+   Leonardo para os detalhes da ponte CRM-ERP.
 
 ## A questao das imagens (o ponto principal)
 
