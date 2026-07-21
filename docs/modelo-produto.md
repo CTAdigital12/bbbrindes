@@ -9,6 +9,11 @@ Fluxo de integracao relacionado: ver docs/arquitetura-backend.md, secao "Integra
 Site x CRM x ERP". Resumo: Site -> CRM (Leads2b) -> ERP (Cigan/CIGAM), sem integracao
 direta com o ERP; preco e estoque vem do CRM.
 
+Navegacao, datas comemorativas e LPs de campanha: ver docs/taxonomia-navegacao-seo.md.
+Resumo: categoria (tipo de produto) e diferente de tag/ocasiao (data, feira,
+aniversario) e de LP de campanha (pagina com slug para ranquear). Filtro por tag nao
+muda o slug.
+
 Status: o schema do Payload (S03-02) segue CONGELADO. A planilha destravou a maior
 parte do modelo, mas tres pontos ainda bloqueiam: granularidade do produto (ver
 secao 3), imagens e cores (ver secao 5).
@@ -118,12 +123,27 @@ Nenhum destes foi citado na ata e nenhum existe na planilha:
    trocar a cor e o catalogo lista as cores. E a lacuna mais seria.
 3. Video. O Plinio pediu video na PDP e nao ha coluna.
 
+Atualizacao 21/07/2026 (reuniao Plinio/Julien): o MODELO de imagem e de variacao ficou
+definido, mesmo sem os arquivos e a planilha de cor terem chegado. O Plinio vai subir os
+produtos com variacoes depois, direto no banco. Regras validadas:
+
+1. Imagens por produto: a imagem 1 e a que muda ao trocar a cor (foto do produto na
+   cor); a imagem 2 e ambientada (lifestyle), fixa. O schema precisa de imagem por cor
+   (item 1 abaixo) mais um slot de imagem ambientada.
+2. SKU por cor: hoje o cadastro e por produto; vai evoluir para SKU por cor, com
+   codificacao base + variacao numerica de tom (codigo base do produto + sufixo de
+   tom). E a fonte de cor que faltava na secao 6 e no bloqueio de cores.
+
+Continua faltando: os arquivos de imagem, a convencao de nome casando com o codigo, e a
+planilha/coluna onde as cores e os tons vivem. O modelo esta definido; o dado, nao.
+
 ## 6. Produto nao e SKU: a conta dos 1200
 
 A planilha tem menos de 200 produtos e o escopo sempre falou em ~1200 SKUs. Leitura
-provavel: ~190 produtos x cores por produto da a ordem de 1200. Se confirmado, o
-import precisa gerar as variacoes a partir de uma fonte de cor que ainda nao existe, e
-reforca o bloqueio da secao 5.
+provavel: ~190 produtos x cores por produto da a ordem de 1200. A reuniao de 21/07
+confirma a direcao: a evolucao e para SKU por cor (codigo base + variacao numerica de
+tom; ver secao 5). O import gera as variacoes a partir dessa fonte de cor, que o Plinio
+vai subir depois no banco. Segue pendente o dado de cor em si.
 
 ## 7. As 7 flags de canal mudam o modelo
 
@@ -202,6 +222,10 @@ O S03-02 foi implementado antes da reuniao. Ajustes pendentes:
 9. Grupo `erp` (preco, estoque) -> reenquadrar como integracao via CRM (Leads2b).
 10. SEO por produto entra aqui, no S03-02. A S03-07 fica so com o SEO estrutural do
     site (sitemap, robots, JSON-LD, canonical).
+11. Adicionar `ocasioes` (relacao multipla de tags: datas comemorativas, feiras,
+    aniversario de empresa), distinta de `categorias`. Ver docs/taxonomia-navegacao-seo.md.
+12. Imagem por cor (variacao) mais um slot de imagem ambientada; SKU por cor com codigo
+    base + sufixo de tom. Ver secao 5.
 
 ## 12. Delta vs o template de importacao (docs/importacao-catalogo)
 

@@ -48,3 +48,14 @@ Impactos diretos neste card (detalhe em docs/modelo-produto.md):
    palavras chave SEO vem separadas por virgula. O parser precisa quebrar por \n e por
    virgula, respectivamente.
 6. Importar apenas linhas com a flag SITE preenchida.
+
+## Atualizacao 21/07/2026 (SKU por cor e imagens)
+Reuniao definiu o modelo de variacao que faltava para o import (detalhe em
+docs/modelo-produto.md, secao 5):
+1. Evolucao para SKU por cor: codigo base do produto + variacao numerica de tom. E a
+   fonte de cor que o import precisava para gerar as variacoes (secao 6). O Plinio vai
+   subir os produtos com variacoes depois, direto no banco.
+2. Imagens: imagem 1 muda com a cor (foto do produto na cor), imagem 2 e ambientada
+   (fixa). O casamento de imagem por codigo passa a ser por SKU/cor, nao so por produto.
+3. Segue faltando o dado: arquivos de imagem, convencao de nome e a planilha/coluna de
+   cor e tom. O modelo esta definido, o dado nao.

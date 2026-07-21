@@ -27,3 +27,14 @@ Divisao de responsabilidade: o SEO por produto (palavra chave, meta description,
 descricoes) vive na colecao Produtos (S03-02, validado com o cliente). Este card
 consome esses campos e cuida do SEO estrutural do site (sitemap, robots, JSON-LD,
 Open Graph, canonical). Ver docs/modelo-produto.md.
+
+## Atualizacao 21/07/2026 (taxonomia e LPs)
+Decisao de navegacao e SEO registrada em docs/taxonomia-navegacao-seo.md, e afeta este
+card:
+1. Filtro por tag/ocasiao (datas comemorativas) NAO gera slug indexavel. No maximo query
+   param, com noindex nas facetas, para nao criar paginas rasas.
+2. LP de campanha e o que tem slug proprio, keyword-rich no topo (/brindes-de-natal, nao
+   /campanha/natal). Subconjunto curado de ocasioes, nao todas as datas.
+3. O sitemap deve incluir as LPs de campanha e as rotas reais, e excluir as combinacoes
+   de filtro. Renomear os slugs de campanha e uma tarefa de front separada (validacao no
+   browser).

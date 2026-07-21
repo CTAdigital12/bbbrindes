@@ -699,3 +699,42 @@ Onde paramos / proximo passo:
 - Adicionar codigoSite visivel na PDP (CIGAM escondido) quando o Fabio passar o codigo.
 - Decisao do banco de dev (Supabase free vs Postgres local vs seguir sem banco) segue
   em aberto, e trava todo o resto do backend (S03-01, S03-02, schema do S03-11).
+
+## 21/07/2026 21:31 BRT (terca) -- Taxonomia de navegacao, datas comemorativas e LPs (so docs)
+
+Sessao de registro, sem tocar em codigo do app. O Fabio trouxe da reuniao (Plinio,
+Julien) o modelo de LP (/brindes-de-natal), a planilha de datas comemorativas (GERAL
+B2B do MKT) e decisoes de navegacao. Antes disso, nesta mesma sessao, a PDP-modelo
+(S03-11) foi mergeada via PR #27 e publicada no Pages.
+
+Pergunta central da reuniao (slug muda ao filtrar?) respondida com base no codigo: NAO.
+O filtro do catalogo e estado client e nao altera a URL. Quem tem slug e a LP de
+campanha (/campanha/[slug], ja existe). Os dois mecanismos sao diferentes.
+
+Decisoes registradas em docs/taxonomia-navegacao-seo.md (novo):
+1. Tres conceitos separados: categoria (tipo de produto) x tag/ocasiao (data, feira,
+   aniversario) x LP de campanha (pagina com slug para ranquear).
+2. Filtro por tag NAO gera slug indexavel (evita facetas rasas; noindex). Ocasiao vira
+   query param no maximo.
+3. LP de campanha com slug keyword-rich no topo (/brindes-de-natal, nao /campanha/natal).
+   Subconjunto curado: Natal (estrela), eventos, kits-corporativos, dia-das-maes,
+   dia-dos-pais, dia-do-cliente.
+4. Feiras corporativas e aniversario de empresa sao tag/ocasiao, nao categoria
+   (recomendacao minha, contra a fala da ata; pendente de aceite do Plinio).
+5. Tabela das 21 datas comemorativas com a data de "soltar campanha" (~2 meses antes).
+
+Tambem atualizado docs/modelo-produto.md (secoes 5, 6, 11): modelo de imagem (imagem 1
+muda com a cor, imagem 2 ambientada) e SKU por cor (codigo base + variacao de tom), que
+o Plinio vai subir depois no banco. O modelo ficou definido; o dado (arquivos, coluna de
+cor) segue faltando.
+
+Cards atualizados: S03-07 (SEO: LPs no sitemap, filtro sem slug), S03-05 (SKU por cor e
+casamento de imagem por cor), S03-11 (Versao A no ar; pendente codigo do site na PDP e
+galeria imagem-por-cor).
+
+Onde paramos / proximo passo:
+- Branch docs/taxonomia-catalogo-e-datas com estes docs, aguardando push/PR (nao pushado).
+- Front-puro fazivel sem banco: exibir o codigo do site na PDP (falta o valor do Squeeze),
+  renomear slugs de campanha para keyword-rich e plugar o layout de LP (com validacao no
+  browser). Nada disso feito ainda.
+- Schema (S03-02) segue congelado ate a decisao do banco de dev, que continua em aberto.

@@ -43,3 +43,18 @@ nao vai para o site. O `subtitulo` da planilha e texto longo (uma ou duas frases
 frase curta, o que muda a hierarquia visual proposta. O argumento comercial segue
 interno. Da para comecar com mock, mas a arte dos selos e o layout final dependem do
 design e da analista de conteudo.
+
+## Atualizacao 21/07/2026 (simulacao Versao A no ar)
+Feito e publicado no Pages (via PR #27): a PDP-modelo do Squeeze 300 mL na Versao A de
+docs/pdp-modelo-squeeze.md, com linha curta, abertura, Especificacoes, Beneficios, Ideal
+para, Descricao completa com "ver mais", Diferenciais, Selos, FAQ e box de pendencias.
+Validada no browser pelo Fabio (regra 27). URL:
+https://ctadigital12.github.io/bbbrindes/produto/squeeze-300ml-personalizado/
+
+Pendencias desta frente:
+1. Exibir o codigo do site na PDP e esconder o CIGAM (pedido de 21/07, Julien e Plinio).
+   Ainda nao esta no ar. Falta o valor do codigo do site do Squeeze.
+2. Galeria: imagem 1 muda com a cor, imagem 2 ambientada (modelo de 21/07). Hoje a
+   galeria so troca a cor de fundo; vira imagem real por cor. Depende do schema (S03-02)
+   e dos arquivos.
+3. Versao A vs B ainda depende de ratificacao do Plinio.
