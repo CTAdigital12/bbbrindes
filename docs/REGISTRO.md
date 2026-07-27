@@ -699,3 +699,33 @@ Onde paramos / proximo passo:
 - Adicionar codigoSite visivel na PDP (CIGAM escondido) quando o Fabio passar o codigo.
 - Decisao do banco de dev (Supabase free vs Postgres local vs seguir sem banco) segue
   em aberto, e trava todo o resto do backend (S03-01, S03-02, schema do S03-11).
+
+## 23/07/2026 (quarta) -- MARCO: decisao do banco confirmada (construir do zero) e infra do grupo
+
+O Fabio trouxe da reuniao a decisao do banco, que encerra o impasse parado desde 20/07.
+
+1. NAO reaproveitar banco. O atual e o do NopCommerce, que serve os 5 sites do grupo e
+   nao fala com o CRM. Construir tudo do zero e desativar o NopCommerce. Confirma a stack
+   (Payload sobre Postgres, falando via API com o Leads2b). Some a ideia de "auditar o
+   banco existente": nao precisamos de acesso ao NopCommerce.
+2. Infra do grupo: cloud Gilix (Plinio chama de "nossa Amazon"), contato tecnico Igor,
+   que abriria acesso e o time do Grupo BB instalaria o que pedirmos.
+3. Recomendacao (aceita pelo Fabio): dev e homologacao A PARTE na nossa infra (Cloudflare
+   + Supabase + R2), para destravar agora sem depender do Igor; producao na Gilix so no
+   go-live e sob condicoes.
+4. RISCO sinalizado: citaram MySQL, que nao e adapter do Payload. No caminho Gilix tem
+   que ser Postgres, mais host Node, storage S3, SSL, segredos e backup. A lista de specs
+   que o Igor pediu esta incompleta e com o tipo de banco errado; so seria necessaria se
+   formos para a Gilix.
+
+Detalhe em docs/arquitetura-backend.md, secao "Decisao de banco e infra".
+
+Tambem nesta sessao (front, em branches e PRs abertos, aguardando revisao/merge do Fabio):
+- PR #28 fix/next-security-cve: bump Next 15.1.6 -> 15.5.21 (CVE-2025-66478).
+- PR #29 chore/frontend-cart-tests: harness vitest + 9 testes do carrinho.
+- PR #30 feature/sprint-03-seo-estrutural: sitemap, robots, JSON-LD, OG, canonical (S03-07).
+- PR #31 docs/taxonomia-catalogo-e-datas: taxonomia categoria/tag/LP e datas comemorativas.
+- PR #32 docs/decisao-banco-do-zero: este registro.
+
+Proximo passo real do backend: criar o projeto Supabase (dev) na nossa conta, agora que a
+decisao "a parte" destrava o S03-01 sem depender de terceiros.
