@@ -9,6 +9,11 @@ const pkg = JSON.parse(readFileSync(new URL("./package.json", import.meta.url), 
 // Em dev/local (sem a env) o site roda na raiz normalmente.
 const basePath = process.env.PAGES_BASE_PATH || "";
 
+// Origin absoluto para SEO (sitemap, canonical, Open Graph). Em producao,
+// definir NEXT_PUBLIC_SITE_URL com o dominio real. O default aponta para o
+// GitHub Pages, onde o wireframe esta publicado hoje.
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://ctadigital12.github.io";
+
 const nextConfig = {
   reactStrictMode: true,
   // Export estatico: gera HTML/CSS/JS prontos para hospedar no Pages.
@@ -20,6 +25,7 @@ const nextConfig = {
   // Expoe basePath e versao para o client (links/wa.me, rodape).
   env: {
     NEXT_PUBLIC_BASE_PATH: basePath,
+    NEXT_PUBLIC_SITE_URL: siteUrl,
     NEXT_PUBLIC_APP_VERSION: pkg.version,
   },
 };
