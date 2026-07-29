@@ -120,6 +120,36 @@ Neon (ou Supabase Pro) para Postgres, Cloudflare R2 para imagens, Cloudflare
 Pages/Workers para hospedar, Payload 3 sobre Next 15 com ISR. Comeca em free tier e
 escala com custo baixo e previsivel, com egress de imagem sempre proximo de zero.
 
+## Decisao de banco e infra (confirmada 23/07/2026)
+
+Reafirma e encerra o impasse que estava parado desde 20/07 (auditar ou nao o banco
+existente).
+
+1. NAO reaproveitar banco nenhum. O banco atual e o do NopCommerce, plataforma que hoje
+   faz a leitura dos 5 sites do grupo que estao no ar. Ele tem painel de admin proprio,
+   mas nao tem logica para conversar com o CRM.
+2. Construir tudo do zero (decisao ja tomada desde o inicio do projeto) e desativar o
+   site atual em NopCommerce. A estrutura nova fala via API com a ferramenta de captura
+   de leads (Leads2b). Confirma a stack ja decidida: Payload 3 sobre Postgres.
+3. Consequencia pratica: some a necessidade de "acesso para auditar o banco existente".
+   Nao precisamos de acesso ao NopCommerce.
+
+Onde a estrutura nova vai morar, dois caminhos:
+
+1. A PARTE, na nossa infra (Cloudflare + Supabase Postgres + R2), como ja decidido acima.
+   Recomendado para dev e homologacao: destrava agora, sem depender de terceiros, casa
+   com a stack (Postgres) e mantem o controle de seguranca/LGPD.
+2. Na cloud do grupo, a Gilix (o Plinio compara a "nossa Amazon"), provisionada pelo
+   time tecnico do Grupo BB. Contato tecnico: Igor (abre acesso e instala o que
+   pedirmos).
+
+RISCO a vigiar no caminho Gilix: citaram MySQL como tipo de banco. MySQL NAO e adapter
+suportado pelo Payload (usamos db-postgres; o scaffold ja aponta para Postgres). Se algum
+dia a producao for para a Gilix, tem que ser PostgreSQL, nao MySQL, e um host de
+aplicacao Node.js (nao so um banco), mais armazenamento de objetos S3-compativel, SSL,
+gestao de segredos e backup automatico. Recomendacao: dev/homolog a parte agora;
+discutir producao na Gilix so no go-live, sob essas condicoes.
+
 ## Fontes
 
 1. Supabase Pricing: https://supabase.com/pricing
