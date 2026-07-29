@@ -12,9 +12,7 @@ export default function ProdutoDetalheView({ detalhe }: { detalhe: ProdutoDetalh
 
   return (
     <section className="mt-10 space-y-10 border-t border-wf-line pt-8">
-      {/* Abertura */}
-      <p className="max-w-3xl text-sm leading-relaxed text-wf-text">{detalhe.abertura}</p>
-
+      {/* A abertura foi movida para baixo do botao de orcamento (ProdutoView, revisao Plinio) */}
       <div className="grid gap-10 lg:grid-cols-2">
         {/* Especificacoes */}
         <div>

@@ -167,6 +167,11 @@ export default function ProdutoView({ produto }: { produto: Produto }) {
         <p className="text-xs text-wf-muted">
           Sem pagamento online. Voce monta o orcamento e um vendedor entra em contato.
         </p>
+
+        {/* Descricao curta (abertura) abaixo do botao de orcamento (revisao Plinio) */}
+        {produto.detalhe && (
+          <p className="text-sm leading-relaxed text-wf-text">{produto.detalhe.abertura}</p>
+        )}
       </div>
     </div>
   );
