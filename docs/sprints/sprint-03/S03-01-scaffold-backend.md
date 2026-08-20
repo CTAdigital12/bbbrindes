@@ -21,3 +21,10 @@ todo o resto.
 ## Observacoes
 Segredos (Supabase, R2) so no .env local, nunca no repo (CLAUDE.md regra 14).
 Referencia: docs/arquitetura-backend.md.
+
+## Atualizacao 23/07/2026 (banco confirmado, DESTRAVADO)
+O Julien confirmou "vamos seguir com o banco via Supabase mesmo". A decisao "a parte"
+foi aceita, entao o boot do /admin nao depende mais de terceiros. Proximo passo: criar
+o projeto Supabase de dev na nossa conta, por a connection string no backend/.env local
+e subir o /admin. Isso fecha o S03-01 e valida o S03-02 de ponta a ponta.
+Ver docs/arquitetura-backend.md, secao "Decisao de banco e infra".
