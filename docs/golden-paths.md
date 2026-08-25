@@ -7,6 +7,23 @@ do cliente. Alimenta os cards S03-03 (auth), S03-04 (front), S03-06 (leads) e S0
 define o que da para construir agora e o que espera a integracao Leads2b (ver
 docs/integracao-leads2b.md).
 
+## 0. Quem loga (escopo de autenticacao)
+
+Apenas REVENDEDOR e ADMIN tem login. O CLIENTE FINAL NAO loga e NAO cria conta.
+Confirmado por quatro fontes:
+1. PERGUNTAS ECOMMERCE.md: a pergunta "login de clientes?" e respondida escopando login
+   so para a revenda ("Precisa ter login para o painel de compras da revenda").
+2. Golden path (cliente final): "Sem criacao de conta. Meta explicita: jornada de menos
+   de 3 minutos".
+3. CLAUDE.md: cliente monta o carrinho e envia orcamento por formulario; "Area de
+   revendedor com login".
+4. Wireframe: so existe /revendedor/login; a pagina de orcamento nao tem auth.
+
+Cuidado de vocabulario: nos requisitos, "para fazer o pedido precisa do cadastro
+obrigatoriamente, nome, telefone, email e nome da empresa" quer dizer PREENCHER os dados
+obrigatorios no formulario, NAO criar conta nem logar. O cliente informa os dados, o lead
+vai para o CRM, e acabou. Isso define o escopo do S03-03: auth so para revendedor e admin.
+
 ## 1. Revendedor: virar revendedor (cadastro)
 
 Gatilho: chega na pagina institucional de Revendedores (banner + numeros + beneficios)

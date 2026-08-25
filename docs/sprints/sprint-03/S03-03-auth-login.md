@@ -35,3 +35,9 @@ Regras dos golden paths (docs/golden-paths.md) que entram neste card:
    cores, tags) e Marketing Frontend (banners, fotos), mais a aprovacao de revendedor.
 Buildable JA (backend no ar): auth do revendedor e do admin, protecao de rota. Preco e
 estoque seguem placeholder ate a integracao (S03-09).
+
+## Atualizacao 23/07/2026 (escopo confirmado: so revendedor e admin logam)
+Confirmado contra requisitos, golden path, CLAUDE.md e wireframe: o CLIENTE FINAL NAO
+loga e NAO cria conta (orcamento e formulario anonimo). Auth so para revendedor e admin.
+"Cadastro" nos requisitos = preencher os dados do formulario, nao criar conta. Ver
+docs/golden-paths.md secao 0.
