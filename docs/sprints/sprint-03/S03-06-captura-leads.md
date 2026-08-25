@@ -37,3 +37,13 @@ retornado pelo CRM, status entregue/falhou/reenviado), com minimo de PII. Para r
 payload existe so ate a entrega (curta duracao), depois so o registro minimo de auditoria.
 Isso simplifica o card e ajuda na LGPD. O adapter stub segue valido. Detalhe do desenho e
 do endpoint em docs/integracao-leads2b.md.
+
+## Atualizacao 23/07/2026 (formulario "Quero ser revendedor")
+Alem de orcamento e SAC, entra a captura da solicitacao de revenda (golden path, ver
+docs/golden-paths.md):
+1. Formulario "Quero ser revendedor" com CNPJ, inscricao estadual, nome fantasia, razao
+   social, cidade/UF, site, WhatsApp, e-mail, endereco.
+2. Vira lead na Leads2b num FUNIL NOVO, tags origem-site-cadastro-sobrindes +
+   interesse-revenda. Aprovacao manual (Elieser), prazo 24h.
+3. Mesmo desenho dos demais leads: entrega ao CRM + log de entrega, SEM armazenar. O
+   envio real espera token/endpoint (Fase 1, S03-09); form + log + adapter stub da agora.

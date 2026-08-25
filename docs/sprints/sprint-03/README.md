@@ -54,6 +54,7 @@ Prioridade P0 = fundacao, destrava o resto. P1 = importante, nao bloqueia.
 - [S03-09](S03-09-integracao-leads2b.md) (P0, bloqueado) Integracao Leads2b (CRM): revenda e envio de leads
 - [S03-10](S03-10-utm-ga-lead-scoring.md) (P1) UTM + tagueamento GA para lead scoring
 - [S03-11](S03-11-pdp-campos-novos.md) (P1) Simular os campos novos na PDP do wireframe
+- [S03-12](S03-12-portal-revendedor-pre-pedido.md) (P1) Portal do revendedor (pre-pedido)
 
 ## Criterio de pronto
 
@@ -62,3 +63,32 @@ revendedor, o site lendo dados do Payload em vez do mock, captura de leads
 persistida e SEO estrutural gerado. Sem lint/typecheck/build quebrados (CLAUDE.md
 regra 20). Funcionalidade critica (orcamento, login de revendedor, captura de lead)
 com teste minimo (regra 19).
+
+## Atualizacao 23/07/2026 (backend no ar + golden paths: ordem de execucao)
+
+Dois marcos mudam a ordem:
+1. Banco confirmado (Supabase) e o /admin do Payload SUBIU conectado ao Supabase, com o
+   schema das 10 colecoes criado. O S03-01 fechou e o S03-02 esta validado no nivel de
+   schema. Isso destrava tudo que dependia do banco.
+2. Golden paths do revendedor e do administrador documentados em docs/golden-paths.md, e
+   incorporados aos cards S03-03, S03-04, S03-06 e no novo S03-12.
+
+Ordem para codar agora (sem depender do Plinio nem da integracao):
+1. S03-03 auth: Revendedores como colecao auth (acesso unico por empresa, campo `nivel`
+   1 a 4, aprovar-e-atribuir-tabela no mesmo passo); admin do Payload protegido.
+2. S03-04 conteudo: front lendo as colecoes de conteudo (home, banners, categorias,
+   campanhas, blog, cases, imprensa) e a pagina institucional de Revendedores. Produtos e
+   PDP esperam o schema fechar.
+3. S03-06 leads: formularios de orcamento, SAC e "Quero ser revendedor" gravando via
+   adapter stub + log de entrega (sem armazenar). Envio real ao Leads2b e Fase 1.
+4. S03-12 shell do portal do revendedor: navegacao + estoque por cor + "FAZER PEDIDO"
+   como pre-pedido, com preco/estoque/NF/rastreamento em placeholder.
+
+Espera a integracao Leads2b (Fase 1, token + endpoint): envio real de leads, funil de
+revenda, e os dados transacionais do portal (preco por tabela, estoque, NF, rastreamento).
+
+Espera o Plinio: schema de Produto (granularidade, imagens, cores) e, portanto, a fiacao
+de Produtos/PDP e a migration (S03-05).
+
+Pendencia a confirmar com o Julien: se o financeiro (boleto, limite, saldo) entra na v1
+do portal (ver docs/golden-paths.md, secao 4).
