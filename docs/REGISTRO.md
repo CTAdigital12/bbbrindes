@@ -768,3 +768,34 @@ Tambem nesta sessao (front, em branches e PRs abertos, aguardando revisao/merge 
 
 Proximo passo real do backend: criar o projeto Supabase (dev) na nossa conta, agora que a
 decisao "a parte" destrava o S03-01 sem depender de terceiros.
+
+## 23/07/2026 (quarta) -- Plano de integracao Leads2b e respostas do Julien (so docs)
+
+Estudada a doc oficial do Leads2b (https://developers.leads2b.dev) e criado o plano em
+docs/integracao-leads2b.md. Confirmado: auth Bearer token gerado na UI do Leads2b, base
+https://api.leads2b.com/ (v1/v2), recursos incluem Leads/Oportunidades/Orcamentos,
+webhooks so de saida e sem verificacao de assinatura documentada. LACUNA: nao deu para
+extrair o endpoint exato de criar lead (spec grande); resolver abrindo openapi.html no
+navegador, com token, ou via suporte. Mapeamento recomendado: orcamento vira LEAD com os
+itens do carrinho em observacao.
+
+Respostas do Julien (as perguntas que o Fabio mandou), incorporadas aos planos:
+1. Orcamento NAO precisa ser armazenado no nosso banco, DESDE QUE tenha log de entrega.
+   O CRM e o dono do dado; o site so entrega e registra a entrega. Muda o S03-06 e o
+   plano do S03-09 (ver docs/integracao-leads2b.md).
+2. NopCommerce e painel/banco unico, multi-loja (cada site e uma loja; escolhem onde
+   publicar). Contexto de escopo/handover; hoje so a BB Brindes.
+3. Painel de admin 100% administrado pela BB, sem terceiro. Eles vao operar o admin do
+   Payload direto.
+4. Print do admin atual vem depois (basicamente CRUD). Referencia de UX.
+5. BANCO CONFIRMADO: "vamos seguir com o banco via Supabase mesmo". Destrava o S03-01.
+
+Cards atualizados: S03-01 (Supabase confirmado, destravado), S03-06 (log de entrega),
+S03-09 (plano criado). docs/arquitetura-backend.md atualizado (Supabase confirmado +
+contexto NopCommerce).
+
+Onde paramos / proximo passo:
+- Branch docs/leads2b-e-respostas-julien, aguardando push/PR.
+- PROXIMO PASSO REAL DO BACKEND: criar o projeto Supabase de dev na nossa conta e subir
+  o /admin. Fecha o S03-01 e valida o S03-02. Nao depende mais de terceiros.
+- Para a Fase 1 do Leads2b: token da conta do cliente e confirmar sandbox.

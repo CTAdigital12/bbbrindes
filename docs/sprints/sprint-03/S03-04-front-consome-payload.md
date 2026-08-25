@@ -28,3 +28,11 @@ blog, cases, imprensa) tem schema estavel e podem ser ligadas ja. A fiacao de Pr
 e da PDP espera o schema de produto fechar (planilha do Plinio, ver S03-02 e
 docs/modelo-produto.md), porque os campos novos (dois codigos, headline, SEO,
 categorias multiplas) mudam a leitura. Comecar pelo conteudo evita retrabalho.
+
+## Atualizacao 23/07/2026 (paginas do revendedor)
+Os golden paths (docs/golden-paths.md) detalham duas telas do revendedor:
+1. Pagina institucional de Revendedores (proposta + botao "Quero ser revendedor"):
+   conteudo do Payload, buildable agora.
+2. Shell do portal do revendedor: navegacao igual a do cliente final + painel de estoque
+   por cor + botao "FAZER PEDIDO". O shell da para montar; preco/estoque/NF/rastreamento
+   vem do CRM/ERP (ver S03-12), placeholder ate a integracao.

@@ -150,6 +150,21 @@ aplicacao Node.js (nao so um banco), mais armazenamento de objetos S3-compativel
 gestao de segredos e backup automatico. Recomendacao: dev/homolog a parte agora;
 discutir producao na Gilix so no go-live, sob essas condicoes.
 
+CONFIRMADO em 23/07/2026 (Julien): "vamos seguir com o banco de dados via Supabase
+mesmo". A recomendacao "a parte" foi aceita. O banco e o Supabase (Postgres). Isso
+destrava o S03-01 de vez; proximo passo real do backend e criar o projeto Supabase de
+dev na nossa conta.
+
+Contexto do NopCommerce atual (respostas do Julien, 23/07), util para escopo e handover:
+1. E um painel unico, com um banco unico, em modo MULTI-LOJA: cada um dos 5 sites e uma
+   "loja", e escolhe-se em qual loja publicar. Por isso o monolito nao conversa com o CRM.
+   Impacto: hoje construimos so a BB Brindes; se um dia migrarem os 5, a estrutura nova
+   precisaria de capacidade multi-loja/multi-tenant. Nao e escopo agora, so registro.
+2. O painel de admin e administrado 100% pela BB, sem terceiro. Eles vao operar o admin
+   do Payload direto, entao a usabilidade do admin importa para o handover.
+3. O admin atual e basicamente CRUD (inclusao, exclusao, edicao de dados). O Julien vai
+   providenciar um print para servirmos de referencia de UX.
+
 ## Fontes
 
 1. Supabase Pricing: https://supabase.com/pricing
