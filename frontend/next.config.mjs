@@ -14,6 +14,10 @@ const basePath = process.env.PAGES_BASE_PATH || "";
 // GitHub Pages, onde o wireframe esta publicado hoje.
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://ctadigital12.github.io";
 
+// URL do backend Payload (auth do revendedor via REST API). Como o site e
+// export estatico, a URL e inlined no build. Dev: http://localhost:3001.
+const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:3001";
+
 const nextConfig = {
   reactStrictMode: true,
   // Export estatico: gera HTML/CSS/JS prontos para hospedar no Pages.
@@ -26,6 +30,7 @@ const nextConfig = {
   env: {
     NEXT_PUBLIC_BASE_PATH: basePath,
     NEXT_PUBLIC_SITE_URL: siteUrl,
+    NEXT_PUBLIC_BACKEND_URL: backendUrl,
     NEXT_PUBLIC_APP_VERSION: pkg.version,
   },
 };

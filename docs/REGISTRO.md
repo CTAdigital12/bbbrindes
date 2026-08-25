@@ -799,3 +799,46 @@ Onde paramos / proximo passo:
 - PROXIMO PASSO REAL DO BACKEND: criar o projeto Supabase de dev na nossa conta e subir
   o /admin. Fecha o S03-01 e valida o S03-02. Nao depende mais de terceiros.
 - Para a Fase 1 do Leads2b: token da conta do cliente e confirmar sandbox.
+
+## 25/08/2026 (segunda) 19:22 BRT -- S03-03 auth do revendedor e admin
+
+Branch feature/sprint-03-03-auth-login (a partir da master atualizada). Sem push
+(aguarda o teste de UI do Fabio, CLAUDE.md regra 27, e autorizacao de push).
+
+O que foi feito:
+1. Backend. Revendedores virou colecao de AUTH (backend/src/collections/Revendedores.ts).
+   Acesso unico por empresa (CNPJ unique). Campos novos do golden path (nome fantasia,
+   inscricao estadual, whatsapp, site) mais `nivel` (select 1 a 4 = tabela de preco) e
+   `ativo` (checkbox). Regra critica aprovar-e-atribuir-tabela: o campo `ativo` tem
+   validate que barra ativar sem `nivel`. Access control: admin (colecao users) le/edita
+   tudo; revendedor logado le SO o proprio doc; publico nada (PII, LGPD). `nivel` e `ativo`
+   so o admin altera. Hook beforeLogin bloqueia login de revendedor inativo (403) no
+   servidor, nao so no client.
+2. Backend config. payload.config.ts ganhou cors/csrf para a origem do site
+   (FRONTEND_URL), para o front estatico logar via REST API. Nova env FRONTEND_URL no
+   backend/.env.example.
+3. Frontend. Como o site e output: export (sem runtime de servidor), nao da para usar
+   middleware nem route handler: login chama a REST API do Payload direto e a protecao de
+   rota e client-side. Novo frontend/src/lib/auth.ts (login, me, logout, forgotPassword,
+   credentials include). Login real substituiu o mock (frontend/src/app/revendedor/login).
+   Painel protegido por guarda client-side com me() (frontend/src/app/revendedor/painel),
+   Sair faz logout de verdade. Nova pagina /revendedor/esqueci-senha (fluxo basico de
+   reset). NEXT_PUBLIC_BACKEND_URL exposto no next.config.mjs.
+4. Teste minimo (regra 19). frontend/src/lib/auth.test.ts, 7 casos (login ok, credencial
+   invalida, conta inativa 403, me com/sem sessao, backend fora do ar, forgotPassword).
+
+Gates: front typecheck, lint, build (export) e vitest (16 testes) verdes. Backend
+typecheck verde. O backend nao tem ESLint configurado (next lint cai no init interativo);
+gap pre-existente, fora do escopo. O build do backend exige DB vivo, entao roda ao subir.
+
+Atencao ao subir o backend: virar Revendedores em auth altera o schema da tabela
+revendedores no Supabase (colunas de auth: hash/salt/email/reset tokens, mais
+nivel/ativo/campos novos). O drizzle push aplica. Como a tabela foi criada vazia (S03-01),
+o risco e baixo. Criar o primeiro admin em /admin e cadastrar um revendedor de teste
+(ativo com nivel) para validar o login ponta a ponta.
+
+Onde paramos / proximo passo:
+1. Fabio subir o backend (aplica schema), criar admin, cadastrar revendedor ativo, e
+   validar no navegador: login real, painel protegido, logout, esqueci-senha, e que
+   revendedor inativo nao entra. So apos o aceite: push e PR.
+2. Depois do S03-03: S03-04 (front lendo colecoes de conteudo do Payload).

@@ -3,16 +3,30 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { AuthError, login } from "@/lib/auth";
 
 export default function RevendedorLoginPage() {
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
+  const [erro, setErro] = useState<string | null>(null);
+  const [enviando, setEnviando] = useState(false);
 
-  function entrar(e: React.FormEvent) {
+  async function entrar(e: React.FormEvent) {
     e.preventDefault();
-    // Wireframe: sem auth real (entra na Sprint 4). Qualquer dado segue para o painel.
-    router.push("/revendedor/painel");
+    setErro(null);
+    setEnviando(true);
+    try {
+      await login(email, senha);
+      router.push("/revendedor/painel");
+    } catch (err) {
+      setErro(
+        err instanceof AuthError
+          ? err.message
+          : "Nao foi possivel entrar. Tente de novo.",
+      );
+      setEnviando(false);
+    }
   }
 
   return (
@@ -26,14 +40,42 @@ export default function RevendedorLoginPage() {
         <form onSubmit={entrar} className="mt-6 space-y-4">
           <div>
             <label className="wf-label">Email</label>
-            <input type="email" className="wf-input" value={email} onChange={(e) => setEmail(e.target.value)} />
+            <input
+              type="email"
+              required
+              autoComplete="email"
+              className="wf-input"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
           </div>
           <div>
             <label className="wf-label">Senha</label>
-            <input type="password" className="wf-input" value={senha} onChange={(e) => setSenha(e.target.value)} />
+            <input
+              type="password"
+              required
+              autoComplete="current-password"
+              className="wf-input"
+              value={senha}
+              onChange={(e) => setSenha(e.target.value)}
+            />
           </div>
-          <button type="submit" className="wf-btn-primary w-full">
-            Entrar
+
+          {erro && (
+            <p
+              role="alert"
+              className="rounded bg-red-50 p-2 text-sm text-red-700"
+            >
+              {erro}
+            </p>
+          )}
+
+          <button
+            type="submit"
+            disabled={enviando}
+            className="wf-btn-primary w-full disabled:opacity-50"
+          >
+            {enviando ? "Entrando..." : "Entrar"}
           </button>
         </form>
 
@@ -41,12 +83,13 @@ export default function RevendedorLoginPage() {
           <Link href="/revendedores" className="hover:text-wf-accent">
             Quero ser revendedor
           </Link>
-          <span className="cursor-default">Esqueci a senha</span>
+          <Link
+            href="/revendedor/esqueci-senha"
+            className="hover:text-wf-accent"
+          >
+            Esqueci a senha
+          </Link>
         </div>
-
-        <p className="mt-4 rounded bg-wf-bg p-2 text-center text-[10px] uppercase tracking-wide text-wf-muted">
-          Wireframe: login sem validacao real
-        </p>
       </div>
     </div>
   );
