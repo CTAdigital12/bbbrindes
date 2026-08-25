@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import { produtos } from "@/data/produtos";
 import {
@@ -11,6 +12,7 @@ import {
   tabelaRevendedor,
 } from "@/data/revendedor";
 import { listarManuais, type ProdutoManual } from "@/lib/lojista";
+import { logout, me, type RevendedorUser } from "@/lib/auth";
 
 type Aba = "tabela" | "pedido" | "historico" | "cadastro" | "arquivos";
 
@@ -25,14 +27,42 @@ const statusLabel: Record<string, string> = {
 type ItemCatalogo = { key: string; nome: string; preco: number; estoque: number | null; novo: boolean };
 
 export default function PainelRevendedorPage() {
+  const router = useRouter();
   const [aba, setAba] = useState<Aba>("tabela");
   const [pedido, setPedido] = useState<Record<string, number>>({});
   const [manuais, setManuais] = useState<ProdutoManual[]>([]);
+  const [user, setUser] = useState<RevendedorUser | null>(null);
+  const [carregando, setCarregando] = useState(true);
+
+  // Protecao de rota client-side: sem runtime de servidor (export estatico),
+  // a guarda mora aqui. Sem sessao valida, volta para o login. O acesso real
+  // ja e barrado no backend (cookie httpOnly + beforeLogin), isto so evita
+  // renderizar o painel para quem nao esta logado.
+  useEffect(() => {
+    let vivo = true;
+    me().then((u) => {
+      if (!vivo) return;
+      if (!u) {
+        router.replace("/revendedor/login");
+        return;
+      }
+      setUser(u);
+      setCarregando(false);
+    });
+    return () => {
+      vivo = false;
+    };
+  }, [router]);
 
   // Catalogo do revendedor puxado da lista geral do site: produtos do catalogo
   // mais os cadastrados na administracao (marcados como "novo"). Wireframe: os
   // manuais vem do localStorage; na producao viriam da mesma base do Payload.
   useEffect(() => setManuais(listarManuais()), []);
+
+  async function sair() {
+    await logout();
+    router.push("/");
+  }
 
   const catalogo: ItemCatalogo[] = useMemo(
     () => [
@@ -72,6 +102,14 @@ export default function PainelRevendedorPage() {
     setPedido((p) => ({ ...p, [key]: Math.max(0, q) }));
   }
 
+  if (carregando) {
+    return (
+      <div className="wf-container flex justify-center py-24">
+        <p className="text-sm text-wf-muted">Carregando area do revendedor...</p>
+      </div>
+    );
+  }
+
   return (
     <div className="bg-wf-bg">
       {/* Cabecalho distinto do B2B */}
@@ -79,11 +117,13 @@ export default function PainelRevendedorPage() {
         <div className="wf-container flex flex-wrap items-center justify-between gap-2 py-3">
           <div>
             <span className="text-xs uppercase tracking-wide text-wf-muted">Area do revendedor</span>
-            <h1 className="text-lg font-semibold">{revendedorMock.empresa}</h1>
+            <h1 className="text-lg font-semibold">
+              {user?.empresa ?? revendedorMock.empresa}
+            </h1>
           </div>
-          <Link href="/" className="wf-btn-ghost text-wf-ink">
+          <button type="button" onClick={sair} className="wf-btn-ghost text-wf-ink">
             Sair
-          </Link>
+          </button>
         </div>
       </div>
 

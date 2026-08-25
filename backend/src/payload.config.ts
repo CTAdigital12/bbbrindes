@@ -25,8 +25,16 @@ const dirname = path.dirname(filename)
 // o Payload cai no storage de disco local, mantendo o painel funcional.
 const hasR2 = Boolean(process.env.S3_BUCKET)
 
+// Origem do frontend (site estatico) que loga o revendedor via REST API. Em
+// dev e prod (subdominio do mesmo site), o cookie de sessao e same-site, entao
+// SameSite=Lax padrao basta; so precisamos liberar CORS + CSRF para essa
+// origem. FRONTEND_URL vem do .env; default aponta para o dev local.
+const frontendURL = process.env.FRONTEND_URL || 'http://localhost:3000'
+
 export default buildConfig({
   serverURL: process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:3001',
+  cors: [frontendURL],
+  csrf: [frontendURL],
   admin: {
     user: Users.slug,
     importMap: {

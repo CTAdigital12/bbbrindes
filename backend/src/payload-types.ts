@@ -63,6 +63,7 @@ export type SupportedTimezones =
 
 export interface Config {
   auth: {
+    revendedores: RevendedoreAuthOperations;
     users: UserAuthOperations;
   };
   blocks: {};
@@ -109,10 +110,28 @@ export interface Config {
   widgets: {
     collections: CollectionsWidget;
   };
-  user: User;
+  user: Revendedore | User;
   jobs: {
     tasks: unknown;
     workflows: unknown;
+  };
+}
+export interface RevendedoreAuthOperations {
+  forgotPassword: {
+    email: string;
+    password: string;
+  };
+  login: {
+    email: string;
+    password: string;
+  };
+  registerFirstUser: {
+    email: string;
+    password: string;
+  };
+  unlock: {
+    email: string;
+    password: string;
   };
 }
 export interface UserAuthOperations {
@@ -428,10 +447,21 @@ export interface Imprensa {
 export interface Revendedore {
   id: number;
   empresa: string;
-  responsavel?: string | null;
+  nomeFantasia?: string | null;
   cnpj?: string | null;
+  inscricaoEstadual?: string | null;
+  responsavel?: string | null;
   telefone?: string | null;
-  email?: string | null;
+  whatsapp?: string | null;
+  site?: string | null;
+  /**
+   * Obrigatorio para ativar. Define a tabela de preco que o revendedor ve.
+   */
+  nivel?: ('1' | '2' | '3' | '4') | null;
+  /**
+   * Aprovar e atribuir a tabela sao o mesmo passo: nao da para ativar sem nivel.
+   */
+  ativo?: boolean | null;
   enderecoEntrega?: {
     logradouro?: string | null;
     bairro?: string | null;
@@ -442,6 +472,22 @@ export interface Revendedore {
   notas?: string | null;
   updatedAt: string;
   createdAt: string;
+  email: string;
+  resetPasswordToken?: string | null;
+  resetPasswordExpiration?: string | null;
+  salt?: string | null;
+  hash?: string | null;
+  loginAttempts?: number | null;
+  lockUntil?: string | null;
+  sessions?:
+    | {
+        id: string;
+        createdAt?: string | null;
+        expiresAt: string;
+      }[]
+    | null;
+  password?: string | null;
+  collection: 'revendedores';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -533,10 +579,15 @@ export interface PayloadLockedDocument {
         value: number | User;
       } | null);
   globalSlug?: string | null;
-  user: {
-    relationTo: 'users';
-    value: number | User;
-  };
+  user:
+    | {
+        relationTo: 'revendedores';
+        value: number | Revendedore;
+      }
+    | {
+        relationTo: 'users';
+        value: number | User;
+      };
   updatedAt: string;
   createdAt: string;
 }
@@ -546,10 +597,15 @@ export interface PayloadLockedDocument {
  */
 export interface PayloadPreference {
   id: number;
-  user: {
-    relationTo: 'users';
-    value: number | User;
-  };
+  user:
+    | {
+        relationTo: 'revendedores';
+        value: number | Revendedore;
+      }
+    | {
+        relationTo: 'users';
+        value: number | User;
+      };
   key?: string | null;
   value?:
     | {
@@ -712,10 +768,15 @@ export interface ImprensaSelect<T extends boolean = true> {
  */
 export interface RevendedoresSelect<T extends boolean = true> {
   empresa?: T;
-  responsavel?: T;
+  nomeFantasia?: T;
   cnpj?: T;
+  inscricaoEstadual?: T;
+  responsavel?: T;
   telefone?: T;
-  email?: T;
+  whatsapp?: T;
+  site?: T;
+  nivel?: T;
+  ativo?: T;
   enderecoEntrega?:
     | T
     | {
@@ -728,6 +789,20 @@ export interface RevendedoresSelect<T extends boolean = true> {
   notas?: T;
   updatedAt?: T;
   createdAt?: T;
+  email?: T;
+  resetPasswordToken?: T;
+  resetPasswordExpiration?: T;
+  salt?: T;
+  hash?: T;
+  loginAttempts?: T;
+  lockUntil?: T;
+  sessions?:
+    | T
+    | {
+        id?: T;
+        createdAt?: T;
+        expiresAt?: T;
+      };
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

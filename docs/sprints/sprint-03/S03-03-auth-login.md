@@ -12,12 +12,20 @@ depende da integracao (preco, estoque e pedido vem depois do CRM Leads2b, ver
 S03-09).
 
 ## Checklist
-- [ ] Auth do Payload configurada (revendedor e admin)
-- [ ] Pagina de login do revendedor ligada a auth real (troca o mock)
-- [ ] Sessao/protecao de rota na area do revendedor (/revendedor/painel)
-- [ ] Painel do admin (/admin) protegido
-- [ ] Recuperacao de senha (fluxo basico)
-- [ ] Teste minimo do login do revendedor (CLAUDE.md regra 19)
+- [x] Auth do Payload configurada (revendedor e admin)
+- [x] Pagina de login do revendedor ligada a auth real (troca o mock)
+- [x] Sessao/protecao de rota na area do revendedor (/revendedor/painel)
+- [x] Painel do admin (/admin) protegido
+- [x] Recuperacao de senha (fluxo basico)
+- [x] Teste minimo do login do revendedor (CLAUDE.md regra 19)
+
+Implementado na branch feature/sprint-03-03-auth-login (25/08/2026). Detalhe e
+notas de deploy em docs/REGISTRO.md. Falta a validacao de UI do Fabio (regra 27)
+antes de push/PR. Nota: /admin fica protegido nativamente porque a colecao
+admin.user e `users`; o revendedor autentica pela API mas nunca entra no /admin.
+Protecao de rota do painel e client-side porque o front e output: export (sem
+middleware/route handler); a garantia real mora no backend (cookie httpOnly +
+beforeLogin + access control).
 
 ## Observacoes
 A area do revendedor ja esta desenhada no wireframe; aqui ela ganha login de
