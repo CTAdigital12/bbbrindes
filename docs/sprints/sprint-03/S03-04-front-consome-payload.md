@@ -11,12 +11,24 @@ pagina, com renderizacao ISR (estatico cacheado, revalida quando o cliente edita
 painel). Mantem a UI atual do wireframe.
 
 ## Checklist
-- [ ] Home lendo banners, categorias, campanhas, faixas do Payload
-- [ ] Catalogo e filtros lendo produtos e categorias do Payload
-- [ ] PDP lendo o produto (com os campos novos) do Payload
-- [ ] Institucionais (blog, cases, imprensa) lendo do Payload
-- [ ] ISR com revalidacao on-demand via hook do Payload
-- [ ] Remocao gradual dos data/*.ts mock
+- [x] Home lendo banners, categorias, campanhas do Payload (produtos segue mock)
+- [ ] Catalogo e filtros lendo produtos e categorias do Payload (espera schema de produto)
+- [ ] PDP lendo o produto (com os campos novos) do Payload (espera schema de produto)
+- [x] Institucionais (blog, cases, imprensa) lendo do Payload
+- [ ] ISR com revalidacao on-demand via hook do Payload (adiado para o S03-08 / hosting)
+- [~] Remocao gradual dos data/*.ts mock (mock virou fallback; remove quando nao houver risco)
+
+## Atualizacao 27/08/2026 (fatia de conteudo entregue)
+Branch feature/sprint-03-04-front-conteudo. Ver docs/REGISTRO.md (27/08/2026) para o detalhe.
+1. Render decidido: MANTER output: export (SSG, le do Payload no build). ISR/revalidacao
+   on-demand fica para o S03-08 (migracao de hosting Cloudflare).
+2. Camada frontend/src/lib/payload.ts + content.ts com fallback pro mock (se a API falha
+   ou vem vazia). UI inalterada.
+3. Ligados: blog (lista + detalhe), cases, imprensa e home. Seed reproduzivel do post de
+   teste em backend/src/seed/post-teste.ts (script `seed:post-teste`).
+4. Adiado (nao regressao): produtos/catalogo/PDP (schema do Plinio), categorias no header
+   e no catalogo (nav/produto), pagina institucional de Revendedores (estatica, sem
+   colecao), sitemap (ainda mock). Validado no navegador (regra 27).
 
 ## Observacoes
 Feito de forma incremental para nao quebrar o site publicado. A UI nao muda; muda a

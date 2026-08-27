@@ -842,3 +842,47 @@ Onde paramos / proximo passo:
    validar no navegador: login real, painel protegido, logout, esqueci-senha, e que
    revendedor inativo nao entra. So apos o aceite: push e PR.
 2. Depois do S03-03: S03-04 (front lendo colecoes de conteudo do Payload).
+
+## 27/08/2026 (quarta) 14:55 BRT -- S03-04 front lendo o Payload (fatia de conteudo)
+
+Branch feature/sprint-03-04-front-conteudo (a partir da master). Decisao de render:
+manter output: export (SSG, le do Payload no BUILD); ISR/revalidacao on-demand fica pro
+S03-08 junto da migracao de hosting (Cloudflare). Registrado com o Fabio.
+
+O que foi feito:
+1. Camada de dados. frontend/src/lib/payload.ts (fetch da REST API com timeout, extrator
+   de richText lexical->texto, normalizacao de data). frontend/src/lib/content.ts
+   (loaders que mapeiam Payload -> tipos da UI). Estrategia de transicao: se o Payload
+   falha OU vem vazio (cliente ainda nao cadastrou), cai no mock de data/*. Assim que ha
+   conteudo real, ele substitui. UI inalterada.
+2. Paginas ligadas: blog (lista + detalhe /blog/[slug]), cases, imprensa e a HOME (banners
+   carrossel+mini, categorias, campanhas, blog, cases, imprensa). Todas server components
+   async. Produtos/produtosEcologicos e os diferenciais seguem mock (produto espera o
+   schema do Plinio; diferenciais nao tem colecao).
+3. Seed reproduzivel. backend/src/seed/post-teste.ts (Local API, idempotente) + script
+   backend `seed:post-teste`. Cria um post com "teste" no titulo/resumo/conteudo pra
+   validar o dado real. Gotcha: `payload run` resolve o import antes do async terminar;
+   precisou de top-level await pra nao cortar a escrita no banco.
+4. Testes: frontend/src/lib/content.test.ts, 12 casos (mapeamento, split de banners por
+   posicao, filtro de ativo, richText->texto, normalizacao de data, fallback). Suite
+   completa 28 testes verdes. Typecheck, lint e build (export) verdes.
+
+Validado no navegador (regra 27): /blog, /blog/artigo-teste-seed, /cases, /imprensa e a
+home. O post de teste aparece na lista, no detalhe e no teaser da home, substituindo o
+mock. Gotcha de dev registrado: rodar `next build` com o `next dev` ativo corrompe o
+.next (erro "Cannot find module ./565.js"); e cache, nao codigo. Corrigido limpando .next.
+
+Adiado de proposito (nao e regressao):
+1. Produtos, catalogo e PDP: esperam o schema do Plinio (S03-02).
+2. Categorias no menu do header (LogoMenu) e no CatalogoClient: sao componentes client
+   ligados a navegacao/catalogo; ficam no mock ate a fiacao de produto/nav. Com DB vazio
+   nao ha divergencia (ambos caem no mock).
+3. Pagina institucional de Revendedores: estatica, sem colecao no schema. Nada a ligar.
+4. Sitemap ainda usa mock de posts/campanhas: revisar quando a fiacao de produto fechar.
+5. ISR/revalidacao on-demand: com o S03-08 (hosting).
+
+Onde paramos / proximo passo:
+1. Fatia de conteudo do S03-04 pronta e validada. Push/PR apos autorizacao.
+2. Proximo: destravar produto (S03-02 com o Plinio) libera catalogo, PDP, migration
+   (S03-05) e a fiacao de categorias/campanhas no header. Sem isso, avancar em S03-06
+   (captura de leads) que nao depende do schema de produto.
