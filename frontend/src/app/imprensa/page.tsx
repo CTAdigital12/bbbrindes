@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { materias } from "@/data/imprensa";
+import { getMaterias } from "@/lib/content";
 
 export const metadata: Metadata = {
   title: "Imprensa",
@@ -11,7 +11,8 @@ function dataBR(iso: string) {
   return `${dia}/${mes}/${ano}`;
 }
 
-export default function ImprensaPage() {
+export default async function ImprensaPage() {
+  const materias = await getMaterias();
   return (
     <div className="wf-container py-8">
       <h1 className="text-2xl font-bold text-wf-ink">Imprensa</h1>

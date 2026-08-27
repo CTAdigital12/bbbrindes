@@ -1,24 +1,25 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { postPorSlug, posts } from "@/data/blog";
+import { getPostBySlug, getPosts } from "@/lib/content";
 
 type Params = Promise<{ slug: string }>;
 
-export function generateStaticParams() {
+export async function generateStaticParams() {
+  const posts = await getPosts();
   return posts.map((p) => ({ slug: p.slug }));
 }
 
 export async function generateMetadata({ params }: { params: Params }): Promise<Metadata> {
   const { slug } = await params;
-  const post = postPorSlug(slug);
+  const post = await getPostBySlug(slug);
   if (!post) return { title: "Post nao encontrado" };
   return { title: post.titulo, description: post.resumo };
 }
 
 export default async function PostPage({ params }: { params: Params }) {
   const { slug } = await params;
-  const post = postPorSlug(slug);
+  const post = await getPostBySlug(slug);
   if (!post) notFound();
 
   return (

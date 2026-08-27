@@ -1,13 +1,14 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { posts } from "@/data/blog";
+import { getPosts } from "@/lib/content";
 
 export const metadata: Metadata = {
   title: "Blog",
   description: "Conteudos sobre brindes, sustentabilidade, datas comemorativas e personalizacao.",
 };
 
-export default function BlogPage() {
+export default async function BlogPage() {
+  const posts = await getPosts();
   return (
     <div className="wf-container py-8">
       <h1 className="text-2xl font-bold text-wf-ink">Blog</h1>

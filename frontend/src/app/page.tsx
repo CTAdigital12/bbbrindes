@@ -1,16 +1,32 @@
 import Link from "next/link";
-import { banners, diferenciais, miniBanners } from "@/data/banners";
-import { campanhas } from "@/data/campanhas";
-import { categorias } from "@/data/categorias";
-import { posts } from "@/data/blog";
+import { diferenciais } from "@/data/banners";
 import { produtos, produtosEcologicos } from "@/data/produtos";
-import { cases } from "@/data/cases";
-import { materias } from "@/data/imprensa";
+import {
+  getBanners,
+  getCampanhas,
+  getCases,
+  getCategorias,
+  getMaterias,
+  getPosts,
+} from "@/lib/content";
 import BannerCarousel from "@/components/BannerCarousel";
 import DestaquesRandom from "@/components/DestaquesRandom";
 import ProductCard from "@/components/ProductCard";
 
-export default function HomePage() {
+export default async function HomePage() {
+  // Conteudo lido do Payload no build (com fallback pro mock). Produtos e
+  // diferenciais seguem mock: produtos espera o schema do Plinio (S03-02) e
+  // diferenciais nao tem colecao propria no schema.
+  const [{ carrossel: banners, mini: miniBanners }, campanhas, categorias, posts, cases, materias] =
+    await Promise.all([
+      getBanners(),
+      getCampanhas(),
+      getCategorias(),
+      getPosts(),
+      getCases(),
+      getMaterias(),
+    ]);
+
   return (
     <div>
       <h1 className="sr-only">bbbrindes - brindes corporativos personalizados</h1>

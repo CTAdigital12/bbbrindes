@@ -1,13 +1,14 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { cases } from "@/data/cases";
+import { getCases } from "@/lib/content";
 
 export const metadata: Metadata = {
   title: "Cases",
   description: "Cases e prova social: clientes, campanhas e depoimentos de quem confia na bbbrindes.",
 };
 
-export default function CasesPage() {
+export default async function CasesPage() {
+  const cases = await getCases();
   const depoimentos = cases.filter((c) => c.depoimento);
 
   return (
