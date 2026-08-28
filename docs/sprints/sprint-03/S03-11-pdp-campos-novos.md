@@ -58,3 +58,10 @@ Pendencias desta frente:
    galeria so troca a cor de fundo; vira imagem real por cor. Depende do schema (S03-02)
    e dos arquivos.
 3. Versao A vs B ainda depende de ratificacao do Plinio.
+
+## Atualizacao 28/08/2026 (PDP com dado real do Payload)
+A PDP (/produto/[slug]) passou a ler o produto do Payload com fallback pro mock
+(frontend/src/lib/produtos.ts), e o Squeeze 300ml foi cadastrado com conteudo real e 15 fotos
+reais. ProdutoView renderiza a galeria de fotos quando o produto tem imagens. Validado no
+navegador. Detalhe em docs/REGISTRO.md (28/08/2026). Branch
+feature/sprint-03-02-produto-piloto-squeeze.

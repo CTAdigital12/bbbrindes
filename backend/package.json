@@ -14,7 +14,9 @@
     "generate:types": "cross-env NODE_OPTIONS=--no-deprecation payload generate:types",
     "generate:importmap": "cross-env NODE_OPTIONS=--no-deprecation payload generate:importmap",
     "payload": "cross-env NODE_OPTIONS=--no-deprecation payload",
-    "seed:post-teste": "cross-env NODE_OPTIONS=--no-deprecation payload run src/seed/post-teste.ts"
+    "seed:post-teste": "cross-env NODE_OPTIONS=--no-deprecation payload run src/seed/post-teste.ts",
+    "reset:produtos": "cross-env NODE_OPTIONS=--no-deprecation PAYLOAD_DB_PUSH=false payload run src/scripts/reset-produtos.ts",
+    "seed:squeeze": "cross-env NODE_OPTIONS=--no-deprecation PAYLOAD_DB_PUSH=false payload run src/seed/produto-squeeze.ts"
   },
   "dependencies": {
     "@payloadcms/db-postgres": "3.86.0",

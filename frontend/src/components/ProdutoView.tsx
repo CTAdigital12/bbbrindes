@@ -12,10 +12,13 @@ import { nomeCategoria } from "@/data/categorias";
 export default function ProdutoView({ produto }: { produto: Produto }) {
   const { adicionar } = useCart();
   const temCores = produto.cores.length > 0;
+  const imagens = produto.imagens ?? [];
+  const temImagens = imagens.length > 0;
   const [cor, setCor] = useState(produto.cores[0]?.nome ?? "Unica");
   const [qtd, setQtd] = useState(1);
   const [adicionado, setAdicionado] = useState(false);
   const [midia, setMidia] = useState<"imagem" | "video">("imagem");
+  const [imgIdx, setImgIdx] = useState(0);
 
   const corAtual = produto.cores.find((c) => c.nome === cor);
 
@@ -26,18 +29,26 @@ export default function ProdutoView({ produto }: { produto: Produto }) {
 
   return (
     <div className="grid gap-8 lg:grid-cols-2">
-      {/* Galeria: a imagem principal reflete a cor; ha um thumb de video */}
+      {/* Galeria: fotos reais quando o produto tem imagens (Payload); senao,
+          placeholder do wireframe pintado pela cor. Ha um thumb de video. */}
       <div className="space-y-3">
-        <div
-          className="relative aspect-square w-full overflow-hidden rounded-lg border border-wf-line"
-          style={midia === "imagem" && corAtual ? { backgroundColor: corAtual.hex } : undefined}
-        >
+        <div className="relative aspect-square w-full overflow-hidden rounded-lg border border-wf-line bg-white">
           {midia === "video" ? (
             <div className="flex h-full w-full items-center justify-center bg-wf-ink">
               <span className="text-sm font-medium text-white">Video do produto</span>
             </div>
+          ) : temImagens ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              src={imagens[imgIdx]}
+              alt={produto.nome}
+              className="h-full w-full object-contain p-8 sm:p-12"
+            />
           ) : (
-            <div className={`flex h-full w-full items-end p-3 ${corAtual ? "" : "wf-img"}`}>
+            <div
+              className={`flex h-full w-full items-end p-3 ${corAtual ? "" : "wf-img"}`}
+              style={corAtual ? { backgroundColor: corAtual.hex } : undefined}
+            >
               <span className="rounded bg-wf-surface/90 px-2 py-1 text-xs font-medium text-wf-ink">
                 {corAtual ? `Cor: ${corAtual.nome}` : "Imagem principal"}
               </span>
@@ -46,38 +57,70 @@ export default function ProdutoView({ produto }: { produto: Produto }) {
         </div>
 
         <div className="grid grid-cols-4 gap-3">
-          <button
-            type="button"
-            onClick={() => setMidia("imagem")}
-            className={`wf-img aspect-square rounded ${midia === "imagem" ? "ring-2 ring-wf-accent" : ""}`}
-            aria-label="Ver imagem"
-          >
-            Imagem
-          </button>
-          <button
-            type="button"
-            onClick={() => setMidia("video")}
-            className={`wf-img aspect-square rounded ${midia === "video" ? "ring-2 ring-wf-accent" : ""}`}
-            aria-label="Ver video"
-          >
-            Video
-          </button>
-          <button
-            type="button"
-            onClick={() => setMidia("imagem")}
-            className="wf-img aspect-square rounded"
-            aria-label="Ver imagem"
-          >
-            Foto 2
-          </button>
-          <button
-            type="button"
-            onClick={() => setMidia("imagem")}
-            className="wf-img aspect-square rounded"
-            aria-label="Ver imagem"
-          >
-            Foto 3
-          </button>
+          {temImagens ? (
+            <>
+              {imagens.map((src, i) => (
+                <button
+                  key={src}
+                  type="button"
+                  onClick={() => {
+                    setImgIdx(i);
+                    setMidia("imagem");
+                  }}
+                  className={`aspect-square overflow-hidden rounded border bg-white ${
+                    midia === "imagem" && imgIdx === i ? "ring-2 ring-wf-accent" : "border-wf-line"
+                  }`}
+                  aria-label={`Ver foto ${i + 1}`}
+                >
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={src} alt="" className="h-full w-full object-contain p-2" />
+                </button>
+              ))}
+              <button
+                type="button"
+                onClick={() => setMidia("video")}
+                className={`wf-img aspect-square rounded ${midia === "video" ? "ring-2 ring-wf-accent" : ""}`}
+                aria-label="Ver video"
+              >
+                Video
+              </button>
+            </>
+          ) : (
+            <>
+              <button
+                type="button"
+                onClick={() => setMidia("imagem")}
+                className={`wf-img aspect-square rounded ${midia === "imagem" ? "ring-2 ring-wf-accent" : ""}`}
+                aria-label="Ver imagem"
+              >
+                Imagem
+              </button>
+              <button
+                type="button"
+                onClick={() => setMidia("video")}
+                className={`wf-img aspect-square rounded ${midia === "video" ? "ring-2 ring-wf-accent" : ""}`}
+                aria-label="Ver video"
+              >
+                Video
+              </button>
+              <button
+                type="button"
+                onClick={() => setMidia("imagem")}
+                className="wf-img aspect-square rounded"
+                aria-label="Ver imagem"
+              >
+                Foto 2
+              </button>
+              <button
+                type="button"
+                onClick={() => setMidia("imagem")}
+                className="wf-img aspect-square rounded"
+                aria-label="Ver imagem"
+              >
+                Foto 3
+              </button>
+            </>
+          )}
         </div>
       </div>
 

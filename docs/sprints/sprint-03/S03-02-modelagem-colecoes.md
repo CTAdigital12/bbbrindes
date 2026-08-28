@@ -51,3 +51,11 @@ master) e 5 de impressao (metodos e areas). Mais 7 flags de canal (SITE, BRINDIC
 FREESHOP, brindes.com, CATALOGO, TABELA REVENDA, TABELA B2B), que viram visibilidade
 do produto. Resolvido de graca: "Medalhas e Trofeus" nao e linha ecologica (o
 `ecologico=sim` so aparece nas linhas Green).
+
+## Atualizacao 28/08/2026 (schema de produto destravado no nivel piloto)
+Material do Plinio (planilha com slug/title tag + pasta de imagens do Squeeze) permitiu
+reescrever a colecao Produtos conforme docs/modelo-produto.md e validar com 1 produto real.
+Ver docs/REGISTRO.md (28/08/2026). Destravado: dois codigos, SEO por produto, categorias
+multiplas, ecologico booleano, selos, logistica, impressao, canais. Ainda bloqueado para o
+import completo: fonte estruturada de cor/tom por SKU e convencao de nome de imagem. codigoCigam
+segue NAO unique (CL/PB). Branch feature/sprint-03-02-produto-piloto-squeeze.
