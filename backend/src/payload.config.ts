@@ -31,6 +31,22 @@ const hasR2 = Boolean(process.env.S3_BUCKET)
 // origem. FRONTEND_URL vem do .env; default aponta para o dev local.
 const frontendURL = process.env.FRONTEND_URL || 'http://localhost:3000'
 
+// Conexao ao Postgres. Preferimos parametros SEPARADOS (PGHOST/PGPORT/PGUSER/
+// PGPASSWORD/PGDATABASE) quando PGHOST estiver definido: a senha vai crua, sem
+// precisar de percent-encode nem de montar a URI a mao (evita quebra por
+// caractere especial). Sem PGHOST, cai na connection string DATABASE_URI.
+// SSL exigido pelo Supabase; rejectUnauthorized:false por ser certificado gerido.
+const dbPool = process.env.PGHOST
+  ? {
+      host: process.env.PGHOST,
+      port: Number(process.env.PGPORT || 5432),
+      user: process.env.PGUSER,
+      password: process.env.PGPASSWORD,
+      database: process.env.PGDATABASE || 'postgres',
+      ssl: { rejectUnauthorized: false },
+    }
+  : { connectionString: process.env.DATABASE_URI || '' }
+
 export default buildConfig({
   serverURL: process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:3001',
   cors: [frontendURL],
@@ -63,9 +79,11 @@ export default buildConfig({
     outputFile: path.resolve(dirname, 'payload-types.ts'),
   },
   db: postgresAdapter({
-    pool: {
-      connectionString: process.env.DATABASE_URI || '',
-    },
+    // Em dev o Payload sincroniza o schema no boot (push). Scripts de manutencao
+    // (ex.: reset:produtos) rodam com PAYLOAD_DB_PUSH=false para conectar sem
+    // disparar o push interativo do drizzle. Em dev normal, push segue ligado.
+    push: process.env.PAYLOAD_DB_PUSH !== 'false',
+    pool: dbPool,
   }),
   sharp,
   plugins: [

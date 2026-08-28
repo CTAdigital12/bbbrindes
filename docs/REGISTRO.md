@@ -886,3 +886,52 @@ Onde paramos / proximo passo:
 2. Proximo: destravar produto (S03-02 com o Plinio) libera catalogo, PDP, migration
    (S03-05) e a fiacao de categorias/campanhas no header. Sem isso, avancar em S03-06
    (captura de leads) que nao depende do schema de produto.
+
+## 28/08/2026 (sexta) 21:30 BRT -- Piloto de produto (Squeeze 300ml) real no Payload
+
+Branch feature/sprint-03-02-produto-piloto-squeeze (a partir da master). Fecha a fatia
+piloto de S03-02 (schema de produto) e S03-11 (PDP com dado real). Material do Plinio
+(Google Doc + planilha atualizada com slug/title tag + pasta de imagens) analisado: da para
+piloto de 1 produto; o import dos ~88 e o catalogo completo com cor/imagem por SKU seguem
+bloqueados (falta fonte estruturada de cor/tom e convencao de nome de imagem).
+
+Conexao ao banco (destravou o dev). A conexao direta do Supabase e IPv6-only e a rede caiu o
+IPv6, quebrando o backend. Migramos para o Session pooler (IPv4) e, para acabar com a classe
+de erro de URI (prefixo duplicado, @ sumindo, encoding de senha), o payload.config passou a
+aceitar parametros SEPARADOS (PGHOST/PGPORT/PGUSER/PGPASSWORD/PGDATABASE); a senha vai crua.
+DATABASE_URI segue como fallback. .env.example atualizado.
+
+Backend. Produtos reescrito conforme docs/modelo-produto.md: dois codigos (codigoSite unique,
+codigoCigam NAO unique por causa do CL/PB), SEO por produto (titleTag, metaDescription,
+palavrasChave, altText), categorias multiplas (ate 3, primeira principal), ecologico booleano,
+13 selos, especificacoes, logistica, impressao, canais, cores (array, cadastro manual). Grupo
+`crm` no lugar de `erp`. Como o schema mudou muito e o push de dev do drizzle abre prompt de
+rename, criei backend/src/scripts/reset-produtos.ts (+ script reset:produtos, roda com
+PAYLOAD_DB_PUSH=false) para dropar so as tabelas produtos* (vazias) e o boot recriar limpo.
+
+Seed. backend/src/seed/produto-squeeze.ts (+ script seed:squeeze), idempotente: semeia as 15
+categorias validadas, sobe TODAS as imagens de backend/src/seed/assets/ (15 PNGs reais do
+Squeeze, ~4 MB commitados para o seed ser reproduzivel; as 3 JPEGs de marketing ficaram de
+fora por terem texto/logos de outros clientes embutidos) e cadastra o Squeeze 300ml com o
+conteudo real da planilha (codigo 109/MV01109, subtitulo, descricoes, beneficios, ideal para,
+diferenciais, especificacoes, SEO, selos BPA/uso permanente/reciclavel, faixa 4-a-15).
+
+Frontend. PDP ligada ao Payload: frontend/src/lib/produtos.ts (getProdutoBySlug, mapeia
+Payload -> tipo Produto + detalhe, fallback pro mock), produto/[slug] async, ProdutoView
+renderiza foto real quando ha imagens (senao placeholder do wireframe). Tipo Produto ganhou
+`imagens?`. Padding na foto principal (revisao do Fabio). Testes: produtos.test.ts (3 casos).
+Suite 31 verdes. Typecheck, lint e build (export) verdes. Build CI-equivalente (backend
+inacessivel) confirmado: a PDP degrada para mock/placeholder, sem vazar URL de imagem local.
+
+Validado no navegador por Fabio (PDP do Squeeze com as 15 fotos, conteudo e specs reais).
+
+DEPLOY: "subir pra prod" = GitHub Pages (wireframe), como sempre. IMPORTANTE: no CI nao ha
+backend, entao o Pages continua com dado MOCK (fallback); o Squeeze real, o catalogo e as
+imagens so aparecem rodando contra o backend local. Producao de verdade (backend hospedado,
+Supabase Pro, R2, dominio) e o S03-08, ainda nao montado, depende de contas do cliente e DNS.
+
+Onde paramos / proximo passo:
+1. Merge do piloto na master (dispara o Pages). Push/PR apos autorizacao.
+2. Para o catalogo completo: Plinio precisa entregar fonte de cor/tom por SKU e convencao de
+   imagem casada ao codigo. So entao o import dos ~88+ produtos.
+3. Producao real: S03-08 (hosting), quando destravar contas/DNS do cliente.

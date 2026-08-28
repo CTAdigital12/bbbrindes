@@ -159,18 +159,26 @@ export interface UserAuthOperations {
 export interface Produto {
   id: number;
   /**
-   * Chave de integracao com o ERP. Nao e sobrescrita pelo import de conteudo.
+   * Comercial, exibido ao cliente. Alfanumerico (ex.: 109, 233 CL).
    */
-  sku: string;
+  codigoSite: string;
+  /**
+   * Chave de integracao CRM/ERP. NAO e unique: variacoes CL/PB compartilham o mesmo CIGAM (ver modelo-produto.md secao 3).
+   */
+  codigoCigam?: string | null;
   nome: string;
   /**
    * URL amigavel em kebab-case. Gerado a partir do nome se ficar vazio.
    */
   slug: string;
   /**
-   * Frase curta que reforca o principal diferencial (modelo Plinio).
+   * Texto de 1 a 2 frases (planilha traz texto longo).
    */
   subtitulo?: string | null;
+  /**
+   * Chamada do produto. Com o nome, e a primeira chamada da PDP.
+   */
+  headline?: string | null;
   descricaoCurta?: string | null;
   descricaoCompleta?: {
     root: {
@@ -189,47 +197,116 @@ export interface Produto {
   } | null;
   beneficios?: string[] | null;
   idealPara?: string[] | null;
-  diferenciaisProduto?: string[] | null;
-  categoria: number | Categoria;
-  material?: string | null;
-  aplicacoes?: string[] | null;
+  diferenciais?: string[] | null;
+  especificacoes?:
+    | {
+        rotulo: string;
+        valor: string;
+        id?: string | null;
+      }[]
+    | null;
+  seo?: {
+    titleTag?: string | null;
+    metaDescription?: string | null;
+    /**
+     * Lista de termos (a planilha traz separados por virgula).
+     */
+    palavrasChave?: string[] | null;
+    altTextPrincipal?: string | null;
+  };
+  /**
+   * INTERNO. Nao exibir no site. Por que o produto vende.
+   */
+  argumentoComercial?: string | null;
+  /**
+   * Ate 3. A PRIMEIRA e a principal (define URL e breadcrumb).
+   */
+  categorias: (number | Categoria)[];
+  /**
+   * Fonte da verdade do eco (planilha). So as linhas Green sao ecologicas.
+   */
+  ecologico?: boolean | null;
+  /**
+   * Marcados com "OK" na planilha.
+   */
+  selos?: {
+    livreDeBpa?: boolean | null;
+    usoMicroondas?: boolean | null;
+    usoLavaLoucas?: boolean | null;
+    recicladoTotal?: boolean | null;
+    logisticaReversa?: boolean | null;
+    usoPermanente?: boolean | null;
+    reducaoCo2?: boolean | null;
+    fonteRenovavel?: boolean | null;
+    designCircular?: boolean | null;
+    upcycling?: boolean | null;
+    fibraNatural?: boolean | null;
+    reciclavel?: boolean | null;
+    reducaoPlastico?: boolean | null;
+  };
   cores?:
     | {
         nome: string;
         /**
-         * Cor em hexadecimal, ex.: #1a2b3c.
+         * Cor em hexadecimal, ex.: #1a2b3c (opcional).
          */
-        hex: string;
+        hex?: string | null;
+        /**
+         * Foto na cor.
+         */
+        imagem?: (number | null) | Media;
         id?: string | null;
       }[]
     | null;
   /**
-   * Galeria do produto. A primeira e a imagem principal.
+   * Galeria do produto. A primeira e a principal.
    */
   imagens?: (number | Media)[] | null;
+  imagemAmbientada?: (number | null) | Media;
   /**
-   * Opcional. Link de video exibido na PDP (pedido do Plinio).
+   * Opcional. Link de video exibido na PDP.
    */
   videoUrl?: string | null;
+  logistica?: {
+    ncm?: string | null;
+    dimensoes?: string | null;
+    pesoUnitario?: string | null;
+    materiaPrima?: string | null;
+    modeloCaixaMaster?: string | null;
+    qtdPorCaixa?: number | null;
+    dimensoesCaixaMaster?: string | null;
+    pesoCaixaMaster?: string | null;
+  };
+  impressao?: {
+    metodos?: string | null;
+    areaTransfer?: string | null;
+    areaTampografia?: string | null;
+    areaSerigrafia?: string | null;
+    sleeve?: string | null;
+  };
+  canais?: {
+    site?: boolean | null;
+    tabelaRevenda?: boolean | null;
+    tabelaB2B?: boolean | null;
+  };
   /**
-   * Faixa exibida no catalogo publico. O B2B nao mostra preco exato.
+   * Faixa exibida no catalogo. O preco exato vem do CRM.
    */
   faixaPreco?: ('ate-3-99' | '4-a-15' | 'acima-de-15') | null;
   /**
    * Faixas da home onde o produto aparece.
    */
   destaques?: ('destaque' | 'mais-vendido' | 'lancamento')[] | null;
-  tags?: 'ecologico'[] | null;
   /**
-   * Origem: ERP. Placeholder ate a integracao (S03 nao sobrescreve). Nao editar como fonte da verdade.
+   * Origem: CRM (Leads2b) -> ERP. Placeholder ate a integracao (S03-09). Nao editar como fonte da verdade.
    */
-  erp?: {
+  crm?: {
     /**
-     * Preco unitario (BRL). Alimentado pelo ERP.
+     * Preco unitario (BRL). Vem do CRM.
      */
     preco?: number | null;
     /**
-     * Saldo em estoque. Alimentado pelo ERP.
+     * Saldo em estoque. Vem do CRM.
      */
     estoque?: number | null;
   };
@@ -635,31 +712,94 @@ export interface PayloadMigration {
  * via the `definition` "produtos_select".
  */
 export interface ProdutosSelect<T extends boolean = true> {
-  sku?: T;
+  codigoSite?: T;
+  codigoCigam?: T;
   nome?: T;
   slug?: T;
   subtitulo?: T;
+  headline?: T;
   descricaoCurta?: T;
   descricaoCompleta?: T;
   beneficios?: T;
   idealPara?: T;
-  diferenciaisProduto?: T;
-  categoria?: T;
-  material?: T;
-  aplicacoes?: T;
+  diferenciais?: T;
+  especificacoes?:
+    | T
+    | {
+        rotulo?: T;
+        valor?: T;
+        id?: T;
+      };
+  seo?:
+    | T
+    | {
+        titleTag?: T;
+        metaDescription?: T;
+        palavrasChave?: T;
+        altTextPrincipal?: T;
+      };
+  argumentoComercial?: T;
+  categorias?: T;
+  ecologico?: T;
+  selos?:
+    | T
+    | {
+        livreDeBpa?: T;
+        usoMicroondas?: T;
+        usoLavaLoucas?: T;
+        recicladoTotal?: T;
+        logisticaReversa?: T;
+        usoPermanente?: T;
+        reducaoCo2?: T;
+        fonteRenovavel?: T;
+        designCircular?: T;
+        upcycling?: T;
+        fibraNatural?: T;
+        reciclavel?: T;
+        reducaoPlastico?: T;
+      };
   cores?:
     | T
     | {
         nome?: T;
         hex?: T;
+        imagem?: T;
         id?: T;
       };
   imagens?: T;
+  imagemAmbientada?: T;
   videoUrl?: T;
+  logistica?:
+    | T
+    | {
+        ncm?: T;
+        dimensoes?: T;
+        pesoUnitario?: T;
+        materiaPrima?: T;
+        modeloCaixaMaster?: T;
+        qtdPorCaixa?: T;
+        dimensoesCaixaMaster?: T;
+        pesoCaixaMaster?: T;
+      };
+  impressao?:
+    | T
+    | {
+        metodos?: T;
+        areaTransfer?: T;
+        areaTampografia?: T;
+        areaSerigrafia?: T;
+        sleeve?: T;
+      };
+  canais?:
+    | T
+    | {
+        site?: T;
+        tabelaRevenda?: T;
+        tabelaB2B?: T;
+      };
   faixaPreco?: T;
   destaques?: T;
-  tags?: T;
-  erp?:
+  crm?:
     | T
     | {
         preco?: T;

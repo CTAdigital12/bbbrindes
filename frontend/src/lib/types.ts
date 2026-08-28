@@ -26,6 +26,9 @@ export type Produto = {
   // Detalhamento da PDP (S03-11). Opcional: so os produtos-modelo preenchem no
   // wireframe. Na producao virao do Payload (docs/pdp-modelo-squeeze.md, Versao A).
   detalhe?: ProdutoDetalhe;
+  // URLs de imagem reais (Payload). Opcional: produtos mock nao tem e a PDP cai
+  // no placeholder. Presente quando o produto vem do Payload com galeria.
+  imagens?: string[];
 };
 
 // Blocos da pagina de produto simulados no wireframe (S03-11). Espelham a
