@@ -21,6 +21,9 @@ export default function ProdutoView({ produto }: { produto: Produto }) {
   const [imgIdx, setImgIdx] = useState(0);
 
   const corAtual = produto.cores.find((c) => c.nome === cor);
+  // Quando ha uma foto por cor (mesma quantidade e ordem), a cor e a foto ficam
+  // sincronizadas: clicar numa troca a outra.
+  const paresCorImagem = temImagens && imagens.length === produto.cores.length;
 
   function aoAdicionar() {
     adicionar({ produtoSlug: produto.slug, nome: produto.nome, cor, quantidade: qtd });
@@ -66,6 +69,7 @@ export default function ProdutoView({ produto }: { produto: Produto }) {
                   onClick={() => {
                     setImgIdx(i);
                     setMidia("imagem");
+                    if (paresCorImagem) setCor(produto.cores[i].nome);
                   }}
                   className={`aspect-square overflow-hidden rounded border bg-white ${
                     midia === "imagem" && imgIdx === i ? "ring-2 ring-wf-accent" : "border-wf-line"
@@ -145,13 +149,14 @@ export default function ProdutoView({ produto }: { produto: Produto }) {
           <div>
             <span className="wf-label">Cor: {cor}</span>
             <div className="flex flex-wrap gap-2">
-              {produto.cores.map((c) => (
+              {produto.cores.map((c, i) => (
                 <button
                   key={c.nome}
                   type="button"
                   onClick={() => {
                     setCor(c.nome);
                     setMidia("imagem");
+                    if (paresCorImagem) setImgIdx(i);
                   }}
                   title={c.nome}
                   className={`h-8 w-8 rounded-full border-2 ${

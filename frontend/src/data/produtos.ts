@@ -8,9 +8,14 @@ const C: Record<string, VariacaoCor> = {
   verde: { nome: "Verde", hex: "#15803d" },
   vermelho: { nome: "Vermelho", hex: "#b91c1c" },
   amarelo: { nome: "Amarelo", hex: "#eab308" },
+  neon: { nome: "Amarelo Neon", hex: "#c9e62f" },
   laranja: { nome: "Laranja", hex: "#ea580c" },
   natural: { nome: "Natural", hex: "#cbb893" },
 };
+
+// Fotos reais do produto-modelo (Squeeze), servidas pelo proprio site (public/).
+// Prefixadas com o basePath para funcionar tanto em dev quanto no GitHub Pages.
+const SQUEEZE_IMG = `${process.env.NEXT_PUBLIC_BASE_PATH || ""}/produtos/squeeze`;
 
 // Materiais e aplicacoes usados nos filtros do catalogo.
 export const materiais = ["Plastico", "Inox", "Ceramica", "Bambu", "Vidro", "Fibra natural"];
@@ -29,7 +34,16 @@ export const produtos: Produto[] = [
       "Squeeze de 300 mL em polietileno atoxico e livre de BPA, com personalizacao da sua logomarca. Pedidos a partir de 500 unidades.",
     material: "Polietileno (PEAD + PEBD)",
     aplicacoes: ["Bebidas", "Esportes", "Eventos"],
-    cores: [C.branco, C.azul, C.verde, C.vermelho, C.preto],
+    // Cores e fotos na MESMA ordem: clicar a cor troca a foto correspondente.
+    cores: [C.azul, C.vermelho, C.verde, C.neon, C.laranja, C.branco],
+    imagens: [
+      `${SQUEEZE_IMG}/azul.webp`,
+      `${SQUEEZE_IMG}/vermelho.webp`,
+      `${SQUEEZE_IMG}/verde.webp`,
+      `${SQUEEZE_IMG}/neon.webp`,
+      `${SQUEEZE_IMG}/laranja.webp`,
+      `${SQUEEZE_IMG}/branco.webp`,
+    ],
     personalizavel: true,
     faixaPreco: "4-a-15",
     destaques: ["destaque"],
