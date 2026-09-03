@@ -935,3 +935,34 @@ Onde paramos / proximo passo:
 2. Para o catalogo completo: Plinio precisa entregar fonte de cor/tom por SKU e convencao de
    imagem casada ao codigo. So entao o import dos ~88+ produtos.
 3. Producao real: S03-08 (hosting), quando destravar contas/DNS do cliente.
+
+## 03/09/2026 (quarta) 17:52 BRT -- Squeeze real no mock para o Pages mostrar (sem backend)
+
+Branch feature/mock-squeeze-fotos-pages. Objetivo: o link publico do GitHub Pages passar a
+mostrar o Squeeze com as fotos reais, para o Julien mandar ao Plinio, sem depender de backend
+hospedado. Como o Pages builda sem backend e cai no mock (fallback), a solucao foi deixar o
+Squeeze no mock identico ao do banco.
+
+O que foi feito:
+1. As 6 fotos reais do Squeeze (cores azul, vermelho, verde, amarelo neon, laranja, branco)
+   convertidas para webp (56 KB no total) em frontend/public/produtos/squeeze/.
+2. O mock do Squeeze (frontend/src/data/produtos.ts, o produto-modelo do S03-11, ja com todo o
+   conteudo) ganhou o campo `imagens` apontando para essas fotos (prefixadas com o basePath) e
+   as 6 cores casadas na mesma ordem.
+3. ProdutoView sincroniza cor<->foto quando ha uma foto por cor (imagens.length ==
+   cores.length): clicar a cor troca a foto e vice-versa. Retrocompativel: produtos sem esse
+   pareamento (inclusive o produto real do backend, com 15 fotos e 3 cores) seguem como antes.
+
+Forward-compatible: quando o backend real subir, getProdutoBySlug volta a puxar do Payload e o
+mock vira fallback de novo. Gates: typecheck, lint e build (export) verdes; build
+CI-equivalente confirma que a PDP do Pages referencia as webp com basePath e os arquivos vao no
+deploy. Validado no navegador por Fabio (em modo mock).
+
+Contexto (por que mock e nao backend real): o Pages e estatico e buildado no CI sem backend;
+mostrar o produto real ao vivo exige backend publico (Railway, ver docs/deploy-railway-homolog.md),
+que ficou para depois. O mock com as fotos reais entrega a validacao visual do Plinio ja e de
+graca.
+
+Proximo passo: (1) merge dispara o Pages com o Squeeze e as fotos. (2) PLANEJAR o login do
+Plinio para testar a area admin, que depende do backend publico (o /admin e servido pelo
+backend, nao pelo Pages) -- entra junto do plano do Railway.
