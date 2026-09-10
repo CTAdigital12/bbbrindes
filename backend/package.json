@@ -9,6 +9,7 @@
     "devsafe": "rm -rf .next && cross-env NODE_OPTIONS=--no-deprecation next dev -p 3001",
     "build": "cross-env NODE_OPTIONS=\"--no-deprecation --max-old-space-size=8000\" next build",
     "start": "cross-env NODE_OPTIONS=--no-deprecation next start -p 3001",
+    "start:railway": "cross-env NODE_OPTIONS=--no-deprecation next start",
     "lint": "cross-env NODE_OPTIONS=--no-deprecation next lint",
     "typecheck": "tsc --noEmit",
     "generate:types": "cross-env NODE_OPTIONS=--no-deprecation payload generate:types",

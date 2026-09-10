@@ -966,3 +966,23 @@ graca.
 Proximo passo: (1) merge dispara o Pages com o Squeeze e as fotos. (2) PLANEJAR o login do
 Plinio para testar a area admin, que depende do backend publico (o /admin e servido pelo
 backend, nao pelo Pages) -- entra junto do plano do Railway.
+
+## 10/09/2026 (quarta) 17:29 BRT -- Config do deploy do backend no Railway (homolog)
+
+Branch chore/railway-deploy-config. Fabio/Gabriel entrou no Railway (projeto heartfelt-courtesy)
+pra subir o backend Payload como homolog pro Plinio ver. Preparei a config no repo pra o deploy
+funcionar de primeira:
+1. backend/package.json: novo script `start:railway` = `next start` (sem -p fixo), pra o Next
+   usar a variavel PORT que o Railway injeta e ligar em 0.0.0.0 (o `start` normal fixa -p 3001,
+   que quebraria o health check do Railway).
+2. railway.json na raiz (config as code): builder RAILPACK, buildCommand
+   `pnpm --filter backend build`, startCommand `pnpm --filter backend start:railway`,
+   restart ON_FAILURE. Monorepo pnpm compartilhado: install roda na raiz, build/start filtram
+   o backend.
+
+Nao mexe no app (next.config do backend ja e servidor normal, sem export/basePath). O deploy
+real e o teste. Proximos passos na tela do Railway: conectar o repo CTAdigital12/bbbrindes,
+setar as variaveis (PG* do Supabase, PAYLOAD_SECRET, PAYLOAD_DB_PUSH=false pra nao rodar drizzle
+push interativo, NEXT_PUBLIC_SERVER_URL=https://${RAILWAY_PUBLIC_DOMAIN}, FRONTEND_URL do Pages),
+Generate Domain e deploy. Backend usa o MESMO Supabase de dev (via pooler), entao o Squeeze
+piloto ja aparece na API; imagens so depois do R2 + reseed. Ver docs/deploy-railway-homolog.md.
