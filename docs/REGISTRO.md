@@ -986,3 +986,25 @@ setar as variaveis (PG* do Supabase, PAYLOAD_SECRET, PAYLOAD_DB_PUSH=false pra n
 push interativo, NEXT_PUBLIC_SERVER_URL=https://${RAILWAY_PUBLIC_DOMAIN}, FRONTEND_URL do Pages),
 Generate Domain e deploy. Backend usa o MESMO Supabase de dev (via pooler), entao o Squeeze
 piloto ja aparece na API; imagens so depois do R2 + reseed. Ver docs/deploy-railway-homolog.md.
+
+## 14/09/2026 (domingo) 12:49 BRT -- Railway: apontar build/start da raiz pro backend (o railway.json era ignorado)
+
+Branch chore/railway-root-build-backend. O deploy no Railway (via railway up, CLI, conta do
+cliente/Plinio, workspace "Plinio Bevervanso's Projects") estava subindo o FRONTEND por engano
+e crashando (`next start` nao funciona com output: export). Causa: o Railpack ignora o
+railway.json (deprecado; a CLI empurra o IaC .railway/railway.ts, que so aplica com
+`railway config apply`, nao no railway up) e SEMPRE roda o `pnpm run build` e `pnpm run start`
+da raiz, que apontavam pro frontend.
+
+Correcao deterministica: os scripts da raiz `build` e `start` agora apontam pro backend
+(`pnpm --filter backend build` e `pnpm --filter backend start:railway`). Adicionados
+`build:frontend` e `start:frontend` pra nao perder o atalho do front. O CI do Pages usa
+`pnpm --filter frontend build` explicito (deploy.yml linha 42), entao NAO quebra. Removi o
+railway.json (ignorado/deprecado) pra ter uma fonte de verdade so. O `start` do front era
+`next start`, que ja quebrava com export, entao repurpor a raiz nao tira nada util.
+
+FALTA no dashboard do Railway (o usuario faz, sao os segredos): setar Variables (PG* e
+PAYLOAD_SECRET do backend/.env local, PAYLOAD_DB_PUSH=false, FRONTEND_URL=https://ctadigital12.github.io,
+NEXT_PUBLIC_SERVER_URL=https://${RAILWAY_PUBLIC_DOMAIN}), Generate Domain, e rodar `railway up`
+de novo. Ai o Railpack builda o backend (next build pesado) e sobe conectado no Supabase.
+Imagens so depois do R2 + reseed. Ver docs/deploy-railway-homolog.md.
