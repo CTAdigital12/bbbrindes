@@ -43,6 +43,12 @@ jobs:
         env:
           # Site servido sob /<repo> no Pages.
           PAGES_BASE_PATH: /bbbrindes
+          # Backend Payload (homolog no Railway): o build le produtos e categorias
+          # reais daqui e inlina no HTML estatico. Se o backend estiver fora do ar
+          # (Supabase free pausa por inatividade), cada leitura da timeout em 4s e
+          # o front cai no mock, entao o build nunca quebra. Trocar por Cloudflare
+          # na producao.
+          NEXT_PUBLIC_BACKEND_URL: https://heartfelt-courtesy-production-3747.up.railway.app
 
       - name: Evita processamento Jekyll
         run: touch frontend/out/.nojekyll
