@@ -1008,3 +1008,95 @@ PAYLOAD_SECRET do backend/.env local, PAYLOAD_DB_PUSH=false, FRONTEND_URL=https:
 NEXT_PUBLIC_SERVER_URL=https://${RAILWAY_PUBLIC_DOMAIN}), Generate Domain, e rodar `railway up`
 de novo. Ai o Railpack builda o backend (next build pesado) e sobe conectado no Supabase.
 Imagens so depois do R2 + reseed. Ver docs/deploy-railway-homolog.md.
+
+## 14/09/2026 (domingo) 18:05 BRT -- Backend no ar no Railway (homolog), via CLI
+
+Subimos o backend Payload no Railway como homolog pro Plinio. Nao deu pra conectar via GitHub
+(o app do Railway na org CTAdigital12 so um OWNER libera; unico owner e a conta "Raizhe"), entao
+foi por `railway up` (CLI). Workspace do cliente (Plinio), project/service heartfelt-courtesy,
+dominio https://heartfelt-courtesy-production-3747.up.railway.app .
+
+Gotchas resolvidos (detalhe em docs/deploy-railway-homolog.md secao 11):
+1. Railpack ignora o railway.json (deprecado) e roda o `pnpm run build`/`start` da RAIZ. Como
+   apontavam pro front, subia o front e crashava. Fix (PR #41, ABERTO): scripts da raiz ->
+   backend; removido railway.json. Pages CI usa --filter frontend, nao quebra.
+2. PORT: start:railway = next start sem -p (usa a PORT do Railway).
+3. Variaveis: 5 nao-segredo via CLI, 4 creds coladas do .env. Mesmo Supabase de dev.
+4. PGUSER estava com o valor do HOST (confusao) -> pooler "tenant not found". Corrigido lendo do
+   .env.
+5. FINAL: projeto Supabase (free) estava PAUSADO -> pooler "tenant not found" mesmo com creds
+   certas. Despausado no dashboard; o Railway reconecta sozinho.
+
+Imagens ainda 404 (arquivos no disco do dev; falta R2 + reseed). PROXIMO: validar 200 na
+/api/produtos e /admin apos o Supabase voltar; mergear PR #41; depois R2 + reseed pras fotos e
+ligar o build do Pages no backend.
+
+## 14/09/2026 (domingo) 21:21 BRT -- Imagens do homolog no Supabase Storage (nao R2), fotos servindo 200
+
+Decisao de arquitetura: pro HOMOLOG as imagens vao no Supabase Storage, nao no Cloudflare R2.
+Motivo (pergunta do Fabio, procede): o Supabase Storage e S3-compativel (doc oficial), o plugin
+@payloadcms/storage-s3 fala com qualquer endpoint S3, e o payload.config ja tem forcePathStyle:true.
+Entao e so setar as 5 vars S3_*, sem conta nem cartao novo e sem depender do checkout do Cloudflare.
+Menos dependencia externa (lente MVP). As imagens ficam no mesmo projeto Supabase que ja pausa por
+inatividade, entao caem junto com o banco, o que nao piora nada (o homolog cai inteiro de qualquer
+jeito). PRODUCAO continua Cloudflare + R2 por causa do egress (Supabase free = 5 GB/mes depois
+US$0,09/GB; R2 = egress zero), que so pesa em trafego real de catalogo grande.
+
+Config: bucket privado `media` no projeto Supabase (ref haxgqcpgvhzcvakhixxi), endpoint
+https://haxgqcpgvhzcvakhixxi.storage.supabase.co/storage/v1/s3, regiao us-east-2, par de chaves S3
+gerado no dashboard (Storage > S3 Connection). As 5 vars (S3_BUCKET, S3_ENDPOINT, S3_REGION,
+S3_ACCESS_KEY_ID, S3_SECRET_ACCESS_KEY) o Fabio setou no service heartfelt-courtesy pelo painel
+(as 2 secretas o proprio Fabio colou; a IA nao recebe segredo). Gotcha do painel: o Raw Editor e
+tudo-ou-nada e ia apagar as PG*, disparando o aviso "Postgres authentication change". Resolvido
+adicionando as 5 pelo botao New Variable, sem tocar nas existentes.
+
+Reseed das fotos: o seed produto-squeeze.ts reaproveita midia por `alt`, entao so rodar de novo NAO
+re-sobe pro Storage (acha as antigas e reusa). Criei backend/src/seed/reset-squeeze-media.ts (untracked)
+que apaga as midias do Squeeze por alt. Rodei os dois seeds com o ambiente do Railway injetado via
+`railway run --service heartfelt-courtesy -- bash -c "cd backend && ./node_modules/.bin/payload run <seed>"`
+(as chaves S3 entram no processo sem passar pela IA; o `railway run` chamando pnpm falha no Windows
+porque cai no cmd.exe, por isso o bash -c chamando o bin direto). Reset apagou 17 midias; o seed
+recriou 15 (upload pro Storage) e o produto (id=3).
+
+Verificacao ponta a ponta: rodei o seed da MINHA maquina, entao o container do Railway nao tem os
+arquivos em disco. Ele so serve porque busca no Supabase Storage. GET
+/api/media/file/0000572_squeeze-300-ml.webp retorna 200 image/webp ~13 KB. Upload e leitura via S3
+confirmados. A /admin > Media e a API /api/produtos (15 imagens no Squeeze) mostram as fotos.
+
+PROXIMO: mergear PR #41 (fix build/start da raiz, ainda ABERTO); ligar o build do Pages no backend
+(NEXT_PUBLIC_BACKEND_URL no deploy.yml) pra o site publico mostrar o produto real com fotos; avisar
+Julien/Plinio que o Supabase free RE-PAUSA por inatividade (homolog cai sozinho de tempos em tempos;
+producao pede Supabase Pro).
+
+## 15/09/2026 (segunda) 19:11 BRT -- Pages le produtos e categorias reais do backend (Railway)
+
+PR #41 mergeado (merge commit bb7c8f2) e master sincronizada. Branch feature/front-produtos-do-backend.
+Objetivo: o site publico (GitHub Pages) mostrar o produto REAL com foto, nao so o mock.
+
+Descoberta: o wiring ja estava quase todo pronto no front, no padrao "a fonte troca, a tela nao".
+frontend/src/lib/payload.ts le de NEXT_PUBLIC_BACKEND_URL (timeout 4s, throw em falha); produtos.ts
+(getProdutoBySlug) e content.ts (getCategorias, getPosts, ...) buscam no Payload e caem no mock em
+erro OU colecao vazia. A PDP usa generateStaticParams com os slugs do mock (que ja inclui o Squeeze)
+e no build o getProdutoBySlug troca pelo dado real. Faltava so uma coisa: o deploy.yml nao setava
+NEXT_PUBLIC_BACKEND_URL, entao no CI virava localhost:3001, o fetch falhava e caia no mock.
+
+Mudanca (unica de codigo): o step de build do deploy.yml passou a setar
+NEXT_PUBLIC_BACKEND_URL=https://heartfelt-courtesy-production-3747.up.railway.app . Degrada com
+seguranca: se o backend estiver fora (Supabase free pausa), cada leitura da timeout em 4s e o front
+cai no mock, o build nunca quebra.
+
+Verificacao: build local com a env gerou out/produto/squeeze-300ml-personalizado/index.html com as 15
+URLs de imagem do Railway, o headline real e a spec Heat transfer. Servido em localhost:8000 e
+validado no navegador pelo Fabio (regra 27): PDP do Squeeze com dado e fotos reais, cores e galeria.
+Home mostra as 15 categorias reais. Catalogo segue mock de proposito (senao mostraria 1 produto so;
+clicar no Squeeze leva pra PDP real).
+
+Escopo (duvida do Fabio "achei que teriamos muito mais imagens"): so o Squeeze piloto esta no backend,
+e as 15 imagens sao angulos do MESMO SKU. Os ~196 produtos do CSV NAO foram importados; imagem por
+SKU e um dos 2 bloqueios pendentes do Plinio. O template esta em docs/importacao-catalogo/ (tem
+coluna "imagens"), mas o CSV completo (via Drive) nao esta no repo e nao sabemos se a coluna de imagem
+veio preenchida. Importacao do catalogo = proxima tarefa, depende das imagens de origem.
+
+Nao mexe: login de revendedor continua sem funcionar Pages<->Railway (cookie cross-site).
+PROXIMO: abrir PR desta branch; depois confirmar a origem das imagens do catalogo pra planejar o
+seed:catalogo.
