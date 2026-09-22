@@ -1100,3 +1100,41 @@ veio preenchida. Importacao do catalogo = proxima tarefa, depende das imagens de
 Nao mexe: login de revendedor continua sem funcionar Pages<->Railway (cookie cross-site).
 PROXIMO: abrir PR desta branch; depois confirmar a origem das imagens do catalogo pra planejar o
 seed:catalogo.
+
+## 22/09/2026 (segunda) 19:20 BRT -- Deploy real no ar + importador do catalogo (158 SITE=ok)
+
+Retomada apos a sessao cair no meio da criacao do PR #42.
+
+1. PR #42 (front le o backend) foi mergeado. O deploy do Pages tinha caido no MOCK porque o Supabase
+free RE-PAUSOU apos ~1 semana (confirmado: backend em 500). Fabio deu Restore, confirmei o backend em
+200 e re-disparei o build com `gh workflow run deploy.yml --ref master`; o publico passou a servir o
+Squeeze real (15 fotos do Railway inline no HTML). LICAO: homolog no free exige unpause + rebuild
+antes de mostrar pro Plinio; estavel 24/7 pede Supabase Pro.
+
+2. Planilha do catalogo identificada: versao AGOSTO_26 (em Downloads), 196 produtos, 158 SITE=ok, com
+TODO o texto (nome, subtitulo, descricoes, beneficios, ideal, diferenciais, specs, SEO, categorias,
+selos, logistica, impressao, canais). NAO tem coluna de imagem (so "Alt text"): as fotos seguem so
+do Squeeze. Correcao de rumo: nao faltava a planilha (falei mal antes), falta a IMAGEM por produto.
+
+3. Importador do catalogo (S03-05), escopo escolhido pelo Fabio = 158 SITE=ok, DATA-ONLY:
+   a. docs/importacao-catalogo/build-catalogo-json.py: le o CSV bruto e gera JSON normalizado em
+      backend/src/seed/data/catalogo.json. O CSV e o JSON ficam FORA do repo publico (so a logica e
+      versionada; .gitignore /src/seed/data/). Mapa de 14 nomes de categoria -> slugs, parser de
+      listas (1 por linha, dropa bullet), especificacoes (pares alternados), richText por paragrafo,
+      dedup de slug. Validacao: 0 avisos, 158 exportados.
+   b. backend/src/seed/catalogo.ts (npm run seed:catalogo): upsert por codigoSite. DATA-ONLY, NAO
+      toca em imagens/imagemAmbientada/cores (o update do Payload preserva o que nao vem no data),
+      entao o Squeeze mantem as 15 fotos. Tem CATALOGO_DRY=1 pra validar sem gravar. Rodado com o
+      ambiente do Railway injetado (mesmo Supabase que a API le).
+   Resultado: DRY = 157 criar / 1 atualizar; run real = 157 criados, 1 atualizado. Verificado na API:
+   totalDocs=158, Squeeze com imagens=15 (preservadas), Green 801 com 3 categorias e 9 selos, 0
+   produtos sem categoria, so 1 produto com imagem (o Squeeze).
+
+Entram tambem neste commit os seeds admin.ts (cria/reseta admin) e reset-squeeze-media.ts (apaga
+midia por alt pra reupload), que estavam untracked de sessoes anteriores.
+
+ESCOPO DO QUE APARECE: os 158 estao no BACKEND (/admin e API). O site PUBLICO ainda NAO mostra o
+catalogo real, porque a listagem e o generateStaticParams do front vem do MOCK; so o Squeeze aparece
+real no publico (o slug dele esta no mock). PROXIMO: ligar a listagem do catalogo e o
+generateStaticParams no backend (mudanca de front, com validacao visual), sabendo que a maioria entra
+sem foto (placeholder) ate as imagens do Plinio.
