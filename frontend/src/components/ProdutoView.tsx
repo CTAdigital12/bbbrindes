@@ -216,10 +216,13 @@ export default function ProdutoView({ produto }: { produto: Produto }) {
           Sem pagamento online. Voce monta o orcamento e um vendedor entra em contato.
         </p>
 
-        {/* Descricao curta (abertura) abaixo do botao de orcamento (revisao Plinio) */}
-        {produto.detalhe && (
-          <p className="text-sm leading-relaxed text-wf-text">{produto.detalhe.abertura}</p>
-        )}
+        {/* Descricao curta (abertura) abaixo do botao de orcamento (revisao Plinio).
+            So aparece quando difere da linha-curta do topo: produtos sem `headline`
+            caem no subtitulo nos dois lugares e o texto ficava duplicado. */}
+        {produto.detalhe && produto.detalhe.abertura &&
+          produto.detalhe.abertura !== produto.detalhe.linhaCurta && (
+            <p className="text-sm leading-relaxed text-wf-text">{produto.detalhe.abertura}</p>
+          )}
       </div>
     </div>
   );
