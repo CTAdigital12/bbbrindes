@@ -4,7 +4,11 @@
 // no Payload continuam vindo do mock.
 
 import type { Produto, ProdutoDetalhe, VariacaoCor } from "@/lib/types";
-import { produtoPorSlug, produtos as produtosMock } from "@/data/produtos";
+import {
+  produtoPorSlug,
+  produtos as produtosMock,
+  produtosEcologicos as produtosEcologicosMock,
+} from "@/data/produtos";
 import { lexicalToPlainText, payloadFind } from "@/lib/payload";
 
 type CategoriaRef = { slug?: string; nome?: string } | number;
@@ -143,4 +147,26 @@ export async function getProdutoSlugs(): Promise<string[]> {
     // cai no mock abaixo
   }
   return produtosMock.map((p) => p.slug);
+}
+
+// Lista completa de produtos reais do backend, ja mapeada pro tipo da UI, para a
+// vitrine (/catalogo) e as faixas da home. Fallback pro mock se o backend cair no
+// build (mesma regra das PDPs: no pior caso sobem so os de exemplo).
+export async function getProdutos(): Promise<Produto[]> {
+  try {
+    const docs = await payloadFind<ProdutoDoc>("produtos", { depth: 1, limit: 1000 });
+    if (docs.length > 0) return docs.map(mapear);
+  } catch {
+    // cai no mock abaixo
+  }
+  return produtosMock;
+}
+
+// So os ecologicos, para a faixa "Brindes Ecologicos" da home. Deriva da lista
+// real pelo flag `ecologico`; cai no mock se a lista real veio vazia/fora do ar.
+export async function getProdutosEcologicos(): Promise<Produto[]> {
+  const todos = await getProdutos();
+  if (todos === produtosMock) return produtosEcologicosMock();
+  const eco = todos.filter((p) => (p.tags ?? []).includes("ecologico"));
+  return eco.length > 0 ? eco : produtosEcologicosMock();
 }
