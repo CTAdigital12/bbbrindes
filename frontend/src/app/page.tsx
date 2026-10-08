@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { diferenciais } from "@/data/banners";
-import { produtos, produtosEcologicos } from "@/data/produtos";
+import { getProdutos, getProdutosEcologicos } from "@/lib/produtos";
 import {
   getBanners,
   getCampanhas,
@@ -14,18 +14,28 @@ import DestaquesRandom from "@/components/DestaquesRandom";
 import ProductCard from "@/components/ProductCard";
 
 export default async function HomePage() {
-  // Conteudo lido do Payload no build (com fallback pro mock). Produtos e
-  // diferenciais seguem mock: produtos espera o schema do Plinio (S03-02) e
-  // diferenciais nao tem colecao propria no schema.
-  const [{ carrossel: banners, mini: miniBanners }, campanhas, categorias, posts, cases, materias] =
-    await Promise.all([
-      getBanners(),
-      getCampanhas(),
-      getCategorias(),
-      getPosts(),
-      getCases(),
-      getMaterias(),
-    ]);
+  // Conteudo lido do Payload no build (com fallback pro mock). Produtos agora
+  // tambem sao reais (getProdutos/getProdutosEcologicos); diferenciais seguem
+  // mock, pois nao tem colecao propria no schema.
+  const [
+    { carrossel: banners, mini: miniBanners },
+    campanhas,
+    categorias,
+    posts,
+    cases,
+    materias,
+    produtos,
+    produtosEco,
+  ] = await Promise.all([
+    getBanners(),
+    getCampanhas(),
+    getCategorias(),
+    getPosts(),
+    getCases(),
+    getMaterias(),
+    getProdutos(),
+    getProdutosEcologicos(),
+  ]);
 
   return (
     <div>
@@ -100,7 +110,7 @@ export default async function HomePage() {
           </Link>
         </div>
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
-          {produtosEcologicos()
+          {produtosEco
             .slice(0, 6)
             .map((p, i) => (
               <ProductCard

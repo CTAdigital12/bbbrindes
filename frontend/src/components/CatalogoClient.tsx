@@ -4,7 +4,7 @@ import { useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import type { Produto } from "@/lib/types";
 import { categorias } from "@/data/categorias";
-import { aplicacoes, faixaPrecoLabels, materiais, produtos } from "@/data/produtos";
+import { aplicacoes, faixaPrecoLabels, materiais, produtos as produtosMock } from "@/data/produtos";
 import ProductCard from "@/components/ProductCard";
 
 type Filtros = {
@@ -18,7 +18,7 @@ type Filtros = {
 
 const coresFiltro = ["Branco", "Preto", "Azul", "Verde", "Vermelho", "Amarelo", "Laranja", "Natural"];
 
-export default function CatalogoClient() {
+export default function CatalogoClient({ produtos = produtosMock }: { produtos?: Produto[] }) {
   // Le os filtros iniciais da query string (ex.: /catalogo?categoria=ecologicos).
   const sp = useSearchParams();
   const [f, setF] = useState<Filtros>(() => ({
@@ -30,7 +30,7 @@ export default function CatalogoClient() {
     cor: sp.get("cor") ?? "",
   }));
 
-  const resultados = useMemo(() => filtrar(produtos, f), [f]);
+  const resultados = useMemo(() => filtrar(produtos, f), [produtos, f]);
 
   function set<K extends keyof Filtros>(chave: K, valor: Filtros[K]) {
     setF((atual) => ({ ...atual, [chave]: valor }));
