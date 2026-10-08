@@ -4,7 +4,7 @@
 // no Payload continuam vindo do mock.
 
 import type { Produto, ProdutoDetalhe, VariacaoCor } from "@/lib/types";
-import { produtoPorSlug } from "@/data/produtos";
+import { produtoPorSlug, produtos as produtosMock } from "@/data/produtos";
 import { lexicalToPlainText, payloadFind } from "@/lib/payload";
 
 type CategoriaRef = { slug?: string; nome?: string } | number;
@@ -111,11 +111,36 @@ function mapear(doc: ProdutoDoc): Produto {
 
 export async function getProdutoBySlug(slug: string): Promise<Produto | undefined> {
   try {
-    const docs = await payloadFind<ProdutoDoc>("produtos", { depth: 1, limit: 200 });
-    const doc = docs.find((d) => d.slug === slug);
-    if (doc) return mapear(doc);
+    // Busca o produto direto pelo slug, em vez de puxar a lista inteira a cada
+    // pagina (que, com 150+ produtos e depth 1, era pesado e estourava o timeout).
+    const docs = await payloadFind<ProdutoDoc>("produtos", {
+      depth: 1,
+      limit: 1,
+      where: { "where[slug][equals]": slug },
+    });
+    if (docs[0]) return mapear(docs[0]);
   } catch {
     // cai no mock abaixo
   }
   return produtoPorSlug(slug);
+}
+
+// Slugs de TODOS os produtos reais do backend, para o generateStaticParams gerar
+// uma PDP por produto publicado (sem isso, as paginas sao geradas a partir do
+// mock e os produtos reais dao 404). Se o backend cair durante o build, usa os
+// slugs do mock: o build nunca quebra, no pior caso sobem so os de exemplo.
+export async function getProdutoSlugs(): Promise<string[]> {
+  try {
+    const docs = await payloadFind<{ slug?: string }>("produtos", {
+      depth: 0,
+      limit: 1000,
+    });
+    const slugs = docs
+      .map((d) => d.slug)
+      .filter((s): s is string => typeof s === "string" && s.length > 0);
+    if (slugs.length > 0) return slugs;
+  } catch {
+    // cai no mock abaixo
+  }
+  return produtosMock.map((p) => p.slug);
 }

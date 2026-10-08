@@ -10,6 +10,9 @@ type FindParams = {
   limit?: number;
   sort?: string;
   depth?: number;
+  // Filtros crus do Payload, ex.: { "where[slug][equals]": "cantil-500ml" }.
+  where?: Record<string, string>;
+  timeoutMs?: number;
 };
 
 // Lista documentos de uma colecao publica. Lanca em erro de rede, timeout ou
@@ -17,14 +20,18 @@ type FindParams = {
 // fallback.
 export async function payloadFind<T = Record<string, unknown>>(
   collection: string,
-  { limit = 100, sort, depth = 0 }: FindParams = {},
+  { limit = 100, sort, depth = 0, where, timeoutMs = 8000 }: FindParams = {},
 ): Promise<T[]> {
   const qs = new URLSearchParams({ limit: String(limit), depth: String(depth) });
   if (sort) qs.set("sort", sort);
+  for (const [chave, valor] of Object.entries(where ?? {})) qs.set(chave, valor);
 
   // Timeout para o build nao pendurar se o backend estiver lento/fora do ar.
+  // 8s tolera o cold start do homolog (Railway/Supabase free) sem cair no mock a
+  // toa; com o backend quente a leitura volta em menos de 1s. O 4s de antes
+  // derrubava o build no mock quando o container acordava frio.
   const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), 4000);
+  const timeout = setTimeout(() => controller.abort(), timeoutMs);
   try {
     const res = await fetch(`${BACKEND}/api/${collection}?${qs.toString()}`, {
       signal: controller.signal,

@@ -3,7 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { nomeCategoria } from "@/data/categorias";
 import { produtos } from "@/data/produtos";
-import { getProdutoBySlug } from "@/lib/produtos";
+import { getProdutoBySlug, getProdutoSlugs } from "@/lib/produtos";
 import ProdutoView from "@/components/ProdutoView";
 import ProdutoDetalheView from "@/components/ProdutoDetalheView";
 import ProductCard from "@/components/ProductCard";
@@ -11,8 +11,12 @@ import { pageUrl } from "@/lib/site";
 
 type Params = Promise<{ slug: string }>;
 
-export function generateStaticParams() {
-  return produtos.map((p) => ({ slug: p.slug }));
+export async function generateStaticParams() {
+  // Uma PDP por produto REAL do backend (fallback pros slugs do mock se o backend
+  // cair no build). Antes isto lia `produtos` (mock), entao os 150+ produtos reais
+  // nunca ganhavam pagina e davam 404 pro cliente.
+  const slugs = await getProdutoSlugs();
+  return slugs.map((slug) => ({ slug }));
 }
 
 export async function generateMetadata({ params }: { params: Params }): Promise<Metadata> {
