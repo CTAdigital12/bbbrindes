@@ -15,6 +15,10 @@ dist/
 /media/
 /uploads/
 
+# dados brutos do catalogo do cliente (CSV/JSON): repo publico, ficam fora.
+# regenerar com docs/importacao-catalogo/build-catalogo-json.py
+/src/seed/data/
+
 # logs / os
 *.log
 .DS_Store
