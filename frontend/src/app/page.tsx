@@ -51,7 +51,10 @@ export default async function HomePage() {
             <Link
               key={b.id}
               href={b.href}
-              className="wf-img flex min-h-[110px] flex-col justify-end rounded-lg p-4"
+              className={`flex min-h-[110px] flex-col justify-end overflow-hidden rounded-lg p-4 ${
+                b.imagem ? "bg-cover bg-center" : "wf-img"
+              }`}
+              style={b.imagem ? { backgroundImage: `url("${b.imagem}")` } : undefined}
             >
               <div className="rounded bg-wf-surface/85 p-3">
                 <h2 className="text-sm font-semibold text-wf-ink">{b.titulo}</h2>

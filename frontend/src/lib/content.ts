@@ -89,6 +89,7 @@ type BannerDoc = {
   subtitulo?: string;
   cta?: string;
   href?: string;
+  imagem?: { url?: string } | number;
   posicao: "carrossel" | "mini";
   ativo?: boolean;
   ordem?: number;
@@ -100,7 +101,8 @@ type BannerDoc = {
 // painel, mesmo que uma das posicoes fique sem itens.
 export async function getBanners(): Promise<{ carrossel: Banner[]; mini: Banner[] }> {
   try {
-    const docs = await payloadFind<BannerDoc>("banners", { sort: "ordem" });
+    // depth: 1 traz a imagem como objeto com url (sem isso vem so o id).
+    const docs = await payloadFind<BannerDoc>("banners", { sort: "ordem", depth: 1 });
     if (docs.length === 0) return { carrossel: bannersMock, mini: miniBannersMock };
 
     const mapear = (posicao: BannerDoc["posicao"]): Banner[] =>
@@ -112,6 +114,7 @@ export async function getBanners(): Promise<{ carrossel: Banner[]; mini: Banner[
           subtitulo: d.subtitulo ?? "",
           cta: d.cta ?? "",
           href: d.href && d.href.length > 0 ? d.href : "#",
+          imagem: typeof d.imagem === "object" ? d.imagem?.url : undefined,
         }));
 
     return { carrossel: mapear("carrossel"), mini: mapear("mini") };
