@@ -21,7 +21,23 @@ export default function ProductCard({
       href={`/produto/${produto.slug}`}
       className={`wf-card group flex flex-col overflow-hidden transition-shadow hover:shadow-md ${className}`}
     >
-      <div className={`wf-img w-full ${compacto ? "aspect-[4/3]" : "aspect-square"}`}>Imagem</div>
+      <div
+        className={`w-full overflow-hidden bg-white ${compacto ? "aspect-[4/3]" : "aspect-square"} ${
+          produto.imagens?.length ? "" : "wf-img"
+        }`}
+      >
+        {produto.imagens?.length ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={produto.imagens[0]}
+            alt={produto.nome}
+            loading="lazy"
+            className="h-full w-full object-contain p-4"
+          />
+        ) : (
+          "Imagem"
+        )}
+      </div>
       <div className="flex flex-1 flex-col gap-2 p-3">
         <h3 className="line-clamp-2 text-sm font-medium text-wf-ink group-hover:text-wf-accent">
           {produto.nome}
