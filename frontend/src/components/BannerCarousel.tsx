@@ -26,7 +26,10 @@ export default function BannerCarousel({ banners }: { banners: Banner[] }) {
     >
       <Link
         href={b.href}
-        className="wf-img flex min-h-[240px] flex-col justify-end overflow-hidden rounded-lg p-6"
+        className={`flex min-h-[240px] flex-col justify-end overflow-hidden rounded-lg p-6 ${
+          b.imagem ? "bg-cover bg-center" : "wf-img"
+        }`}
+        style={b.imagem ? { backgroundImage: `url("${b.imagem}")` } : undefined}
       >
         <div className="relative max-w-md rounded bg-wf-surface/85 p-4">
           <span className="wf-tag">Campanha</span>

@@ -54,6 +54,9 @@ export type Banner = {
   subtitulo: string;
   cta: string;
   href: string;
+  // URL do fundo (Payload). Opcional: sem imagem cai no placeholder. O texto
+  // (titulo/subtitulo/cta) mora aqui, nao na imagem; o banner e so o fundo.
+  imagem?: string;
 };
 
 export type Post = {
