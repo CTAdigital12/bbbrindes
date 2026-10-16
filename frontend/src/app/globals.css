@@ -63,3 +63,15 @@ body {
     @apply inline-flex items-center rounded border border-dashed border-wf-muted px-2 py-0.5 text-[10px] uppercase tracking-wide text-wf-muted;
   }
 }
+
+/* Correcao de acessibilidade do hero da Joy: o joy.css deixa o texto do slide
+   (.slide .anim>*) em opacity:0 ate a animacao 'rise' rodar, mas sob
+   prefers-reduced-motion o joy.css desliga toda animacao, o que deixaria o
+   texto do slide ativo invisivel. Aqui mostramos direto (maior especificidade),
+   sem mudar o visual padrao (so afeta quem pediu menos movimento). */
+@media (prefers-reduced-motion: reduce) {
+  .slide.on .anim > * {
+    opacity: 1;
+    transform: none;
+  }
+}
