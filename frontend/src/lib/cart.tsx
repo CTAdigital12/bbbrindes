@@ -7,6 +7,10 @@ export type ItemOrcamento = {
   nome: string;
   cor: string;
   quantidade: number;
+  // Caminho/URL cru da imagem do produto (asset local ou URL do Payload), usado
+  // pela gaveta e pela pagina de orcamento para a miniatura. Opcional e aditivo:
+  // nao altera a API do CartProvider nem quebra itens persistidos sem ele.
+  imagem?: string;
 };
 
 type CartContextValue = {

@@ -7,6 +7,7 @@ import type { Produto } from "@/lib/types";
 import { categorias, nomeCategoria } from "@/data/categorias";
 import { aplicacoes, produtos as produtosMock } from "@/data/produtos";
 import { useCart } from "@/lib/cart";
+import { useCartUI } from "@/lib/cart-ui";
 import { imgSrc } from "@/lib/asset";
 import { WA, nb } from "@/data/home-joy";
 import Icon from "@/components/Icon";
@@ -64,6 +65,7 @@ export default function CatalogoClient({ produtos = produtosMock }: { produtos?:
   const novo = sp.get("novo");
 
   const { adicionar } = useCart();
+  const { abrir } = useCartUI();
 
   // Recarrega os filtros quando a querystring muda (busca do header, link de
   // categoria, "Limpar"). Alteracoes feitas na propria pagina nao mexem na URL.
@@ -130,8 +132,11 @@ export default function CatalogoClient({ produtos = produtosMock }: { produtos?:
       nome: p.nome,
       cor: p.cores?.[0]?.nome ?? "",
       quantidade: 500,
+      imagem: p.imagens?.[0],
     });
+    // Fecha o quickview e abre a gaveta de orcamento (como o addToCart do mockup).
     setQvProduto(null);
+    abrir();
   }
 
   // Contagens por opcao (.n): total de produtos por valor, sobre a lista inteira

@@ -6,6 +6,7 @@ import { imgSrc } from "@/lib/asset";
 import { nomeCategoria } from "@/data/categorias";
 import { nb } from "@/data/home-joy";
 import { useCart } from "@/lib/cart";
+import { useCartUI } from "@/lib/cart-ui";
 import Icon from "@/components/Icon";
 
 // Minimo B2B: todo produto e personalizado a partir de 500 unidades.
@@ -13,17 +14,23 @@ const MIN_QTD = 500;
 
 // Quick-add (.qa do mockup): botao "Adicionar ao orcamento" que aparece no hover
 // do card. Fica num componente proprio para que so o catalogo (quickActions)
-// assine o carrinho; na home o card nao chama useCart. Adiciona a 1a cor, 500 un.
-// (o badge do header incrementa; o drawer de carrinho vem na proxima fase).
+// assine o carrinho; na home o card nao chama useCart. Adiciona a 1a cor, 500 un.,
+// e abre a gaveta de orcamento (como o addToCart() do mockup).
 function QuickAdd({ produto }: { produto: Produto }) {
   const { adicionar } = useCart();
-  const adicionarAoOrcamento = () =>
+  const { abrir } = useCartUI();
+  // Adiciona a 1a cor, 500 un., e abre a gaveta de orcamento (comportamento do
+  // addToCart() do mockup). O badge do header ja incrementa pelo CartProvider.
+  const adicionarAoOrcamento = () => {
     adicionar({
       produtoSlug: produto.slug,
       nome: produto.nome,
       cor: produto.cores?.[0]?.nome ?? "",
       quantidade: MIN_QTD,
+      imagem: produto.imagens?.[0],
     });
+    abrir();
+  };
 
   return (
     <div className="qa">

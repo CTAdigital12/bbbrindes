@@ -5,6 +5,7 @@
 import { type MouseEvent, useEffect, useRef, useState } from "react";
 import type { Produto } from "@/lib/types";
 import { useCart } from "@/lib/cart";
+import { useCartUI } from "@/lib/cart-ui";
 import { nomeCategoria } from "@/data/categorias";
 import { WA, nb } from "@/data/home-joy";
 import { imgSrc } from "@/lib/asset";
@@ -26,6 +27,7 @@ type GalItem = { cor: string; src: string };
 
 export default function ProdutoView({ produto }: { produto: Produto }) {
   const { adicionar } = useCart();
+  const { abrir } = useCartUI();
 
   const cores = produto.cores ?? [];
   const imagens = produto.imagens ?? [];
@@ -118,7 +120,14 @@ export default function ProdutoView({ produto }: { produto: Produto }) {
       toast("O pedido mínimo é de 500 unidades");
       return;
     }
-    adicionar({ produtoSlug: produto.slug, nome: produto.nome, cor: corNome, quantidade: qtd });
+    adicionar({
+      produtoSlug: produto.slug,
+      nome: produto.nome,
+      cor: corNome,
+      quantidade: qtd,
+      imagem: gal[imgIdx]?.src ?? imagens[0],
+    });
+    abrir();
     toast("Adicionado ao orçamento");
   }
 

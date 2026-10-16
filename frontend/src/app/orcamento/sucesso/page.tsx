@@ -2,6 +2,13 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { WA } from "@/data/home-joy";
+import Icon from "@/components/Icon";
+
+// Confirmacao de orcamento ("Cotacao recebida") espelhando a funcao done() do
+// mockup funcional da Joy, com as classes verbatim do joy.css (.done, .ok). O
+// snapshot do ultimo pedido ("bbbrindes:ultimo-pedido") e opcional: se existir,
+// mostramos um resumo discreto abaixo dos botoes (continuidade do wireframe).
 
 type Resumo = {
   solicitante: { nome: string; empresa: string; telefone: string; email: string };
@@ -9,7 +16,7 @@ type Resumo = {
   total: number;
 };
 
-const WHATSAPP = process.env.NEXT_PUBLIC_WHATSAPP_NUMERO ?? "5571999999999";
+const fmt = (n: number) => n.toLocaleString("pt-BR");
 
 export default function SucessoPage() {
   const [resumo, setResumo] = useState<Resumo | null>(null);
@@ -19,60 +26,72 @@ export default function SucessoPage() {
       const raw = window.localStorage.getItem("bbbrindes:ultimo-pedido");
       if (raw) setResumo(JSON.parse(raw) as Resumo);
     } catch {
-      // ignora
+      // ignora snapshot corrompido
     }
   }, []);
 
-  const msg = encodeURIComponent(
-    "Ola! Acabei de enviar um pedido de orcamento pelo site e gostaria de falar com urgencia.",
-  );
-
   return (
-    <div className="wf-container py-12">
-      <div className="mx-auto max-w-xl text-center">
-        <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-wf-accent text-2xl text-white">
-          OK
+    <div className="wrap">
+      <div className="done">
+        <div className="ok">
+          <Icon name="check" />
         </div>
-        <h1 className="text-2xl font-bold text-wf-ink">Pedido de orcamento enviado</h1>
-        <p className="mt-2 text-sm text-wf-text">
-          Recebemos seu pedido. Um vendedor entra em contato em breve. Voce tambem recebera um email
-          de confirmacao (na producao).
+        <h1>Cotação recebida</h1>
+        <p style={{ color: "var(--muted)", margin: "0 0 22px" }}>
+          Obrigado! Seu pedido de orçamento chegou ao time comercial da BB Brindes. Um especialista
+          entra em contato pelo WhatsApp ou e-mail informado.
         </p>
-
-        <a
-          href={`https://wa.me/${WHATSAPP}?text=${msg}`}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="wf-btn-primary mt-6"
-        >
-          Fale com urgencia no WhatsApp
-        </a>
+        <div style={{ display: "flex", gap: 10, justifyContent: "center", flexWrap: "wrap" }}>
+          <a className="btn btn-wa" href={WA} target="_blank" rel="noopener">
+            <Icon name="brand-whatsapp" />
+            Adiantar pelo WhatsApp
+          </a>
+          <Link className="btn btn-ghost" href="/">
+            Voltar ao início
+          </Link>
+        </div>
 
         {resumo && (
-          <div className="wf-card mt-8 p-4 text-left">
-            <h2 className="mb-2 text-sm font-semibold text-wf-ink">Resumo do pedido</h2>
-            <p className="text-xs text-wf-muted">
-              {resumo.solicitante.nome} - {resumo.solicitante.empresa}
+          <div style={{ marginTop: 28, textAlign: "left" }}>
+            <h2 style={{ margin: "0 0 8px", fontSize: 15, fontWeight: 600 }}>Resumo do pedido</h2>
+            <p style={{ margin: 0, fontSize: 12.5, color: "var(--muted)" }}>
+              {resumo.solicitante.nome}
+              {resumo.solicitante.empresa ? ` · ${resumo.solicitante.empresa}` : ""}
             </p>
-            <ul className="mt-3 space-y-1 text-sm text-wf-text">
+            <ul
+              style={{
+                listStyle: "none",
+                padding: 0,
+                margin: "12px 0 0",
+                display: "grid",
+                gap: 6,
+              }}
+            >
               {resumo.itens.map((i, idx) => (
-                <li key={idx} className="flex justify-between border-b border-wf-line py-1">
+                <li
+                  key={idx}
+                  style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    gap: 12,
+                    fontSize: 14,
+                    borderBottom: "1px solid var(--line)",
+                    paddingBottom: 6,
+                  }}
+                >
                   <span>
-                    {i.nome} <span className="text-wf-muted">({i.cor})</span>
+                    {i.nome}
+                    {i.cor ? <span style={{ color: "var(--muted)" }}> · {i.cor}</span> : null}
                   </span>
-                  <span>{i.quantidade} un</span>
+                  <span style={{ whiteSpace: "nowrap" }}>{fmt(i.quantidade)} un.</span>
                 </li>
               ))}
             </ul>
-            <p className="mt-2 text-right text-xs text-wf-muted">{resumo.total} itens no total</p>
+            <p style={{ margin: "10px 0 0", textAlign: "right", fontSize: 12.5, color: "var(--muted)" }}>
+              {fmt(resumo.total)} unidades no total
+            </p>
           </div>
         )}
-
-        <div className="mt-8">
-          <Link href="/catalogo" className="wf-btn-ghost">
-            Voltar ao catalogo
-          </Link>
-        </div>
       </div>
     </div>
   );

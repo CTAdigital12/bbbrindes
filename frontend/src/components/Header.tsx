@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useRouter, usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useCart } from "@/lib/cart";
+import { useCartUI } from "@/lib/cart-ui";
 import Icon from "@/components/Icon";
 import { campanhas } from "@/data/campanhas";
 
@@ -38,6 +39,7 @@ const PROMESSAS: { icon: string; texto: string }[] = [
 
 export default function Header() {
   const { totalItens } = useCart();
+  const { abrir } = useCartUI();
   const router = useRouter();
   const pathname = usePathname();
   const [busca, setBusca] = useState("");
@@ -124,15 +126,16 @@ export default function Header() {
             <Link href="/revendedor/login" className="btn btn-ghost btn-sm rev">
               Revendedor
             </Link>
-            <Link
-              href="/orcamento"
+            <button
+              type="button"
               className="btn btn-deep btn-sm cartbtn"
-              aria-label="Meu orcamento"
+              onClick={abrir}
+              aria-label="Abrir orçamento"
             >
               <Icon name="shopping-bag" />
-              <span className="lbl-c">Orcamento</span>
+              <span className="lbl-c">Orçamento</span>
               <span className="badge">{totalItens}</span>
-            </Link>
+            </button>
           </div>
         </div>
 
