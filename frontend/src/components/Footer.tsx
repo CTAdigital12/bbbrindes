@@ -1,94 +1,111 @@
 import Link from "next/link";
+import Icon from "@/components/Icon";
 
-// Rodape reorganizado conforme a revisao do Plinio (S01-12): institucional,
-// revenda e a coluna de cases/imprensa, mantendo versao e contato.
-const colunas: { titulo: string; links: { href: string; label: string }[] }[] = [
-  {
-    titulo: "Institucional",
-    links: [
-      { href: "/quem-somos", label: "Quem Somos" },
-      { href: "/blog", label: "Blog" },
-      { href: "/catalogos", label: "Catalogos" },
-      { href: "/contato", label: "Contato" },
-      { href: "/sac", label: "SAC" },
-    ],
-  },
-  {
-    titulo: "Revenda",
-    links: [
-      { href: "/revendedores", label: "Revendedores" },
-      { href: "/revendedor/login", label: "Area do revendedor" },
-    ],
-  },
-  {
-    titulo: "Cases e imprensa",
-    links: [
-      { href: "/cases", label: "Cases" },
-      { href: "/imprensa", label: "Imprensa" },
-    ],
-  },
-];
-
+// Rodape da identidade da Joy (mockup funcional, 16/10). 4 colunas + selos + barra
+// inferior. A logo usa a classe .logo.white (mascara inline no joy.css). Contatos
+// e CNPJ vem do mockup (fonte da verdade do visual). Links apontam pras rotas reais.
 export default function Footer() {
   return (
-    <footer className="mt-12 border-t border-wf-line bg-wf-surface">
-      <div className="wf-container grid gap-8 py-10 sm:grid-cols-2 lg:grid-cols-5">
-        <div className="lg:col-span-2">
-          <div className="text-lg font-bold text-wf-ink">
-            bb<span className="text-wf-accent">brindes</span>
+    <>
+      <footer className="site">
+        <div className="wrap">
+          <div className="fgrid">
+            <div>
+              <span className="logo white" style={{ width: 140, height: 36 }} aria-label="BB Brindes" />
+              <p style={{ margin: "14px 0 0", maxWidth: "36ch" }}>
+                BB Brindes, uma empresa Grupo BB. Industria brasileira de brindes corporativos
+                personalizados, com fabrica propria ha&nbsp;27&nbsp;anos.
+              </p>
+              <div className="fcon">
+                <a href="https://wa.me/557191717496" target="_blank" rel="noopener">
+                  <Icon name="brand-whatsapp" />
+                  (71) 9171-7496
+                </a>
+                <a href="mailto:comercial@bbgrupo.com.br">
+                  <Icon name="mail" />
+                  comercial@bbgrupo.com.br
+                </a>
+                <span>
+                  <Icon name="map-pin" />
+                  Lauro de Freitas / BA
+                </span>
+              </div>
+              <div className="soc">
+                <a href="#" aria-label="Instagram">
+                  <Icon name="brand-instagram" />
+                </a>
+                <a href="#" aria-label="LinkedIn">
+                  <Icon name="brand-linkedin" />
+                </a>
+                <a href="#" aria-label="Facebook">
+                  <Icon name="brand-facebook" />
+                </a>
+                <a href="#" aria-label="Pinterest">
+                  <Icon name="brand-pinterest" />
+                </a>
+                <a href="#" aria-label="YouTube">
+                  <Icon name="brand-youtube" />
+                </a>
+              </div>
+            </div>
+
+            <div>
+              <h4>Institucional</h4>
+              <ul>
+                <li><Link href="/quem-somos">Quem somos</Link></li>
+                <li><Link href="/blog">Blog</Link></li>
+                <li><Link href="/catalogos">Catalogos</Link></li>
+                <li><Link href="/contato">Contato</Link></li>
+                <li><Link href="/sac">SAC</Link></li>
+              </ul>
+            </div>
+
+            <div>
+              <h4>Revenda</h4>
+              <ul>
+                <li><Link href="/revendedores">Seja revendedor</Link></li>
+                <li><Link href="/revendedor/login">Area do revendedor</Link></li>
+              </ul>
+              <h4 style={{ marginTop: 22 }}>Compre</h4>
+              <ul>
+                <li><Link href="/catalogo">Catalogo completo</Link></li>
+                <li><Link href="/orcamento">Meu orcamento</Link></li>
+              </ul>
+            </div>
+
+            <div>
+              <h4>Cases e imprensa</h4>
+              <ul>
+                <li><Link href="/cases">Cases</Link></li>
+                <li><Link href="/imprensa">Imprensa</Link></li>
+              </ul>
+            </div>
           </div>
-          <p className="mt-2 max-w-sm text-sm text-wf-text">
-            Industria 100% brasileira de brindes corporativos. Catalogo, orcamento e revenda.
-          </p>
-          <div className="mt-4 text-sm text-wf-text">
-            <p>WhatsApp: (71) 99999-9999</p>
-            <p>contato@bbbrindes.com.br</p>
-            <p>Lauro de Freitas / BA</p>
+
+          <div className="certs">
+            <span>SGP</span>
+            <span>PS&amp;C</span>
+            <span>GMP</span>
+            <span>NM300</span>
+            <span>SMETA 4 Pilares</span>
+          </div>
+
+          <div className="fbot">
+            <span>&copy; 2026 BB Brindes, uma empresa Grupo BB, CNPJ 11.158.637/0001-27</span>
+            <span><Link href="/sac">Politica de privacidade</Link></span>
           </div>
         </div>
+      </footer>
 
-        {colunas.map((col) => (
-          <div key={col.titulo}>
-            <h3 className="mb-2 text-sm font-semibold text-wf-ink">{col.titulo}</h3>
-            <ul className="space-y-1 text-sm text-wf-text">
-              {col.links.map((l) => (
-                <li key={l.href}>
-                  <Link href={l.href} className="hover:text-wf-accent">
-                    {l.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-        ))}
-
-        <div>
-          <h3 className="mb-2 text-sm font-semibold text-wf-ink">Redes</h3>
-          <ul className="space-y-1 text-sm text-wf-text">
-            <li>Instagram</li>
-            <li>Facebook</li>
-            <li>Pinterest</li>
-            <li>YouTube</li>
-          </ul>
-        </div>
-      </div>
-
-      <div className="border-t border-wf-line">
-        <div className="wf-container flex flex-col gap-2 py-4 text-xs text-wf-muted sm:flex-row sm:items-center sm:justify-between">
-          <span>
-            2026 bbbrindes. Todos os direitos reservados.
-          </span>
-
-          <div className="flex items-center gap-4">
-            <Link href="/gestao" className="hover:text-wf-accent">
-              Admin do site
-            </Link>
-            <Link href="/sac" className="hover:text-wf-accent">
-              Politica de Privacidade
-            </Link>
-          </div>
-        </div>
-      </div>
-    </footer>
+      <a
+        className="wa-f"
+        href="https://wa.me/557191717496"
+        target="_blank"
+        rel="noopener"
+        aria-label="Falar no WhatsApp"
+      >
+        <Icon name="brand-whatsapp" />
+      </a>
+    </>
   );
 }
