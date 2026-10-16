@@ -1,151 +1,200 @@
 "use client";
 
-import { useState } from "react";
-import type { ProdutoDetalhe } from "@/lib/types";
+import { type CSSProperties, useState } from "react";
+import Link from "next/link";
+import type { Produto } from "@/lib/types";
+import Icon from "@/components/Icon";
 
-// Blocos de conteudo da PDP simulados no wireframe (S03-11), na ordem de
-// docs/pdp-modelo-squeeze.md (Versao A). A descricao completa fica atras de um
-// "Ver mais" para nao lotar a pagina. Itens marcados [a confirmar] sinalizam
-// dado que ainda depende do cliente, para nao publicar informacao errada.
-export default function ProdutoDetalheView({ detalhe }: { detalhe: ProdutoDetalhe }) {
+// Blocos de conteudo da PDP (specs + beneficios, ideal para, descricao completa
+// com "Ler mais", diferenciais e FAQ), espelhando a funcao produto() do mockup
+// funcional com as classes verbatim do joy.css (.specs, table.sp, ul.ben,
+// .ideal, .desc.clamp, details.q). Dado REAL do detalhe (montarDetalhe); onde o
+// detalhe vier vazio cai no fallback curto do mockup, para nada ficar em branco.
+
+type Faq = { pergunta: string; resposta: string; aConfirmar?: boolean };
+
+// Estilo do selo "a confirmar" (sem classe propria no joy.css): reusa a paleta
+// do .chip-orange (fundo #ffe9d1 / texto #9a4b00) num selo pequeno inline.
+const BADGE: CSSProperties = {
+  fontSize: "10.5px",
+  fontWeight: 700,
+  letterSpacing: ".04em",
+  textTransform: "uppercase",
+  color: "#9a4b00",
+  background: "#ffe9d1",
+  padding: "2px 7px",
+  borderRadius: "999px",
+};
+
+export default function ProdutoDetalheView({ produto }: { produto: Produto }) {
   const [aberto, setAberto] = useState(false);
+  const d = produto.detalhe;
+
+  const livreBpa =
+    (d?.selos ?? []).some((s) => /bpa/i.test(s)) ||
+    (produto.tags ?? []).some((t) => /bpa/i.test(t));
+  const fibra = /fibra/i.test(produto.material);
+
+  // Dado REAL quando existe; fallback curto do mockup quando o campo vem vazio.
+  const specs =
+    d?.especificacoes && d.especificacoes.length
+      ? d.especificacoes
+      : [
+          {
+            rotulo: "Material",
+            valor: fibra
+              ? "Fibras naturais de coco e madeira de reflorestamento"
+              : produto.material || "Plástico de alta resistência",
+          },
+          { rotulo: "Personalização", valor: "Transfer ou serigrafia" },
+          { rotulo: "Pedido mínimo", valor: "500 unidades" },
+        ];
+
+  const ben =
+    d?.beneficios && d.beneficios.length
+      ? d.beneficios
+      : [
+          "Produto de uso permanente, não descartável",
+          "Excelente área para personalização",
+          "Produção nacional com qualidade premium",
+          livreBpa ? "Atoxidade certificada para contato com alimento" : "Garantia de fábrica",
+        ];
+
+  const idealPara =
+    d?.idealPara && d.idealPara.length
+      ? d.idealPara
+      : ["Endomarketing", "Eventos corporativos", "Ações promocionais", "Datas comemorativas"];
+
+  const descricao =
+    d?.descricaoCompleta && d.descricaoCompleta.length
+      ? d.descricaoCompleta
+      : [
+          `Pequenos gestos geram grandes conexões. O ${produto.nome} foi desenvolvido para transformar um hábito simples, como manter-se hidratado ou fazer uma pausa para o café, em uma oportunidade permanente de aproximação entre a sua marca e as pessoas.`,
+          `Produzido na fábrica da BB Brindes, com controle de qualidade em cada etapa e personalização da sua logomarca. Um brinde de uso diário, que continua com a sua marca muito depois da ação.`,
+        ];
+
+  const diferenciais =
+    d?.diferenciais && d.diferenciais.length
+      ? d.diferenciais
+      : [
+          "Fabricação própria",
+          "Indústria nacional",
+          "Personalização de alta qualidade",
+          "Produção para pequenos e grandes volumes",
+          "27 anos de experiência em brindes promocionais",
+          "Projetos especiais sob demanda",
+        ];
+
+  const faq: Faq[] =
+    d?.faq && d.faq.length
+      ? d.faq
+      : [
+          { pergunta: "Qual o pedido mínimo?", resposta: "500 unidades por item." },
+          {
+            pergunta: "Quanto tempo leva a produção?",
+            resposta:
+              "O prazo é informado na proposta. Recomendamos fechar com 40 a 60 dias de antecedência.",
+          },
+          {
+            pergunta: "Posso ver a arte antes da produção?",
+            resposta: "Sim. Você aprova o layout com a sua marca antes de produzirmos.",
+          },
+          {
+            pergunta: "O produto é atóxico?",
+            resposta: livreBpa
+              ? "Sim. Tem atoxidade certificada e é livre de BPA."
+              : "Este item não tem contato com alimento; ele tem garantia de fábrica.",
+          },
+        ];
 
   return (
-    <section className="mt-10 space-y-10 border-t border-wf-line pt-8">
-      {/* A abertura foi movida para baixo do botao de orcamento (ProdutoView, revisao Plinio) */}
-      <div className="grid gap-10 lg:grid-cols-2">
-        {/* Especificacoes */}
+    <>
+      <div className="specs">
         <div>
-          <h2 className="mb-3 text-lg font-semibold text-wf-ink">Especificações</h2>
-          <dl className="divide-y divide-wf-line text-sm">
-            {detalhe.especificacoes.map((e) => (
-              <div key={e.rotulo} className="flex justify-between gap-4 py-2">
-                <dt className="text-wf-muted">{e.rotulo}</dt>
-                <dd className="text-right font-medium text-wf-ink">{e.valor}</dd>
-              </div>
-            ))}
-          </dl>
+          <h2 className="h">Especificações</h2>
+          <table className="sp">
+            <tbody>
+              {specs.map((s) => (
+                <tr key={s.rotulo}>
+                  <td>{s.rotulo}</td>
+                  <td>{s.valor}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
-
-        {/* Beneficios */}
         <div>
-          <h2 className="mb-3 text-lg font-semibold text-wf-ink">Principais benefícios</h2>
-          <ul className="space-y-2 text-sm text-wf-text">
-            {detalhe.beneficios.map((b) => (
-              <li key={b} className="flex gap-2">
-                <span aria-hidden className="text-wf-accent">
-                  •
-                </span>
-                <span>{b}</span>
+          <h2 className="h">Principais benefícios</h2>
+          <ul className="ben">
+            {ben.map((b) => (
+              <li key={b}>
+                <Icon name="check" />
+                {b}
               </li>
             ))}
           </ul>
         </div>
       </div>
 
-      {/* Ideal para */}
-      <div>
-        <h2 className="mb-3 text-lg font-semibold text-wf-ink">Ideal para</h2>
-        <div className="flex flex-wrap gap-2">
-          {detalhe.idealPara.map((i) => (
-            <span
-              key={i}
-              className="rounded-full border border-wf-line bg-wf-surface px-3 py-1 text-xs text-wf-text"
-            >
-              {i}
-            </span>
+      <section className="sec">
+        <h2 className="h">Ideal para</h2>
+        <div className="ideal">
+          {idealPara.map((x) => (
+            <Link key={x} className="chip" href={`/catalogo?categoria=${produto.categoria}`}>
+              {x}
+            </Link>
           ))}
         </div>
-      </div>
+      </section>
 
-      {/* Descricao completa com Ver mais */}
-      <div>
-        <h2 className="mb-3 text-lg font-semibold text-wf-ink">Descrição completa</h2>
-        <div className="max-w-3xl space-y-3 text-sm leading-relaxed text-wf-text">
-          <p>{detalhe.descricaoCompleta[0]}</p>
-          {aberto &&
-            detalhe.descricaoCompleta.slice(1).map((p, i) => <p key={i}>{p}</p>)}
+      <section className="sec">
+        <h2 className="h">Descrição completa</h2>
+        <div className={`desc${aberto ? "" : " clamp"}`} id="desc">
+          {descricao.map((p, i) => (
+            <p key={i} style={{ margin: i === descricao.length - 1 ? 0 : "0 0 10px" }}>
+              {p}
+            </p>
+          ))}
         </div>
-        {detalhe.descricaoCompleta.length > 1 && (
-          <button
-            type="button"
-            onClick={() => setAberto((v) => !v)}
-            className="wf-btn-ghost mt-3"
-            aria-expanded={aberto}
-          >
-            {aberto ? "Ver menos" : "Ver mais"}
-          </button>
-        )}
-      </div>
+        <button
+          type="button"
+          className="btn btn-ghost btn-sm"
+          onClick={() => setAberto((v) => !v)}
+          aria-expanded={aberto}
+          style={{ marginTop: 12 }}
+        >
+          {aberto ? "Ler menos" : "Ler mais"}
+        </button>
+      </section>
 
-      {/* Diferenciais e selos */}
-      <div className="grid gap-10 lg:grid-cols-2">
+      <section className="sec specs" style={{ marginTop: 0, paddingTop: 40 }}>
         <div>
-          <h2 className="mb-3 text-lg font-semibold text-wf-ink">Diferenciais da BB neste produto</h2>
-          <ul className="space-y-2 text-sm text-wf-text">
-            {detalhe.diferenciais.map((d) => (
-              <li key={d} className="flex gap-2">
-                <span aria-hidden className="text-wf-accent">
-                  •
-                </span>
-                <span>{d}</span>
+          <h2 className="h">Diferenciais da BB neste produto</h2>
+          <ul className="ben">
+            {diferenciais.map((b) => (
+              <li key={b}>
+                <Icon name="check" />
+                {b}
               </li>
             ))}
           </ul>
         </div>
         <div>
-          <h2 className="mb-3 text-lg font-semibold text-wf-ink">Selos</h2>
-          <div className="flex flex-wrap gap-2">
-            {detalhe.selos.map((s) => (
-              <span
-                key={s}
-                className="rounded-md border border-wf-accent/40 bg-wf-accent/10 px-3 py-1 text-xs font-medium text-wf-ink"
-              >
-                {s}
-              </span>
-            ))}
-          </div>
-        </div>
-      </div>
-
-      {/* FAQ */}
-      <div>
-        <h2 className="mb-3 text-lg font-semibold text-wf-ink">Perguntas frequentes</h2>
-        <div className="max-w-3xl divide-y divide-wf-line">
-          {detalhe.faq.map((f) => (
-            <details key={f.pergunta} className="group py-3">
-              <summary className="cursor-pointer list-none text-sm font-medium text-wf-ink marker:hidden">
-                <span className="inline-flex items-center gap-2">
+          <h2 className="h">Perguntas frequentes</h2>
+          {faq.map((f, i) => (
+            <details className="q" key={f.pergunta} open={i === 0}>
+              <summary>
+                <span style={{ display: "inline-flex", alignItems: "center", gap: 8 }}>
                   {f.pergunta}
-                  {f.aConfirmar && (
-                    <span className="rounded bg-amber-100 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-amber-700">
-                      a confirmar
-                    </span>
-                  )}
+                  {f.aConfirmar && <span style={BADGE}>a confirmar</span>}
                 </span>
+                <Icon name="plus" />
               </summary>
-              <p className="mt-2 text-sm text-wf-text">{f.resposta}</p>
+              <div className="a">{f.resposta}</div>
             </details>
           ))}
         </div>
-      </div>
-
-      {/* Pendencias: uso interno do wireframe, dado que depende do cliente */}
-      {detalhe.pendencias && detalhe.pendencias.length > 0 && (
-        <div className="rounded-lg border border-amber-300 bg-amber-50 p-4">
-          <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-amber-800">
-            Pendências a confirmar com o cliente (nota do wireframe)
-          </p>
-          <ul className="space-y-1 text-sm text-amber-900">
-            {detalhe.pendencias.map((p) => (
-              <li key={p} className="flex gap-2">
-                <span aria-hidden>⚠</span>
-                <span>{p}</span>
-              </li>
-            ))}
-          </ul>
-        </div>
-      )}
-    </section>
+      </section>
+    </>
   );
 }
