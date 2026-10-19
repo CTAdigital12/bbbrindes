@@ -169,27 +169,28 @@ export default function Header() {
             <Link href="/cases">Cases</Link>
           </div>
 
-          <div className={`ddp${campOpen ? " on" : ""}`}>
-            <div className="wrap">
-              <div className="ddh">
-                <b>Campanhas e datas</b>
-                <span>Uma pagina para cada data, com os brindes mais pedidos.</span>
-              </div>
-              <div className="ddg">
-                {campanhas
-                  .filter((c) => CAMP_TILE[c.slug])
-                  .map((c) => (
-                    <Link key={c.slug} href={`/campanha/${c.slug}`} className="tile">
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img src={img(`/img/banners/home-campanha-${CAMP_TILE[c.slug]}.webp`)} alt="" />
-                      <span className="lb">{c.nome}</span>
-                      <span className="mes">{c.mes}</span>
-                    </Link>
-                  ))}
-              </div>
+        </nav>
+
+        <div className={`ddp${campOpen ? " on" : ""}`}>
+          <div className="wrap">
+            <div className="ddh">
+              <b>Campanhas e datas</b>
+              <span>Uma pagina para cada data, com os brindes mais pedidos.</span>
+            </div>
+            <div className="ddg">
+              {campanhas
+                .filter((c) => CAMP_TILE[c.slug])
+                .map((c) => (
+                  <Link key={c.slug} href={`/campanha/${c.slug}`} className="tile">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src={img(`/img/banners/home-campanha-${CAMP_TILE[c.slug]}.webp`)} alt="" />
+                    <span className="lb">{c.nome}</span>
+                    <span className="mes">{c.mes}</span>
+                  </Link>
+                ))}
             </div>
           </div>
-        </nav>
+        </div>
       </header>
 
       {/* Menu mobile (drawer da esquerda). Chrome pelo joy.css, miolo em Tailwind. */}
