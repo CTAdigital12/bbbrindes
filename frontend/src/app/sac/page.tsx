@@ -1,80 +1,103 @@
 "use client";
 
-import { useState } from "react";
+import Link from "next/link";
+import { useRef, useState } from "react";
+import Icon from "@/components/Icon";
 
-const motivos = [
-  "Duvida sobre produto",
-  "Acompanhamento de pedido",
-  "Reclamacao",
-  "Troca ou devolucao",
+// Motivos do mockup sac() (chegam na pessoa certa).
+const MOTIVOS = [
+  "Status do pedido",
+  "Problema com produto",
+  "Divergência de quantidade ou item",
+  "Prazo de entrega",
+  "Nota fiscal e documentos",
+  "Aprovação de arte",
   "Elogio",
   "Outro",
 ];
 
+// Espelha sac(): form.form + toast de confirmacao + reset. Sem envio real
+// (integracao com CRM entra depois), como no mockup (data-act="sacf").
 export default function SacPage() {
-  const [enviado, setEnviado] = useState(false);
-  const [form, setForm] = useState({ nome: "", email: "", motivo: motivos[0], mensagem: "" });
+  const formRef = useRef<HTMLFormElement>(null);
+  const timer = useRef<number | undefined>(undefined);
+  const [toast, setToast] = useState(false);
 
   function enviar(e: React.FormEvent) {
     e.preventDefault();
-    // Wireframe: sem envio real. Integracao com CRM entra na Sprint 5.
-    setEnviado(true);
-  }
-
-  function set<K extends keyof typeof form>(k: K, v: string) {
-    setForm((f) => ({ ...f, [k]: v }));
+    formRef.current?.reset();
+    setToast(true);
+    if (timer.current) window.clearTimeout(timer.current);
+    timer.current = window.setTimeout(() => setToast(false), 2600);
   }
 
   return (
-    <div className="wf-container py-8">
-      <h1 className="text-2xl font-bold text-wf-ink">SAC / Atendimento</h1>
-      <p className="mt-1 text-sm text-wf-text">
-        Selecione o motivo do contato e envie sua mensagem. Sua solicitacao vai para o atendimento.
-      </p>
+    <div className="wrap">
+      <div className="crumb">
+        <Link href="/">Início</Link>/<span>SAC</span>
+      </div>
+      <div className="ptitle">
+        <h1>SAC BB Brindes</h1>
+        <p>
+          Conta o que aconteceu. Selecione o motivo abaixo para que a sua mensagem chegue direto na
+          pessoa certa. Retornamos em até 24 horas úteis.
+        </p>
+      </div>
 
-      {enviado ? (
-        <div className="wf-card mt-6 max-w-xl p-6 text-sm text-wf-text">
-          Mensagem registrada. Nosso time retornara em breve. (Wireframe: sem envio real.)
-        </div>
-      ) : (
-        <form onSubmit={enviar} className="wf-card mt-6 max-w-xl space-y-4 p-6">
-          <div className="grid gap-4 sm:grid-cols-2">
-            <div>
-              <label className="wf-label">Nome</label>
-              <input className="wf-input" value={form.nome} onChange={(e) => set("nome", e.target.value)} required />
-            </div>
-            <div>
-              <label className="wf-label">Email</label>
-              <input type="email" className="wf-input" value={form.email} onChange={(e) => set("email", e.target.value)} required />
-            </div>
+      <form
+        ref={formRef}
+        className="form"
+        style={{ position: "static", maxWidth: "640px" }}
+        noValidate
+        onSubmit={enviar}
+      >
+        <div className="row2">
+          <div className="fld">
+            <label>Nome</label>
+            <input required />
           </div>
-
-          <div>
-            <label className="wf-label">Motivo do contato</label>
-            <select className="wf-input" value={form.motivo} onChange={(e) => set("motivo", e.target.value)}>
-              {motivos.map((m) => (
-                <option key={m} value={m}>
-                  {m}
-                </option>
+          <div className="fld">
+            <label>E-mail corporativo</label>
+            <input type="email" required />
+          </div>
+        </div>
+        <div className="row2">
+          <div className="fld">
+            <label>Telefone / WhatsApp</label>
+            <input required inputMode="tel" />
+          </div>
+          <div className="fld">
+            <label>Empresa</label>
+            <input />
+          </div>
+        </div>
+        <div className="row2">
+          <div className="fld">
+            <label>Número do pedido (opcional)</label>
+            <input />
+          </div>
+          <div className="fld">
+            <label>Motivo</label>
+            <select>
+              {MOTIVOS.map((o) => (
+                <option key={o}>{o}</option>
               ))}
             </select>
           </div>
+        </div>
+        <div className="fld">
+          <label>Mensagem</label>
+          <textarea required />
+        </div>
+        <button type="submit" className="btn btn-deep btn-lg">
+          Enviar
+        </button>
+      </form>
 
-          <div>
-            <label className="wf-label">Mensagem</label>
-            <textarea
-              className="wf-input min-h-[120px]"
-              value={form.mensagem}
-              onChange={(e) => set("mensagem", e.target.value)}
-              required
-            />
-          </div>
-
-          <button type="submit" className="wf-btn-primary w-full">
-            Enviar
-          </button>
-        </form>
-      )}
+      <div className={`toast${toast ? " on" : ""}`} role="status" aria-live="polite">
+        <Icon name="circle-check" />
+        <span>Mensagem enviada. Retornamos em até 24 horas úteis.</span>
+      </div>
     </div>
   );
 }

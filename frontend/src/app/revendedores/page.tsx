@@ -1,49 +1,91 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import Icon from "@/components/Icon";
+import { img } from "@/lib/asset";
 
 export const metadata: Metadata = {
   title: "Revendedores",
-  description: "Seja um revendedor bbbrindes: acesso a precos tabelados, estoque e fechamento de pedido online.",
+  description:
+    "Seja um revendedor BB Brindes: área exclusiva com preços, estoque e pedido online, com produção nacional.",
 };
 
-const beneficios = [
-  "Precos tabelados exclusivos",
+const BENEFICIOS = [
+  "Preços tabelados exclusivos",
   "Consulta de estoque em tempo real",
   "Fechamento de pedido online",
-  "Historico e segunda via de pedidos",
+  "Histórico e segunda via de pedidos",
   "Upload de arquivos e notas por pedido",
   "Atendimento comercial dedicado",
 ];
 
 export default function RevendedoresPage() {
   return (
-    <div className="wf-container py-8">
-      <div className="wf-card flex flex-col items-start gap-4 p-8 lg:flex-row lg:items-center lg:justify-between">
-        <div className="max-w-xl">
-          <h1 className="text-2xl font-bold text-wf-ink">Seja um revendedor bbbrindes</h1>
-          <p className="mt-2 text-sm text-wf-text">
-            Tenha acesso a uma area exclusiva com precos, estoque e pedido online. Amplie seu mix de
-            brindes com producao nacional.
-          </p>
-        </div>
-        <div className="flex gap-2">
-          <Link href="/revendedor/login" className="wf-btn-primary">
-            Ja sou revendedor
-          </Link>
-          <Link href="/contato" className="wf-btn-ghost">
-            Quero me cadastrar
-          </Link>
-        </div>
+    <div className="wrap">
+      <div className="crumb">
+        <Link href="/">Início</Link>/<span>Revendedores</span>
       </div>
 
-      <h2 className="mt-10 text-lg font-semibold text-wf-ink">Beneficios</h2>
-      <div className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-        {beneficios.map((b) => (
-          <div key={b} className="wf-card p-4 text-sm font-medium text-wf-ink">
-            {b}
+      <div className="urg" style={{ marginTop: "18px" }}>
+        <div className="tx">
+          <span className="chip chip-lime" style={{ alignSelf: "flex-start" }}>
+            <Icon name="building-store" />
+            Revenda
+          </span>
+          <h2>Seja um revendedor BB&nbsp;Brindes</h2>
+          <p>
+            Tenha acesso a uma área exclusiva com preços, estoque e pedido online. Amplie seu mix de
+            brindes com produção nacional.
+          </p>
+          <div style={{ display: "flex", gap: "10px", flexWrap: "wrap" }}>
+            <Link className="btn btn-cta btn-lg" href="/contato">
+              Quero me cadastrar
+              <Icon name="arrow-right" />
+            </Link>
+            <Link className="btn btn-ghost-w btn-lg" href="/revendedor/login">
+              Já sou revendedor
+            </Link>
           </div>
-        ))}
+        </div>
+        <div className="ph">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={img("/img/foto/MV02142G-copo-cancun-ecologico-green-fibras-mug-320ml.webp")}
+            alt=""
+          />
+        </div>
+        <span className="deco" />
       </div>
+
+      <section className="sec">
+        <div className="shead">
+          <div>
+            <h2>Benefícios</h2>
+          </div>
+        </div>
+        <div className="dgrid">
+          {BENEFICIOS.map((b) => (
+            <div className="dif" key={b}>
+              <span
+                style={{
+                  width: "46px",
+                  height: "46px",
+                  borderRadius: "50%",
+                  background: "var(--deep)",
+                  color: "var(--lime)",
+                  display: "grid",
+                  placeItems: "center",
+                  flex: "none",
+                }}
+              >
+                <Icon name="check" />
+              </span>
+              <div>
+                <b>{b}</b>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
     </div>
   );
 }

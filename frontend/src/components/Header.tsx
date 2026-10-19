@@ -7,6 +7,8 @@ import { useCart } from "@/lib/cart";
 import { useCartUI } from "@/lib/cart-ui";
 import Icon from "@/components/Icon";
 import { campanhas } from "@/data/campanhas";
+import { CAMP_TILE } from "@/data/home-joy";
+import { img } from "@/lib/asset";
 
 // Links de categoria da barra de navegacao (subconjunto curado, igual ao mockup
 // da Joy). Apontam pras rotas reais do App Router (/catalogo?categoria=slug).
@@ -167,29 +169,28 @@ export default function Header() {
             <Link href="/cases">Cases</Link>
           </div>
 
-          <div className={`ddp${campOpen ? " on" : ""}`}>
-            <div className="wrap">
-              <div className="ddh">
-                <b>Campanhas e datas</b>
-                <span>Brindes certos para cada ocasiao do ano</span>
-              </div>
-              <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
-                {campanhas.map((c) => (
-                  <Link
-                    key={c.slug}
-                    href={`/campanha/${c.slug}`}
-                    className="chip chip-sage"
-                    style={{ height: "auto", padding: "8px 14px" }}
-                  >
-                    <strong style={{ fontWeight: 600 }}>{c.mes}</strong>
-                    {" · "}
-                    {c.nome}
+        </nav>
+
+        <div className={`ddp${campOpen ? " on" : ""}`}>
+          <div className="wrap">
+            <div className="ddh">
+              <b>Campanhas e datas</b>
+              <span>Uma pagina para cada data, com os brindes mais pedidos.</span>
+            </div>
+            <div className="ddg">
+              {campanhas
+                .filter((c) => CAMP_TILE[c.slug])
+                .map((c) => (
+                  <Link key={c.slug} href={`/campanha/${c.slug}`} className="tile">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src={img(`/img/banners/home-campanha-${CAMP_TILE[c.slug]}.webp`)} alt="" />
+                    <span className="lb">{c.nome}</span>
+                    <span className="mes">{c.mes}</span>
                   </Link>
                 ))}
-              </div>
             </div>
           </div>
-        </nav>
+        </div>
       </header>
 
       {/* Menu mobile (drawer da esquerda). Chrome pelo joy.css, miolo em Tailwind. */}
