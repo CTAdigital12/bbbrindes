@@ -33,7 +33,7 @@ export default function ContatoPage() {
             <span>
               <b>Comercial (WhatsApp)</b>
               <br />
-              (71) 9171-7496
+              (71) 99416-0138
             </span>
           </a>
           <a href="mailto:comercial@bbgrupo.com.br">

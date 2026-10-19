@@ -4,7 +4,7 @@
 // (ex.: #/catalogo?cat=X -> /catalogo?categoria=X). Os produtos e categorias NAO
 // moram aqui: vem do Payload (getProdutos/getCategorias).
 
-export const WA = "https://wa.me/557191717496";
+export const WA = "https://wa.me/5571994160138";
 
 // Sem viuva: troca o ultimo espaco por um espaco inquebravel ( ). Espelha o
 // helper nb() do mockup, mas devolvendo o caractere (nao a entidade &nbsp;),

@@ -92,9 +92,9 @@ export default function Header() {
             ))}
           </div>
           <div style={{ display: "flex", gap: 18, alignItems: "center" }}>
-            <a href="https://wa.me/557191717496" target="_blank" rel="noopener">
+            <a href="https://wa.me/5571994160138" target="_blank" rel="noopener">
               <Icon name="brand-whatsapp" />
-              (71) 9171-7496
+              (71) 99416-0138
             </a>
           </div>
         </div>

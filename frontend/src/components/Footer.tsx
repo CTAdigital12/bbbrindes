@@ -17,9 +17,9 @@ export default function Footer() {
                 personalizados, com fabrica propria ha&nbsp;27&nbsp;anos.
               </p>
               <div className="fcon">
-                <a href="https://wa.me/557191717496" target="_blank" rel="noopener">
+                <a href="https://wa.me/5571994160138" target="_blank" rel="noopener">
                   <Icon name="brand-whatsapp" />
-                  (71) 9171-7496
+                  (71) 99416-0138
                 </a>
                 <a href="mailto:comercial@bbgrupo.com.br">
                   <Icon name="mail" />
@@ -99,7 +99,7 @@ export default function Footer() {
 
       <a
         className="wa-f"
-        href="https://wa.me/557191717496"
+        href="https://wa.me/5571994160138"
         target="_blank"
         rel="noopener"
         aria-label="Falar no WhatsApp"
