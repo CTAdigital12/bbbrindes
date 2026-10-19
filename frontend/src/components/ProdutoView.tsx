@@ -1,226 +1,340 @@
 "use client";
 
-import Link from "next/link";
-import { useState } from "react";
+/* eslint-disable @next/next/no-img-element */
+
+import { type MouseEvent, useEffect, useRef, useState } from "react";
 import type { Produto } from "@/lib/types";
 import { useCart } from "@/lib/cart";
+import { useCartUI } from "@/lib/cart-ui";
 import { nomeCategoria } from "@/data/categorias";
+import { WA, nb } from "@/data/home-joy";
+import { imgSrc } from "@/lib/asset";
+import Icon from "@/components/Icon";
+import Link from "next/link";
 
-// PDP revisada (S01-13): galeria com opcao de video, troca de cor muda a imagem
-// exibida, sem "personalizavel" e "aplicacoes". Mantem descricao, categoria,
-// cores, quantidade e adicionar ao orcamento.
+// PDP (galeria + configurador + barra de compra fixa) espelhando a funcao
+// produto() do mockup funcional da Joy, com as classes verbatim do joy.css
+// (.pd, .gal, .thumbs, .stage, .ring, .fl, .pinfo, .sub, .blk, .colors, .seg2,
+// .seg, .step, .warn, .buy#buyrow, .assure, .sticky-buy#sbuy). Dado REAL do
+// Payload (getProdutoBySlug); cores e imagens de produto.cores / produto.imagens.
+
+const MIN_QTD = 500;
+const PRESETS = [500, 1000, 3000, 5000];
+const PASSO = 100;
+const fmt = (n: number) => n.toLocaleString("pt-BR");
+
+type GalItem = { cor: string; src: string };
+
 export default function ProdutoView({ produto }: { produto: Produto }) {
   const { adicionar } = useCart();
-  const temCores = produto.cores.length > 0;
-  const imagens = produto.imagens ?? [];
-  const temImagens = imagens.length > 0;
-  const [cor, setCor] = useState(produto.cores[0]?.nome ?? "Unica");
-  const [qtd, setQtd] = useState(1);
-  const [adicionado, setAdicionado] = useState(false);
-  const [midia, setMidia] = useState<"imagem" | "video">("imagem");
-  const [imgIdx, setImgIdx] = useState(0);
+  const { abrir } = useCartUI();
 
-  const corAtual = produto.cores.find((c) => c.nome === cor);
-  // Quando ha uma foto por cor (mesma quantidade e ordem), a cor e a foto ficam
-  // sincronizadas: clicar numa troca a outra.
-  const paresCorImagem = temImagens && imagens.length === produto.cores.length;
+  const cores = produto.cores ?? [];
+  const imagens = produto.imagens ?? [];
+  // Sincronia cor<->imagem: quando ha uma foto por cor (mesma quantidade), cada
+  // miniatura representa uma cor; clicar numa troca a outra (o Squeeze-modelo tem
+  // 1 foto por cor). Fora disso as miniaturas sao so as imagens do produto.
+  const synced = imagens.length > 0 && imagens.length === cores.length;
+  const gal: GalItem[] = synced
+    ? cores.map((c, i) => ({ cor: c.nome, src: imagens[i] }))
+    : imagens.map((src) => ({ cor: "", src }));
+
+  const [corNome, setCorNome] = useState(cores[0]?.nome ?? "");
+  const [imgIdx, setImgIdx] = useState(0);
+  const [qtd, setQtd] = useState(MIN_QTD);
+  const [pers, setPers] = useState<"transfer" | "serigrafia">("transfer");
+  const [sbOn, setSbOn] = useState(false);
+  const [toastMsg, setToastMsg] = useState("");
+
+  const stageRef = useRef<HTMLDivElement>(null);
+  const imgRef = useRef<HTMLImageElement>(null);
+  const buyRef = useRef<HTMLDivElement>(null);
+  const qinRef = useRef<HTMLInputElement>(null);
+  const toastTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const abaixoDoMinimo = qtd < MIN_QTD;
+
+  // Flags da estante (.fl): Novo (lancamento), Livre de BPA (selo/atoxidade),
+  // Uso permanente e Reciclavel. Espelha o bloco .fl do produto() do mockup.
+  const novo = (produto.destaques ?? []).includes("lancamento");
+  const livreBpa =
+    (produto.detalhe?.selos ?? []).some((s) => /bpa/i.test(s)) ||
+    (produto.tags ?? []).some((t) => /bpa/i.test(t));
+
+  const stageSrc = imgSrc(gal[imgIdx]?.src);
+  const mainSrc = imgSrc(imagens[0]);
+  const waText = `${WA}?text=${encodeURIComponent("Olá! Quero um orçamento de " + produto.nome)}`;
+
+  // Barra de compra fixa: aparece quando o #buyrow sai da viewport por cima
+  // (IntersectionObserver), como o after()/sbObs do mockup. body.sb-on sobe o
+  // WhatsApp flutuante (regra ja no joy.css).
+  useEffect(() => {
+    const alvo = buyRef.current;
+    if (!alvo || typeof IntersectionObserver === "undefined") return;
+    const obs = new IntersectionObserver(
+      ([e]) => setSbOn(!e.isIntersecting && e.boundingClientRect.top < 0),
+      { threshold: 0 },
+    );
+    obs.observe(alvo);
+    return () => obs.disconnect();
+  }, []);
+
+  useEffect(() => {
+    document.body.classList.toggle("sb-on", sbOn);
+    return () => document.body.classList.remove("sb-on");
+  }, [sbOn]);
+
+  function toast(msg: string) {
+    setToastMsg(msg);
+    if (toastTimer.current) clearTimeout(toastTimer.current);
+    toastTimer.current = setTimeout(() => setToastMsg(""), 2600);
+  }
+
+  // Zoom no mousemove sobre a .stage (scale 1.6 com origem no cursor), igual ao
+  // mockup. Mexe direto no style do <img> via ref para nao re-renderizar.
+  function aoMover(e: MouseEvent<HTMLDivElement>) {
+    const st = stageRef.current;
+    const im = imgRef.current;
+    if (!st || !im) return;
+    const r = st.getBoundingClientRect();
+    im.style.transformOrigin = `${((e.clientX - r.left) / r.width) * 100}% ${((e.clientY - r.top) / r.height) * 100}%`;
+    im.style.transform = "scale(1.6)";
+  }
+  function aoSair() {
+    if (imgRef.current) imgRef.current.style.transform = "";
+  }
+
+  function escolherThumb(i: number) {
+    setImgIdx(i);
+    const c = gal[i]?.cor;
+    if (c) setCorNome(c);
+  }
+  function escolherCor(i: number) {
+    setCorNome(cores[i].nome);
+    if (synced) setImgIdx(i);
+  }
 
   function aoAdicionar() {
-    adicionar({ produtoSlug: produto.slug, nome: produto.nome, cor, quantidade: qtd });
-    setAdicionado(true);
+    if (abaixoDoMinimo) {
+      qinRef.current?.focus();
+      toast("O pedido mínimo é de 500 unidades");
+      return;
+    }
+    adicionar({
+      produtoSlug: produto.slug,
+      nome: produto.nome,
+      cor: corNome,
+      quantidade: qtd,
+      imagem: gal[imgIdx]?.src ?? imagens[0],
+    });
+    abrir();
+    toast("Adicionado ao orçamento");
   }
 
   return (
-    <div className="grid gap-8 lg:grid-cols-2">
-      {/* Galeria: fotos reais quando o produto tem imagens (Payload); senao,
-          placeholder do wireframe pintado pela cor. Ha um thumb de video. */}
-      <div className="space-y-3">
-        <div className="relative aspect-square w-full overflow-hidden rounded-lg border border-wf-line bg-white">
-          {midia === "video" ? (
-            <div className="flex h-full w-full items-center justify-center bg-wf-ink">
-              <span className="text-sm font-medium text-white">Video do produto</span>
+    <>
+      <div className="pd">
+        {/* Galeria: coluna de miniaturas + palco com zoom */}
+        <div className="gal">
+          <div className="thumbs">
+            {gal.map((g, i) => (
+              <button
+                key={`${g.src}-${i}`}
+                type="button"
+                className={i === imgIdx ? "on" : ""}
+                onClick={() => escolherThumb(i)}
+                aria-label={`Imagem ${i + 1}`}
+              >
+                <img src={imgSrc(g.src)} alt="" />
+              </button>
+            ))}
+          </div>
+
+          <div
+            className="stage"
+            id="stage"
+            ref={stageRef}
+            onMouseMove={aoMover}
+            onMouseLeave={aoSair}
+          >
+            <span className="ring" />
+            {stageSrc ? <img id="mimg" ref={imgRef} src={stageSrc} alt={produto.nome} /> : null}
+            <div className="fl">
+              {novo && <span className="chip chip-orange">Novo</span>}
+              {livreBpa && <span className="chip chip-sage">Livre de BPA</span>}
+              <span className="chip chip-sage">Uso permanente</span>
+              <span className="chip chip-sage">Reciclável</span>
             </div>
-          ) : temImagens ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
-              src={imagens[imgIdx]}
-              alt={produto.nome}
-              className="h-full w-full object-contain p-8 sm:p-12"
-            />
-          ) : (
-            <div
-              className={`flex h-full w-full items-end p-3 ${corAtual ? "" : "wf-img"}`}
-              style={corAtual ? { backgroundColor: corAtual.hex } : undefined}
-            >
-              <span className="rounded bg-wf-surface/90 px-2 py-1 text-xs font-medium text-wf-ink">
-                {corAtual ? `Cor: ${corAtual.nome}` : "Imagem principal"}
-              </span>
-            </div>
-          )}
+          </div>
         </div>
 
-        <div className="grid grid-cols-4 gap-3">
-          {temImagens ? (
-            <>
-              {imagens.map((src, i) => (
-                <button
-                  key={src}
-                  type="button"
-                  onClick={() => {
-                    setImgIdx(i);
-                    setMidia("imagem");
-                    if (paresCorImagem) setCor(produto.cores[i].nome);
-                  }}
-                  className={`aspect-square overflow-hidden rounded border bg-white ${
-                    midia === "imagem" && imgIdx === i ? "ring-2 ring-wf-accent" : "border-wf-line"
-                  }`}
-                  aria-label={`Ver foto ${i + 1}`}
-                >
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={src} alt="" className="h-full w-full object-contain p-2" />
-                </button>
-              ))}
-              <button
-                type="button"
-                onClick={() => setMidia("video")}
-                className={`wf-img aspect-square rounded ${midia === "video" ? "ring-2 ring-wf-accent" : ""}`}
-                aria-label="Ver video"
-              >
-                Video
-              </button>
-            </>
-          ) : (
-            <>
-              <button
-                type="button"
-                onClick={() => setMidia("imagem")}
-                className={`wf-img aspect-square rounded ${midia === "imagem" ? "ring-2 ring-wf-accent" : ""}`}
-                aria-label="Ver imagem"
-              >
-                Imagem
-              </button>
-              <button
-                type="button"
-                onClick={() => setMidia("video")}
-                className={`wf-img aspect-square rounded ${midia === "video" ? "ring-2 ring-wf-accent" : ""}`}
-                aria-label="Ver video"
-              >
-                Video
-              </button>
-              <button
-                type="button"
-                onClick={() => setMidia("imagem")}
-                className="wf-img aspect-square rounded"
-                aria-label="Ver imagem"
-              >
-                Foto 2
-              </button>
-              <button
-                type="button"
-                onClick={() => setMidia("imagem")}
-                className="wf-img aspect-square rounded"
-                aria-label="Ver imagem"
-              >
-                Foto 3
-              </button>
-            </>
-          )}
-        </div>
-      </div>
-
-      {/* Informacoes e compra */}
-      <div className="space-y-5">
-        <div>
-          <span className="text-xs text-wf-muted">{nomeCategoria(produto.categoria)}</span>
-          <h1 className="text-2xl font-bold text-wf-ink">{produto.nome}</h1>
-          {produto.detalhe && (
-            <p className="mt-1 text-sm text-wf-muted">{produto.detalhe.linhaCurta}</p>
-          )}
-        </div>
-
-        {!produto.detalhe && <p className="text-sm text-wf-text">{produto.descricao}</p>}
-
-        <dl className="text-sm">
-          <dt className="text-wf-muted">Material</dt>
-          <dd className="font-medium text-wf-ink">{produto.material}</dd>
-        </dl>
-
-        {temCores && (
+        {/* Informacoes + configurador */}
+        <div className="pinfo">
           <div>
-            <span className="wf-label">Cor: {cor}</span>
-            <div className="flex flex-wrap gap-2">
-              {produto.cores.map((c, i) => (
+            <Link className="cat" href={`/catalogo?categoria=${produto.categoria}`}>
+              {nomeCategoria(produto.categoria)}
+            </Link>
+            <h1>{nb(produto.nome)}</h1>
+          </div>
+          <p className="sub">
+            {produto.detalhe?.linhaCurta ||
+              produto.descricao ||
+              `${produto.nome} personalizado com a sua logomarca, fabricado no Brasil. Pedidos a partir de 500 unidades.`}
+          </p>
+
+          <div className="blk">
+            {cores.length > 0 && (
+              <div>
+                <div className="lbl">
+                  Cor <span id="corl">{corNome}</span>
+                </div>
+                <div className="colors">
+                  {cores.map((c, i) => (
+                    <button
+                      key={c.nome}
+                      type="button"
+                      className={c.nome === corNome ? "on" : ""}
+                      style={{ background: c.hex }}
+                      onClick={() => escolherCor(i)}
+                      aria-label={c.nome}
+                    />
+                  ))}
+                </div>
+              </div>
+            )}
+
+            <div>
+              <div className="lbl">Personalização</div>
+              <div className="seg2">
                 <button
-                  key={c.nome}
                   type="button"
-                  onClick={() => {
-                    setCor(c.nome);
-                    setMidia("imagem");
-                    if (paresCorImagem) setImgIdx(i);
-                  }}
-                  title={c.nome}
-                  className={`h-8 w-8 rounded-full border-2 ${
-                    cor === c.nome ? "border-wf-accent" : "border-wf-line"
-                  }`}
-                  style={{ backgroundColor: c.hex }}
-                  aria-label={`Selecionar cor ${c.nome}`}
-                />
-              ))}
+                  className={pers === "transfer" ? "on" : ""}
+                  onClick={() => setPers("transfer")}
+                >
+                  <b>Heat transfer</b>Cores ilimitadas, ideal para logos com degradê
+                </button>
+                <button
+                  type="button"
+                  className={pers === "serigrafia" ? "on" : ""}
+                  onClick={() => setPers("serigrafia")}
+                >
+                  <b>Serigrafia</b>Até 4 cores, acabamento sólido e durável
+                </button>
+              </div>
+            </div>
+
+            <div>
+              <div className="lbl">
+                Quantidade <span>mínimo 500 unidades</span>
+              </div>
+              <div className="seg">
+                {PRESETS.map((n) => (
+                  <button
+                    key={n}
+                    type="button"
+                    className={qtd === n ? "on" : ""}
+                    onClick={() => setQtd(n)}
+                  >
+                    {fmt(n)}
+                  </button>
+                ))}
+              </div>
+              <div className="qty">
+                <div className="step">
+                  <button
+                    type="button"
+                    onClick={() => setQtd((q) => Math.max(PASSO, q - PASSO))}
+                    aria-label="Menos"
+                  >
+                    <Icon name="minus" />
+                  </button>
+                  <input
+                    id="qin"
+                    ref={qinRef}
+                    inputMode="numeric"
+                    value={qtd}
+                    onChange={(e) => setQtd(parseInt(e.target.value.replace(/\D/g, ""), 10) || 0)}
+                    aria-label="Quantidade"
+                  />
+                  <button type="button" onClick={() => setQtd((q) => q + PASSO)} aria-label="Mais">
+                    <Icon name="plus" />
+                  </button>
+                </div>
+                <small>ou digite a quantidade exata</small>
+              </div>
+              <div className={`warn${abaixoDoMinimo ? " on" : ""}`} id="qw">
+                O pedido mínimo é de 500 unidades. Para volumes menores, fale com o especialista.
+              </div>
+            </div>
+
+            <div className="buy" id="buyrow" ref={buyRef}>
+              <button type="button" className="btn btn-cta btn-lg" onClick={aoAdicionar}>
+                <Icon name="shopping-bag" />
+                Adicionar ao orçamento
+              </button>
+              <a
+                className="btn btn-ghost btn-lg"
+                href={waText}
+                target="_blank"
+                rel="noopener"
+                aria-label="WhatsApp"
+              >
+                <Icon name="brand-whatsapp" />
+              </a>
+            </div>
+
+            <div className="assure">
+              <div>
+                <Icon name="circle-check" />
+                <span>
+                  <b>Sem pagamento online.</b> Você monta o orçamento e um especialista retorna com a
+                  proposta.
+                </span>
+              </div>
+              <div>
+                <Icon name="building-factory-2" />
+                <span>
+                  Fabricado pela BB Brindes, empresa do Grupo BB. Prazo de produção informado na
+                  proposta.
+                </span>
+              </div>
+              <div>
+                <Icon name="truck-delivery" />
+                <span>Entrega para todo o Brasil.</span>
+              </div>
             </div>
           </div>
-        )}
+        </div>
+      </div>
 
-        <div>
-          <span className="wf-label">Quantidade</span>
-          <div className="inline-flex items-center">
-            <button
-              type="button"
-              className="wf-btn-ghost rounded-r-none px-3"
-              onClick={() => setQtd((q) => Math.max(1, q - 1))}
-              aria-label="Diminuir"
-            >
-              -
-            </button>
-            <input
-              type="number"
-              min={1}
-              value={qtd}
-              onChange={(e) => setQtd(Math.max(1, Number(e.target.value) || 1))}
-              className="wf-input w-20 rounded-none text-center"
-            />
-            <button
-              type="button"
-              className="wf-btn-ghost rounded-l-none px-3"
-              onClick={() => setQtd((q) => q + 1)}
-              aria-label="Aumentar"
-            >
-              +
+      {/* Barra de compra fixa no rodape (#sbuy) */}
+      <div className={`sticky-buy${sbOn ? " on" : ""}`} id="sbuy">
+        <div className="wrap">
+          {mainSrc ? <img src={mainSrc} alt="" /> : null}
+          <div className="info">
+            <b>{produto.nome}</b>
+            <small id="sbinfo">
+              {fmt(qtd)} unidades{corNome ? ` · ${corNome}` : ""}
+            </small>
+          </div>
+          <div className="r">
+            <a className="btn btn-ghost" href={WA} target="_blank" rel="noopener">
+              <Icon name="brand-whatsapp" />
+              Especialista
+            </a>
+            <button type="button" className="btn btn-cta" onClick={aoAdicionar}>
+              <Icon name="shopping-bag" />
+              Adicionar ao orçamento
             </button>
           </div>
         </div>
-
-        <div className="flex flex-wrap gap-3">
-          <button type="button" onClick={aoAdicionar} className="wf-btn-primary">
-            Adicionar ao orcamento
-          </button>
-          {adicionado && (
-            <Link href="/orcamento" className="wf-btn-ghost">
-              Ir para o orcamento
-            </Link>
-          )}
-        </div>
-
-        {adicionado && <p className="text-sm text-wf-accent">Adicionado ao orcamento.</p>}
-
-        <p className="text-xs text-wf-muted">
-          Sem pagamento online. Voce monta o orcamento e um vendedor entra em contato.
-        </p>
-
-        {/* Descricao curta (abertura) abaixo do botao de orcamento (revisao Plinio) */}
-        {produto.detalhe && (
-          <p className="text-sm leading-relaxed text-wf-text">{produto.detalhe.abertura}</p>
-        )}
       </div>
-    </div>
+
+      {/* Toast de confirmacao (espelha o toast() do mockup) */}
+      <div className={`toast${toastMsg ? " on" : ""}`} role="status" aria-live="polite">
+        <Icon name="circle-check" />
+        <span>{toastMsg}</span>
+      </div>
+    </>
   );
 }

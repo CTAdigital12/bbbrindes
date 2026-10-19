@@ -3,6 +3,8 @@ import { Poppins } from "next/font/google";
 import "./globals.css";
 import "./joy.css";
 import { CartProvider } from "@/lib/cart";
+import { CartUIProvider } from "@/lib/cart-ui";
+import CartDrawer from "@/components/CartDrawer";
 
 // Fonte da identidade da Joy. Expoe --font-poppins (usada no tailwind.config)
 // e aplica Poppins no body (a classe vence o seletor de elemento do joy.css).
@@ -56,9 +58,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationLd) }}
         />
         <CartProvider>
-          <Header />
-          <main className="flex-1">{children}</main>
-          <Footer />
+          <CartUIProvider>
+            <Header />
+            <main className="flex-1">{children}</main>
+            <Footer />
+            <CartDrawer />
+          </CartUIProvider>
         </CartProvider>
       </body>
     </html>

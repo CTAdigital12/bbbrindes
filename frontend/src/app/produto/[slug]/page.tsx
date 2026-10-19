@@ -2,11 +2,12 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { nomeCategoria } from "@/data/categorias";
-import { produtos } from "@/data/produtos";
-import { getProdutoBySlug, getProdutoSlugs } from "@/lib/produtos";
+import { getProdutoBySlug, getProdutoSlugs, getProdutos } from "@/lib/produtos";
 import ProdutoView from "@/components/ProdutoView";
 import ProdutoDetalheView from "@/components/ProdutoDetalheView";
-import ProductCard from "@/components/ProductCard";
+import VistosRecentemente from "@/components/VistosRecentemente";
+import Rail from "@/components/Rail";
+import ProductCardJoy from "@/components/ProductCardJoy";
 import { pageUrl } from "@/lib/site";
 
 type Params = Promise<{ slug: string }>;
@@ -49,9 +50,12 @@ export default async function ProdutoPage({ params }: { params: Params }) {
   const produto = await getProdutoBySlug(slug);
   if (!produto) notFound();
 
-  const relacionados = produtos
+  // Relacionados por categoria, a partir do catalogo REAL (getProdutos; cai no
+  // mock se o backend estiver fora no build), como o `rel` do produto() do mockup.
+  const todos = await getProdutos();
+  const relacionados = todos
     .filter((p) => p.categoria === produto.categoria && p.slug !== produto.slug)
-    .slice(0, 4);
+    .slice(0, 8);
 
   // Dados estruturados da PDP: Produto e trilha de navegacao (Breadcrumb).
   const productLd = {
@@ -74,7 +78,7 @@ export default async function ProdutoPage({ params }: { params: Params }) {
   };
 
   return (
-    <div className="wf-container py-6">
+    <div className="wrap">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(productLd) }}
@@ -83,31 +87,32 @@ export default async function ProdutoPage({ params }: { params: Params }) {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }}
       />
-      <nav className="mb-4 text-xs text-wf-muted">
-        <Link href="/" className="hover:text-wf-accent">
-          Inicio
-        </Link>{" "}
-        /{" "}
-        <Link href={`/catalogo?categoria=${produto.categoria}`} className="hover:text-wf-accent">
+      <div className="crumb">
+        <Link href="/">Início</Link>/
+        <Link href={`/catalogo?categoria=${produto.categoria}`}>
           {nomeCategoria(produto.categoria)}
-        </Link>{" "}
-        / <span className="text-wf-text">{produto.nome}</span>
-      </nav>
+        </Link>
+        /<span>{produto.nome}</span>
+      </div>
 
       <ProdutoView produto={produto} />
 
-      {produto.detalhe && <ProdutoDetalheView detalhe={produto.detalhe} />}
+      <ProdutoDetalheView produto={produto} />
 
       {relacionados.length > 0 && (
-        <section className="mt-12">
-          <h2 className="mb-3 text-lg font-semibold text-wf-ink">Produtos relacionados</h2>
-          <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-            {relacionados.map((p) => (
-              <ProductCard key={p.slug} produto={p} />
-            ))}
+        <section className="sec">
+          <div className="shead">
+            <h2 style={{ fontSize: 24 }}>Quem viu este produto também pediu</h2>
           </div>
+          <Rail id="tr-rel">
+            {relacionados.map((p) => (
+              <ProductCardJoy key={p.slug} produto={p} />
+            ))}
+          </Rail>
         </section>
       )}
+
+      <VistosRecentemente produto={produto} />
     </div>
   );
 }
