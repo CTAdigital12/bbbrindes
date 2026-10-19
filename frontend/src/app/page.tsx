@@ -330,7 +330,9 @@ export default async function HomePage() {
           />
           <div className="cases">
             {CASES.map(([cliente, segmento, titulo, imagem]) => (
-              <Link className="case" href="/cases" key={cliente}>
+              // Cases ilustrativos (o cliente ainda nao escolheu cases reais):
+              // o clique leva ao blog em vez de uma pagina de case inexistente.
+              <Link className="case" href="/blog" key={cliente}>
                 <div className="ph">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img src={img(imagem)} alt="" loading="lazy" />
