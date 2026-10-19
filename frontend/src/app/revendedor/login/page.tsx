@@ -5,6 +5,8 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { AuthError, login } from "@/lib/auth";
 
+// Visual na identidade Joy (mockup login(): .done reusado, text-align left), com
+// a logica real de auth (lib/auth) mantida intacta.
 export default function RevendedorLoginPage() {
   const router = useRouter();
   const [email, setEmail] = useState("");
@@ -21,51 +23,44 @@ export default function RevendedorLoginPage() {
       router.push("/revendedor/painel");
     } catch (err) {
       setErro(
-        err instanceof AuthError
-          ? err.message
-          : "Nao foi possivel entrar. Tente de novo.",
+        err instanceof AuthError ? err.message : "Nao foi possivel entrar. Tente de novo.",
       );
       setEnviando(false);
     }
   }
 
   return (
-    <div className="wf-container flex justify-center py-16">
-      <div className="wf-card w-full max-w-sm p-6">
-        <h1 className="text-xl font-semibold text-wf-ink">Area do revendedor</h1>
-        <p className="mt-1 text-sm text-wf-text">
-          Acesso exclusivo a precos tabelados, estoque e fechamento de pedido.
+    <div className="wrap">
+      <div className="done" style={{ textAlign: "left" }}>
+        <h1 style={{ fontSize: "28px" }}>Área do revendedor</h1>
+        <p style={{ color: "var(--muted)" }}>
+          Acesso exclusivo a preços tabelados, estoque e fechamento de pedido.
         </p>
 
-        <form onSubmit={entrar} className="mt-6 space-y-4">
-          <div>
-            <label className="wf-label">Email</label>
+        <form onSubmit={entrar}>
+          <div className="fld">
+            <label>E-mail</label>
             <input
               type="email"
               required
               autoComplete="email"
-              className="wf-input"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
             />
           </div>
-          <div>
-            <label className="wf-label">Senha</label>
+          <div className="fld" style={{ marginTop: "10px" }}>
+            <label>Senha</label>
             <input
               type="password"
               required
               autoComplete="current-password"
-              className="wf-input"
               value={senha}
               onChange={(e) => setSenha(e.target.value)}
             />
           </div>
 
           {erro && (
-            <p
-              role="alert"
-              className="rounded bg-red-50 p-2 text-sm text-red-700"
-            >
+            <p role="alert" style={{ marginTop: "12px", color: "#9a4b00", fontSize: "13.5px" }}>
               {erro}
             </p>
           )}
@@ -73,20 +68,25 @@ export default function RevendedorLoginPage() {
           <button
             type="submit"
             disabled={enviando}
-            className="wf-btn-primary w-full disabled:opacity-50"
+            className="btn btn-deep btn-lg btn-block"
+            style={{ marginTop: "16px", opacity: enviando ? 0.5 : 1 }}
           >
             {enviando ? "Entrando..." : "Entrar"}
           </button>
         </form>
 
-        <div className="mt-4 flex justify-between text-xs text-wf-muted">
-          <Link href="/revendedores" className="hover:text-wf-accent">
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            marginTop: "14px",
+            fontSize: "13.5px",
+          }}
+        >
+          <Link className="link" href="/revendedores">
             Quero ser revendedor
           </Link>
-          <Link
-            href="/revendedor/esqueci-senha"
-            className="hover:text-wf-accent"
-          >
+          <Link className="link" href="/revendedor/esqueci-senha">
             Esqueci a senha
           </Link>
         </div>

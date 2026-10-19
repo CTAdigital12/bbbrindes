@@ -1,46 +1,52 @@
 import type { Metadata } from "next";
+import Link from "next/link";
+import Icon from "@/components/Icon";
 
 export const metadata: Metadata = {
-  title: "Catalogos",
-  description: "Folheie o catalogo em flipbook ou baixe os catalogos em PDF.",
+  title: "Catálogos",
+  description:
+    "Folheie o catálogo online ou baixe em PDF: catálogo completo, linha Green e datas comemorativas.",
 };
 
-const catalogos = [
-  { nome: "Catalogo Completo 2026", paginas: 120 },
-  { nome: "Linha Green (Ecologicos)", paginas: 32 },
-  { nome: "Datas Comemorativas", paginas: 24 },
+// PDFs do mockup catalogos() (.press): nome + numero de paginas.
+const PDFS: [nome: string, paginas: string][] = [
+  ["Catálogo completo 2026", "120 páginas"],
+  ["Linha Green (ecológicos)", "32 páginas"],
+  ["Datas comemorativas", "24 páginas"],
 ];
 
 export default function CatalogosPage() {
   return (
-    <div className="wf-container py-8">
-      <h1 className="text-2xl font-bold text-wf-ink">Catalogos</h1>
+    <div className="wrap">
+      <div className="crumb">
+        <Link href="/">Início</Link>/<span>Catálogos</span>
+      </div>
+      <div className="ptitle">
+        <h1>Catálogos</h1>
+        <p>Folheie online ou baixe em PDF.</p>
+      </div>
 
-      {/* Flipbook */}
-      <section className="mt-6">
-        <h2 className="mb-3 text-lg font-semibold text-wf-ink">Flipbook</h2>
-        <div className="wf-img flex aspect-[16/8] w-full items-center justify-center rounded-lg">
-          Visualizador de flipbook (placeholder)
-        </div>
-        <p className="mt-2 text-xs text-wf-muted">
-          Integracao do flipbook entra na Sprint 5. Aqui ficara o folheador interativo.
-        </p>
-      </section>
+      {/* Visualizador de flipbook: integracao futura (placeholder visivel). */}
+      <div className="map" style={{ aspectRatio: "16/7" }}>
+        <Icon name="notes" className="big" />
+        Visualizador de flipbook
+      </div>
 
-      {/* Downloads */}
-      <section className="mt-10">
-        <h2 className="mb-3 text-lg font-semibold text-wf-ink">Baixar em PDF</h2>
-        <div className="grid gap-3 sm:grid-cols-3">
-          {catalogos.map((c) => (
-            <div key={c.nome} className="wf-card flex flex-col gap-3 p-4">
-              <div className="wf-img aspect-[3/4] w-full rounded">PDF</div>
-              <div>
-                <h3 className="text-sm font-medium text-wf-ink">{c.nome}</h3>
-                <p className="text-xs text-wf-muted">{c.paginas} paginas</p>
-              </div>
-              <button type="button" className="wf-btn-primary mt-auto">
+      <section className="sec">
+        <div className="press">
+          {PDFS.map(([nome, paginas]) => (
+            <div className="pr" key={nome}>
+              <small>
+                <Icon name="file-type-pdf" /> PDF · {paginas}
+              </small>
+              <b>{nome}</b>
+              <a
+                className="btn btn-ghost btn-sm"
+                style={{ alignSelf: "flex-start", marginTop: "8px" }}
+                href="#"
+              >
                 Baixar PDF
-              </button>
+              </a>
             </div>
           ))}
         </div>

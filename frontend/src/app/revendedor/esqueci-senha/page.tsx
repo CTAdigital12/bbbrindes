@@ -4,6 +4,8 @@ import Link from "next/link";
 import { useState } from "react";
 import { forgotPassword } from "@/lib/auth";
 
+// Pagina sem equivalente no mockup: so reaplica o tema Joy (card .done). Logica
+// de recuperacao (lib/auth, anti-enumeracao) mantida intacta.
 export default function EsqueciSenhaPage() {
   const [email, setEmail] = useState("");
   const [enviando, setEnviando] = useState(false);
@@ -19,29 +21,27 @@ export default function EsqueciSenhaPage() {
   }
 
   return (
-    <div className="wf-container flex justify-center py-16">
-      <div className="wf-card w-full max-w-sm p-6">
-        <h1 className="text-xl font-semibold text-wf-ink">Recuperar senha</h1>
+    <div className="wrap">
+      <div className="done" style={{ textAlign: "left" }}>
+        <h1 style={{ fontSize: "28px" }}>Recuperar senha</h1>
 
         {enviado ? (
-          <p className="mt-4 text-sm text-wf-text">
-            Se este e-mail estiver cadastrado, enviamos um link para redefinir a
-            senha. Verifique sua caixa de entrada.
+          <p style={{ color: "var(--muted)", marginTop: "12px" }}>
+            Se este e-mail estiver cadastrado, enviamos um link para redefinir a senha. Verifique
+            sua caixa de entrada.
           </p>
         ) : (
           <>
-            <p className="mt-1 text-sm text-wf-text">
-              Informe o e-mail do seu acesso. Enviaremos um link para redefinir
-              a senha.
+            <p style={{ color: "var(--muted)" }}>
+              Informe o e-mail do seu acesso. Enviaremos um link para redefinir a senha.
             </p>
-            <form onSubmit={enviar} className="mt-6 space-y-4">
-              <div>
-                <label className="wf-label">Email</label>
+            <form onSubmit={enviar}>
+              <div className="fld" style={{ marginTop: "8px" }}>
+                <label>E-mail</label>
                 <input
                   type="email"
                   required
                   autoComplete="email"
-                  className="wf-input"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                 />
@@ -49,7 +49,8 @@ export default function EsqueciSenhaPage() {
               <button
                 type="submit"
                 disabled={enviando}
-                className="wf-btn-primary w-full disabled:opacity-50"
+                className="btn btn-deep btn-lg btn-block"
+                style={{ marginTop: "16px", opacity: enviando ? 0.5 : 1 }}
               >
                 {enviando ? "Enviando..." : "Enviar link"}
               </button>
@@ -57,8 +58,8 @@ export default function EsqueciSenhaPage() {
           </>
         )}
 
-        <div className="mt-4 text-xs text-wf-muted">
-          <Link href="/revendedor/login" className="hover:text-wf-accent">
+        <div style={{ marginTop: "14px", fontSize: "13.5px" }}>
+          <Link className="link" href="/revendedor/login">
             Voltar ao login
           </Link>
         </div>

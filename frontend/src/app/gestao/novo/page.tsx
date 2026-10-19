@@ -7,6 +7,8 @@ import { categorias } from "@/data/categorias";
 import { aplicacoes, faixaPrecoLabels, materiais } from "@/data/produtos";
 import { adicionarManual } from "@/lib/lojista";
 
+// Pagina sem equivalente no mockup: so reaplica o tema Joy. Toda a logica de
+// cadastro (estado do form, cores/SKU, salvar via lojista) mantida intacta.
 export default function NovoProdutoPage() {
   const router = useRouter();
   const [nome, setNome] = useState("");
@@ -52,34 +54,36 @@ export default function NovoProdutoPage() {
   }
 
   return (
-    <div className="bg-wf-bg">
-      <div className="border-b border-wf-line bg-wf-ink text-white">
-        <div className="wf-container flex items-center justify-between py-3">
+    <div className="bg-joy-paper">
+      <div className="bg-joy-deep text-white">
+        <div className="wrap flex items-center justify-between py-4">
           <div>
-            <span className="text-xs uppercase tracking-wide text-wf-muted">Administracao do site</span>
+            <span className="text-xs uppercase tracking-wide text-white/60">
+              Administração do site
+            </span>
             <h1 className="text-lg font-semibold">Adicionar produto</h1>
           </div>
-          <Link href="/gestao" className="wf-btn-ghost text-wf-ink">
+          <Link href="/gestao" className="btn btn-ghost-w btn-sm">
             Voltar
           </Link>
         </div>
       </div>
 
-      <div className="wf-container py-6">
+      <div className="wrap py-6">
         <form onSubmit={salvar} className="grid gap-6 lg:grid-cols-[1fr_320px]">
           {/* Coluna principal */}
           <div className="space-y-4">
-            <div className="wf-card space-y-4 p-4">
-              <div>
-                <label className="wf-label">Nome do produto</label>
-                <input className="wf-input" value={nome} onChange={(e) => setNome(e.target.value)} />
-                {erro && <span className="mt-1 block text-xs text-red-600">{erro}</span>}
+            <div className="space-y-4 rounded-joy bg-white p-5 shadow-joy1">
+              <div className="fld">
+                <label>Nome do produto</label>
+                <input value={nome} onChange={(e) => setNome(e.target.value)} />
+                {erro && <span className="mt-1 block text-xs text-[#c8202c]">{erro}</span>}
               </div>
 
               <div className="grid gap-4 sm:grid-cols-2">
-                <div>
-                  <label className="wf-label">Categoria</label>
-                  <select className="wf-input" value={categoria} onChange={(e) => setCategoria(e.target.value)}>
+                <div className="fld">
+                  <label>Categoria</label>
+                  <select value={categoria} onChange={(e) => setCategoria(e.target.value)}>
                     {categorias.map((c) => (
                       <option key={c.slug} value={c.slug}>
                         {c.nome}
@@ -87,9 +91,9 @@ export default function NovoProdutoPage() {
                     ))}
                   </select>
                 </div>
-                <div>
-                  <label className="wf-label">Material</label>
-                  <select className="wf-input" value={material} onChange={(e) => setMaterial(e.target.value)}>
+                <div className="fld">
+                  <label>Material</label>
+                  <select value={material} onChange={(e) => setMaterial(e.target.value)}>
                     {materiais.map((m) => (
                       <option key={m} value={m}>
                         {m}
@@ -99,20 +103,19 @@ export default function NovoProdutoPage() {
                 </div>
               </div>
 
-              <div>
-                <label className="wf-label">Descricao</label>
-                <textarea
-                  className="wf-input min-h-[100px]"
-                  value={descricao}
-                  onChange={(e) => setDescricao(e.target.value)}
-                />
+              <div className="fld">
+                <label>Descrição</label>
+                <textarea value={descricao} onChange={(e) => setDescricao(e.target.value)} />
               </div>
 
-              <div>
-                <span className="wf-label">Aplicacoes</span>
-                <div className="flex flex-wrap gap-2">
+              <div className="fld">
+                <label>Aplicações</label>
+                <div className="flex flex-wrap gap-3">
                   {aplicacoes.map((a) => (
-                    <label key={a} className="flex items-center gap-1 text-sm text-wf-text">
+                    <label
+                      key={a}
+                      className="flex items-center gap-1.5 text-sm font-normal text-[#3e5148]"
+                    >
                       <input type="checkbox" checked={aps.includes(a)} onChange={() => toggleAp(a)} />
                       {a}
                     </label>
@@ -122,35 +125,40 @@ export default function NovoProdutoPage() {
             </div>
 
             {/* Variacoes de cor */}
-            <div className="wf-card space-y-3 p-4">
-              <span className="wf-label">Variacoes de cor (cada cor e um SKU)</span>
+            <div className="space-y-3 rounded-joy bg-white p-5 shadow-joy1">
+              <span className="block text-[12.5px] font-semibold text-[#3e5148]">
+                Variações de cor (cada cor é um SKU)
+              </span>
               <div className="flex flex-wrap items-end gap-2">
                 <input
-                  className="wf-input w-40"
+                  className="h-11 w-40 rounded-[12px] border-0 bg-[#f3f5ec] px-3.5 text-sm text-joy-ink outline-none"
                   placeholder="Nome da cor"
                   value={corNome}
                   onChange={(e) => setCorNome(e.target.value)}
                 />
                 <input
                   type="color"
-                  className="h-9 w-12 rounded border border-wf-line"
+                  className="h-11 w-12 rounded-[12px] border border-joy-line"
                   value={corHex}
                   onChange={(e) => setCorHex(e.target.value)}
                   aria-label="Cor"
                 />
-                <button type="button" onClick={addCor} className="wf-btn-ghost">
+                <button type="button" onClick={addCor} className="btn btn-ghost btn-sm">
                   Adicionar cor
                 </button>
               </div>
               <div className="flex flex-wrap gap-2">
                 {cores.map((c, i) => (
-                  <span key={i} className="wf-chip flex items-center gap-1">
-                    <span className="h-3 w-3 rounded-full border border-wf-line" style={{ backgroundColor: c.hex }} />
+                  <span key={i} className="chip">
+                    <span
+                      className="h-3 w-3 rounded-full"
+                      style={{ backgroundColor: c.hex, boxShadow: "inset 0 0 0 1px rgba(0,0,0,.15)" }}
+                    />
                     {c.nome}
                     <button
                       type="button"
                       onClick={() => setCores((cs) => cs.filter((_, idx) => idx !== i))}
-                      className="ml-1 text-wf-muted hover:text-wf-accent"
+                      className="ml-1 text-joy-muted hover:text-joy-deep"
                       aria-label={`Remover ${c.nome}`}
                     >
                       x
@@ -163,10 +171,10 @@ export default function NovoProdutoPage() {
 
           {/* Coluna lateral */}
           <div className="space-y-4">
-            <div className="wf-card space-y-4 p-4">
-              <div>
-                <label className="wf-label">Faixa de preco</label>
-                <select className="wf-input" value={faixaPreco} onChange={(e) => setFaixaPreco(e.target.value)}>
+            <div className="space-y-4 rounded-joy bg-white p-5 shadow-joy1">
+              <div className="fld">
+                <label>Faixa de preço</label>
+                <select value={faixaPreco} onChange={(e) => setFaixaPreco(e.target.value)}>
                   {Object.entries(faixaPrecoLabels).map(([valor, rotulo]) => (
                     <option key={valor} value={valor}>
                       {rotulo}
@@ -175,29 +183,29 @@ export default function NovoProdutoPage() {
                 </select>
               </div>
 
-              <label className="flex items-center gap-2 text-sm text-wf-text">
+              <label className="flex items-center gap-2 text-sm text-[#3e5148]">
                 <input
                   type="checkbox"
                   checked={personalizavel}
                   onChange={(e) => setPersonalizavel(e.target.checked)}
                 />
-                Personalizavel
+                Personalizável
               </label>
 
-              <div>
-                <span className="wf-label">Imagens</span>
-                <div className="wf-img flex min-h-[110px] flex-col items-center justify-center rounded border border-dashed border-wf-muted text-center">
+              <div className="fld">
+                <label>Imagens</label>
+                <div className="flex min-h-[110px] flex-col items-center justify-center rounded-joy-sm border border-dashed border-joy-line bg-[#f3f5ec] text-center text-sm text-joy-muted">
                   <span>Arraste imagens aqui</span>
                   <span className="text-[10px]">ou clique para selecionar</span>
                 </div>
-                <input type="file" multiple className="mt-2 text-xs text-wf-text" />
+                <input type="file" multiple className="mt-2 text-xs text-[#3e5148]" />
               </div>
             </div>
 
-            <button type="submit" className="wf-btn-primary w-full">
+            <button type="submit" className="btn btn-cta btn-block">
               Salvar produto
             </button>
-            <Link href="/gestao" className="wf-btn-ghost w-full">
+            <Link href="/gestao" className="btn btn-ghost btn-block">
               Cancelar
             </Link>
           </div>

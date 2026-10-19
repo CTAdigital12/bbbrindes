@@ -1,27 +1,48 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { getPosts } from "@/lib/content";
+import { img } from "@/lib/asset";
+import { nb, POSTS } from "@/data/home-joy";
 
 export const metadata: Metadata = {
   title: "Blog",
-  description: "Conteudos sobre brindes, sustentabilidade, datas comemorativas e personalizacao.",
+  description:
+    "Conteúdo sobre brindes corporativos para quem compra: como escolher produto por ocasião, fabricante x revendedor e o que exigir de um fornecedor.",
 };
 
+// Capas ilustrativas (imagens do mockup POSTS), cicladas sobre os posts reais:
+// o Post (getPosts) nao tem imagem no wireframe. Espelha o blogHTML do mockup.
+const COVERS = POSTS.map(([, , imagem]) => imagem);
+
+// Espelha blog() (.blog). Dado REAL: getPosts() (Payload com fallback no mock
+// data/blog). Cada post linka para /blog/[slug], que tem generateStaticParams.
 export default async function BlogPage() {
   const posts = await getPosts();
   return (
-    <div className="wf-container py-8">
-      <h1 className="text-2xl font-bold text-wf-ink">Blog</h1>
-      <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {posts.map((p) => (
-          <Link key={p.slug} href={`/blog/${p.slug}`} className="wf-card overflow-hidden hover:shadow-md">
-            <div className="wf-img aspect-[16/9] w-full">Imagem</div>
-            <div className="p-4">
-              <span className="text-xs text-wf-muted">
-                {new Date(p.data).toLocaleDateString("pt-BR")}
+    <div className="wrap">
+      <div className="crumb">
+        <Link href="/">Início</Link>/<span>Blog</span>
+      </div>
+      <div className="ptitle">
+        <h1>Blog da BB Brindes</h1>
+        <p>
+          Conteúdo sobre brindes corporativos para quem compra: como escolher produto por ocasião, o
+          que muda entre fabricante e revendedor e o que exigir de um fornecedor.
+        </p>
+      </div>
+      <div className="blog">
+        {posts.map((p, i) => (
+          <Link className="post" href={`/blog/${p.slug}`} key={p.slug}>
+            <div className="ph">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={img(COVERS[i % COVERS.length])} alt="" loading="lazy" />
+            </div>
+            <div className="bd">
+              <span className="chip chip-sage" style={{ alignSelf: "flex-start" }}>
+                Artigo
               </span>
-              <h2 className="mt-1 text-sm font-medium text-wf-ink">{p.titulo}</h2>
-              <p className="mt-1 line-clamp-3 text-xs text-wf-text">{p.resumo}</p>
+              <h3>{nb(p.titulo)}</h3>
+              <p>{p.resumo}</p>
             </div>
           </Link>
         ))}

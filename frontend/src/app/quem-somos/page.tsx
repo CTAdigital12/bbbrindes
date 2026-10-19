@@ -1,94 +1,124 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { diferenciais } from "@/data/banners";
+import Icon from "@/components/Icon";
+import FinalCta from "@/components/FinalCta";
+import { img } from "@/lib/asset";
+import { WA, nb, DIF } from "@/data/home-joy";
 
 export const metadata: Metadata = {
   title: "Quem Somos",
   description:
-    "Industria 100% brasileira de brindes corporativos, parte do Grupo BB, com foco em sustentabilidade, escala e qualidade.",
+    "Somos fábrica, não revenda: indústria brasileira de brindes corporativos do Grupo BB, com produção própria, escala nacional e atendimento comercial direto.",
 };
 
-const numeros = [
-  { valor: "20+ anos", rotulo: "de mercado" },
-  { valor: "1200+", rotulo: "produtos no catalogo" },
-  { valor: "Milhoes", rotulo: "de pecas por ano" },
-  { valor: "100%", rotulo: "producao nacional" },
+// Numeros institucionais (mockup quem()): 27 anos / 500 un. / 100% / 5.
+const NUMS: [valor: string, rotulo: string][] = [
+  ["27 anos", "de mercado"],
+  ["500 un.", "pedido mínimo"],
+  ["100%", "produção nacional"],
+  ["5", "certificações de qualidade"],
 ];
 
-const sustentabilidade = [
-  "Produtos livres de BPA e materiais reciclados",
-  "Reducao de plastico virgem na linha ecologica",
-  "Producao propria com controle de qualidade",
+// Sustentabilidade (icone sustentabilidade-<slug>.svg, titulo).
+const SUST: [slug: string, titulo: string][] = [
+  ["livres-de-bpa-e-reciclados", "Produtos livres de BPA e materiais reciclados"],
+  ["menos-plastico-virgem", "Redução de plástico virgem na linha ecológica"],
+  ["controle-de-qualidade", "Produção própria com controle de qualidade"],
 ];
 
 export default function QuemSomosPage() {
   return (
-    <div className="wf-container py-8">
-      <h1 className="text-2xl font-bold text-wf-ink">Quem Somos</h1>
+    <div className="wrap">
+      <div className="crumb">
+        <Link href="/">Início</Link>/<span>Quem somos</span>
+      </div>
 
-      <div className="mt-6 grid gap-8 lg:grid-cols-2">
-        <div className="space-y-4 text-sm text-wf-text">
+      <div className="split">
+        <div>
+          <span className="eyebrow">Quem somos</span>
+          <h1
+            style={{
+              margin: "0 0 14px",
+              fontSize: "40px",
+              lineHeight: 1.1,
+              letterSpacing: "-.03em",
+              fontWeight: 600,
+            }}
+          >
+            Somos fábrica, não&nbsp;revenda.
+          </h1>
           <p>
-            Industria 100% brasileira de brindes corporativos e parte do Grupo BB, um grupo
-            consolidado no mercado. Producao propria, escala nacional e atendimento comercial
-            direto.
+            A BB Brindes, empresa do Grupo BB, é uma indústria brasileira de brindes corporativos.
+            Produção própria, escala nacional e atendimento comercial direto.
           </p>
           <p>
-            Atendemos empresas e revendedores em todo o pais, com catalogo amplo, personalizacao e
-            compromisso com prazo e qualidade.
+            Atendemos empresas e revendedores em todo o país, com catálogo amplo, personalização da
+            sua marca e compromisso com prazo e qualidade.
           </p>
-          <p className="text-xs text-wf-muted">Texto de exemplo. Conteudo final via CMS (Sprint 5).</p>
+          <div style={{ display: "flex", gap: "10px", flexWrap: "wrap", marginTop: "18px" }}>
+            <Link className="btn btn-cta" href="/catalogo">
+              Ver catálogo
+              <Icon name="arrow-right" />
+            </Link>
+            <a className="btn btn-ghost" href={WA} target="_blank" rel="noopener">
+              <Icon name="brand-whatsapp" />
+              Falar com o comercial
+            </a>
+          </div>
         </div>
-        <div className="wf-img flex aspect-video w-full items-center justify-center rounded-lg text-sm text-wf-ink">
-          Imagem institucional / Grupo BB
+        {/* PENDENTE cliente: foto real da fabrica. Placeholder visivel ate chegar. */}
+        <div className="ph">FOTO DA FÁBRICA</div>
+      </div>
+
+      <div className="nums">
+        {NUMS.map(([valor, rotulo]) => (
+          <div className="num" key={rotulo}>
+            <b>{valor}</b>
+            <span>{rotulo}</span>
+          </div>
+        ))}
+      </div>
+
+      <section className="sec">
+        <div className="shead">
+          <div>
+            <h2>Sustentabilidade</h2>
+          </div>
         </div>
-      </div>
+        <div className="dgrid">
+          {SUST.map(([slug, titulo]) => (
+            <div className="dif" key={slug}>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={img(`/img/icones/sustentabilidade-${slug}.svg`)} alt="" />
+              <div>
+                <b>{titulo}</b>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
 
-      <div className="mt-8 grid grid-cols-2 gap-3 lg:grid-cols-4">
-        {numeros.map((n) => (
-          <div key={n.rotulo} className="wf-card p-4 text-center">
-            <div className="text-xl font-bold text-wf-ink">{n.valor}</div>
-            <div className="mt-1 text-xs text-wf-text">{n.rotulo}</div>
-          </div>
-        ))}
-      </div>
-
-      <h2 className="mt-12 text-lg font-semibold text-wf-ink">Sustentabilidade</h2>
-      <div className="mt-3 grid gap-3 sm:grid-cols-3">
-        {sustentabilidade.map((s) => (
-          <div key={s} className="wf-card flex items-start gap-3 p-4">
-            <span className="wf-img h-9 w-9 shrink-0 rounded-full" aria-hidden="true" />
-            <span className="text-sm text-wf-ink">{s}</span>
-          </div>
-        ))}
-      </div>
-
-      <h2 className="mt-12 text-lg font-semibold text-wf-ink">Nossos diferenciais</h2>
-      <div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-3">
-        {diferenciais.map((d) => (
-          <div key={d.nome} className="wf-card flex items-center gap-3 p-3">
-            <span className="wf-img h-9 w-9 rounded-full" />
-            <span className="text-sm font-medium text-wf-ink">{d.nome}</span>
-          </div>
-        ))}
-      </div>
-
-      <div className="mt-12 grid gap-4 sm:grid-cols-2">
-        <Link href="/cases" className="wf-card flex items-center justify-between p-6 hover:shadow-md">
+      <section className="sec">
+        <div className="shead">
           <div>
-            <h3 className="text-sm font-semibold text-wf-ink">Cases e prova social</h3>
-            <p className="mt-1 text-xs text-wf-text">Clientes, campanhas e depoimentos.</p>
+            <h2>Nossos diferenciais</h2>
           </div>
-          <span className="text-sm font-medium text-wf-accent">Ver</span>
-        </Link>
-        <Link href="/imprensa" className="wf-card flex items-center justify-between p-6 hover:shadow-md">
-          <div>
-            <h3 className="text-sm font-semibold text-wf-ink">Imprensa</h3>
-            <p className="mt-1 text-xs text-wf-text">A bbbrindes e o Grupo BB na midia.</p>
-          </div>
-          <span className="text-sm font-medium text-wf-accent">Ver</span>
-        </Link>
-      </div>
+        </div>
+        <div className="dgrid">
+          {DIF.map(([slug, titulo, sub]) => (
+            <div className="dif" key={slug}>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={img(`/img/icones/diferencial-${slug}.svg`)} alt="" />
+              <div>
+                <b>{titulo}</b>
+                <span>{nb(sub)}</span>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <FinalCta />
     </div>
   );
 }

@@ -91,6 +91,18 @@ export const CASES: [cliente: string, segmento: string, titulo: string, img: str
   ["Nestlé", "Alimentos", "Canecas ecológicas para endomarketing", "/img/foto/MV01215-caneca-quadrada-250ml.webp"],
 ];
 
+// Cases completos (6) para a pagina /cases, portados do array CASES(6) do mockup
+// (casesHTML(6)). Ilustrativos: imagem de produto como stand-in + chip "Ilustrativo".
+// O home-joy CASES (3 itens, acima) alimenta a secao da home; este os 6 da pagina.
+export const CASES6: [cliente: string, segmento: string, titulo: string, img: string][] = [
+  ["Coca-Cola", "Bebidas", "Squeezes personalizados para campanha de verão", "/img/foto/MV01113-squeeze-550ml.webp"],
+  ["Ambev", "Bebidas", "Copos para ativação em evento", "/img/foto/MV01147-copo-mini-roma-cristal-300ml.webp"],
+  ["Nestlé", "Alimentos", "Canecas ecológicas para endomarketing", "/img/foto/MV01215-caneca-quadrada-250ml.webp"],
+  ["PicPay", "Financeiro", "Canecas Green Fibras para o time", "/img/foto/MV02215GC-caneca-quadrada-ecologica-green-fibras-colors.webp"],
+  ["Jeep", "Automotivo", "Itens to go para o pós-venda", "/img/foto/MV02277G-mariner-box-plus-ecologico-green-fibras.webp"],
+  ["Claro", "Telecom", "Canecas térmicas para ação de inverno", "/img/foto/MV02251GC-caneca-termica-color-300ml-ecologica-green-fibras-colors.webp"],
+];
+
 // Depoimentos da secao de cases.
 export const QUOTES: [texto: string, autor: string][] = [
   ["“Vocês foram brilhantes. Os brindes ficaram lindos. Cumpriram os prazos com excelência.”", "Lilian Bueno · Braskem"],

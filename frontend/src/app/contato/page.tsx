@@ -1,60 +1,94 @@
-"use client";
+import type { Metadata } from "next";
+import Link from "next/link";
+import Icon from "@/components/Icon";
+import { WA } from "@/data/home-joy";
 
-import { useState } from "react";
+export const metadata: Metadata = {
+  title: "Contato",
+  description:
+    "Fale com a BB Brindes: WhatsApp, e-mail, SAC e orçamento. Fábrica em Lauro de Freitas / BA.",
+};
 
+// Canais de contato (mockup contato()): .cbox com os canais + .map placeholder.
+// Sem formulario: o fluxo de orcamento tem pagina propria (/orcamento).
 export default function ContatoPage() {
-  const [enviado, setEnviado] = useState(false);
-
   return (
-    <div className="wf-container py-8">
-      <h1 className="text-2xl font-bold text-wf-ink">Contato</h1>
-
-      <div className="mt-6 grid gap-6 lg:grid-cols-2">
-        <div className="space-y-4">
-          <div className="wf-card space-y-2 p-4 text-sm">
-            <p className="font-semibold text-wf-ink">Fale com a gente</p>
-            <p className="text-wf-text">WhatsApp: (71) 99999-9999</p>
-            <p className="text-wf-text">Email: contato@bbbrindes.com.br</p>
-            <p className="text-wf-text">Lauro de Freitas / BA</p>
-          </div>
-          <div className="wf-img flex aspect-video w-full items-center justify-center rounded-lg">
-            Mapa (placeholder)
-          </div>
+    <div className="wrap">
+      <div className="crumb">
+        <Link href="/">Início</Link>/<span>Contato</span>
+      </div>
+      <div className="ptitle">
+        <h1>Fale com a BB Brindes</h1>
+        <p>
+          Escolha o canal que preferir. Se o assunto for orçamento, o caminho mais rápido é o
+          formulário de orçamento, que já chega com os dados do seu projeto para o time comercial.
+        </p>
+      </div>
+      <div className="split" style={{ alignItems: "start" }}>
+        <div className="cbox">
+          <a href={WA} target="_blank" rel="noopener">
+            <span className="ib">
+              <Icon name="brand-whatsapp" />
+            </span>
+            <span>
+              <b>Comercial (WhatsApp)</b>
+              <br />
+              (71) 9171-7496
+            </span>
+          </a>
+          <a href="mailto:comercial@bbgrupo.com.br">
+            <span className="ib">
+              <Icon name="mail" />
+            </span>
+            <span>
+              <b>E-mail</b>
+              <br />
+              comercial@bbgrupo.com.br
+            </span>
+          </a>
+          <Link href="/sac">
+            <span className="ib">
+              <Icon name="headset" />
+            </span>
+            <span>
+              <b>SAC / pós-venda</b>
+              <br />
+              Retorno em até 24 horas úteis
+            </span>
+          </Link>
+          {/* PENDENTE cliente: endereco completo da fabrica. */}
+          <span>
+            <span className="ib">
+              <Icon name="map-pin" />
+            </span>
+            <span>
+              <b>Fábrica</b>
+              <br />
+              Lauro de Freitas / BA
+            </span>
+          </span>
+          {/* PENDENTE cliente: horario de atendimento. */}
+          <span>
+            <span className="ib">
+              <Icon name="clock" />
+            </span>
+            <span>
+              <b>Horário de atendimento</b>
+              <br />
+              A confirmar
+            </span>
+          </span>
+          <Link className="btn btn-cta" href="/orcamento">
+            Solicitar orçamento
+            <Icon name="arrow-right" />
+          </Link>
+          <small style={{ color: "var(--muted)" }}>CNPJ 11.158.637/0001-27</small>
         </div>
-
-        {enviado ? (
-          <div className="wf-card p-6 text-sm text-wf-text">
-            Mensagem enviada. Retornaremos em breve. (Wireframe: sem envio real.)
-          </div>
-        ) : (
-          <form
-            onSubmit={(e) => {
-              e.preventDefault();
-              setEnviado(true);
-            }}
-            className="wf-card space-y-4 p-6"
-          >
-            <div>
-              <label className="wf-label">Nome</label>
-              <input className="wf-input" required />
-            </div>
-            <div>
-              <label className="wf-label">Empresa</label>
-              <input className="wf-input" />
-            </div>
-            <div>
-              <label className="wf-label">Email</label>
-              <input type="email" className="wf-input" required />
-            </div>
-            <div>
-              <label className="wf-label">Mensagem</label>
-              <textarea className="wf-input min-h-[120px]" required />
-            </div>
-            <button type="submit" className="wf-btn-primary w-full">
-              Enviar mensagem
-            </button>
-          </form>
-        )}
+        {/* PENDENTE cliente: mapa / endereco da fabrica. */}
+        <div className="map">
+          <Icon name="map-2" className="big" />
+          Mapa da fábrica
+        </div>
       </div>
     </div>
   );
