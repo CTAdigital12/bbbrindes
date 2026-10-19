@@ -30,7 +30,8 @@ export default function CasesPage() {
 
       <div className="cases">
         {CASES6.map(([cliente, segmento, titulo, imagem]) => (
-          <Link className="case" href="/cases" key={cliente}>
+          // Cases ilustrativos: o clique leva ao blog (nao ha case real/detalhe).
+          <Link className="case" href="/blog" key={cliente}>
             <div className="ph">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src={img(imagem)} alt="" loading="lazy" />
