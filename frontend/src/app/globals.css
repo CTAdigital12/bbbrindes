@@ -64,9 +64,9 @@ body {
   }
 }
 
-/* Correcao de acessibilidade do hero da Joy: o joy.css deixa o texto do slide
+/* Correcao de acessibilidade do hero da Joy: o design-system.css deixa o texto do slide
    (.slide .anim>*) em opacity:0 ate a animacao 'rise' rodar, mas sob
-   prefers-reduced-motion o joy.css desliga toda animacao, o que deixaria o
+   prefers-reduced-motion o design-system.css desliga toda animacao, o que deixaria o
    texto do slide ativo invisivel. Aqui mostramos direto (maior especificidade),
    sem mudar o visual padrao (so afeta quem pediu menos movimento). */
 @media (prefers-reduced-motion: reduce) {

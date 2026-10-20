@@ -2,7 +2,7 @@
 
 import { useEffect } from "react";
 
-// Revela as secoes .reveal ao entrar na viewport, adicionando .in (o joy.css
+// Revela as secoes .reveal ao entrar na viewport, adicionando .in (o design-system.css
 // deixa .reveal em opacity:0 ate .in). Espelha o IntersectionObserver do after()
 // do mockup. Sem isso, a maior parte da home ficaria invisivel. Fallback: se nao
 // houver IntersectionObserver, mostra tudo de imediato.

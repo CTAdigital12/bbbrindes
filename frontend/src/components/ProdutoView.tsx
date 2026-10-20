@@ -13,7 +13,7 @@ import Icon from "@/components/Icon";
 import Link from "next/link";
 
 // PDP (galeria + configurador + barra de compra fixa) espelhando a funcao
-// produto() do mockup funcional da Joy, com as classes verbatim do joy.css
+// produto() do mockup funcional da Joy, com as classes verbatim do design-system.css
 // (.pd, .gal, .thumbs, .stage, .ring, .fl, .pinfo, .sub, .blk, .colors, .seg2,
 // .seg, .step, .warn, .buy#buyrow, .assure, .sticky-buy#sbuy). Dado REAL do
 // Payload (getProdutoBySlug); cores e imagens de produto.cores / produto.imagens.
@@ -67,7 +67,7 @@ export default function ProdutoView({ produto }: { produto: Produto }) {
 
   // Barra de compra fixa: aparece quando o #buyrow sai da viewport por cima
   // (IntersectionObserver), como o after()/sbObs do mockup. body.sb-on sobe o
-  // WhatsApp flutuante (regra ja no joy.css).
+  // WhatsApp flutuante (regra ja no design-system.css).
   useEffect(() => {
     const alvo = buyRef.current;
     if (!alvo || typeof IntersectionObserver === "undefined") return;
@@ -157,7 +157,7 @@ export default function ProdutoView({ produto }: { produto: Produto }) {
             onMouseMove={aoMover}
             onMouseLeave={aoSair}
           >
-            <span className="ring" />
+            <span className="halo" />
             {stageSrc ? <img id="mimg" ref={imgRef} src={stageSrc} alt={produto.nome} /> : null}
             <div className="fl">
               {novo && <span className="chip chip-orange">Novo</span>}

@@ -65,7 +65,7 @@ export default function ProductCardJoy({
   onQuickview?: (produto: Produto) => void;
 }) {
   const src = imgSrc(produto.imagens?.[0]);
-  // Foto aplicada (com a marca), revelada no hover pela .ph img.alt do joy.css.
+  // Foto aplicada (com a marca), revelada no hover pela .ph img.alt do design-system.css.
   const fotoAplicada = imgSrc(produto.imagens?.[1]);
   const categoria = produto.categoria ? nomeCategoria(produto.categoria) : "";
   const eco = (produto.tags ?? []).includes("ecologico");

@@ -6,7 +6,7 @@ import { WA } from "@/data/home-joy";
 import Icon from "@/components/Icon";
 
 // Confirmacao de orcamento ("Cotacao recebida") espelhando a funcao done() do
-// mockup funcional da Joy, com as classes verbatim do joy.css (.done, .ok). O
+// mockup funcional da Joy, com as classes verbatim do design-system.css (.done, .ok). O
 // snapshot do ultimo pedido ("bbbrindes:ultimo-pedido") e opcional: se existir,
 // mostramos um resumo discreto abaixo dos botoes (continuidade do wireframe).
 

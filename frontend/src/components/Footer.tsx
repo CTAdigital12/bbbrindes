@@ -2,7 +2,7 @@ import Link from "next/link";
 import Icon from "@/components/Icon";
 
 // Rodape da identidade da Joy (mockup funcional, 16/10). 4 colunas + selos + barra
-// inferior. A logo usa a classe .logo.white (mascara inline no joy.css). Contatos
+// inferior. A logo usa a classe .logo.white (mascara inline no design-system.css). Contatos
 // e CNPJ vem do mockup (fonte da verdade do visual). Links apontam pras rotas reais.
 export default function Footer() {
   return (
