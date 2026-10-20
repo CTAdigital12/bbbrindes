@@ -11,7 +11,7 @@ import { imgSrc } from "@/lib/asset";
 import Icon from "@/components/Icon";
 
 // Gaveta de orcamento (drawer da DIREITA, #cartd) espelhando cartHTML() do
-// mockup funcional da Joy, com as classes verbatim do joy.css (.scrim, .drawer,
+// mockup funcional da Joy, com as classes verbatim do design-system.css (.scrim, .drawer,
 // .dh, .db, .df, .ci, .xbtn). Montada globalmente no layout: abre pelo botao
 // "Orcamento" do Header e ao adicionar um item (quick-add, PDP, quickview).
 //
@@ -34,7 +34,7 @@ export default function CartDrawer() {
 
   // body.drawer-on + trava de scroll enquanto a gaveta esta aberta, igual aos
   // outros overlays (menu mobile do Header, filtro do catalogo) e ao open() do
-  // mockup. Esconde o WhatsApp flutuante (regra ja no joy.css).
+  // mockup. Esconde o WhatsApp flutuante (regra ja no design-system.css).
   useEffect(() => {
     document.body.classList.toggle("drawer-on", aberto);
     document.body.style.overflow = aberto ? "hidden" : "";

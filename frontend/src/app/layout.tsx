@@ -1,13 +1,13 @@
 import type { Metadata } from "next";
 import { Poppins } from "next/font/google";
 import "./globals.css";
-import "./joy.css";
+import "./design-system.css";
 import { CartProvider } from "@/lib/cart";
 import { CartUIProvider } from "@/lib/cart-ui";
 import CartDrawer from "@/components/CartDrawer";
 
 // Fonte da identidade da Joy. Expoe --font-poppins (usada no tailwind.config)
-// e aplica Poppins no body (a classe vence o seletor de elemento do joy.css).
+// e aplica Poppins no body (a classe vence o seletor de elemento do design-system.css).
 const poppins = Poppins({
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],

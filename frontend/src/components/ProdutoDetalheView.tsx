@@ -7,13 +7,13 @@ import Icon from "@/components/Icon";
 
 // Blocos de conteudo da PDP (specs + beneficios, ideal para, descricao completa
 // com "Ler mais", diferenciais e FAQ), espelhando a funcao produto() do mockup
-// funcional com as classes verbatim do joy.css (.specs, table.sp, ul.ben,
+// funcional com as classes verbatim do design-system.css (.specs, table.sp, ul.ben,
 // .ideal, .desc.clamp, details.q). Dado REAL do detalhe (montarDetalhe); onde o
 // detalhe vier vazio cai no fallback curto do mockup, para nada ficar em branco.
 
 type Faq = { pergunta: string; resposta: string; aConfirmar?: boolean };
 
-// Estilo do selo "a confirmar" (sem classe propria no joy.css): reusa a paleta
+// Estilo do selo "a confirmar" (sem classe propria no design-system.css): reusa a paleta
 // do .chip-orange (fundo #ffe9d1 / texto #9a4b00) num selo pequeno inline.
 const BADGE: CSSProperties = {
   fontSize: "10.5px",

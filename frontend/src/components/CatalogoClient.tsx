@@ -14,7 +14,7 @@ import Icon from "@/components/Icon";
 import ProductCardJoy from "@/components/ProductCardJoy";
 
 // Catalogo da Joy (espelha a funcao catalogo() do mockup funcional). Classes
-// verbatim do joy.css: .crumb, .ptitle, .cat-l, .filt, .cbar, .pgrid, .empty,
+// verbatim do design-system.css: .crumb, .ptitle, .cat-l, .filt, .cbar, .pgrid, .empty,
 // .modal#qv. Produtos REAIS vindos de getProdutos (passados pelo page.tsx);
 // filtro e ordenacao 100% client-side. Sem faixa de preco (o site nao mostra
 // preco). A leitura inicial dos filtros vem da querystring (?categoria=, ?q=,

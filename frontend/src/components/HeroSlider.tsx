@@ -9,7 +9,7 @@ import { WA, type HeroSlide } from "@/data/home-joy";
 // Slider do hero (identidade Joy): autoplay 6s, dots com barra de progresso,
 // setas prev/next e troca de tema dark/cream por slide (classe cream-on no
 // slider). Espelha slShow/slStep/countdown de autoplay do mockup. Pausa no
-// hover. prefers-reduced-motion e tratado pelo joy.css.
+// hover. prefers-reduced-motion e tratado pelo design-system.css.
 export default function HeroSlider({ slides }: { slides: HeroSlide[] }) {
   const n = slides.length;
   const [idx, setIdx] = useState(0);

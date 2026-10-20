@@ -10,7 +10,7 @@ import { imgSrc } from "@/lib/asset";
 import Icon from "@/components/Icon";
 
 // Pagina de orcamento espelhando a funcao orcamento() do mockup funcional da
-// Joy, com as classes verbatim do joy.css (.empty, .ptitle, .orc, .list, .oi,
+// Joy, com as classes verbatim do design-system.css (.empty, .ptitle, .orc, .list, .oi,
 // .step, .warn, .steps, .stp, .form, .fld, .row2, .secure). Carrinho de
 // ORCAMENTO: sem preco nem pagamento. A quantidade usa passo de 100 (stepper) e
 // o minimo B2B e 500 unidades (aviso quando abaixo). O envio salva um snapshot

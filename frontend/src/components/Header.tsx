@@ -193,7 +193,7 @@ export default function Header() {
         </div>
       </header>
 
-      {/* Menu mobile (drawer da esquerda). Chrome pelo joy.css, miolo em Tailwind. */}
+      {/* Menu mobile (drawer da esquerda). Chrome pelo design-system.css, miolo em Tailwind. */}
       <div
         className={`scrim${menuOpen ? " on" : ""}`}
         onClick={() => setMenuOpen(false)}
