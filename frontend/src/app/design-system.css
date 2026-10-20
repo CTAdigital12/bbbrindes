@@ -383,7 +383,13 @@ body.drawer-on .wa-f,body.wa-hide .wa-f{opacity:0;pointer-events:none;transform:
 .thumbs button.on{box-shadow:inset 0 0 0 2px var(--deep)}
 .thumbs img{width:100%;height:100%;object-fit:contain}
 .stage{position:relative;aspect-ratio:1;border-radius:26px;background:var(--g-card);display:grid;place-items:center;overflow:hidden;box-shadow:var(--sh-1);cursor:zoom-in}
-.stage img{width:62%;height:78%;object-fit:contain;filter:drop-shadow(0 26px 26px rgba(0,40,25,.2));transition:transform .2s}
+/* Caixa da foto QUADRADA (70%) com object-fit:contain: normaliza o tamanho
+   aparente dos produtos. Como as fotos do banco vem coladas na borda (sem
+   margem) e com proporcoes bem diferentes, o lado maior de cada produto (alto
+   ou largo) passa a ocupar a mesma fracao do palco, com margem uniforme. Antes
+   era 62%x78% (caixa retangular), que deixava os altos gigantes (travavam em
+   78% de altura) e os largos pequenos (travavam em 62% de largura, ~32% alt). */
+.stage img{width:70%;height:70%;object-fit:contain;filter:drop-shadow(0 26px 26px rgba(0,40,25,.2));transition:transform .2s}
 .stage .fl{position:absolute;left:18px;top:18px;display:flex;gap:6px;flex-wrap:wrap}
 /* halo decorativo atras do produto. NAO usar a classe "ring": colide com o
    utilitario .ring do Tailwind (box-shadow azul padrao) e desenha um anel azul. */
