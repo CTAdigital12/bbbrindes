@@ -224,36 +224,36 @@ export default function Header() {
           </form>
 
           <nav className="mt-5 flex flex-col">
-            <span className="px-1 pb-1 text-xs font-semibold uppercase tracking-wide text-joy-muted">
+            <span className="px-1 pb-1 text-xs font-semibold uppercase tracking-wide text-brand-muted">
               Categorias
             </span>
             {CATS.map((c) => (
               <Link
                 key={c.label}
                 href={c.href}
-                className="rounded-pill px-3 py-2 text-[15px] font-medium text-joy-ink hover:bg-joy-cream"
+                className="rounded-pill px-3 py-2 text-[15px] font-medium text-brand-ink hover:bg-brand-cream"
               >
                 {c.label}
               </Link>
             ))}
           </nav>
 
-          <nav className="mt-5 flex flex-col border-t border-joy-line pt-4">
-            <span className="px-1 pb-1 text-xs font-semibold uppercase tracking-wide text-joy-muted">
+          <nav className="mt-5 flex flex-col border-t border-brand-line pt-4">
+            <span className="px-1 pb-1 text-xs font-semibold uppercase tracking-wide text-brand-muted">
               Institucional
             </span>
             {INST.map((i) => (
               <Link
                 key={i.href}
                 href={i.href}
-                className="rounded-pill px-3 py-2 text-[15px] font-medium text-joy-ink hover:bg-joy-cream"
+                className="rounded-pill px-3 py-2 text-[15px] font-medium text-brand-ink hover:bg-brand-cream"
               >
                 {i.label}
               </Link>
             ))}
             <Link
               href="/revendedor/login"
-              className="rounded-pill px-3 py-2 text-[15px] font-medium text-joy-ink hover:bg-joy-cream"
+              className="rounded-pill px-3 py-2 text-[15px] font-medium text-brand-ink hover:bg-brand-cream"
             >
               Area do revendedor
             </Link>

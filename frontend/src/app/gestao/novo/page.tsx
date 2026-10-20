@@ -54,8 +54,8 @@ export default function NovoProdutoPage() {
   }
 
   return (
-    <div className="bg-joy-paper">
-      <div className="bg-joy-deep text-white">
+    <div className="bg-brand-paper">
+      <div className="bg-brand-deep text-white">
         <div className="wrap flex items-center justify-between py-4">
           <div>
             <span className="text-xs uppercase tracking-wide text-white/60">
@@ -73,7 +73,7 @@ export default function NovoProdutoPage() {
         <form onSubmit={salvar} className="grid gap-6 lg:grid-cols-[1fr_320px]">
           {/* Coluna principal */}
           <div className="space-y-4">
-            <div className="space-y-4 rounded-joy bg-white p-5 shadow-joy1">
+            <div className="space-y-4 rounded-brand bg-white p-5 shadow-brand1">
               <div className="fld">
                 <label>Nome do produto</label>
                 <input value={nome} onChange={(e) => setNome(e.target.value)} />
@@ -125,20 +125,20 @@ export default function NovoProdutoPage() {
             </div>
 
             {/* Variacoes de cor */}
-            <div className="space-y-3 rounded-joy bg-white p-5 shadow-joy1">
+            <div className="space-y-3 rounded-brand bg-white p-5 shadow-brand1">
               <span className="block text-[12.5px] font-semibold text-[#3e5148]">
                 Variações de cor (cada cor é um SKU)
               </span>
               <div className="flex flex-wrap items-end gap-2">
                 <input
-                  className="h-11 w-40 rounded-[12px] border-0 bg-[#f3f5ec] px-3.5 text-sm text-joy-ink outline-none"
+                  className="h-11 w-40 rounded-[12px] border-0 bg-[#f3f5ec] px-3.5 text-sm text-brand-ink outline-none"
                   placeholder="Nome da cor"
                   value={corNome}
                   onChange={(e) => setCorNome(e.target.value)}
                 />
                 <input
                   type="color"
-                  className="h-11 w-12 rounded-[12px] border border-joy-line"
+                  className="h-11 w-12 rounded-[12px] border border-brand-line"
                   value={corHex}
                   onChange={(e) => setCorHex(e.target.value)}
                   aria-label="Cor"
@@ -158,7 +158,7 @@ export default function NovoProdutoPage() {
                     <button
                       type="button"
                       onClick={() => setCores((cs) => cs.filter((_, idx) => idx !== i))}
-                      className="ml-1 text-joy-muted hover:text-joy-deep"
+                      className="ml-1 text-brand-muted hover:text-brand-deep"
                       aria-label={`Remover ${c.nome}`}
                     >
                       x
@@ -171,7 +171,7 @@ export default function NovoProdutoPage() {
 
           {/* Coluna lateral */}
           <div className="space-y-4">
-            <div className="space-y-4 rounded-joy bg-white p-5 shadow-joy1">
+            <div className="space-y-4 rounded-brand bg-white p-5 shadow-brand1">
               <div className="fld">
                 <label>Faixa de preço</label>
                 <select value={faixaPreco} onChange={(e) => setFaixaPreco(e.target.value)}>
@@ -194,7 +194,7 @@ export default function NovoProdutoPage() {
 
               <div className="fld">
                 <label>Imagens</label>
-                <div className="flex min-h-[110px] flex-col items-center justify-center rounded-joy-sm border border-dashed border-joy-line bg-[#f3f5ec] text-center text-sm text-joy-muted">
+                <div className="flex min-h-[110px] flex-col items-center justify-center rounded-brand-sm border border-dashed border-brand-line bg-[#f3f5ec] text-center text-sm text-brand-muted">
                   <span>Arraste imagens aqui</span>
                   <span className="text-[10px]">ou clique para selecionar</span>
                 </div>
