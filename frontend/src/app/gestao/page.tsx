@@ -36,9 +36,9 @@ export default function GestaoPage() {
   }));
 
   return (
-    <div className="bg-joy-paper">
+    <div className="bg-brand-paper">
       {/* Cabecalho distinto (area logada do lojista) */}
-      <div className="bg-joy-deep text-white">
+      <div className="bg-brand-deep text-white">
         <div className="wrap flex flex-wrap items-center justify-between gap-2 py-4">
           <div>
             <span className="text-xs uppercase tracking-wide text-white/60">
@@ -58,24 +58,24 @@ export default function GestaoPage() {
       </div>
 
       <div className="wrap py-6">
-        <div className="mb-4 rounded-joy-sm bg-white p-4 text-sm text-[#3e5148] shadow-joy1">
+        <div className="mb-4 rounded-brand-sm bg-white p-4 text-sm text-[#3e5148] shadow-brand1">
           Cadastro dos produtos e SKUs do site. Convivem os produtos vindos do catálogo da empresa
           (Importado) e os cadastrados aqui (Manual). Uma nova importação nunca apaga os produtos
           manuais. (Wireframe: dados de exemplo, sem backend.)
         </div>
 
         <div className="mb-3 flex items-center justify-between">
-          <h2 className="text-sm font-semibold text-joy-ink">
+          <h2 className="text-sm font-semibold text-brand-ink">
             Produtos ({importados.length + manuais.length})
           </h2>
-          <span className="text-xs text-joy-muted">
+          <span className="text-xs text-brand-muted">
             {manuais.length} manual(is), {importados.length} importado(s)
           </span>
         </div>
 
-        <div className="overflow-x-auto rounded-joy-sm bg-white shadow-joy1">
+        <div className="overflow-x-auto rounded-brand-sm bg-white shadow-brand1">
           <table className="w-full text-sm">
-            <thead className="bg-joy-paper text-left text-xs uppercase text-joy-muted">
+            <thead className="bg-brand-paper text-left text-xs uppercase text-brand-muted">
               <tr>
                 <th className="p-3">Produto</th>
                 <th className="p-3">Categoria</th>
@@ -86,18 +86,18 @@ export default function GestaoPage() {
             <tbody>
               {/* Manuais primeiro, com acoes de editar/remover */}
               {manuais.map((p) => (
-                <tr key={p.id} className="border-t border-joy-line">
-                  <td className="p-3 font-medium text-joy-ink">{p.nome}</td>
+                <tr key={p.id} className="border-t border-brand-line">
+                  <td className="p-3 font-medium text-brand-ink">{p.nome}</td>
                   <td className="p-3">{nomeCategoria(p.categoria)}</td>
                   <td className="p-3">
                     <span className="chip chip-orange">Manual</span>
                   </td>
                   <td className="p-3 text-right">
-                    <span className="mr-3 cursor-default text-xs text-joy-muted">Editar</span>
+                    <span className="mr-3 cursor-default text-xs text-brand-muted">Editar</span>
                     <button
                       type="button"
                       onClick={() => remover(p.id)}
-                      className="text-xs text-joy-muted hover:text-joy-deep"
+                      className="text-xs text-brand-muted hover:text-brand-deep"
                     >
                       Remover
                     </button>
@@ -106,14 +106,14 @@ export default function GestaoPage() {
               ))}
 
               {importados.map((p) => (
-                <tr key={p.id} className="border-t border-joy-line">
-                  <td className="p-3 font-medium text-joy-ink">{p.nome}</td>
+                <tr key={p.id} className="border-t border-brand-line">
+                  <td className="p-3 font-medium text-brand-ink">{p.nome}</td>
                   <td className="p-3">{nomeCategoria(p.categoria)}</td>
                   <td className="p-3">
                     <span className="chip">Importado</span>
                   </td>
                   <td className="p-3 text-right">
-                    <span className="cursor-default text-xs text-joy-muted">
+                    <span className="cursor-default text-xs text-brand-muted">
                       Gerenciado pelo import
                     </span>
                   </td>

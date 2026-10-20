@@ -19,7 +19,7 @@ const brl = (v: number) => v.toLocaleString("pt-BR", { style: "currency", curren
 
 // Input Joy reutilizavel (campos soltos, fora de .fld).
 const INPUT =
-  "rounded-[12px] border-0 bg-[#f3f5ec] px-3 text-sm text-joy-ink outline-none h-10";
+  "rounded-[12px] border-0 bg-[#f3f5ec] px-3 text-sm text-brand-ink outline-none h-10";
 
 const statusLabel: Record<string, string> = {
   "em-analise": "Em analise",
@@ -110,15 +110,15 @@ export default function PainelRevendedorPage() {
   if (carregando) {
     return (
       <div className="wrap flex justify-center py-24">
-        <p className="text-sm text-joy-muted">Carregando área do revendedor...</p>
+        <p className="text-sm text-brand-muted">Carregando área do revendedor...</p>
       </div>
     );
   }
 
   return (
-    <div className="bg-joy-paper">
+    <div className="bg-brand-paper">
       {/* Cabecalho distinto do B2B */}
-      <div className="bg-joy-deep text-white">
+      <div className="bg-brand-deep text-white">
         <div className="wrap flex flex-wrap items-center justify-between gap-2 py-4">
           <div>
             <span className="text-xs uppercase tracking-wide text-white/60">Área do revendedor</span>
@@ -131,7 +131,7 @@ export default function PainelRevendedorPage() {
       </div>
 
       {/* Abas */}
-      <div className="border-b border-joy-line bg-white">
+      <div className="border-b border-brand-line bg-white">
         <div className="wrap flex gap-1 overflow-x-auto">
           {(
             [
@@ -148,8 +148,8 @@ export default function PainelRevendedorPage() {
               onClick={() => setAba(id)}
               className={`whitespace-nowrap border-b-2 px-3 py-3 text-sm ${
                 aba === id
-                  ? "border-joy-deep font-medium text-joy-ink"
-                  : "border-transparent text-joy-muted"
+                  ? "border-brand-deep font-medium text-brand-ink"
+                  : "border-transparent text-brand-muted"
               }`}
             >
               {label}
@@ -165,9 +165,9 @@ export default function PainelRevendedorPage() {
               Catálogo puxado da lista geral do site (produtos e SKUs cadastrados na administração).
               Itens marcados como Novo foram adicionados na administração do site.
             </p>
-            <div className="overflow-x-auto rounded-joy-sm bg-white shadow-joy1">
+            <div className="overflow-x-auto rounded-brand-sm bg-white shadow-brand1">
               <table className="w-full text-sm">
-                <thead className="bg-joy-paper text-left text-xs uppercase text-joy-muted">
+                <thead className="bg-brand-paper text-left text-xs uppercase text-brand-muted">
                   <tr>
                     <th className="p-3">Produto</th>
                     <th className="p-3">Preço unit.</th>
@@ -177,15 +177,15 @@ export default function PainelRevendedorPage() {
                 </thead>
                 <tbody>
                   {catalogo.map((item) => (
-                    <tr key={item.key} className="border-t border-joy-line">
-                      <td className="p-3 font-medium text-joy-ink">
+                    <tr key={item.key} className="border-t border-brand-line">
+                      <td className="p-3 font-medium text-brand-ink">
                         {item.nome}
                         {item.novo && <span className="chip chip-orange ml-2">Novo</span>}
                       </td>
                       <td className="p-3">{brl(item.preco)}</td>
                       <td className="p-3">
                         {item.estoque === null ? (
-                          <span className="text-joy-muted">--</span>
+                          <span className="text-brand-muted">--</span>
                         ) : (
                           <span className={item.estoque < 100 ? "text-[#c8202c]" : "text-[#3e5148]"}>
                             {item.estoque} un
@@ -211,9 +211,9 @@ export default function PainelRevendedorPage() {
 
         {aba === "pedido" && (
           <div className="grid gap-6 lg:grid-cols-[1fr_320px]">
-            <div className="divide-y divide-joy-line rounded-joy-sm bg-white px-4 shadow-joy1">
+            <div className="divide-y divide-brand-line rounded-brand-sm bg-white px-4 shadow-brand1">
               {itensPedido.length === 0 ? (
-                <p className="py-6 text-sm text-joy-muted">
+                <p className="py-6 text-sm text-brand-muted">
                   Nenhum item no pedido. Adicione na aba Preços e estoque.
                 </p>
               ) : (
@@ -221,7 +221,7 @@ export default function PainelRevendedorPage() {
                   const item = itemDe(key);
                   return (
                     <div key={key} className="flex items-center gap-3 py-3">
-                      <div className="flex-1 text-sm font-medium text-joy-ink">{item?.nome}</div>
+                      <div className="flex-1 text-sm font-medium text-brand-ink">{item?.nome}</div>
                       <input
                         type="number"
                         min={0}
@@ -235,11 +235,11 @@ export default function PainelRevendedorPage() {
                 })
               )}
             </div>
-            <div className="h-fit space-y-3 rounded-joy bg-white p-5 shadow-joy1">
-              <h2 className="text-sm font-semibold text-joy-ink">Resumo</h2>
+            <div className="h-fit space-y-3 rounded-brand bg-white p-5 shadow-brand1">
+              <h2 className="text-sm font-semibold text-brand-ink">Resumo</h2>
               <div className="flex justify-between text-sm">
                 <span className="text-[#3e5148]">Total estimado</span>
-                <span className="font-semibold text-joy-ink">{brl(totalPedido)}</span>
+                <span className="font-semibold text-brand-ink">{brl(totalPedido)}</span>
               </div>
               <button
                 type="button"
@@ -249,7 +249,7 @@ export default function PainelRevendedorPage() {
               >
                 Fechar pedido
               </button>
-              <p className="text-xs text-joy-muted">
+              <p className="text-xs text-brand-muted">
                 O pedido vai para o CRM e o vendedor confirma a venda (integração na Sprint 4).
               </p>
             </div>
@@ -257,9 +257,9 @@ export default function PainelRevendedorPage() {
         )}
 
         {aba === "historico" && (
-          <div className="overflow-x-auto rounded-joy-sm bg-white shadow-joy1">
+          <div className="overflow-x-auto rounded-brand-sm bg-white shadow-brand1">
             <table className="w-full text-sm">
-              <thead className="bg-joy-paper text-left text-xs uppercase text-joy-muted">
+              <thead className="bg-brand-paper text-left text-xs uppercase text-brand-muted">
                 <tr>
                   <th className="p-3">Pedido</th>
                   <th className="p-3">Data</th>
@@ -270,8 +270,8 @@ export default function PainelRevendedorPage() {
               </thead>
               <tbody>
                 {historicoRevendedor.map((h) => (
-                  <tr key={h.numero} className="border-t border-joy-line">
-                    <td className="p-3 font-medium text-joy-ink">{h.numero}</td>
+                  <tr key={h.numero} className="border-t border-brand-line">
+                    <td className="p-3 font-medium text-brand-ink">{h.numero}</td>
                     <td className="p-3">{new Date(h.data).toLocaleDateString("pt-BR")}</td>
                     <td className="p-3">{h.itens}</td>
                     <td className="p-3">{brl(h.total)}</td>
@@ -287,14 +287,14 @@ export default function PainelRevendedorPage() {
 
         {aba === "cadastro" && (
           <div className="grid gap-6 lg:grid-cols-2">
-            <div className="space-y-3 rounded-joy bg-white p-5 shadow-joy1">
-              <h2 className="text-sm font-semibold text-joy-ink">Dados da empresa</h2>
+            <div className="space-y-3 rounded-brand bg-white p-5 shadow-brand1">
+              <h2 className="text-sm font-semibold text-brand-ink">Dados da empresa</h2>
               <Linha rotulo="Empresa" valor={revendedorMock.empresa} />
               <Linha rotulo="Responsável" valor={revendedorMock.responsavel} />
               <Linha rotulo="CNPJ" valor={revendedorMock.cnpj} />
             </div>
-            <div className="space-y-3 rounded-joy bg-white p-5 shadow-joy1">
-              <h2 className="text-sm font-semibold text-joy-ink">Endereço de entrega</h2>
+            <div className="space-y-3 rounded-brand bg-white p-5 shadow-brand1">
+              <h2 className="text-sm font-semibold text-brand-ink">Endereço de entrega</h2>
               <Linha rotulo="Logradouro" valor={revendedorMock.endereco.logradouro} />
               <Linha rotulo="Bairro" valor={revendedorMock.endereco.bairro} />
               <Linha
@@ -311,18 +311,18 @@ export default function PainelRevendedorPage() {
 
         {aba === "arquivos" && (
           <div className="grid gap-6 lg:grid-cols-2">
-            <div className="space-y-3 rounded-joy bg-white p-5 shadow-joy1">
-              <h2 className="text-sm font-semibold text-joy-ink">Anexar arquivos</h2>
-              <div className="flex min-h-[140px] flex-col items-center justify-center rounded-joy-sm border border-dashed border-joy-line bg-[#f3f5ec] text-center text-joy-muted">
+            <div className="space-y-3 rounded-brand bg-white p-5 shadow-brand1">
+              <h2 className="text-sm font-semibold text-brand-ink">Anexar arquivos</h2>
+              <div className="flex min-h-[140px] flex-col items-center justify-center rounded-brand-sm border border-dashed border-brand-line bg-[#f3f5ec] text-center text-brand-muted">
                 <span>Arraste arquivos aqui</span>
                 <span className="text-[10px]">ou clique para selecionar</span>
               </div>
               <input type="file" className="text-xs text-[#3e5148]" />
             </div>
-            <div className="space-y-3 rounded-joy bg-white p-5 shadow-joy1">
-              <h2 className="text-sm font-semibold text-joy-ink">Notas do revendedor</h2>
+            <div className="space-y-3 rounded-brand bg-white p-5 shadow-brand1">
+              <h2 className="text-sm font-semibold text-brand-ink">Notas do revendedor</h2>
               <textarea
-                className="min-h-[140px] w-full rounded-[12px] border-0 bg-[#f3f5ec] p-3.5 text-sm text-joy-ink outline-none"
+                className="min-h-[140px] w-full rounded-[12px] border-0 bg-[#f3f5ec] p-3.5 text-sm text-brand-ink outline-none"
                 placeholder="Observações sobre pedidos, prazos, preferências de entrega..."
               />
               <button type="button" className="btn btn-deep">
@@ -338,9 +338,9 @@ export default function PainelRevendedorPage() {
 
 function Linha({ rotulo, valor }: { rotulo: string; valor: string }) {
   return (
-    <div className="flex justify-between border-b border-joy-line pb-2 text-sm">
-      <span className="text-joy-muted">{rotulo}</span>
-      <span className="font-medium text-joy-ink">{valor}</span>
+    <div className="flex justify-between border-b border-brand-line pb-2 text-sm">
+      <span className="text-brand-muted">{rotulo}</span>
+      <span className="font-medium text-brand-ink">{valor}</span>
     </div>
   );
 }
