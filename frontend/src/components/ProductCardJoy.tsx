@@ -48,7 +48,8 @@ function QuickAdd({ produto }: { produto: Produto }) {
 }
 
 // Card de produto na identidade da Joy, espelhando a .card do mockup funcional:
-// painel de imagem com fundo var(--g-card) + foto aplicada no hover (.alt),
+// painel de imagem com fundo var(--g-card); o mockup lifestyle fica na frente e
+// o produto real aparece no hover (.alt invertida, pedido da Joy 27/10),
 // tags (Novo / Ecologico), nome, categoria (eyebrow .ln) e swatches de cor.
 //
 // Client-safe: usado tanto na home (server component, SEM quick-actions) quanto
@@ -64,12 +65,18 @@ export default function ProductCardJoy({
   quickActions?: boolean;
   onQuickview?: (produto: Produto) => void;
 }) {
-  const src = imgSrc(produto.imagens?.[0]);
-  // Foto aplicada (lifestyle/ambientada, com a marca), revelada no hover pela
-  // .ph img.alt (slot full-bleed) do design-system.css. Preferimos a
-  // imagemAmbientada (campo proprio); sem ela, cai na 2a foto da galeria.
-  const fotoAplicada =
-    imgSrc(produto.imagemAmbientada) || imgSrc(produto.imagens?.[1]);
+  // Foto real do produto (cutout limpo), camada de baixo do painel. Fallback no
+  // mockup se o produto nao tiver foto (edge raro).
+  const fotoReal = imgSrc(produto.imagens?.[0]) || imgSrc(produto.imagemAmbientada);
+  // Mockup lifestyle (com a marca aplicada). Pedido da Joy (27/10): o mockup vai
+  // na FRENTE do card e o produto real aparece no HOVER (inverteu o que estava).
+  // A .ph img.alt (design-system.css) agora fica visivel em repouso e some no
+  // hover, revelando a foto real embaixo. So entra quando ha mockup E foto real;
+  // sem mockup, o card mostra so a foto real, sem inversao.
+  const fotoMockup =
+    produto.imagemAmbientada && produto.imagens?.[0]
+      ? imgSrc(produto.imagemAmbientada)
+      : "";
   const categoria = produto.categoria ? nomeCategoria(produto.categoria) : "";
   const eco = (produto.tags ?? []).includes("ecologico");
   const novo = (produto.destaques ?? []).includes("lancamento");
@@ -80,13 +87,13 @@ export default function ProductCardJoy({
     <article className="card">
       <div className="phw">
         <Link href={href} className="ph" aria-label={produto.nome}>
-          {src ? (
+          {fotoReal ? (
             // eslint-disable-next-line @next/next/no-img-element
-            <img src={src} alt={produto.nome} loading="lazy" />
+            <img src={fotoReal} alt={produto.nome} loading="lazy" />
           ) : null}
-          {src && fotoAplicada ? (
+          {fotoMockup ? (
             // eslint-disable-next-line @next/next/no-img-element
-            <img className="alt" src={fotoAplicada} alt="" loading="lazy" />
+            <img className="alt" src={fotoMockup} alt="" loading="lazy" />
           ) : null}
         </Link>
 
