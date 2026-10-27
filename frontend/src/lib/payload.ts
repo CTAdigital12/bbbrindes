@@ -44,6 +44,28 @@ export async function payloadFind<T = Record<string, unknown>>(
   }
 }
 
+// Le um Global do Payload (singleton), ex.: as configuracoes do site. Diferente
+// de payloadFind: o endpoint GET /api/globals/:slug devolve o doc DIRETO (sem o
+// envelope { docs }). Mesma estrategia de timeout/abort; quem chama trata a falha
+// caindo no mock.
+export async function payloadGlobal<T = Record<string, unknown>>(
+  slug: string,
+  { depth = 0, timeoutMs = 8000 }: { depth?: number; timeoutMs?: number } = {},
+): Promise<T> {
+  const qs = new URLSearchParams({ depth: String(depth) });
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), timeoutMs);
+  try {
+    const res = await fetch(`${BACKEND}/api/globals/${slug}?${qs.toString()}`, {
+      signal: controller.signal,
+    });
+    if (!res.ok) throw new Error(`Payload global ${slug} respondeu ${res.status}`);
+    return (await res.json()) as T;
+  } finally {
+    clearTimeout(timeout);
+  }
+}
+
 // Normaliza data do Payload (ISO com hora, ex.: 2026-04-12T00:00:00.000Z) para
 // o formato date-only (2026-04-12) que a UI do wireframe ja espera.
 export function toDateOnly(value: unknown): string {

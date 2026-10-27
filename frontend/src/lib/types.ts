@@ -94,6 +94,28 @@ export type Materia = {
   url: string;
 };
 
+// Configuracoes gerais do site (global `configuracoes` do Payload, FB-6): dados
+// de contato, redes sociais, selos e o blurb do rodape. O front le via
+// getConfig(), com fallback no mock (data/config.ts) enquanto o global nao
+// estiver preenchido. redes vem como "" quando nao cadastradas (icone escondido).
+export type SiteConfig = {
+  telefone: string;
+  whatsapp: string; // so numeros, com DDI (base do link wa.me)
+  email: string;
+  endereco: string;
+  horario: string;
+  cnpj: string;
+  descricao: string;
+  redes: {
+    instagram: string;
+    linkedin: string;
+    facebook: string;
+    pinterest: string;
+    youtube: string;
+  };
+  selos: string[];
+};
+
 // Visao exclusiva do revendedor (preco e estoque por produto).
 export type RevendedorPreco = {
   produtoSlug: string;

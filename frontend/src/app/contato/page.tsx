@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import Icon from "@/components/Icon";
-import { WA } from "@/data/home-joy";
+import { getConfig } from "@/lib/content";
 
 export const metadata: Metadata = {
   title: "Contato",
@@ -11,7 +11,11 @@ export const metadata: Metadata = {
 
 // Canais de contato (mockup contato()): .cbox com os canais + .map placeholder.
 // Sem formulario: o fluxo de orcamento tem pagina propria (/orcamento).
-export default function ContatoPage() {
+export default async function ContatoPage() {
+  // Contato vem do global `configuracoes` (FB-6), editavel no admin, com fallback
+  // no mock. Unifica a fonte do WhatsApp/telefone/email/endereco/horario/CNPJ.
+  const config = await getConfig();
+  const wa = `https://wa.me/${config.whatsapp}`;
   return (
     <div className="wrap">
       <div className="crumb">
@@ -26,24 +30,24 @@ export default function ContatoPage() {
       </div>
       <div className="split" style={{ alignItems: "start" }}>
         <div className="cbox">
-          <a href={WA} target="_blank" rel="noopener">
+          <a href={wa} target="_blank" rel="noopener">
             <span className="ib">
               <Icon name="brand-whatsapp" />
             </span>
             <span>
               <b>Comercial (WhatsApp)</b>
               <br />
-              (71) 99416-0138
+              {config.telefone}
             </span>
           </a>
-          <a href="mailto:comercial@bbgrupo.com.br">
+          <a href={`mailto:${config.email}`}>
             <span className="ib">
               <Icon name="mail" />
             </span>
             <span>
               <b>E-mail</b>
               <br />
-              comercial@bbgrupo.com.br
+              {config.email}
             </span>
           </a>
           <Link href="/sac">
@@ -56,7 +60,7 @@ export default function ContatoPage() {
               Retorno em até 24 horas úteis
             </span>
           </Link>
-          {/* PENDENTE cliente: endereco completo da fabrica. */}
+          {/* Endereco editavel no admin (global configuracoes); cliente poe o completo. */}
           <span>
             <span className="ib">
               <Icon name="map-pin" />
@@ -64,10 +68,10 @@ export default function ContatoPage() {
             <span>
               <b>Fábrica</b>
               <br />
-              Lauro de Freitas / BA
+              {config.endereco}
             </span>
           </span>
-          {/* PENDENTE cliente: horario de atendimento. */}
+          {/* Horario editavel no admin (global configuracoes). */}
           <span>
             <span className="ib">
               <Icon name="clock" />
@@ -75,14 +79,14 @@ export default function ContatoPage() {
             <span>
               <b>Horário de atendimento</b>
               <br />
-              A confirmar
+              {config.horario}
             </span>
           </span>
           <Link className="btn btn-cta" href="/orcamento">
             Solicitar orçamento
             <Icon name="arrow-right" />
           </Link>
-          <small style={{ color: "var(--muted)" }}>CNPJ 11.158.637/0001-27</small>
+          <small style={{ color: "var(--muted)" }}>CNPJ {config.cnpj}</small>
         </div>
         {/* PENDENTE cliente: mapa / endereco da fabrica. */}
         <div className="map">

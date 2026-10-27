@@ -1,10 +1,23 @@
 import Link from "next/link";
 import Icon from "@/components/Icon";
+import type { SiteConfig } from "@/lib/types";
 
 // Rodape da identidade da Joy (mockup funcional, 16/10). 4 colunas + selos + barra
-// inferior. A logo usa a classe .logo.white (mascara inline no design-system.css). Contatos
-// e CNPJ vem do mockup (fonte da verdade do visual). Links apontam pras rotas reais.
-export default function Footer() {
+// inferior. A logo usa a classe .logo.white (mascara inline no design-system.css).
+// Contato, redes, selos, CNPJ e blurb vem do Global `configuracoes` (getConfig no
+// layout), editaveis no admin (FB-6). Links apontam pras rotas reais.
+export default function Footer({ config }: { config: SiteConfig }) {
+  const wa = `https://wa.me/${config.whatsapp}`;
+
+  // Redes sociais: so entram as que tem URL cadastrada (vazia = icone escondido).
+  const redes: { url: string; icon: string; label: string }[] = [
+    { url: config.redes.instagram, icon: "brand-instagram", label: "Instagram" },
+    { url: config.redes.linkedin, icon: "brand-linkedin", label: "LinkedIn" },
+    { url: config.redes.facebook, icon: "brand-facebook", label: "Facebook" },
+    { url: config.redes.pinterest, icon: "brand-pinterest", label: "Pinterest" },
+    { url: config.redes.youtube, icon: "brand-youtube", label: "YouTube" },
+  ].filter((r) => r.url);
+
   return (
     <>
       <footer className="site">
@@ -12,41 +25,30 @@ export default function Footer() {
           <div className="fgrid">
             <div>
               <span className="logo white" style={{ width: 140, height: 36 }} aria-label="BB Brindes" />
-              <p style={{ margin: "14px 0 0", maxWidth: "36ch" }}>
-                BB Brindes, uma empresa Grupo BB. Industria brasileira de brindes corporativos
-                personalizados, com fabrica propria ha&nbsp;27&nbsp;anos.
-              </p>
+              <p style={{ margin: "14px 0 0", maxWidth: "36ch" }}>{config.descricao}</p>
               <div className="fcon">
-                <a href="https://wa.me/5571994160138" target="_blank" rel="noopener">
+                <a href={wa} target="_blank" rel="noopener">
                   <Icon name="brand-whatsapp" />
-                  (71) 99416-0138
+                  {config.telefone}
                 </a>
-                <a href="mailto:comercial@bbgrupo.com.br">
+                <a href={`mailto:${config.email}`}>
                   <Icon name="mail" />
-                  comercial@bbgrupo.com.br
+                  {config.email}
                 </a>
                 <span>
                   <Icon name="map-pin" />
-                  Lauro de Freitas / BA
+                  {config.endereco}
                 </span>
               </div>
-              <div className="soc">
-                <a href="#" aria-label="Instagram">
-                  <Icon name="brand-instagram" />
-                </a>
-                <a href="#" aria-label="LinkedIn">
-                  <Icon name="brand-linkedin" />
-                </a>
-                <a href="#" aria-label="Facebook">
-                  <Icon name="brand-facebook" />
-                </a>
-                <a href="#" aria-label="Pinterest">
-                  <Icon name="brand-pinterest" />
-                </a>
-                <a href="#" aria-label="YouTube">
-                  <Icon name="brand-youtube" />
-                </a>
-              </div>
+              {redes.length > 0 && (
+                <div className="soc">
+                  {redes.map((r) => (
+                    <a key={r.label} href={r.url} target="_blank" rel="noopener" aria-label={r.label}>
+                      <Icon name={r.icon} />
+                    </a>
+                  ))}
+                </div>
+              )}
             </div>
 
             <div>
@@ -82,16 +84,16 @@ export default function Footer() {
             </div>
           </div>
 
-          <div className="certs">
-            <span>SGP</span>
-            <span>PS&amp;C</span>
-            <span>GMP</span>
-            <span>NM300</span>
-            <span>SMETA 4 Pilares</span>
-          </div>
+          {config.selos.length > 0 && (
+            <div className="certs">
+              {config.selos.map((s) => (
+                <span key={s}>{s}</span>
+              ))}
+            </div>
+          )}
 
           <div className="fbot">
-            <span>&copy; 2026 BB Brindes, uma empresa Grupo BB, CNPJ 11.158.637/0001-27</span>
+            <span>&copy; 2026 BB Brindes, uma empresa Grupo BB, CNPJ {config.cnpj}</span>
             <span><Link href="/sac">Politica de privacidade</Link></span>
           </div>
         </div>
@@ -99,7 +101,7 @@ export default function Footer() {
 
       <a
         className="wa-f"
-        href="https://wa.me/5571994160138"
+        href={wa}
         target="_blank"
         rel="noopener"
         aria-label="Falar no WhatsApp"
