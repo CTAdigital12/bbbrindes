@@ -29,18 +29,30 @@ Railway sobe com push ligado, o boot cria a tabela do global.)
 
 ## Fases e subtarefas
 
+> ESTADO 27/10: Fase 0 + Fase 1 commitadas na branch `feature/fb6-admin-editavel`
+> (da master, commit 07be720). Frontend `tsc --noEmit` EXIT 0. Validado via curl no
+> dev (localhost:3010): /contato/ e / renderizam 200 com todos os valores do mock
+> (telefone, email, CNPJ, endereço, horário, selos, descrição) e o link wa.me do
+> config; Footer sem `href="#"` (0 links mortos). Screenshot no browser ficou
+> bloqueado por ambiente (o Chrome da extensão não alcança o localhost:3010; curl
+> alcança). PR ainda NÃO aberto (aguarda go do Fábio + decisão das redes).
+
 ### Fase 0 — Fundação (infra de edição)  [CÓDIGO PRONTO, falta deploy]
 - [x] FB6-0.1 Global "Configurações do site" (backend/src/globals/Configuracoes.ts) + registrado em payload.config; payload-types regenerado
 - [x] FB6-0.2 Loader `getConfig()` (payloadGlobal em lib/payload.ts + getConfig em lib/content.ts) + tipo SiteConfig + mock em data/config.ts. Frontend tsc limpo
 - [x] FB6-0.3 Seed `seed-configuracoes.ts` (idempotente, CONF_OVERWRITE=1 força) com os valores atuais
 - [ ] FB6-0.deploy Backend com o global no ar (ver dependência acima) + seed aplicado (via REST admin, já que railway run morreu)
 
-### Fase 1 — Identidade site-wide (Header, Footer, Contato)  [depende da 0]
-- [ ] FB6-1.1 Footer lê contato/redes/selos/CNPJ/blurb do global
-- [ ] FB6-1.2 Header (topbar) lê telefone/WhatsApp do global
-- [ ] FB6-1.3 Contato lê do global
-- [ ] FB6-1.4 Unificar o WhatsApp (hoje repetido em 4+ lugares) numa fonte só
+### Fase 1 — Identidade site-wide (Header, Footer, Contato)  [CÓDIGO PRONTO, validado via curl]
+- [x] FB6-1.1 Footer lê contato/redes/selos/CNPJ/blurb do global
+- [x] FB6-1.2 Header (topbar) lê telefone/WhatsApp do global
+- [x] FB6-1.3 Contato lê do global (telefone/email/endereço/horário/CNPJ + link wa.me)
+- [x] FB6-1.4 Unificar o WhatsApp (antes repetido em vários lugares) numa fonte só
 - Input externo: URLs reais das redes (hoje `#`), endereço completo, horário, mapa
+- MUDANÇA VISÍVEL: com as redes vazias no mock, o Footer esconde a fileira de
+  ícones sociais (antes 5 ícones apontando pra `#`, links mortos). Volta assim que
+  o cliente cadastrar as URLs no admin. Decisão a confirmar com o Fábio: manter
+  escondido (recomendado, sem link morto) ou voltar a mostrar os ícones com `#`.
 
 ### Fase 2 — Upload (limite de tamanho e formato)  [independente]
 - [ ] FB6-2.1 Formato imagens + PDF (collection separada de PDF)
