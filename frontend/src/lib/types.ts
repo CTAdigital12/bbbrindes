@@ -29,6 +29,13 @@ export type Produto = {
   // URLs de imagem reais (Payload). Opcional: produtos mock nao tem e a PDP cai
   // no placeholder. Presente quando o produto vem do Payload com galeria.
   imagens?: string[];
+  // Foto lifestyle/ambientada (Payload: imagemAmbientada). E a imagem que o card
+  // revela no HOVER (slot .alt full-bleed). Opcional; quando vazia o hover cai no
+  // comportamento antigo (2a foto da galeria).
+  imagemAmbientada?: string;
+  // Video da linha do produto (Payload: videoUrl, URL do YouTube). Opcional;
+  // quando presente, a PDP mostra o botao "Ver video" (abre modal com o embed).
+  videoUrl?: string;
 };
 
 // Blocos da pagina de produto simulados no wireframe (S03-11). Espelham a

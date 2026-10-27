@@ -26,6 +26,17 @@ const SUST: [slug: string, titulo: string][] = [
   ["controle-de-qualidade", "Produção própria com controle de qualidade"],
 ];
 
+// Galeria institucional (fotos reais do cliente, extraidas do PDF): fabrica,
+// maquinario, producao em escala e presenca em feiras.
+const GALERIA: [arquivo: string, alt: string][] = [
+  ["inst-05.webp", "Máquina de injeção e sopro na fábrica"],
+  ["inst-04.webp", "Produção de squeezes da linha ecológica"],
+  ["inst-02.webp", "Lote de squeezes personalizados"],
+  ["inst-03.webp", "Produtos em In Mold Label"],
+  ["inst-06.webp", "Estande da BB Brindes em feira do setor"],
+  ["inst-07.webp", "BB Brindes em feira do setor"],
+];
+
 export default function QuemSomosPage() {
   return (
     <div className="wrap">
@@ -66,8 +77,11 @@ export default function QuemSomosPage() {
             </a>
           </div>
         </div>
-        {/* PENDENTE cliente: foto real da fabrica. Placeholder visivel ate chegar. */}
-        <div className="ph">FOTO DA FÁBRICA</div>
+        {/* Foto real da fabrica (extraida do PDF institucional do cliente). */}
+        <div className="ph">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src={img("/img/institucional/inst-01.webp")} alt="Fábrica própria da BB Brindes" />
+        </div>
       </div>
 
       <div className="nums">
@@ -113,6 +127,22 @@ export default function QuemSomosPage() {
                 <b>{titulo}</b>
                 <span>{nb(sub)}</span>
               </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <section className="sec">
+        <div className="shead">
+          <div>
+            <h2>Por dentro da BB Brindes</h2>
+          </div>
+        </div>
+        <div className="inst-gal">
+          {GALERIA.map(([arquivo, alt]) => (
+            <div className="inst-ph" key={arquivo}>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={img(`/img/institucional/${arquivo}`)} alt={alt} loading="lazy" />
             </div>
           ))}
         </div>

@@ -65,8 +65,11 @@ export default function ProductCardJoy({
   onQuickview?: (produto: Produto) => void;
 }) {
   const src = imgSrc(produto.imagens?.[0]);
-  // Foto aplicada (com a marca), revelada no hover pela .ph img.alt do design-system.css.
-  const fotoAplicada = imgSrc(produto.imagens?.[1]);
+  // Foto aplicada (lifestyle/ambientada, com a marca), revelada no hover pela
+  // .ph img.alt (slot full-bleed) do design-system.css. Preferimos a
+  // imagemAmbientada (campo proprio); sem ela, cai na 2a foto da galeria.
+  const fotoAplicada =
+    imgSrc(produto.imagemAmbientada) || imgSrc(produto.imagens?.[1]);
   const categoria = produto.categoria ? nomeCategoria(produto.categoria) : "";
   const eco = (produto.tags ?? []).includes("ecologico");
   const novo = (produto.destaques ?? []).includes("lancamento");

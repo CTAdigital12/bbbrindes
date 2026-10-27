@@ -30,6 +30,8 @@ type ProdutoDoc = {
   selos?: Record<string, boolean>;
   cores?: { nome: string; hex?: string }[];
   imagens?: MediaRef[];
+  imagemAmbientada?: MediaRef;
+  videoUrl?: string;
   faixaPreco?: Produto["faixaPreco"];
   destaques?: Produto["destaques"];
   logistica?: { materiaPrima?: string };
@@ -71,6 +73,12 @@ function urlsDasImagens(imgs?: MediaRef[]): string[] {
     .filter((u): u is string => typeof u === "string" && u.length > 0);
 }
 
+function urlDaImagem(img?: MediaRef): string | undefined {
+  return img && typeof img === "object" && typeof img.url === "string" && img.url.length > 0
+    ? img.url
+    : undefined;
+}
+
 function montarDetalhe(doc: ProdutoDoc): ProdutoDetalhe {
   const completa = lexicalToPlainText(doc.descricaoCompleta);
   const selos = Object.entries(doc.selos ?? {})
@@ -110,6 +118,8 @@ function mapear(doc: ProdutoDoc): Produto {
     tags: doc.ecologico ? ["ecologico"] : [],
     detalhe: montarDetalhe(doc),
     imagens: urlsDasImagens(doc.imagens),
+    imagemAmbientada: urlDaImagem(doc.imagemAmbientada),
+    videoUrl: doc.videoUrl || undefined,
   };
 }
 
