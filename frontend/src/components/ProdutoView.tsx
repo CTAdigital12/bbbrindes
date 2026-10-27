@@ -45,6 +45,12 @@ export default function ProdutoView({ produto }: { produto: Produto }) {
   const [pers, setPers] = useState<"transfer" | "serigrafia">("transfer");
   const [sbOn, setSbOn] = useState(false);
   const [toastMsg, setToastMsg] = useState("");
+  const [videoOpen, setVideoOpen] = useState(false);
+
+  // Video da linha (YouTube): converte a URL de watch em embed. So aparece o
+  // botao "Ver video" quando o produto tem videoUrl.
+  const ytId = produto.videoUrl?.match(/[?&]v=([\w-]+)/)?.[1];
+  const embedUrl = ytId ? `https://www.youtube.com/embed/${ytId}` : null;
 
   const stageRef = useRef<HTMLDivElement>(null);
   const imgRef = useRef<HTMLImageElement>(null);
@@ -83,6 +89,16 @@ export default function ProdutoView({ produto }: { produto: Produto }) {
     document.body.classList.toggle("sb-on", sbOn);
     return () => document.body.classList.remove("sb-on");
   }, [sbOn]);
+
+  // Fecha o modal de video com Esc.
+  useEffect(() => {
+    if (!videoOpen) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setVideoOpen(false);
+    };
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+  }, [videoOpen]);
 
   function toast(msg: string) {
     setToastMsg(msg);
@@ -181,6 +197,17 @@ export default function ProdutoView({ produto }: { produto: Produto }) {
               produto.descricao ||
               `${produto.nome} personalizado com a sua logomarca, fabricado no Brasil. Pedidos a partir de 500 unidades.`}
           </p>
+
+          {embedUrl && (
+            <button
+              type="button"
+              className="btn btn-ghost btn-sm btn-video"
+              onClick={() => setVideoOpen(true)}
+            >
+              <Icon name="brand-youtube" />
+              Ver vídeo do produto
+            </button>
+          )}
 
           <div className="blk">
             {cores.length > 0 && (
@@ -329,6 +356,36 @@ export default function ProdutoView({ produto }: { produto: Produto }) {
           </div>
         </div>
       </div>
+
+      {/* Modal de video (YouTube embed) */}
+      {videoOpen && embedUrl && (
+        <div
+          className="vmodal"
+          role="dialog"
+          aria-modal="true"
+          aria-label={`Vídeo: ${produto.nome}`}
+          onClick={() => setVideoOpen(false)}
+        >
+          <div className="vbox" onClick={(e) => e.stopPropagation()}>
+            <button
+              type="button"
+              className="vclose"
+              aria-label="Fechar vídeo"
+              onClick={() => setVideoOpen(false)}
+            >
+              <Icon name="x" />
+            </button>
+            <div className="vframe">
+              <iframe
+                src={`${embedUrl}?autoplay=1&rel=0`}
+                title={`Vídeo do produto ${produto.nome}`}
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+              />
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Toast de confirmacao (espelha o toast() do mockup) */}
       <div className={`toast${toastMsg ? " on" : ""}`} role="status" aria-live="polite">

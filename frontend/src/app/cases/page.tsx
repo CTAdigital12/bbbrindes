@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import Icon from "@/components/Icon";
 import FinalCta from "@/components/FinalCta";
-import { img } from "@/lib/asset";
-import { CASES6, QUOTES, nb } from "@/data/home-joy";
+import { getCases } from "@/lib/content";
+import { QUOTES, nb } from "@/data/home-joy";
 
 export const metadata: Metadata = {
   title: "Cases",
@@ -11,10 +11,12 @@ export const metadata: Metadata = {
     "Cases e prova social: empresas de diferentes setores contam com a BB Brindes para campanhas, eventos e brindes institucionais.",
 };
 
-// Espelha cases(): casesHTML(6) + .quotes (2) + finalCTA. Os cases sao
-// ilustrativos (imagem de produto como stand-in, chip "Ilustrativo"), portados
-// do array CASES(6) do mockup (data/home-joy CASES6).
-export default function CasesPage() {
+// Cases REAIS do cliente (collection `cases` via getCases, fallback no mock). Sem
+// imagem por case (decisao 27/10): o card usa uma faixa de marca com o nome do
+// cliente no lugar da foto. .quotes (depoimentos) e finalCTA seguem.
+export default async function CasesPage() {
+  const cases = await getCases();
+
   return (
     <div className="wrap">
       <div className="crumb">
@@ -29,21 +31,17 @@ export default function CasesPage() {
       </div>
 
       <div className="cases">
-        {CASES6.map(([cliente, segmento, titulo, imagem]) => (
-          // Cases ilustrativos: o clique leva ao blog (nao ha case real/detalhe).
-          <Link className="case" href="/blog" key={cliente}>
-            <div className="ph">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={img(imagem)} alt="" loading="lazy" />
-              <span className="chip">Ilustrativo</span>
+        {cases.map((c) => (
+          <article className="case case-text" key={c.slug}>
+            <div className="ph ph-brand">
+              <span className="cli">{c.cliente}</span>
             </div>
             <div className="bd">
-              <small>{segmento}</small>
-              <h3>
-                {cliente}: {nb(titulo.toLowerCase())}
-              </h3>
+              {c.segmento && <small>{c.segmento}</small>}
+              <h3>{nb(c.titulo)}</h3>
+              {c.resumo && <p className="case-resumo">{c.resumo}</p>}
             </div>
-          </Link>
+          </article>
         ))}
       </div>
 
