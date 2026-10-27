@@ -186,8 +186,10 @@ section.sec{padding:56px 0 8px}
 .card .ph{position:relative;aspect-ratio:1;background:var(--g-card);display:grid;place-items:center;overflow:hidden}
 .card .ph img{width:68%;height:72%;object-fit:contain;filter:drop-shadow(0 16px 18px rgba(0,40,25,.18));transition:transform .5s cubic-bezier(.2,.8,.2,1)}
 .card:hover .ph img{transform:scale(1.07) rotate(-3deg)}
-.card .ph img.alt{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;filter:none;transition:opacity .4s}
-.card:hover .ph img.alt{opacity:1;transform:none}
+/* .alt = mockup lifestyle: fica na FRENTE (visivel em repouso) e some no hover,
+   revelando a foto real do produto embaixo (pedido da Joy 27/10, invertido). */
+.card .ph img.alt{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:1;filter:none;transition:opacity .4s}
+.card:hover .ph img.alt{opacity:0;transform:none}
 .card .tags{position:absolute;top:12px;left:12px;display:flex;gap:6px;flex-wrap:wrap;z-index:2}
 .card .tags .chip{height:24px;font-size:11px;padding:0 10px}
 .card .qv{position:absolute;top:12px;right:12px;width:34px;height:34px;border-radius:50%;background:rgba(255,255,255,.92);display:grid;place-items:center;color:var(--deep);opacity:0;transform:translateY(-4px);transition:.2s;z-index:2;box-shadow:var(--sh-1)}
