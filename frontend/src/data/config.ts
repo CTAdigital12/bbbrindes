@@ -6,9 +6,9 @@ import type { SiteConfig } from "@/lib/types";
 // pra nao regredir o visual. Quando o cliente cadastrar no admin, o global
 // substitui estes valores.
 //
-// redes: vazias de proposito. Hoje o Footer aponta pra "#" (placeholder sem
-// link); ao ligar o global (Fase 1), icone sem URL fica escondido. As URLs reais
-// das redes sao input pendente do cliente.
+// redes: URLs reais do site oficial bbbrindes.com.br (28/10). Com valor, o Footer
+// mostra o icone com link; vazio fica escondido (ex. LinkedIn, que o site oficial
+// nao tem). Quando o cliente preencher o global no admin, ele substitui isto.
 export const configMock: SiteConfig = {
   telefone: "(71) 99416-0138",
   whatsapp: "5571994160138",
@@ -19,11 +19,11 @@ export const configMock: SiteConfig = {
   descricao:
     "BB Brindes, uma empresa Grupo BB. Indústria brasileira de brindes corporativos personalizados, com fábrica própria há 27 anos.",
   redes: {
-    instagram: "",
+    instagram: "https://www.instagram.com/grupobbbrindes/",
     linkedin: "",
-    facebook: "",
-    pinterest: "",
-    youtube: "",
+    facebook: "https://www.facebook.com/grupobbbrindes",
+    pinterest: "https://br.pinterest.com/grupobb/",
+    youtube: "https://www.youtube.com/user/bbgrupo",
   },
   selos: ["SGP", "PS&C", "GMP", "NM300", "SMETA 4 Pilares"],
 };
