@@ -84,8 +84,16 @@ export default async function HomePage() {
   const camposComTile = campanhas.filter((c) => CAMP_TILE[c.slug]);
 
   // Cases/imprensa/blog reais, limitados ao que a home exibe (3 cada). Os
-  // loaders ja caem no mock quando a collection esta vazia.
-  const casesHome = cases.slice(0, 3);
+  // loaders ja caem no mock quando a collection esta vazia. A /cases mostra
+  // todos; a home destaca 3 marcas fortes (por slug) pra nao depender da ordem
+  // de criacao no backend. Se nenhum destaque bater, cai nos 3 primeiros.
+  const DESTAQUE_CASES = new Set([
+    "abridor-contour-personalizado", // Coca-Cola
+    "replica-da-taca-personalizada", // Stella Artois
+    "bowl-coracao-personalizado", // Nestle
+  ]);
+  const destaques = cases.filter((c) => DESTAQUE_CASES.has(c.slug));
+  const casesHome = (destaques.length ? destaques : cases).slice(0, 3);
   const materiasHome = materias.slice(0, 3);
   const postsHome = posts.slice(0, 3);
 

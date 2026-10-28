@@ -84,24 +84,9 @@ export const DIF: [slug: string, titulo: string, sub: string][] = [
   ["microondas-e-lava-loucas", "Microondas e lava-louças", "Uso permanente, não descartável"],
 ];
 
-// Cases ilustrativos (cliente, segmento, titulo, imagem local). Link -> /cases.
-export const CASES: [cliente: string, segmento: string, titulo: string, img: string][] = [
-  ["Coca-Cola", "Bebidas", "Squeezes personalizados para campanha de verão", "/img/foto/MV01113-squeeze-550ml.webp"],
-  ["Ambev", "Bebidas", "Copos para ativação em evento", "/img/foto/MV01147-copo-mini-roma-cristal-300ml.webp"],
-  ["Nestlé", "Alimentos", "Canecas ecológicas para endomarketing", "/img/foto/MV01215-caneca-quadrada-250ml.webp"],
-];
-
-// Cases completos (6) para a pagina /cases, portados do array CASES(6) do mockup
-// (casesHTML(6)). Ilustrativos: imagem de produto como stand-in + chip "Ilustrativo".
-// O home-joy CASES (3 itens, acima) alimenta a secao da home; este os 6 da pagina.
-export const CASES6: [cliente: string, segmento: string, titulo: string, img: string][] = [
-  ["Coca-Cola", "Bebidas", "Squeezes personalizados para campanha de verão", "/img/foto/MV01113-squeeze-550ml.webp"],
-  ["Ambev", "Bebidas", "Copos para ativação em evento", "/img/foto/MV01147-copo-mini-roma-cristal-300ml.webp"],
-  ["Nestlé", "Alimentos", "Canecas ecológicas para endomarketing", "/img/foto/MV01215-caneca-quadrada-250ml.webp"],
-  ["PicPay", "Financeiro", "Canecas Green Fibras para o time", "/img/foto/MV02215GC-caneca-quadrada-ecologica-green-fibras-colors.webp"],
-  ["Jeep", "Automotivo", "Itens to go para o pós-venda", "/img/foto/MV02277G-mariner-box-plus-ecologico-green-fibras.webp"],
-  ["Claro", "Telecom", "Canecas térmicas para ação de inverno", "/img/foto/MV02251GC-caneca-termica-color-300ml-ecologica-green-fibras-colors.webp"],
-];
+// Os cases agora vem da collection `cases` (getCases, fallback em data/cases.ts).
+// Os arrays ilustrativos CASES/CASES6 do mockup (Ambev, PicPay, Jeep, Claro...)
+// ficaram orfaos apos a Fase 3.3 e foram removidos em 28/10.
 
 // Depoimentos da secao de cases.
 export const QUOTES: [texto: string, autor: string][] = [
