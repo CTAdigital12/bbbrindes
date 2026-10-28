@@ -60,10 +60,10 @@ Railway sobe com push ligado, o boot cria a tabela do global.)
 - [ ] FB6-2.3 Mensagem de erro amigável no admin
 
 ### Fase 3 — Ligar a home ao que já existe
-- [ ] FB6-3.1 Hero da home ler a collection Banners (hoje órfã)
-- [ ] FB6-3.2 Banners laterais (2) -> Banners posicao=mini
-- [ ] FB6-3.3 Home usar getCases/getMaterias/getPosts (parar de usar mock home-joy)
-- [ ] FB6-3.4 Ícone de categoria vir do campo `icone` da collection
+- [ ] FB6-3.1 Hero da home ler a collection Banners (hoje órfã) [SEGURADO: trocaria o hero mensal rotativo por banners que o cliente ainda não cadastrou; precisa conteúdo + decisão visual]
+- [ ] FB6-3.2 Banners laterais (2) -> Banners posicao=mini [junto do 3.1]
+- [x] FB6-3.3 Home usar getCases/getMaterias/getPosts (parar de usar mock home-joy). As seções Cases (faixa de marca, igual à /cases), Na imprensa e Do blog agora leem o conteúdo REAL que já está no ar. Validado via curl no dev (localhost:3010 batendo no backend live): Cases = Coca-Cola/Stella Artois/Nestlé (sem chip "Ilustrativo"); Imprensa = Plástico Virtual/Folha do Norte/Site Lícia Fabio; Blog = 3 posts reais com slug certo linkando pra /blog/[slug]. Frontend puro + fallback no mock: sobe por GitHub Pages SEM depender do deploy do backend (não bloqueado pelo Railway). tsc EXIT 0, lint limpo.
+- [ ] FB6-3.4 Ícone de categoria vir do campo `icone` da collection [depende do cliente preencher o campo `icone`; sem isso regride os ícones atuais do CAT_ICON]
 
 ### Fase 4 — Campanhas (overlap FB-4)
 - [ ] FB6-4.1 campanha/[slug] ler a collection Campanhas (conteudo/chamada/imagem/produtos)
