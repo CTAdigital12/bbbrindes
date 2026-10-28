@@ -7,7 +7,7 @@ import RevealInit from "@/components/RevealInit";
 import Rail from "@/components/Rail";
 import ProductCardJoy from "@/components/ProductCardJoy";
 import { getProdutos, getProdutosEcologicos } from "@/lib/produtos";
-import { getCampanhas, getCategorias } from "@/lib/content";
+import { getCampanhas, getCases, getCategorias, getMaterias, getPosts } from "@/lib/content";
 import { img } from "@/lib/asset";
 import {
   WA,
@@ -17,14 +17,16 @@ import {
   TRUST,
   LOGOS,
   DIF,
-  CASES,
   QUOTES,
-  PRESS,
   POSTS,
   FAQ,
   CAT_ICON,
   CAMP_TILE,
 } from "@/data/home-joy";
+
+// Capas ilustrativas (POSTS do mockup) cicladas sobre os posts reais na home,
+// mesmo criterio da pagina /blog (o Post do Payload nao carrega imagem).
+const COVERS = POSTS.map(([, , imagem]) => imagem);
 
 // Cabecalho de secao (shead do mockup): titulo, subtitulo opcional e link opcional.
 function SectionHead({
@@ -56,15 +58,20 @@ function SectionHead({
 
 export default async function HomePage() {
   // Marketing (hero, trust, logos, campanhas-tiles, urgencia, eco-lead,
-  // diferenciais, cases, imprensa, blog, faq, cta) = conteudo do mockup (porta
-  // de data/home-joy.ts). Dado REAL do Payload: categorias (faixa), produtos
-  // (rail Lancamentos) e produtos ecologicos (pgrid Eco), alem das campanhas.
-  const [categorias, campanhas, produtos, produtosEco] = await Promise.all([
-    getCategorias(),
-    getCampanhas(),
-    getProdutos(),
-    getProdutosEcologicos(),
-  ]);
+  // diferenciais, faq, cta) = conteudo do mockup (porta de data/home-joy.ts).
+  // Dado REAL do Payload: categorias (faixa), produtos (rail Lancamentos),
+  // produtos ecologicos (pgrid Eco), campanhas e agora cases/imprensa/blog
+  // (getCases/getMaterias/getPosts, com fallback no mock) = FB6-3.3.
+  const [categorias, campanhas, produtos, produtosEco, cases, materias, posts] =
+    await Promise.all([
+      getCategorias(),
+      getCampanhas(),
+      getProdutos(),
+      getProdutosEcologicos(),
+      getCases(),
+      getMaterias(),
+      getPosts(),
+    ]);
 
   // Mes corrente resolvido no build (export estatico): ordena o hero e aponta as
   // 2 proximas campanhas.
@@ -75,6 +82,20 @@ export default async function HomePage() {
   const lancamentos = produtos.slice(0, 8);
   const eco = produtosEco.slice(0, 6);
   const camposComTile = campanhas.filter((c) => CAMP_TILE[c.slug]);
+
+  // Cases/imprensa/blog reais, limitados ao que a home exibe (3 cada). Os
+  // loaders ja caem no mock quando a collection esta vazia. A /cases mostra
+  // todos; a home destaca 3 marcas fortes (por slug) pra nao depender da ordem
+  // de criacao no backend. Se nenhum destaque bater, cai nos 3 primeiros.
+  const DESTAQUE_CASES = new Set([
+    "abridor-contour-personalizado", // Coca-Cola
+    "replica-da-taca-personalizada", // Stella Artois
+    "bowl-coracao-personalizado", // Nestle
+  ]);
+  const destaques = cases.filter((c) => DESTAQUE_CASES.has(c.slug));
+  const casesHome = (destaques.length ? destaques : cases).slice(0, 3);
+  const materiasHome = materias.slice(0, 3);
+  const postsHome = posts.slice(0, 3);
 
   const contagem = (slug: string) => produtos.filter((p) => p.categoria === slug).length;
 
@@ -319,7 +340,7 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* Cases e prova social (ilustrativos) + depoimentos */}
+      {/* Cases e prova social (REAIS: getCases) + depoimentos */}
       <section className="sec reveal">
         <div className="wrap">
           <SectionHead
@@ -329,20 +350,16 @@ export default async function HomePage() {
             linkText="Ver cases"
           />
           <div className="cases">
-            {CASES.map(([cliente, segmento, titulo, imagem]) => (
-              // Cases ilustrativos (o cliente ainda nao escolheu cases reais):
-              // o clique leva ao blog em vez de uma pagina de case inexistente.
-              <Link className="case" href="/blog" key={cliente}>
-                <div className="ph">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={img(imagem)} alt="" loading="lazy" />
-                  <span className="chip">Ilustrativo</span>
+            {casesHome.map((c) => (
+              // Mesmo tratamento da pagina /cases: sem foto por case (decisao
+              // 27/10), faixa de marca com o nome do cliente. Clique -> /cases.
+              <Link className="case case-text" href="/cases" key={c.slug}>
+                <div className="ph ph-brand">
+                  <span className="cli">{c.cliente}</span>
                 </div>
                 <div className="bd">
-                  <small>{segmento}</small>
-                  <h3>
-                    {cliente}: {nb(titulo.toLowerCase())}
-                  </h3>
+                  {c.segmento ? <small>{c.segmento}</small> : null}
+                  <h3>{nb(c.titulo)}</h3>
                 </div>
               </Link>
             ))}
@@ -361,22 +378,22 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* Na imprensa */}
+      {/* Na imprensa (REAL: getMaterias) */}
       <section className="sec reveal">
         <div className="wrap">
           <SectionHead title="Na imprensa" link="/imprensa" linkText="Ver imprensa" />
           <div className="press">
-            {PRESS.map(([veiculo, titulo]) => (
-              <Link className="pr" href="/imprensa" key={veiculo}>
-                <small>{veiculo}</small>
-                <b>{nb(titulo)}</b>
+            {materiasHome.map((m) => (
+              <Link className="pr" href="/imprensa" key={m.id}>
+                <small>{m.veiculo}</small>
+                <b>{nb(m.titulo)}</b>
               </Link>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Do blog */}
+      {/* Do blog (REAL: getPosts; capa ilustrativa ciclada, igual a /blog) */}
       <section className="sec reveal">
         <div className="wrap">
           <SectionHead
@@ -386,18 +403,18 @@ export default async function HomePage() {
             linkText="Ver blog"
           />
           <div className="blog">
-            {POSTS.map(([titulo, resumo, imagem]) => (
-              <Link className="post" href="/blog" key={titulo}>
+            {postsHome.map((p, i) => (
+              <Link className="post" href={`/blog/${p.slug}`} key={p.slug}>
                 <div className="ph">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={img(imagem)} alt="" loading="lazy" />
+                  <img src={img(COVERS[i % COVERS.length])} alt="" loading="lazy" />
                 </div>
                 <div className="bd">
                   <span className="chip chip-sage" style={{ alignSelf: "flex-start" }}>
                     Artigo
                   </span>
-                  <h3>{nb(titulo)}</h3>
-                  <p>{resumo}</p>
+                  <h3>{nb(p.titulo)}</h3>
+                  <p>{p.resumo}</p>
                 </div>
               </Link>
             ))}

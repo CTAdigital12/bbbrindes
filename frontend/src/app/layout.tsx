@@ -16,6 +16,7 @@ const poppins = Poppins({
 });
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import { getConfig } from "@/lib/content";
 import { SITE_URL, SITE_NAME, SITE_DESCRIPTION } from "@/lib/site";
 
 export const metadata: Metadata = {
@@ -49,7 +50,10 @@ const organizationLd = {
   description: SITE_DESCRIPTION,
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  // Configuracoes do site (contato, redes, selos, blurb) do Payload, com fallback
+  // no mock. Buscadas aqui (server) e passadas pro Header (client) e Footer.
+  const config = await getConfig();
   return (
     <html lang="pt-BR">
       <body className={`${poppins.variable} ${poppins.className} flex min-h-screen flex-col`}>
@@ -59,9 +63,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         />
         <CartProvider>
           <CartUIProvider>
-            <Header />
+            <Header config={config} />
             <main className="flex-1">{children}</main>
-            <Footer />
+            <Footer config={config} />
             <CartDrawer />
           </CartUIProvider>
         </CartProvider>

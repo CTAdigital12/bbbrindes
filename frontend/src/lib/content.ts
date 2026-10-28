@@ -4,7 +4,7 @@
 // cadastrou), cai no mock de data/*. Assim que houver conteudo real no painel,
 // ele substitui o placeholder. A fonte muda; a tela nao.
 
-import type { Banner, Case, Categoria, Materia, Post } from "@/lib/types";
+import type { Banner, Case, Categoria, Materia, Post, SiteConfig } from "@/lib/types";
 import type { Campanha } from "@/data/campanhas";
 import { posts as postsMock } from "@/data/blog";
 import { cases as casesMock } from "@/data/cases";
@@ -12,7 +12,8 @@ import { materias as materiasMock } from "@/data/imprensa";
 import { banners as bannersMock, miniBanners as miniBannersMock } from "@/data/banners";
 import { campanhas as campanhasMock } from "@/data/campanhas";
 import { categorias as categoriasMock } from "@/data/categorias";
-import { lexicalToPlainText, payloadFind, toDateOnly } from "@/lib/payload";
+import { configMock } from "@/data/config";
+import { lexicalToPlainText, payloadFind, payloadGlobal, toDateOnly } from "@/lib/payload";
 
 type PostDoc = {
   slug: string;
@@ -145,6 +146,59 @@ export async function getCategorias(): Promise<Categoria[]> {
     return docs.map((d) => ({ slug: d.slug, nome: d.nome }));
   } catch {
     return categoriasMock;
+  }
+}
+
+type ConfigDoc = {
+  contato?: {
+    telefone?: string;
+    whatsapp?: string;
+    email?: string;
+    endereco?: string;
+    horario?: string;
+    cnpj?: string;
+  };
+  redes?: {
+    instagram?: string;
+    linkedin?: string;
+    facebook?: string;
+    pinterest?: string;
+    youtube?: string;
+  };
+  descricao?: string;
+  selos?: { nome?: string }[];
+};
+
+// Configuracoes gerais do site (global `configuracoes`, FB-6): contato, redes,
+// selos e blurb. Cai no mock (data/config.ts) se o backend falhar OU se o global
+// ainda estiver vazio (cliente nao cadastrou). Cada campo tem fallback proprio no
+// mock, entao um global parcialmente preenchido completa o resto com o padrao.
+export async function getConfig(): Promise<SiteConfig> {
+  try {
+    const doc = await payloadGlobal<ConfigDoc>("configuracoes");
+    // Global recem-criado (sem contato) -> usa o mock inteiro.
+    if (!doc?.contato?.whatsapp && !doc?.contato?.email) return configMock;
+    return {
+      telefone: doc.contato?.telefone ?? configMock.telefone,
+      whatsapp: doc.contato?.whatsapp ?? configMock.whatsapp,
+      email: doc.contato?.email ?? configMock.email,
+      endereco: doc.contato?.endereco ?? configMock.endereco,
+      horario: doc.contato?.horario ?? configMock.horario,
+      cnpj: doc.contato?.cnpj ?? configMock.cnpj,
+      descricao: doc.descricao ?? configMock.descricao,
+      redes: {
+        instagram: doc.redes?.instagram ?? "",
+        linkedin: doc.redes?.linkedin ?? "",
+        facebook: doc.redes?.facebook ?? "",
+        pinterest: doc.redes?.pinterest ?? "",
+        youtube: doc.redes?.youtube ?? "",
+      },
+      selos: (doc.selos ?? [])
+        .map((s) => s.nome ?? "")
+        .filter(Boolean),
+    };
+  } catch {
+    return configMock;
   }
 }
 

@@ -17,6 +17,7 @@ import { Posts } from './collections/Posts'
 import { Cases } from './collections/Cases'
 import { Imprensa } from './collections/Imprensa'
 import { Revendedores } from './collections/Revendedores'
+import { Configuracoes } from './globals/Configuracoes'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -72,6 +73,10 @@ export default buildConfig({
     // Sistema
     Media,
     Users,
+  ],
+  globals: [
+    // Configuracoes gerais do site (contato, redes, selos, blurb). FB-6.
+    Configuracoes,
   ],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',

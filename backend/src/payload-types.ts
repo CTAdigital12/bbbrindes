@@ -104,8 +104,12 @@ export interface Config {
     defaultIDType: number;
   };
   fallbackLocale: null;
-  globals: {};
-  globalsSelect: {};
+  globals: {
+    configuracoes: Configuracoe;
+  };
+  globalsSelect: {
+    configuracoes: ConfiguracoesSelect<false> | ConfiguracoesSelect<true>;
+  };
   locale: null;
   widgets: {
     collections: CollectionsWidget;
@@ -1057,6 +1061,84 @@ export interface PayloadMigrationsSelect<T extends boolean = true> {
   batch?: T;
   updatedAt?: T;
   createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "configuracoes".
+ */
+export interface Configuracoe {
+  id: number;
+  contato?: {
+    /**
+     * Como aparece no site, ex.: (71) 99416-0138.
+     */
+    telefone?: string | null;
+    /**
+     * Ex.: 5571994160138. Vira o link wa.me do site.
+     */
+    whatsapp?: string | null;
+    email?: string | null;
+    endereco?: string | null;
+    horario?: string | null;
+    cnpj?: string | null;
+  };
+  /**
+   * Deixe em branco para esconder o icone no site.
+   */
+  redes?: {
+    instagram?: string | null;
+    linkedin?: string | null;
+    facebook?: string | null;
+    pinterest?: string | null;
+    youtube?: string | null;
+  };
+  descricao?: string | null;
+  /**
+   * Ex.: SGP, GMP, NM300. Aparecem no rodape.
+   */
+  selos?:
+    | {
+        nome: string;
+        id?: string | null;
+      }[]
+    | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "configuracoes_select".
+ */
+export interface ConfiguracoesSelect<T extends boolean = true> {
+  contato?:
+    | T
+    | {
+        telefone?: T;
+        whatsapp?: T;
+        email?: T;
+        endereco?: T;
+        horario?: T;
+        cnpj?: T;
+      };
+  redes?:
+    | T
+    | {
+        instagram?: T;
+        linkedin?: T;
+        facebook?: T;
+        pinterest?: T;
+        youtube?: T;
+      };
+  descricao?: T;
+  selos?:
+    | T
+    | {
+        nome?: T;
+        id?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

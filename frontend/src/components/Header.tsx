@@ -9,6 +9,7 @@ import Icon from "@/components/Icon";
 import { campanhas } from "@/data/campanhas";
 import { CAMP_TILE } from "@/data/home-joy";
 import { img } from "@/lib/asset";
+import type { SiteConfig } from "@/lib/types";
 
 // Links de categoria da barra de navegacao (subconjunto curado, igual ao mockup
 // da Joy). Apontam pras rotas reais do App Router (/catalogo?categoria=slug).
@@ -39,7 +40,7 @@ const PROMESSAS: { icon: string; texto: string }[] = [
   { icon: "certificate", texto: "Atoxidade certificada" },
 ];
 
-export default function Header() {
+export default function Header({ config }: { config: SiteConfig }) {
   const { totalItens } = useCart();
   const { abrir } = useCartUI();
   const router = useRouter();
@@ -92,9 +93,9 @@ export default function Header() {
             ))}
           </div>
           <div style={{ display: "flex", gap: 18, alignItems: "center" }}>
-            <a href="https://wa.me/5571994160138" target="_blank" rel="noopener">
+            <a href={`https://wa.me/${config.whatsapp}`} target="_blank" rel="noopener">
               <Icon name="brand-whatsapp" />
-              (71) 99416-0138
+              {config.telefone}
             </a>
           </div>
         </div>
