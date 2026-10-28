@@ -6,7 +6,7 @@
 //
 // Rodar (na pasta backend/), com o schema do global ja existente no banco:
 //   payload run src/scripts/seed-configuracoes.ts
-// (as redes sociais vao vazias: as URLs reais sao input pendente do cliente.)
+// (redes sociais ja com as URLs reais do site oficial; LinkedIn vazio.)
 
 import { getPayload } from 'payload'
 import config from '@payload-config'
@@ -23,11 +23,12 @@ const defaults = {
     cnpj: '11.158.637/0001-27',
   },
   redes: {
-    instagram: '',
+    // URLs reais do site oficial (28/10); LinkedIn vazio pois o site nao tem.
+    instagram: 'https://www.instagram.com/grupobbbrindes/',
     linkedin: '',
-    facebook: '',
-    pinterest: '',
-    youtube: '',
+    facebook: 'https://www.facebook.com/grupobbbrindes',
+    pinterest: 'https://br.pinterest.com/grupobb/',
+    youtube: 'https://www.youtube.com/user/bbgrupo',
   },
   descricao:
     'BB Brindes, uma empresa Grupo BB. Indústria brasileira de brindes corporativos personalizados, com fábrica própria há 27 anos.',
