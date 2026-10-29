@@ -68,6 +68,17 @@ export default buildConfig({
   serverURL: process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:3001',
   cors: [frontendURL],
   csrf: [frontendURL],
+  // Travas de upload (FB-6): limite de peso por arquivo + mensagem em PT.
+  // abortOnLimit ja e true por padrao (rejeita com HTTP 413 em vez de truncar).
+  // So subimos imagem por ora (sem PDF), entao o limite global = o de imagem.
+  upload: {
+    limits: {
+      fileSize: 15 * 1024 * 1024, // 15 MB por arquivo
+    },
+    abortOnLimit: true,
+    responseOnLimit:
+      'Arquivo muito grande. O limite por upload e 15 MB. Reduza o tamanho e tente de novo.',
+  },
   admin: {
     user: Users.slug,
     importMap: {
