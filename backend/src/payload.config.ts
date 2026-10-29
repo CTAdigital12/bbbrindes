@@ -18,6 +18,7 @@ import { Cases } from './collections/Cases'
 import { Imprensa } from './collections/Imprensa'
 import { Revendedores } from './collections/Revendedores'
 import { Configuracoes } from './globals/Configuracoes'
+import { withRebuildHooks } from './hooks/triggerDeploy'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -31,6 +32,21 @@ const hasR2 = Boolean(process.env.S3_BUCKET)
 // SameSite=Lax padrao basta; so precisamos liberar CORS + CSRF para essa
 // origem. FRONTEND_URL vem do .env; default aponta para o dev local.
 const frontendURL = process.env.FRONTEND_URL || 'http://localhost:3000'
+
+// Slugs cujo conteudo e inlinado no site estatico: toda mudanca precisa disparar
+// um rebuild pra aparecer no ar (FB-6, ver hooks/triggerDeploy). Ficam de fora
+// `users` (contas do admin) e `revendedores` (area logada, lida em runtime via
+// REST, nao vai pro HTML estatico).
+const REBUILD_ON_CHANGE = [
+  'produtos',
+  'categorias',
+  'banners',
+  'campanhas',
+  'posts',
+  'cases',
+  'imprensa',
+  'media',
+]
 
 // Conexao ao Postgres. Preferimos parametros SEPARADOS (PGHOST/PGPORT/PGUSER/
 // PGPASSWORD/PGDATABASE) quando PGHOST estiver definido: a senha vai crua, sem
@@ -73,7 +89,9 @@ export default buildConfig({
     // Sistema
     Media,
     Users,
-  ],
+  ].map((collection) =>
+    REBUILD_ON_CHANGE.includes(collection.slug) ? withRebuildHooks(collection) : collection,
+  ),
   globals: [
     // Configuracoes gerais do site (contato, redes, selos, blurb). FB-6.
     Configuracoes,
