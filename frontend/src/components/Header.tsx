@@ -126,6 +126,10 @@ export default function Header({ config }: { config: SiteConfig }) {
           </form>
 
           <div className="hact">
+            <Link href="/catalogos" className="btn btn-ghost btn-sm catd">
+              <Icon name="book-2" />
+              Catálogo digital
+            </Link>
             <Link href="/revendedor/login" className="btn btn-ghost btn-sm rev">
               Revendedor
             </Link>

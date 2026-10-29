@@ -296,6 +296,11 @@ section.sec{padding:56px 0 8px}
 .pr:hover{transform:translateY(-3px)}
 .pr small{font-size:11.5px;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);font-weight:600}
 .pr b{font-size:15px;line-height:1.4;font-weight:600}
+/* catalogo digital: flipbook (heyzine) + botao .catd no header */
+.flip{position:relative;width:100%;aspect-ratio:16/9;border-radius:var(--r);overflow:hidden;background:var(--deep);box-shadow:var(--sh-1);margin-top:4px}
+.flip iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+.catd .ic{width:16px;height:16px}
+@media(max-width:900px){.catd{display:none}.flip{aspect-ratio:3/4}}
 .blog{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
 .post{background:#fff;border-radius:var(--r);overflow:hidden;box-shadow:var(--sh-1);transition:transform .25s}
 .post:hover{transform:translateY(-4px)}

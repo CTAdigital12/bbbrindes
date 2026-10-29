@@ -1,52 +1,67 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import Icon from "@/components/Icon";
+import CompartilharCatalogo from "@/components/CompartilharCatalogo";
+import { pageUrl } from "@/lib/site";
 
 export const metadata: Metadata = {
-  title: "Catálogos",
+  title: "Catálogo digital",
   description:
-    "Folheie o catálogo online ou baixe em PDF: catálogo completo, linha Green e datas comemorativas.",
+    "Folheie o catálogo da BB Brindes online, em flipbook, e compartilhe o link com quem decide a compra.",
 };
 
-// PDFs do mockup catalogos() (.press): nome + numero de paginas.
-const PDFS: [nome: string, paginas: string][] = [
-  ["Catálogo completo 2026", "120 páginas"],
-  ["Linha Green (ecológicos)", "32 páginas"],
-  ["Datas comemorativas", "24 páginas"],
+// Flipbook unico (heyzine). Os cards sao atalhos pro mesmo catalogo; quando
+// houver flipbooks separados por tema, viram links proprios.
+const FLIP = "https://heyzine.com/flip-book/aa2476761e.html";
+
+const CARDS = [
+  "Catálogo BB Brindes 2027",
+  "Linha Green (ecológicos)",
+  "Datas comemorativas",
 ];
 
 export default function CatalogosPage() {
+  const compartilharUrl = pageUrl("/catalogos");
   return (
     <div className="wrap">
       <div className="crumb">
-        <Link href="/">Início</Link>/<span>Catálogos</span>
+        <Link href="/">Início</Link>/<span>Catálogo digital</span>
       </div>
       <div className="ptitle">
-        <h1>Catálogos</h1>
-        <p>Folheie online ou baixe em PDF.</p>
+        <h1>Catálogo digital</h1>
+        <p>Folheie online e compartilhe o link com quem decide a compra.</p>
       </div>
 
-      {/* Visualizador de flipbook: integracao futura (placeholder visivel). */}
-      <div className="map" style={{ aspectRatio: "16/7" }}>
-        <Icon name="notes" className="big" />
-        Visualizador de flipbook
+      <div className="flip">
+        <iframe
+          src={FLIP}
+          title="Catálogo BB Brindes 2027"
+          allowFullScreen
+          loading="lazy"
+        />
       </div>
 
       <section className="sec">
         <div className="press">
-          {PDFS.map(([nome, paginas]) => (
+          {CARDS.map((nome) => (
             <div className="pr" key={nome}>
               <small>
-                <Icon name="file-type-pdf" /> PDF · {paginas}
+                <Icon name="book-2" /> Flipbook
               </small>
               <b>{nome}</b>
-              <a
-                className="btn btn-ghost btn-sm"
-                style={{ alignSelf: "flex-start", marginTop: "8px" }}
-                href="#"
+              <div
+                style={{
+                  display: "flex",
+                  gap: "8px",
+                  flexWrap: "wrap",
+                  marginTop: "8px",
+                }}
               >
-                Baixar PDF
-              </a>
+                <Link className="btn btn-deep btn-sm" href="/catalogos">
+                  Folhear
+                </Link>
+                <CompartilharCatalogo url={compartilharUrl} titulo={nome} />
+              </div>
             </div>
           ))}
         </div>
