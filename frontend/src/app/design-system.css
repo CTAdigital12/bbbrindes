@@ -654,3 +654,59 @@ h2.h{font-size:24px;letter-spacing:-.02em;font-weight:600;margin:0 0 16px}
 .certbox .selo:first-child b{font-size:15px;color:var(--deep)}
 @media(max-width:900px){.certbox{grid-template-columns:1fr;padding:26px 22px}}
 @media(prefers-reduced-motion:reduce){.fmq-t{animation:none}.fmq{overflow-x:auto}}
+/* teaser compacto da linha do tempo (histMini, pagina de produto) - mockup 28/10 */
+.hmini .hmh{display:flex;justify-content:space-between;align-items:baseline;gap:16px;flex-wrap:wrap}
+.hmini .link{display:inline-flex;align-items:center;gap:6px;font-weight:600}
+.hmini .link .ic{width:16px;height:16px}
+.hmini ol{list-style:none;margin:16px 0 0;padding:0;display:grid;grid-template-columns:repeat(6,1fr);gap:12px;position:relative}
+.hmini li{background:#fff;border-radius:14px;padding:14px 14px 16px;box-shadow:var(--sh-1);border-top:4px solid var(--lime);min-width:0}
+.hmini li b{display:block;font-size:22px;letter-spacing:-.02em;color:var(--deep)}
+.hmini li span{font-size:13px;color:var(--muted);line-height:1.4}
+@media(max-width:900px){.hmini ol{grid-template-columns:repeat(3,1fr)}}
+
+/* linha do tempo em rolagem (quem-somos) - mockup 28/10. full-bleed dentro do .wrap */
+.hscroll{position:relative;height:calc(var(--n) * 62vh + 100vh);background:var(--deep-2);color:#eef5ea;margin:24px calc(50% - 50vw) 0}
+.hstage{position:sticky;top:var(--hh,0px);height:calc(100vh - var(--hh,0px));overflow:hidden;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.25fr);align-items:center}
+.hstage{--D:min(165vh,1500px);--X:clamp(430px,38vw,600px)}
+.hdial{position:absolute;left:calc(var(--X) - var(--D) * .90625);top:50%;width:var(--D);aspect-ratio:1;transform:translateY(-50%);pointer-events:none}
+.hdial svg{width:100%;height:100%;overflow:visible}
+.hdial .ring{fill:none;stroke:rgba(180,201,148,.22);stroke-width:2}
+.hdial .ring2{fill:none;stroke:rgba(180,201,148,.12);stroke-width:1}
+#hrot{transition:transform .9s cubic-bezier(.2,.8,.2,1)}
+.hdial .ticks line{stroke:rgba(180,201,148,.38);stroke-width:2}
+.hyrs text{fill:rgba(238,245,234,.45);font:600 22px Poppins,sans-serif;letter-spacing:.06em;text-anchor:middle;transition:fill .4s}
+.hyrs text.on{fill:transparent}
+.hline{position:absolute;left:calc(var(--X) + 66px);top:50%;width:clamp(50px,7vw,130px);height:2px;background:var(--lime);transform:translateY(-1px)}
+.hphoto{position:absolute;left:calc(var(--X) - 62px);top:50%;width:124px;height:124px;margin-top:-62px;border-radius:50%;overflow:hidden;border:3px solid var(--lime);box-shadow:0 18px 40px rgba(0,0,0,.4);background:var(--deep)}
+.hphoto img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transform:scale(1.08);transition:opacity .5s,transform .8s}
+.hphoto img.on{opacity:1;transform:none}
+.hcount{position:absolute;top:28px;left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:14px;font-size:13px;color:rgba(238,245,234,.7);font-variant-numeric:tabular-nums}
+.hcount i{display:block;width:70px;height:1px;background:rgba(238,245,234,.5)}
+.htitle{position:absolute;top:24px;right:clamp(20px,5vw,72px);text-align:right}
+.htitle b{display:block;font-size:clamp(24px,2.4vw,34px);font-weight:500;letter-spacing:-.02em}
+.htitle small{font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--sage)}
+.htext{position:relative;grid-column:1;margin-left:clamp(20px,6vw,96px);width:calc(var(--X) - var(--D) * .047 - clamp(20px,6vw,96px) - 40px);max-width:380px;min-height:240px;z-index:2}
+.ht{position:absolute;inset:0 0 auto 0;opacity:0;transform:translateY(16px);transition:opacity .45s,transform .45s;pointer-events:none}
+.ht.on{opacity:1;transform:none;pointer-events:auto}
+.ht h3{margin:0 0 12px;font-size:clamp(24px,2.3vw,32px);font-weight:500;letter-spacing:-.02em;line-height:1.15}
+.ht p{margin:0;color:rgba(238,245,234,.78);font-size:15.5px;line-height:1.65}
+.hyear{grid-column:2;justify-self:end;margin-right:clamp(20px,5vw,72px);font-size:clamp(110px,15vw,240px);font-weight:300;line-height:.9;letter-spacing:-.04em;color:#f4f8ef;font-variant-numeric:tabular-nums}
+.hyear.in{animation:hyIn .6s cubic-bezier(.2,.8,.2,1)}
+@keyframes hyIn{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:none}}
+.hhint{position:absolute;bottom:22px;left:50%;transform:translateX(-50%);font-size:12.5px;color:rgba(238,245,234,.6);display:flex;gap:6px;align-items:center;transition:opacity .3s}
+.hhint .ic{width:16px;height:16px;animation:hint 1.6s ease-in-out infinite}
+@keyframes hint{50%{transform:translateY(4px)}}
+.hscroll.fim .hhint{opacity:0}
+@media(max-width:900px){
+ .hstage{grid-template-columns:1fr;grid-template-rows:auto auto;align-content:center;gap:10px}
+ .hstage{--D:150vw;--X:40vw}
+ .hdial{opacity:.35}
+ .hyrs{display:none}
+ .htext{width:auto;max-width:none}
+ .hline,.hphoto{display:none}
+ .hcount{top:16px;left:20px;transform:none}
+ .htitle{top:12px;right:20px}.htitle small{display:none}
+ .hyear{grid-column:1;grid-row:1;justify-self:end;font-size:28vw;margin-right:20px}
+ .htext{grid-row:2;margin:0 20px;min-height:230px}
+}
+@media(prefers-reduced-motion:reduce){#hrot,.ht,.hphoto img{transition:none}.hyear.in{animation:none}}

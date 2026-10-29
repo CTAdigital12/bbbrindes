@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import Icon from "@/components/Icon";
 import FinalCta from "@/components/FinalCta";
+import LinhaDoTempo from "@/components/LinhaDoTempo";
 import { img } from "@/lib/asset";
 import { WA, nb, DIF } from "@/data/home-joy";
 
@@ -101,6 +102,8 @@ export default function QuemSomosPage() {
           </div>
         ))}
       </div>
+
+      <LinhaDoTempo />
 
       <section className="sec">
         <div className="shead">
