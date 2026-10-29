@@ -150,7 +150,7 @@ export default async function CampanhaPage({ params }: { params: Params }) {
             title={`Mais pedidos para ${c.nome}`}
             sub="Produtos do catálogo com o apelo da data."
             link="/catalogo"
-            linkText="Ver catálogo completo"
+            linkText="Ver todos os produtos"
           />
           <div className="pgrid">
             {itens.map((p) => (

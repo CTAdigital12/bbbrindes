@@ -198,17 +198,6 @@ export default function ProdutoView({ produto }: { produto: Produto }) {
               `${produto.nome} personalizado com a sua logomarca, fabricado no Brasil. Pedidos a partir de 500 unidades.`}
           </p>
 
-          {embedUrl && (
-            <button
-              type="button"
-              className="btn btn-ghost btn-sm btn-video"
-              onClick={() => setVideoOpen(true)}
-            >
-              <Icon name="brand-youtube" />
-              Ver vídeo do produto
-            </button>
-          )}
-
           <div className="blk">
             {cores.length > 0 && (
               <div>
@@ -253,6 +242,16 @@ export default function ProdutoView({ produto }: { produto: Produto }) {
             <div>
               <div className="lbl">
                 Quantidade <span>mínimo 500 unidades</span>
+                {embedUrl && (
+                  <button
+                    type="button"
+                    className="vbtn"
+                    onClick={() => setVideoOpen(true)}
+                  >
+                    <Icon name="camera" />
+                    Ver vídeo do produto
+                  </button>
+                )}
               </div>
               <div className="seg">
                 {PRESETS.map((n) => (
