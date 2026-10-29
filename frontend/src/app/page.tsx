@@ -171,7 +171,7 @@ export default async function HomePage() {
             title="Categorias"
             sub="Encontre o brinde certo para cada ação da sua marca."
             link="/catalogo"
-            linkText="Ver catálogo"
+            linkText="Ver todos os produtos"
           />
           <div className="cgrid">
             {categorias.map((c) => {

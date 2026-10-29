@@ -78,7 +78,7 @@ export default function QuemSomosPage() {
           </p>
           <div style={{ display: "flex", gap: "10px", flexWrap: "wrap", marginTop: "18px" }}>
             <Link className="btn btn-cta" href="/catalogo">
-              Ver catálogo
+              Ver todos os produtos
               <Icon name="arrow-right" />
             </Link>
             <a className="btn btn-ghost" href={WA} target="_blank" rel="noopener">
