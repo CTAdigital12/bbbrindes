@@ -13,9 +13,9 @@ import type { SiteConfig } from "@/lib/types";
 
 // Links de categoria da barra de navegacao (subconjunto curado, igual ao mockup
 // da Joy). Apontam pras rotas reais do App Router (/catalogo?categoria=slug).
-const CATS: { label: string; href: string; hot?: boolean }[] = [
+const CATS: { label: string; href: string; hot?: boolean; eco?: boolean }[] = [
   { label: "Todos os produtos", href: "/catalogo" },
-  { label: "Ecologicos", href: "/catalogo?categoria=green-plasticaria" },
+  { label: "Ecologicos", href: "/catalogo?categoria=green-plasticaria", eco: true },
   { label: "Copos", href: "/catalogo?categoria=copos" },
   { label: "Canecas e xicaras", href: "/catalogo?categoria=canecas-xicaras" },
   { label: "Squeezes", href: "/catalogo?categoria=squeezes" },
@@ -144,15 +144,17 @@ export default function Header({ config }: { config: SiteConfig }) {
 
         <nav className="cats">
           <div className="wrap">
-            {CATS.map((c) => (
-              <Link
-                key={c.label}
-                href={c.href}
-                className={pathname === c.href ? "on" : undefined}
-              >
-                {c.label}
-              </Link>
-            ))}
+            {CATS.map((c) => {
+              const cls = [c.eco ? "eco" : "", pathname === c.href ? "on" : ""]
+                .filter(Boolean)
+                .join(" ");
+              return (
+                <Link key={c.label} href={c.href} className={cls || undefined}>
+                  {c.eco && <Icon name="leaf" />}
+                  {c.label}
+                </Link>
+              );
+            })}
             <button
               type="button"
               className={`ddb${campOpen ? " on" : ""}`}

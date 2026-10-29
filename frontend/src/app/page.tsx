@@ -278,6 +278,26 @@ export default async function HomePage() {
       {/* Eco: lead escuro + pgrid de produtos ecologicos (dado REAL) */}
       <section className="sec reveal">
         <div className="wrap">
+          {/* Eco banner (Linha Green) - mockup 28/10 */}
+          <Link className="eco-bn" href="/catalogo?categoria=green-fibras">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={img("/img/banners/home-hero-fixo-2-linha-ecologica.webp")}
+              alt=""
+              loading="lazy"
+            />
+            <div className="ebt">
+              <span className="eyebrow" style={{ color: "var(--green)" }}>
+                Linha Green
+              </span>
+              <h2>A nova geração dos brindes&nbsp;ecológicos</h2>
+              <p>Mais design. Menos impacto. Mais&nbsp;futuro.</p>
+              <span className="btn btn-deep">
+                Ver linha ecológica
+                <Icon name="arrow-right" />
+              </span>
+            </div>
+          </Link>
           <div className="eco">
             <div className="lead">
               <span className="eyebrow" style={{ color: "var(--lime)" }}>
