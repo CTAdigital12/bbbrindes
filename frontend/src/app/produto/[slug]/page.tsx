@@ -6,6 +6,7 @@ import { getProdutoBySlug, getProdutoSlugs, getProdutos } from "@/lib/produtos";
 import ProdutoView from "@/components/ProdutoView";
 import ProdutoDetalheView from "@/components/ProdutoDetalheView";
 import VistosRecentemente from "@/components/VistosRecentemente";
+import HistMini from "@/components/HistMini";
 import Rail from "@/components/Rail";
 import ProductCardJoy from "@/components/ProductCardJoy";
 import { pageUrl } from "@/lib/site";
@@ -98,6 +99,8 @@ export default async function ProdutoPage({ params }: { params: Params }) {
       <ProdutoView produto={produto} />
 
       <ProdutoDetalheView produto={produto} />
+
+      <HistMini />
 
       {relacionados.length > 0 && (
         <section className="sec">
