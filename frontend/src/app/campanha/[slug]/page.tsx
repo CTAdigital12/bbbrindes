@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { campanhaPorSlug, campanhas } from "@/data/campanhas";
+import { getCampanhaBySlug, getCampanhaSlugs } from "@/lib/content";
 import { getProdutos } from "@/lib/produtos";
 import { CAMP_TILE, nb } from "@/data/home-joy";
-import { img } from "@/lib/asset";
+import { img, imgSrc } from "@/lib/asset";
 import type { Produto } from "@/lib/types";
 import ProductCardJoy from "@/components/ProductCardJoy";
 import FinalCta from "@/components/FinalCta";
@@ -12,17 +12,18 @@ import Icon from "@/components/Icon";
 
 type Params = Promise<{ slug: string }>;
 
-export function generateStaticParams() {
-  return campanhas.map((c) => ({ slug: c.slug }));
+export async function generateStaticParams() {
+  const slugs = await getCampanhaSlugs();
+  return slugs.map((slug) => ({ slug }));
 }
 
 export async function generateMetadata({ params }: { params: Params }): Promise<Metadata> {
   const { slug } = await params;
-  const c = campanhaPorSlug(slug);
+  const c = await getCampanhaBySlug(slug);
   if (!c) return { title: "Campanha" };
   return {
     title: `Campanha ${c.nome}`,
-    description: `Brindes corporativos para a campanha ${c.nome} (${c.mes}).`,
+    description: c.chamada || `Brindes corporativos para a campanha ${c.nome} (${c.mes}).`,
   };
 }
 
@@ -71,31 +72,48 @@ const PASSOS: [titulo: string, texto: string][] = [
   ["Receba no prazo", "Fabricamos e entregamos em todo o Brasil."],
 ];
 
+// Curadoria padrao campanha -> produto quando a campanha nao tem produtos
+// mapeados no painel: prioriza ecologicos (carro-chefe) e lancamentos, 8 itens.
+function curadoria(todos: Produto[]): Produto[] {
+  const peso = (p: Produto) =>
+    ((p.tags ?? []).includes("ecologico") ? 2 : 0) +
+    ((p.destaques ?? []).includes("lancamento") ? 1 : 0);
+  return [...todos].sort((a, b) => peso(b) - peso(a)).slice(0, 8);
+}
+
 // Landing de campanha (destino de anuncios/LPs). Espelha a campanha() do mockup
-// funcional da Joy. Server component: le os produtos reais (getProdutos) e mostra
-// uma curadoria sensata, ja que ainda NAO existe mapeamento campanha->produto no
-// dado real (ver relatorio da F7). Mantem generateStaticParams/metadata.
+// funcional da Joy. Server component: le a campanha real do Payload
+// (getCampanhaBySlug) com hero/chamada/conteudo/produtos; cai no mock quando a
+// campanha ainda nao esta no painel. Os produtos vem da relacao da campanha; sem
+// relacao, usa uma curadoria sensata sobre o catalogo real.
 export default async function CampanhaPage({ params }: { params: Params }) {
   const { slug } = await params;
-  const c = campanhaPorSlug(slug);
+  const c = await getCampanhaBySlug(slug);
   if (!c) notFound();
 
   // Mes de corte (~40 a 60 dias antes): 2 meses antes da data, como o mockup.
   const mi = MESES_NOME.findIndex((m) => semAcento(m) === semAcento(c.mes));
   const fecha = mi >= 0 ? MESES_NOME[(mi + 10) % 12].toLowerCase() : "";
 
-  // Imagem de topo: mesma base do tile (CAMP_TILE). Campanhas sem arte (ex.:
-  // ano-novo) renderizam o hero so com o fundo escuro.
+  // Imagem de topo: a cadastrada no painel tem prioridade; senao usa a base do
+  // tile (CAMP_TILE). Campanhas sem arte renderizam o hero so com o fundo escuro.
   const base = CAMP_TILE[slug];
-  const heroImg = base ? img(`/img/banners/campanha-topo-${base}.webp`) : "";
+  const heroImg = c.imagem
+    ? imgSrc(c.imagem)
+    : base
+      ? img(`/img/banners/campanha-topo-${base}.webp`)
+      : "";
 
-  // Curadoria campanha -> produto: sem mapeamento no dado real, prioriza
-  // ecologicos (carro-chefe da marca) e lancamentos, depois completa, 8 itens.
+  // Produtos em destaque: a relacao da campanha (na ordem do painel), resolvida
+  // contra o catalogo real; sem relacao (ou nenhum resolvido), cai na curadoria.
   const todos = await getProdutos();
-  const peso = (p: Produto) =>
-    ((p.tags ?? []).includes("ecologico") ? 2 : 0) +
-    ((p.destaques ?? []).includes("lancamento") ? 1 : 0);
-  const itens = [...todos].sort((a, b) => peso(b) - peso(a)).slice(0, 8);
+  const porSlug = new Map(todos.map((p) => [p.slug, p]));
+  const mapeados = (c.produtos ?? [])
+    .map((s) => porSlug.get(s))
+    .filter((p): p is Produto => Boolean(p));
+  const itens = mapeados.length > 0 ? mapeados : curadoria(todos);
+
+  const paragrafos = c.conteudo ? c.conteudo.split("\n\n").filter(Boolean) : [];
 
   return (
     <div>
@@ -120,7 +138,10 @@ export default async function CampanhaPage({ params }: { params: Params }) {
             Campanha · {c.mes}
           </span>
           <h1>Brindes para {c.nome}</h1>
-          <p>Brindes selecionados para a data, com a sua marca aplicada. Monte seu orçamento.</p>
+          <p>
+            {c.chamada ||
+              "Brindes selecionados para a data, com a sua marca aplicada. Monte seu orçamento."}
+          </p>
         </div>
       </div>
 
@@ -144,6 +165,18 @@ export default async function CampanhaPage({ params }: { params: Params }) {
             <Icon name="arrow-right" />
           </Link>
         </div>
+
+        {paragrafos.length > 0 ? (
+          <section className="sec">
+            <div style={{ maxWidth: "760px", lineHeight: 1.7 }}>
+              {paragrafos.map((par, i) => (
+                <p key={i} style={{ marginBottom: "14px" }}>
+                  {nb(par)}
+                </p>
+              ))}
+            </div>
+          </section>
+        ) : null}
 
         <section className="sec">
           <SectionHead

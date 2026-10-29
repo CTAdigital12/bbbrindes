@@ -2,6 +2,12 @@ export type Campanha = {
   slug: string;
   nome: string;
   mes: string;
+  // Campos ricos vindos do Payload (collection Campanhas). Opcionais: o mock so
+  // tem slug/nome/mes, entao a landing cai no comportamento padrao quando faltam.
+  chamada?: string; // subtitulo do hero
+  imagem?: string; // URL da media (hero da campanha)
+  conteudo?: string; // texto da landing (richText achatado em texto)
+  produtos?: string[]; // slugs dos produtos em destaque
 };
 
 // Campanhas sazonais e datas comemorativas. Cada uma serve de destino para
