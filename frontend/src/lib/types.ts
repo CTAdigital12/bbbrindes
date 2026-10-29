@@ -36,6 +36,9 @@ export type Produto = {
   // Video da linha do produto (Payload: videoUrl, URL do YouTube). Opcional;
   // quando presente, a PDP mostra o botao "Ver video" (abre modal com o embed).
   videoUrl?: string;
+  // Quantidade minima de pedido (Payload: quantidadeMinima). Opcional; quando
+  // ausente a PDP assume 500 (minimo padrao da fabrica).
+  quantidadeMinima?: number;
 };
 
 // Blocos da pagina de produto simulados no wireframe (S03-11). Espelham a
