@@ -1,5 +1,7 @@
 import type { GlobalConfig } from 'payload'
 
+import { rebuildGlobalAfterChange } from '../hooks/triggerDeploy'
+
 // Configuracoes gerais do site (singleton). Reune o que hoje esta hardcoded no
 // front (Header, Footer, pagina de Contato): dados de contato, redes sociais,
 // selos de certificacao e o texto institucional do rodape. Editavel pelo cliente
@@ -13,6 +15,10 @@ export const Configuracoes: GlobalConfig = {
   },
   access: {
     read: () => true,
+  },
+  hooks: {
+    // Toda edicao salva no admin dispara o rebuild do site estatico (FB-6).
+    afterChange: [rebuildGlobalAfterChange],
   },
   fields: [
     {
