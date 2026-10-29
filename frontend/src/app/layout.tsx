@@ -5,6 +5,7 @@ import "./design-system.css";
 import { CartProvider } from "@/lib/cart";
 import { CartUIProvider } from "@/lib/cart-ui";
 import CartDrawer from "@/components/CartDrawer";
+import ExitPopup from "@/components/ExitPopup";
 
 // Fonte da identidade da Joy. Expoe --font-poppins (usada no tailwind.config)
 // e aplica Poppins no body (a classe vence o seletor de elemento do design-system.css).
@@ -67,6 +68,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
             <main className="flex-1">{children}</main>
             <Footer config={config} />
             <CartDrawer />
+            <ExitPopup />
           </CartUIProvider>
         </CartProvider>
       </body>

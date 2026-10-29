@@ -37,6 +37,15 @@ const GALERIA: [arquivo: string, alt: string][] = [
   ["inst-07.webp", "BB Brindes em feira do setor"],
 ];
 
+// Certificacoes (certbox do mockup). A 1a (SMETA) ocupa a linha inteira em destaque.
+const SELOS: [sigla: string, desc: string][] = [
+  ["SMETA 4 Pilares", "Trabalho, saúde e segurança, meio ambiente e ética"],
+  ["NBR NM 300", "Segurança de brinquedos (Inmetro)"],
+  ["SGP", "Auditoria de fornecedor"],
+  ["PS&C", "Auditoria de fornecedor"],
+  ["GMP", "Boas práticas de fabricação"],
+];
+
 export default function QuemSomosPage() {
   return (
     <div className="wrap">
@@ -135,16 +144,56 @@ export default function QuemSomosPage() {
       <section className="sec">
         <div className="shead">
           <div>
-            <h2>Por dentro da BB Brindes</h2>
+            <h2>Nossa fábrica</h2>
+            <p>Produção própria em Lauro de Freitas (BA).</p>
           </div>
         </div>
-        <div className="inst-gal">
-          {GALERIA.map(([arquivo, alt]) => (
-            <div className="inst-ph" key={arquivo}>
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={img(`/img/institucional/${arquivo}`)} alt={alt} loading="lazy" />
-            </div>
-          ))}
+        {/* Carrossel infinito: lista duplicada, anima ate -50% (a 2a metade e
+            decorativa, aria-hidden). Pausa no hover; para em prefers-reduced-motion. */}
+        <div className="fmq" aria-label="Fotos da fábrica">
+          <div className="fmq-t">
+            {[...GALERIA, ...GALERIA].map(([arquivo, alt], i) => (
+              <figure
+                className="fab"
+                key={`${arquivo}-${i}`}
+                aria-hidden={i >= GALERIA.length ? "true" : undefined}
+              >
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={img(`/img/institucional/${arquivo}`)}
+                  alt={i >= GALERIA.length ? "" : alt}
+                  loading="lazy"
+                />
+                <figcaption>{alt}</figcaption>
+              </figure>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="sec">
+        <div className="certbox">
+          <div>
+            <span className="eyebrow" style={{ color: "var(--lime)" }}>
+              Certificações
+            </span>
+            <h2>Auditada no padrão SMETA 4 Pilares</h2>
+            <p>
+              Trabalho, saúde e segurança, meio ambiente e ética nos negócios.
+              Somos uma das quatro empresas de brindes do Brasil com a SMETA 4
+              Pilares, a auditoria que grandes compradores exigem dos seus
+              fornecedores. Certificações globais, reconhecidas
+              internacionalmente.
+            </p>
+          </div>
+          <div className="selos">
+            {SELOS.map(([sigla, desc]) => (
+              <div className="selo" key={sigla}>
+                <i>{sigla}</i>
+                <b>{desc}</b>
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 
