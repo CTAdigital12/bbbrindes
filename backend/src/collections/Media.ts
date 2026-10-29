@@ -8,6 +8,8 @@ export const Media: CollectionConfig = {
   slug: 'media',
   admin: {
     group: 'Sistema',
+    description:
+      'Imagens ate 15 MB. Sao convertidas pra WebP e reduzidas pro maximo de 2400px no lado maior. Dimensoes recomendadas: foto de produto ~1200x1200px, logo de cliente ~600x300px (fundo transparente), banner/hero ~1920x1080px, icone de categoria ~240x240px.',
   },
   access: {
     read: () => true,
@@ -22,6 +24,9 @@ export const Media: CollectionConfig = {
   upload: {
     mimeTypes: ['image/*'],
     formatOptions: toWebp,
+    // Dimensao maxima (FB-6): limita o lado maior a 2400px (2x o maior imageSize),
+    // sem ampliar imagens menores. Reduz o original pesado sem rejeitar o upload.
+    resizeOptions: { width: 2400, height: 2400, fit: 'inside', withoutEnlargement: true },
     imageSizes: [
       { name: 'thumbnail', width: 300, height: 300, position: 'centre', formatOptions: toWebp },
       { name: 'card', width: 640, formatOptions: toWebp },
