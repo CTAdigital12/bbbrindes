@@ -242,6 +242,21 @@ export const Produtos: CollectionConfig = {
       ],
     },
 
+    // Quantidade minima de pedido (exibida na PDP). Antes era fixa no front
+    // (MIN_QTD=500); agora e por produto, editavel no admin. Default 500 pra
+    // nao regredir. O front le produto.quantidadeMinima com fallback em 500.
+    {
+      name: 'quantidadeMinima',
+      type: 'number',
+      label: 'Quantidade minima de pedido',
+      defaultValue: 500,
+      min: 1,
+      admin: {
+        description:
+          'Minimo de unidades por pedido, exibido na PDP (ex.: "minimo 500 unidades"). Padrao 500.',
+      },
+    },
+
     // Faixa de preco publica e faixas de destaque na home.
     {
       name: 'faixaPreco',
