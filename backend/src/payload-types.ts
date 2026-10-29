@@ -75,6 +75,7 @@ export interface Config {
     posts: Post;
     cases: Case;
     imprensa: Imprensa;
+    tags: Tag;
     revendedores: Revendedore;
     media: Media;
     users: User;
@@ -92,6 +93,7 @@ export interface Config {
     posts: PostsSelect<false> | PostsSelect<true>;
     cases: CasesSelect<false> | CasesSelect<true>;
     imprensa: ImprensaSelect<false> | ImprensaSelect<true>;
+    tags: TagsSelect<false> | TagsSelect<true>;
     revendedores: RevendedoresSelect<false> | RevendedoresSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
     users: UsersSelect<false> | UsersSelect<true>;
@@ -478,6 +480,24 @@ export interface Post {
     };
     [k: string]: unknown;
   } | null;
+  /**
+   * Tags pra distribuir/relacionar com blog, cases e imprensa.
+   */
+  tags?: (number | Tag)[] | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "tags".
+ */
+export interface Tag {
+  id: number;
+  nome: string;
+  /**
+   * URL amigavel em kebab-case. Gerado a partir do nome se ficar vazio.
+   */
+  slug: string;
   updatedAt: string;
   createdAt: string;
 }
@@ -504,6 +524,10 @@ export interface Case {
     texto?: string | null;
     autor?: string | null;
   };
+  /**
+   * Tags pra distribuir/relacionar com blog, cases e imprensa.
+   */
+  tags?: (number | Tag)[] | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -518,6 +542,10 @@ export interface Imprensa {
   data: string;
   resumo?: string | null;
   url?: string | null;
+  /**
+   * Tags pra distribuir/relacionar com blog, cases e imprensa.
+   */
+  tags?: (number | Tag)[] | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -646,6 +674,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'imprensa';
         value: number | Imprensa;
+      } | null)
+    | ({
+        relationTo: 'tags';
+        value: number | Tag;
       } | null)
     | ({
         relationTo: 'revendedores';
@@ -869,6 +901,7 @@ export interface PostsSelect<T extends boolean = true> {
   autor?: T;
   capa?: T;
   conteudo?: T;
+  tags?: T;
   updatedAt?: T;
   createdAt?: T;
 }
@@ -890,6 +923,7 @@ export interface CasesSelect<T extends boolean = true> {
         texto?: T;
         autor?: T;
       };
+  tags?: T;
   updatedAt?: T;
   createdAt?: T;
 }
@@ -903,6 +937,17 @@ export interface ImprensaSelect<T extends boolean = true> {
   data?: T;
   resumo?: T;
   url?: T;
+  tags?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "tags_select".
+ */
+export interface TagsSelect<T extends boolean = true> {
+  nome?: T;
+  slug?: T;
   updatedAt?: T;
   createdAt?: T;
 }

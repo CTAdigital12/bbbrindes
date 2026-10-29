@@ -16,6 +16,7 @@ import { Campanhas } from './collections/Campanhas'
 import { Posts } from './collections/Posts'
 import { Cases } from './collections/Cases'
 import { Imprensa } from './collections/Imprensa'
+import { Tags } from './collections/Tags'
 import { Revendedores } from './collections/Revendedores'
 import { Configuracoes } from './globals/Configuracoes'
 import { withRebuildHooks } from './hooks/triggerDeploy'
@@ -45,6 +46,7 @@ const REBUILD_ON_CHANGE = [
   'posts',
   'cases',
   'imprensa',
+  'tags',
   'media',
 ]
 
@@ -95,6 +97,7 @@ export default buildConfig({
     Posts,
     Cases,
     Imprensa,
+    Tags,
     // Revenda
     Revendedores,
     // Sistema

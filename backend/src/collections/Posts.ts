@@ -23,5 +23,12 @@ export const Posts: CollectionConfig = {
     { name: 'autor', type: 'text' },
     { name: 'capa', type: 'upload', relationTo: 'media' },
     { name: 'conteudo', type: 'richText' },
+    {
+      name: 'tags',
+      type: 'relationship',
+      relationTo: 'tags',
+      hasMany: true,
+      admin: { description: 'Tags pra distribuir/relacionar com blog, cases e imprensa.' },
+    },
   ],
 }
