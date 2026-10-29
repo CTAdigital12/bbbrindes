@@ -94,3 +94,20 @@ Tracker detalhado por subtarefa: [fb6-admin-editavel-plano.md](fb6-admin-editave
 - Item 16: cor do botão WhatsApp pra verde-escuro (CSS) + texto comercial.
 - Item 19: trocar os números no admin (Configurações do site), assim que confirmados.
 - Item 14: trocar o ícone do botão de vídeo pra câmera e mover pra junto da qtd mínima.
+
+---
+
+## eKyte (acompanhamento gerencial)
+
+Projeto **bbbrindes (Desenvolvimento)** (id 342292, workspace Raizhe). Uma tarefa por front, cada uma linkando o bloco deste tracker:
+
+| Front | Tarefa eKyte |
+|-------|--------------|
+| 1 Admin editável + upload (FB-6) | 10895893 |
+| 2 Catálogo e produto (PDP) | 10895894 |
+| 3 Campanhas data-driven (FB-4) | 10895897 |
+| 4 Conteúdo e institucional | 10895898 |
+| 5 Conversão: popups e WhatsApp (FB-5) | 10895900 |
+| 6 Tracking e CRM (FB-7) | 10895903 |
+| 7 UX e copy | 10895905 |
+| 8 Operacional (taguear 9 produtos) | 10895906 |
