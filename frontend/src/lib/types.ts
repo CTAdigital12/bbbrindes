@@ -122,6 +122,36 @@ export type SiteConfig = {
   selos: string[];
 };
 
+// Conteudo editavel da home (global `conteudo-home`, FB-6 Fase 5): a copy dos
+// blocos que eram hardcoded (home-joy.ts + inline no page.tsx). O front le via
+// getConteudoHome(), com fallback no mock (home-joy) enquanto o global nao
+// estiver disponivel/preenchido, pra home nao regredir. Imagens dos blocos e o
+// countdown seguem no front (nao vem do global). `icone`: nos selos e o nome do
+// Icon; nos diferenciais e o slug do arquivo diferencial-<icone>.svg.
+export type ConteudoHome = {
+  selosConfianca: { icone: string; titulo: string; sub: string }[];
+  diferenciais: { icone: string; titulo: string; sub: string }[];
+  depoimentos: { texto: string; autor: string }[];
+  faq: { pergunta: string; resposta: string }[];
+  urgencia: {
+    chip: string;
+    tituloInicio: string;
+    tituloDestaque: string;
+    texto: string;
+    ctaLabel: string;
+    ctaHref: string;
+  };
+  ecoBanner: { eyebrow: string; titulo: string; texto: string; ctaLabel: string };
+  ecoLead: {
+    eyebrow: string;
+    titulo: string;
+    texto: string;
+    linhas: string[];
+    ctaLabel: string;
+  };
+  ctaFinal: { titulo: string; texto: string; ctaLabel: string; ctaHref: string };
+};
+
 // Visao exclusiva do revendedor (preco e estoque por produto).
 export type RevendedorPreco = {
   produtoSlug: string;

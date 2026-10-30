@@ -4,7 +4,7 @@
 // cadastrou), cai no mock de data/*. Assim que houver conteudo real no painel,
 // ele substitui o placeholder. A fonte muda; a tela nao.
 
-import type { Banner, Case, Categoria, Materia, Post, SiteConfig } from "@/lib/types";
+import type { Banner, Case, Categoria, ConteudoHome, Materia, Post, SiteConfig } from "@/lib/types";
 import type { Campanha } from "@/data/campanhas";
 import { posts as postsMock } from "@/data/blog";
 import { cases as casesMock } from "@/data/cases";
@@ -13,6 +13,7 @@ import { banners as bannersMock, miniBanners as miniBannersMock } from "@/data/b
 import { campanhas as campanhasMock, campanhaPorSlug } from "@/data/campanhas";
 import { categorias as categoriasMock } from "@/data/categorias";
 import { configMock } from "@/data/config";
+import { TRUST, DIF, QUOTES, FAQ } from "@/data/home-joy";
 import { lexicalToPlainText, payloadFind, payloadGlobal, toDateOnly } from "@/lib/payload";
 
 type PostDoc = {
@@ -264,6 +265,136 @@ export async function getConfig(): Promise<SiteConfig> {
     };
   } catch {
     return configMock;
+  }
+}
+
+// ---- Conteudo da home (global `conteudo-home`, FB-6 Fase 5) ----
+
+// Shape cru do global (tudo opcional: um global parcial nao quebra o build).
+type ConteudoHomeDoc = {
+  selosConfianca?: { icone?: string; titulo?: string; sub?: string }[];
+  diferenciais?: { icone?: string; titulo?: string; sub?: string }[];
+  depoimentos?: { texto?: string; autor?: string }[];
+  faq?: { pergunta?: string; resposta?: string }[];
+  urgencia?: {
+    chip?: string;
+    tituloInicio?: string;
+    tituloDestaque?: string;
+    texto?: string;
+    ctaLabel?: string;
+    ctaHref?: string;
+  };
+  ecoBanner?: { eyebrow?: string; titulo?: string; texto?: string; ctaLabel?: string };
+  ecoLead?: {
+    eyebrow?: string;
+    titulo?: string;
+    texto?: string;
+    linhas?: { texto?: string }[];
+    ctaLabel?: string;
+  };
+  ctaFinal?: { titulo?: string; texto?: string; ctaLabel?: string; ctaHref?: string };
+};
+
+// Fallback montado a partir do home-joy.ts (TRUST/DIF/QUOTES/FAQ) e da copy que
+// estava inline no page.tsx. E o estado atual no ar: usado quando o global nao
+// responde ou vier vazio, pra home nao regredir.
+function conteudoHomeMock(): ConteudoHome {
+  return {
+    selosConfianca: TRUST.map(([icone, titulo, sub]) => ({ icone, titulo, sub })),
+    diferenciais: DIF.map(([icone, titulo, sub]) => ({ icone, titulo, sub })),
+    depoimentos: QUOTES.map(([texto, autor]) => ({ texto, autor })),
+    faq: FAQ.map(([pergunta, resposta]) => ({ pergunta, resposta })),
+    urgencia: {
+      chip: "Agenda de fim de ano",
+      tituloInicio: "Dezembro tem prazo.",
+      tituloDestaque: "A produção do seu brinde também.",
+      texto:
+        "A produção de fim de ano é o pico do setor. Feche seu pedido de Natal até o fim de outubro e garanta a entrega antes das festas.",
+      ctaLabel: "Garantir meu prazo",
+      ctaHref: "/campanha/natal",
+    },
+    ecoBanner: {
+      eyebrow: "Linha Green",
+      titulo: "A nova geração dos brindes ecológicos",
+      texto: "Mais design. Menos impacto. Mais futuro.",
+      ctaLabel: "Ver linha ecológica",
+    },
+    ecoLead: {
+      eyebrow: "Brindes ecológicos",
+      titulo: "Brindes que duram, não descartáveis",
+      texto:
+        "Fabricados com fibras naturais de coco e madeira de reflorestamento. Produto reciclável, de uso permanente, livre de BPA.",
+      linhas: ["Premium", "Green Fibras", "Green Plasticaria", "Green Reversa"],
+      ctaLabel: "Ver linha ecológica",
+    },
+    ctaFinal: {
+      titulo: "Monte seu orçamento. Um especialista responde com a proposta.",
+      texto:
+        "Sem pagamento online. Você escolhe os produtos e a quantidade, e o time comercial retorna.",
+      ctaLabel: "Começar meu orçamento",
+      ctaHref: "/catalogo",
+    },
+  };
+}
+
+// Le o global com fallback POR BLOCO: cada array/grupo que vier vazio ou faltando
+// cai no mock, entao um global so parcialmente preenchido completa o resto com o
+// valor atual (mesma logica do getConfig). Imagens dos blocos e o countdown
+// seguem no front.
+export async function getConteudoHome(): Promise<ConteudoHome> {
+  const mock = conteudoHomeMock();
+  try {
+    const doc = await payloadGlobal<ConteudoHomeDoc>("conteudo-home");
+
+    const selos = (doc.selosConfianca ?? [])
+      .map((s) => ({ icone: s.icone ?? "", titulo: s.titulo ?? "", sub: s.sub ?? "" }))
+      .filter((s) => s.icone && s.titulo);
+    const difs = (doc.diferenciais ?? [])
+      .map((d) => ({ icone: d.icone ?? "", titulo: d.titulo ?? "", sub: d.sub ?? "" }))
+      .filter((d) => d.icone && d.titulo);
+    const deps = (doc.depoimentos ?? [])
+      .map((q) => ({ texto: q.texto ?? "", autor: q.autor ?? "" }))
+      .filter((q) => q.texto && q.autor);
+    const faqs = (doc.faq ?? [])
+      .map((f) => ({ pergunta: f.pergunta ?? "", resposta: f.resposta ?? "" }))
+      .filter((f) => f.pergunta && f.resposta);
+    const linhasEco = (doc.ecoLead?.linhas ?? []).map((l) => l.texto ?? "").filter(Boolean);
+
+    return {
+      selosConfianca: selos.length ? selos : mock.selosConfianca,
+      diferenciais: difs.length ? difs : mock.diferenciais,
+      depoimentos: deps.length ? deps : mock.depoimentos,
+      faq: faqs.length ? faqs : mock.faq,
+      urgencia: {
+        chip: doc.urgencia?.chip ?? mock.urgencia.chip,
+        tituloInicio: doc.urgencia?.tituloInicio ?? mock.urgencia.tituloInicio,
+        tituloDestaque: doc.urgencia?.tituloDestaque ?? mock.urgencia.tituloDestaque,
+        texto: doc.urgencia?.texto ?? mock.urgencia.texto,
+        ctaLabel: doc.urgencia?.ctaLabel ?? mock.urgencia.ctaLabel,
+        ctaHref: doc.urgencia?.ctaHref ?? mock.urgencia.ctaHref,
+      },
+      ecoBanner: {
+        eyebrow: doc.ecoBanner?.eyebrow ?? mock.ecoBanner.eyebrow,
+        titulo: doc.ecoBanner?.titulo ?? mock.ecoBanner.titulo,
+        texto: doc.ecoBanner?.texto ?? mock.ecoBanner.texto,
+        ctaLabel: doc.ecoBanner?.ctaLabel ?? mock.ecoBanner.ctaLabel,
+      },
+      ecoLead: {
+        eyebrow: doc.ecoLead?.eyebrow ?? mock.ecoLead.eyebrow,
+        titulo: doc.ecoLead?.titulo ?? mock.ecoLead.titulo,
+        texto: doc.ecoLead?.texto ?? mock.ecoLead.texto,
+        linhas: linhasEco.length ? linhasEco : mock.ecoLead.linhas,
+        ctaLabel: doc.ecoLead?.ctaLabel ?? mock.ecoLead.ctaLabel,
+      },
+      ctaFinal: {
+        titulo: doc.ctaFinal?.titulo ?? mock.ctaFinal.titulo,
+        texto: doc.ctaFinal?.texto ?? mock.ctaFinal.texto,
+        ctaLabel: doc.ctaFinal?.ctaLabel ?? mock.ctaFinal.ctaLabel,
+        ctaHref: doc.ctaFinal?.ctaHref ?? mock.ctaFinal.ctaHref,
+      },
+    };
+  } catch {
+    return mock;
   }
 }
 

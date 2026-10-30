@@ -1,5 +1,6 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
+import type { ConteudoHome } from "@/lib/types";
 import Icon from "@/components/Icon";
 import HeroSlider from "@/components/HeroSlider";
 import Countdown from "@/components/Countdown";
@@ -7,19 +8,22 @@ import RevealInit from "@/components/RevealInit";
 import Rail from "@/components/Rail";
 import ProductCardJoy from "@/components/ProductCardJoy";
 import { getProdutos, getProdutosEcologicos } from "@/lib/produtos";
-import { getCampanhas, getCases, getCategorias, getMaterias, getPosts } from "@/lib/content";
+import {
+  getCampanhas,
+  getCases,
+  getCategorias,
+  getConteudoHome,
+  getMaterias,
+  getPosts,
+} from "@/lib/content";
 import { img, imgSrc } from "@/lib/asset";
 import {
   WA,
   nb,
   orderedHeroSlides,
   nextCamps,
-  TRUST,
   LOGOS,
-  DIF,
-  QUOTES,
   POSTS,
-  FAQ,
   CAT_ICON,
   CAMP_TILE,
 } from "@/data/home-joy";
@@ -62,7 +66,7 @@ export default async function HomePage() {
   // Dado REAL do Payload: categorias (faixa), produtos (rail Lancamentos),
   // produtos ecologicos (pgrid Eco), campanhas e agora cases/imprensa/blog
   // (getCases/getMaterias/getPosts, com fallback no mock) = FB6-3.3.
-  const [categorias, campanhas, produtos, produtosEco, cases, materias, posts] =
+  const [categorias, campanhas, produtos, produtosEco, cases, materias, posts, conteudo] =
     await Promise.all([
       getCategorias(),
       getCampanhas(),
@@ -71,6 +75,7 @@ export default async function HomePage() {
       getCases(),
       getMaterias(),
       getPosts(),
+      getConteudoHome(),
     ]);
 
   // Mes corrente resolvido no build (export estatico): ordena o hero e aponta as
@@ -137,14 +142,14 @@ export default async function HomePage() {
       {/* Faixa de confianca */}
       <section className="trust">
         <div className="wrap tgrid">
-          {TRUST.map(([icon, titulo, sub]) => (
-            <div className="titem" key={titulo}>
+          {conteudo.selosConfianca.map((s) => (
+            <div className="titem" key={s.titulo}>
               <span className="ib">
-                <Icon name={icon} />
+                <Icon name={s.icone} />
               </span>
               <div>
-                <b>{nb(titulo)}</b>
-                <span>{nb(sub)}</span>
+                <b>{nb(s.titulo)}</b>
+                <span>{nb(s.sub)}</span>
               </div>
             </div>
           ))}
@@ -225,20 +230,17 @@ export default async function HomePage() {
           <div className="tx">
             <span className="chip chip-lime" style={{ alignSelf: "flex-start" }}>
               <Icon name="alarm" />
-              Agenda de fim de ano
+              {conteudo.urgencia.chip}
             </span>
             <h2>
-              Dezembro tem prazo.{" "}
-              <span style={{ color: "var(--lime)" }}>A produção do seu brinde também.</span>
+              {conteudo.urgencia.tituloInicio}{" "}
+              <span style={{ color: "var(--lime)" }}>{conteudo.urgencia.tituloDestaque}</span>
             </h2>
-            <p>
-              A produção de fim de ano é o pico do setor. Feche seu pedido de Natal até o fim de
-              outubro e garanta a entrega antes das festas.
-            </p>
+            <p>{conteudo.urgencia.texto}</p>
             <Countdown />
             <div style={{ display: "flex", gap: "10px", flexWrap: "wrap" }}>
-              <Link className="btn btn-cta btn-lg" href="/campanha/natal">
-                Garantir meu prazo
+              <Link className="btn btn-cta btn-lg" href={conteudo.urgencia.ctaHref}>
+                {conteudo.urgencia.ctaLabel}
                 <Icon name="arrow-right" />
               </Link>
               <a className="btn btn-ghost-w btn-lg" href={WA} target="_blank" rel="noopener">
@@ -292,12 +294,12 @@ export default async function HomePage() {
             />
             <div className="ebt">
               <span className="eyebrow" style={{ color: "var(--green)" }}>
-                Linha Green
+                {conteudo.ecoBanner.eyebrow}
               </span>
-              <h2>A nova geração dos brindes&nbsp;ecológicos</h2>
-              <p>Mais design. Menos impacto. Mais&nbsp;futuro.</p>
+              <h2>{nb(conteudo.ecoBanner.titulo)}</h2>
+              <p>{nb(conteudo.ecoBanner.texto)}</p>
               <span className="btn btn-deep">
-                Ver linha ecológica
+                {conteudo.ecoBanner.ctaLabel}
                 <Icon name="arrow-right" />
               </span>
             </div>
@@ -305,21 +307,17 @@ export default async function HomePage() {
           <div className="eco">
             <div className="lead">
               <span className="eyebrow" style={{ color: "var(--lime)" }}>
-                Brindes ecológicos
+                {conteudo.ecoLead.eyebrow}
               </span>
-              <h2>Brindes que duram, não&nbsp;descartáveis</h2>
-              <p>
-                Fabricados com fibras naturais de coco e madeira de reflorestamento. Produto
-                reciclável, de uso permanente, livre&nbsp;de&nbsp;BPA.
-              </p>
+              <h2>{nb(conteudo.ecoLead.titulo)}</h2>
+              <p>{nb(conteudo.ecoLead.texto)}</p>
               <div className="lines">
-                <span>Premium</span>
-                <span>Green Fibras</span>
-                <span>Green Plasticaria</span>
-                <span>Green Reversa</span>
+                {conteudo.ecoLead.linhas.map((l) => (
+                  <span key={l}>{l}</span>
+                ))}
               </div>
               <Link className="btn btn-lime" href="/catalogo?categoria=green-fibras">
-                Ver linha ecológica
+                {conteudo.ecoLead.ctaLabel}
                 <Icon name="arrow-right" />
               </Link>
               <span className="bub" />
@@ -350,13 +348,13 @@ export default async function HomePage() {
             sub="Fabricante com 27 anos de mercado: o que muda no seu pedido."
           />
           <div className="dgrid">
-            {DIF.map(([slug, titulo, sub]) => (
-              <div className="dif" key={slug}>
+            {conteudo.diferenciais.map((d) => (
+              <div className="dif" key={d.icone}>
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={img(`/img/icones/diferencial-${slug}.svg`)} alt="" />
+                <img src={img(`/img/icones/diferencial-${d.icone}.svg`)} alt="" />
                 <div>
-                  <b>{titulo}</b>
-                  <span>{nb(sub)}</span>
+                  <b>{d.titulo}</b>
+                  <span>{nb(d.sub)}</span>
                 </div>
               </div>
             ))}
@@ -389,12 +387,12 @@ export default async function HomePage() {
             ))}
           </div>
           <div className="quotes">
-            {QUOTES.map(([texto, autor]) => (
-              <div className="qt" key={autor}>
+            {conteudo.depoimentos.map((q) => (
+              <div className="qt" key={q.autor}>
                 <Icon name="quote" />
                 <div>
-                  <p>{texto}</p>
-                  <span>{autor}</span>
+                  <p>{q.texto}</p>
+                  <span>{q.autor}</span>
                 </div>
               </div>
             ))}
@@ -471,13 +469,13 @@ export default async function HomePage() {
             </a>
           </div>
           <div>
-            {FAQ.map(([pergunta, resposta], i) => (
-              <details className="q" key={pergunta} open={i === 0}>
+            {conteudo.faq.map((f, i) => (
+              <details className="q" key={f.pergunta} open={i === 0}>
                 <summary>
-                  {pergunta}
+                  {f.pergunta}
                   <Icon name="plus" />
                 </summary>
-                <div className="a">{resposta}</div>
+                <div className="a">{f.resposta}</div>
               </details>
             ))}
           </div>
@@ -486,7 +484,7 @@ export default async function HomePage() {
 
       {/* CTA final */}
       <div className="wrap reveal">
-        <FinalCta />
+        <FinalCta cta={conteudo.ctaFinal} />
       </div>
 
       <RevealInit />
@@ -494,23 +492,18 @@ export default async function HomePage() {
   );
 }
 
-// CTA final (finalCTA do mockup).
-function FinalCta(): ReactNode {
+// CTA final (finalCTA do mockup). Copy vem do global `conteudo-home` (ctaFinal),
+// com fallback no mock; as imagens/estilo seguem no front.
+function FinalCta({ cta }: { cta: ConteudoHome["ctaFinal"] }): ReactNode {
   return (
     <div className="final">
       <div style={{ position: "relative", zIndex: 2 }}>
-        <h2>
-          Monte seu orçamento.
-          <br />
-          Um especialista responde com a&nbsp;proposta.
-        </h2>
-        <p>
-          Sem pagamento online. Você escolhe os produtos e a quantidade, e o time comercial retorna.
-        </p>
+        <h2>{nb(cta.titulo)}</h2>
+        <p>{cta.texto}</p>
       </div>
       <div className="bt">
-        <Link className="btn btn-cta btn-lg" href="/catalogo">
-          Começar meu orçamento
+        <Link className="btn btn-cta btn-lg" href={cta.ctaHref}>
+          {cta.ctaLabel}
           <Icon name="arrow-right" />
         </Link>
         <a className="btn btn-ghost-w btn-lg" href={WA} target="_blank" rel="noopener">
