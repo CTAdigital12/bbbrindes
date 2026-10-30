@@ -8,7 +8,7 @@ import Rail from "@/components/Rail";
 import ProductCardJoy from "@/components/ProductCardJoy";
 import { getProdutos, getProdutosEcologicos } from "@/lib/produtos";
 import { getCampanhas, getCases, getCategorias, getMaterias, getPosts } from "@/lib/content";
-import { img } from "@/lib/asset";
+import { img, imgSrc } from "@/lib/asset";
 import {
   WA,
   nb,
@@ -179,7 +179,11 @@ export default async function HomePage() {
               const iconFile = CAT_ICON[c.slug];
               return (
                 <Link className="cat" href={`/catalogo?categoria=${c.slug}`} key={c.slug}>
-                  {iconFile ? (
+                  {c.icone ? (
+                    // Icone cadastrado no painel (Payload) tem prioridade.
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img src={imgSrc(c.icone)} alt="" />
+                  ) : iconFile ? (
                     // eslint-disable-next-line @next/next/no-img-element
                     <img src={img(`/img/icones/${iconFile}.svg`)} alt="" />
                   ) : (
