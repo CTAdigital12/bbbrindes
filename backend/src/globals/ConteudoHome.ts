@@ -1,5 +1,7 @@
 import type { GlobalConfig } from 'payload'
 
+import { rebuildGlobalAfterChange } from '../hooks/triggerDeploy'
+
 // Global "Conteudo da home" (FB-6, Fase 5). Torna editavel no /admin a COPY dos
 // blocos da home que hoje sao hardcoded no front (frontend/src/data/home-joy.ts e
 // blocos inline em app/page.tsx): selos de confianca, diferenciais, depoimentos,
@@ -21,6 +23,11 @@ export const ConteudoHome: GlobalConfig = {
   },
   access: {
     read: () => true,
+  },
+  // Editar a home no admin dispara rebuild do site estatico (FB-6: editavel tem
+  // que refletir sem dev). Mesmo hook do global `configuracoes`.
+  hooks: {
+    afterChange: [rebuildGlobalAfterChange],
   },
   fields: [
     {
