@@ -337,60 +337,132 @@ function conteudoHomeMock(): ConteudoHome {
   };
 }
 
-// Le o global com fallback POR BLOCO: cada array/grupo que vier vazio ou faltando
-// cai no mock, entao um global so parcialmente preenchido completa o resto com o
-// valor atual (mesma logica do getConfig). Imagens dos blocos e o countdown
-// seguem no front.
+// Remove acentos pra comparar "mesmo texto a menos de acento". O backend semeia os
+// defaultValue do global em ASCII (ex.: "Fabrica propria"); a copy acentuada
+// canonica vive no front (mock). Enquanto o campo do global ainda for esse default
+// ASCII, mantemos a versao acentuada; so quando o cliente edita de verdade (texto
+// diferente) o global entra. Assim a home nunca regride de acento.
+function semAcento(s: string): string {
+  return s
+    .normalize("NFD")
+    .replace(/[̀-ͯ]/g, "")
+    .toLowerCase()
+    .trim();
+}
+
+// Campo de texto: usa o mock (acentuado) quando o global esta vazio OU e o mesmo
+// texto a menos de acento (ainda o default do backend); usa o global quando for
+// edicao real do cliente.
+function preferir(doGlobal: string | undefined, doMock: string): string {
+  if (!doGlobal) return doMock;
+  return semAcento(doGlobal) === semAcento(doMock) ? doMock : doGlobal;
+}
+
+// Le o global com fallback POR BLOCO (array/grupo vazio ou faltando cai no mock) e,
+// nos campos de texto, com preferencia pela copy acentuada do mock enquanto o
+// global ainda for o default ASCII do backend (ver `preferir`). Arrays pareiam por
+// indice quando o tamanho bate (so o default mudou); se o cliente mexeu na
+// estrutura (tamanho diferente), usa o array do global como veio. Imagens dos
+// blocos e o countdown seguem no front.
 export async function getConteudoHome(): Promise<ConteudoHome> {
   const mock = conteudoHomeMock();
   try {
     const doc = await payloadGlobal<ConteudoHomeDoc>("conteudo-home");
 
-    const selos = (doc.selosConfianca ?? [])
+    const selosG = (doc.selosConfianca ?? [])
       .map((s) => ({ icone: s.icone ?? "", titulo: s.titulo ?? "", sub: s.sub ?? "" }))
       .filter((s) => s.icone && s.titulo);
-    const difs = (doc.diferenciais ?? [])
+    const selos =
+      selosG.length === 0
+        ? mock.selosConfianca
+        : selosG.length === mock.selosConfianca.length
+          ? mock.selosConfianca.map((m, i) => ({
+              icone: selosG[i].icone || m.icone,
+              titulo: preferir(selosG[i].titulo, m.titulo),
+              sub: preferir(selosG[i].sub, m.sub),
+            }))
+          : selosG;
+
+    const difsG = (doc.diferenciais ?? [])
       .map((d) => ({ icone: d.icone ?? "", titulo: d.titulo ?? "", sub: d.sub ?? "" }))
       .filter((d) => d.icone && d.titulo);
-    const deps = (doc.depoimentos ?? [])
+    const difs =
+      difsG.length === 0
+        ? mock.diferenciais
+        : difsG.length === mock.diferenciais.length
+          ? mock.diferenciais.map((m, i) => ({
+              icone: difsG[i].icone || m.icone,
+              titulo: preferir(difsG[i].titulo, m.titulo),
+              sub: preferir(difsG[i].sub, m.sub),
+            }))
+          : difsG;
+
+    const depsG = (doc.depoimentos ?? [])
       .map((q) => ({ texto: q.texto ?? "", autor: q.autor ?? "" }))
       .filter((q) => q.texto && q.autor);
-    const faqs = (doc.faq ?? [])
+    const deps =
+      depsG.length === 0
+        ? mock.depoimentos
+        : depsG.length === mock.depoimentos.length
+          ? mock.depoimentos.map((m, i) => ({
+              texto: preferir(depsG[i].texto, m.texto),
+              autor: preferir(depsG[i].autor, m.autor),
+            }))
+          : depsG;
+
+    const faqsG = (doc.faq ?? [])
       .map((f) => ({ pergunta: f.pergunta ?? "", resposta: f.resposta ?? "" }))
       .filter((f) => f.pergunta && f.resposta);
-    const linhasEco = (doc.ecoLead?.linhas ?? []).map((l) => l.texto ?? "").filter(Boolean);
+    const faqs =
+      faqsG.length === 0
+        ? mock.faq
+        : faqsG.length === mock.faq.length
+          ? mock.faq.map((m, i) => ({
+              pergunta: preferir(faqsG[i].pergunta, m.pergunta),
+              resposta: preferir(faqsG[i].resposta, m.resposta),
+            }))
+          : faqsG;
+
+    const linhasG = (doc.ecoLead?.linhas ?? []).map((l) => l.texto ?? "").filter(Boolean);
+    const linhas =
+      linhasG.length === 0
+        ? mock.ecoLead.linhas
+        : linhasG.length === mock.ecoLead.linhas.length
+          ? mock.ecoLead.linhas.map((m, i) => preferir(linhasG[i], m))
+          : linhasG;
 
     return {
-      selosConfianca: selos.length ? selos : mock.selosConfianca,
-      diferenciais: difs.length ? difs : mock.diferenciais,
-      depoimentos: deps.length ? deps : mock.depoimentos,
-      faq: faqs.length ? faqs : mock.faq,
+      selosConfianca: selos,
+      diferenciais: difs,
+      depoimentos: deps,
+      faq: faqs,
       urgencia: {
-        chip: doc.urgencia?.chip ?? mock.urgencia.chip,
-        tituloInicio: doc.urgencia?.tituloInicio ?? mock.urgencia.tituloInicio,
-        tituloDestaque: doc.urgencia?.tituloDestaque ?? mock.urgencia.tituloDestaque,
-        texto: doc.urgencia?.texto ?? mock.urgencia.texto,
-        ctaLabel: doc.urgencia?.ctaLabel ?? mock.urgencia.ctaLabel,
-        ctaHref: doc.urgencia?.ctaHref ?? mock.urgencia.ctaHref,
+        chip: preferir(doc.urgencia?.chip, mock.urgencia.chip),
+        tituloInicio: preferir(doc.urgencia?.tituloInicio, mock.urgencia.tituloInicio),
+        tituloDestaque: preferir(doc.urgencia?.tituloDestaque, mock.urgencia.tituloDestaque),
+        texto: preferir(doc.urgencia?.texto, mock.urgencia.texto),
+        ctaLabel: preferir(doc.urgencia?.ctaLabel, mock.urgencia.ctaLabel),
+        // href e slug, nao prose: mantem o global quando preenchido.
+        ctaHref: doc.urgencia?.ctaHref || mock.urgencia.ctaHref,
       },
       ecoBanner: {
-        eyebrow: doc.ecoBanner?.eyebrow ?? mock.ecoBanner.eyebrow,
-        titulo: doc.ecoBanner?.titulo ?? mock.ecoBanner.titulo,
-        texto: doc.ecoBanner?.texto ?? mock.ecoBanner.texto,
-        ctaLabel: doc.ecoBanner?.ctaLabel ?? mock.ecoBanner.ctaLabel,
+        eyebrow: preferir(doc.ecoBanner?.eyebrow, mock.ecoBanner.eyebrow),
+        titulo: preferir(doc.ecoBanner?.titulo, mock.ecoBanner.titulo),
+        texto: preferir(doc.ecoBanner?.texto, mock.ecoBanner.texto),
+        ctaLabel: preferir(doc.ecoBanner?.ctaLabel, mock.ecoBanner.ctaLabel),
       },
       ecoLead: {
-        eyebrow: doc.ecoLead?.eyebrow ?? mock.ecoLead.eyebrow,
-        titulo: doc.ecoLead?.titulo ?? mock.ecoLead.titulo,
-        texto: doc.ecoLead?.texto ?? mock.ecoLead.texto,
-        linhas: linhasEco.length ? linhasEco : mock.ecoLead.linhas,
-        ctaLabel: doc.ecoLead?.ctaLabel ?? mock.ecoLead.ctaLabel,
+        eyebrow: preferir(doc.ecoLead?.eyebrow, mock.ecoLead.eyebrow),
+        titulo: preferir(doc.ecoLead?.titulo, mock.ecoLead.titulo),
+        texto: preferir(doc.ecoLead?.texto, mock.ecoLead.texto),
+        linhas,
+        ctaLabel: preferir(doc.ecoLead?.ctaLabel, mock.ecoLead.ctaLabel),
       },
       ctaFinal: {
-        titulo: doc.ctaFinal?.titulo ?? mock.ctaFinal.titulo,
-        texto: doc.ctaFinal?.texto ?? mock.ctaFinal.texto,
-        ctaLabel: doc.ctaFinal?.ctaLabel ?? mock.ctaFinal.ctaLabel,
-        ctaHref: doc.ctaFinal?.ctaHref ?? mock.ctaFinal.ctaHref,
+        titulo: preferir(doc.ctaFinal?.titulo, mock.ctaFinal.titulo),
+        texto: preferir(doc.ctaFinal?.texto, mock.ctaFinal.texto),
+        ctaLabel: preferir(doc.ctaFinal?.ctaLabel, mock.ctaFinal.ctaLabel),
+        ctaHref: doc.ctaFinal?.ctaHref || mock.ctaFinal.ctaHref,
       },
     };
   } catch {
