@@ -137,13 +137,18 @@ export async function getCampanhas(): Promise<Campanha[]> {
   }
 }
 
-type CategoriaDoc = { slug: string; nome: string };
+type CategoriaDoc = { slug: string; nome: string; icone?: { url?: string } | number };
 
 export async function getCategorias(): Promise<Categoria[]> {
   try {
-    const docs = await payloadFind<CategoriaDoc>("categorias", { sort: "ordem" });
+    // depth: 1 traz o icone (upload) como objeto com url (sem isso vem so o id).
+    const docs = await payloadFind<CategoriaDoc>("categorias", { sort: "ordem", depth: 1 });
     if (docs.length === 0) return categoriasMock;
-    return docs.map((d) => ({ slug: d.slug, nome: d.nome }));
+    return docs.map((d) => ({
+      slug: d.slug,
+      nome: d.nome,
+      icone: typeof d.icone === "object" ? d.icone?.url : undefined,
+    }));
   } catch {
     return categoriasMock;
   }

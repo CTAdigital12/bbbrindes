@@ -3,6 +3,9 @@
 export type Categoria = {
   slug: string;
   nome: string;
+  // Icone da categoria (Payload: upload `icone`). URL da media. Opcional; sem ele
+  // o front cai no icone estatico (CAT_ICON) e, sem este, num generico.
+  icone?: string;
 };
 
 export type VariacaoCor = {
