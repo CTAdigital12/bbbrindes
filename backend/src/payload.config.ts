@@ -21,6 +21,7 @@ import { Revendedores } from './collections/Revendedores'
 import { LogsEntrega } from './collections/LogsEntrega'
 import { Configuracoes } from './globals/Configuracoes'
 import { ConteudoHome } from './globals/ConteudoHome'
+import { ConteudoInstitucional } from './globals/ConteudoInstitucional'
 import { withRebuildHooks } from './hooks/triggerDeploy'
 import { orcamentoEndpoint } from './endpoints/orcamento'
 
@@ -122,6 +123,8 @@ export default buildConfig({
     Configuracoes,
     // Conteudo da home (selos, diferenciais, depoimentos, FAQ, urgencia, eco, CTA). FB-6 Fase 5.
     ConteudoHome,
+    // Conteudo institucional (Quem somos + SAC). FB-6 Fase 6.
+    ConteudoInstitucional,
   ],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',
