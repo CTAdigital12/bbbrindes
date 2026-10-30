@@ -17,8 +17,10 @@ import { Posts } from './collections/Posts'
 import { Cases } from './collections/Cases'
 import { Imprensa } from './collections/Imprensa'
 import { Revendedores } from './collections/Revendedores'
+import { LogsEntrega } from './collections/LogsEntrega'
 import { Configuracoes } from './globals/Configuracoes'
 import { withRebuildHooks } from './hooks/triggerDeploy'
+import { orcamentoEndpoint } from './endpoints/orcamento'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -100,9 +102,17 @@ export default buildConfig({
     // Sistema
     Media,
     Users,
+    // Log de entrega dos orcamentos (FB-7). Operacional, nao vai pro HTML: fica
+    // FORA de REBUILD_ON_CHANGE, entao nao dispara rebuild a cada submissao.
+    LogsEntrega,
   ].map((collection) =>
     REBUILD_ON_CHANGE.includes(collection.slug) ? withRebuildHooks(collection) : collection,
   ),
+  endpoints: [
+    // FB-7 PART 0: recebe o pedido de orcamento do site, entrega ao CRM (stub por
+    // ora) e grava o log de entrega. Montado em POST /api/orcamento.
+    orcamentoEndpoint,
+  ],
   globals: [
     // Configuracoes gerais do site (contato, redes, selos, blurb). FB-6.
     Configuracoes,
