@@ -30,6 +30,27 @@ export default function SucessoPage() {
     }
   }, []);
 
+  // Prefill do WhatsApp com o resumo do pedido (nome, empresa e itens). Este e o
+  // caminho real de entrega do lead enquanto o CRM/n8n nao esta ligado, entao vale
+  // adiantar o maximo. Sem snapshot, o link abre o WhatsApp sem texto.
+  const waHref = resumo
+    ? `${WA}?text=${encodeURIComponent(
+        [
+          "Olá! Acabei de enviar um pedido de orçamento pelo site.",
+          "",
+          `Nome: ${resumo.solicitante.nome}`,
+          resumo.solicitante.empresa ? `Empresa: ${resumo.solicitante.empresa}` : "",
+          "",
+          "Itens:",
+          ...resumo.itens.map(
+            (i) => `• ${i.nome}${i.cor ? ` (${i.cor})` : ""}: ${fmt(i.quantidade)} un.`,
+          ),
+        ]
+          .filter(Boolean)
+          .join("\n"),
+      )}`
+    : WA;
+
   return (
     <div className="wrap">
       <div className="done">
@@ -42,7 +63,7 @@ export default function SucessoPage() {
           entra em contato pelo WhatsApp ou e-mail informado.
         </p>
         <div style={{ display: "flex", gap: 10, justifyContent: "center", flexWrap: "wrap" }}>
-          <a className="btn btn-wa" href={WA} target="_blank" rel="noopener">
+          <a className="btn btn-wa" href={waHref} target="_blank" rel="noopener">
             <Icon name="brand-whatsapp" />
             Adiantar pelo WhatsApp
           </a>

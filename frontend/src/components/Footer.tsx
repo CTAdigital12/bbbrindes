@@ -94,7 +94,7 @@ export default function Footer({ config }: { config: SiteConfig }) {
 
           <div className="fbot">
             <span>&copy; 2026 BB Brindes, uma empresa Grupo BB, CNPJ {config.cnpj}</span>
-            <span><Link href="/sac">Politica de privacidade</Link></span>
+            <span><Link href="/politica-de-privacidade">Politica de privacidade</Link></span>
           </div>
         </div>
       </footer>
