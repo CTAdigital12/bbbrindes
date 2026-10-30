@@ -1,7 +1,7 @@
 import { randomUUID } from 'crypto'
 import type { Endpoint, PayloadRequest } from 'payload'
 
-import { entregarLead, type ItemLead, type LeadOrcamento } from '../integrations/leads2b'
+import { entregarLead, type ItemLead, type LeadOrcamento } from '../integrations/crm'
 
 // Endpoint publico que recebe o pedido de orcamento do site (FB-7, PART 0).
 // Fluxo: form de /orcamento -> POST /api/orcamento -> adapter do Leads2b (stub por
@@ -116,7 +116,7 @@ export const orcamentoEndpoint: Endpoint = {
       total: totalUnidades,
     }
 
-    const resultado = await entregarLead(lead)
+    const resultado = await entregarLead(lead, requisicaoId)
 
     // Log de entrega (auditoria + PII minima/mascarada). Criado via Local API, que
     // ignora o access `create: () => false` da collection (so o endpoint grava).

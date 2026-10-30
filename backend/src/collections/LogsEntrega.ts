@@ -53,13 +53,13 @@ export const LogsEntrega: CollectionConfig = {
       defaultValue: 'stub',
       options: [
         { label: 'Stub (sem CRM)', value: 'stub' },
-        { label: 'Real (Leads2b)', value: 'real' },
+        { label: 'Real (entregue via n8n)', value: 'real' },
       ],
     },
     {
       name: 'crmId',
       type: 'text',
-      admin: { description: 'Id do lead no Leads2b, quando a entrega real estiver ligada.' },
+      admin: { description: 'Id do lead no CRM, quando a entrega real (n8n) estiver ligada.' },
     },
     {
       name: 'empresa',
