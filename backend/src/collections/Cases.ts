@@ -30,5 +30,12 @@ export const Cases: CollectionConfig = {
         { name: 'autor', type: 'text' },
       ],
     },
+    {
+      name: 'tags',
+      type: 'relationship',
+      relationTo: 'tags',
+      hasMany: true,
+      admin: { description: 'Tags pra distribuir/relacionar com blog, cases e imprensa.' },
+    },
   ],
 }

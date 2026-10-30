@@ -19,5 +19,12 @@ export const Imprensa: CollectionConfig = {
     { name: 'data', type: 'date', required: true },
     { name: 'resumo', type: 'textarea' },
     { name: 'url', type: 'text', label: 'Link da materia' },
+    {
+      name: 'tags',
+      type: 'relationship',
+      relationTo: 'tags',
+      hasMany: true,
+      admin: { description: 'Tags pra distribuir/relacionar com blog, cases e imprensa.' },
+    },
   ],
 }
