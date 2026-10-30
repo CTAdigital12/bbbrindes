@@ -32,6 +32,7 @@ type ProdutoDoc = {
   imagens?: MediaRef[];
   imagemAmbientada?: MediaRef;
   videoUrl?: string;
+  quantidadeMinima?: number;
   faixaPreco?: Produto["faixaPreco"];
   destaques?: Produto["destaques"];
   logistica?: { materiaPrima?: string };
@@ -120,6 +121,7 @@ function mapear(doc: ProdutoDoc): Produto {
     imagens: urlsDasImagens(doc.imagens),
     imagemAmbientada: urlDaImagem(doc.imagemAmbientada),
     videoUrl: doc.videoUrl || undefined,
+    quantidadeMinima: typeof doc.quantidadeMinima === "number" ? doc.quantidadeMinima : undefined,
   };
 }
 

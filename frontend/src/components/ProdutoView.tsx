@@ -18,8 +18,6 @@ import Link from "next/link";
 // .seg, .step, .warn, .buy#buyrow, .assure, .sticky-buy#sbuy). Dado REAL do
 // Payload (getProdutoBySlug); cores e imagens de produto.cores / produto.imagens.
 
-const MIN_QTD = 500;
-const PRESETS = [500, 1000, 3000, 5000];
 const PASSO = 100;
 const fmt = (n: number) => n.toLocaleString("pt-BR");
 
@@ -39,9 +37,15 @@ export default function ProdutoView({ produto }: { produto: Produto }) {
     ? cores.map((c, i) => ({ cor: c.nome, src: imagens[i] }))
     : imagens.map((src) => ({ cor: "", src }));
 
+  // Quantidade minima do pedido: vem do Payload por produto (quantidadeMinima),
+  // com fallback em 500 (minimo padrao da fabrica) para produtos sem o campo. Os
+  // presets derivam dela, mantendo a escada proporcional (500 -> 500/1k/3k/5k).
+  const minQtd = produto.quantidadeMinima ?? 500;
+  const presets = [minQtd, minQtd * 2, minQtd * 6, minQtd * 10];
+
   const [corNome, setCorNome] = useState(cores[0]?.nome ?? "");
   const [imgIdx, setImgIdx] = useState(0);
-  const [qtd, setQtd] = useState(MIN_QTD);
+  const [qtd, setQtd] = useState(minQtd);
   const [pers, setPers] = useState<"transfer" | "serigrafia">("transfer");
   const [sbOn, setSbOn] = useState(false);
   const [toastMsg, setToastMsg] = useState("");
@@ -58,7 +62,7 @@ export default function ProdutoView({ produto }: { produto: Produto }) {
   const qinRef = useRef<HTMLInputElement>(null);
   const toastTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const abaixoDoMinimo = qtd < MIN_QTD;
+  const abaixoDoMinimo = qtd < minQtd;
 
   // Flags da estante (.fl): Novo (lancamento), Livre de BPA (selo/atoxidade),
   // Uso permanente e Reciclavel. Espelha o bloco .fl do produto() do mockup.
@@ -133,7 +137,7 @@ export default function ProdutoView({ produto }: { produto: Produto }) {
   function aoAdicionar() {
     if (abaixoDoMinimo) {
       qinRef.current?.focus();
-      toast("O pedido mínimo é de 500 unidades");
+      toast(`O pedido mínimo é de ${fmt(minQtd)} unidades`);
       return;
     }
     adicionar({
@@ -195,7 +199,7 @@ export default function ProdutoView({ produto }: { produto: Produto }) {
           <p className="sub">
             {produto.detalhe?.linhaCurta ||
               produto.descricao ||
-              `${produto.nome} personalizado com a sua logomarca, fabricado no Brasil. Pedidos a partir de 500 unidades.`}
+              `${produto.nome} personalizado com a sua logomarca, fabricado no Brasil. Pedidos a partir de ${fmt(minQtd)} unidades.`}
           </p>
 
           <div className="blk">
@@ -241,7 +245,7 @@ export default function ProdutoView({ produto }: { produto: Produto }) {
 
             <div>
               <div className="lbl">
-                Quantidade <span>mínimo 500 unidades</span>
+                Quantidade <span>mínimo {fmt(minQtd)} unidades</span>
                 {embedUrl && (
                   <button
                     type="button"
@@ -254,7 +258,7 @@ export default function ProdutoView({ produto }: { produto: Produto }) {
                 )}
               </div>
               <div className="seg">
-                {PRESETS.map((n) => (
+                {presets.map((n) => (
                   <button
                     key={n}
                     type="button"
@@ -289,7 +293,8 @@ export default function ProdutoView({ produto }: { produto: Produto }) {
                 <small>ou digite a quantidade exata</small>
               </div>
               <div className={`warn${abaixoDoMinimo ? " on" : ""}`} id="qw">
-                O pedido mínimo é de 500 unidades. Para volumes menores, fale com o especialista.
+                O pedido mínimo é de {fmt(minQtd)} unidades. Para volumes menores, fale com o
+                especialista.
               </div>
             </div>
 
