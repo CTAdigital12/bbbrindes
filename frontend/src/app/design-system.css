@@ -352,10 +352,10 @@ body.drawer-on .wa-f,body.wa-hide .wa-f{opacity:0;pointer-events:none;transform:
 /* Hover: botao redondo expande numa pilula pra esquerda (ancorado a direita)
    revelando a mensagem de urgencia; o texto colapsa sozinho (max-width:0) pra
    nao cortar o anel pulsante. */
-.wa-f{display:flex;align-items:center;justify-content:flex-end;transition:width .35s cubic-bezier(.2,.8,.2,1),border-radius .35s,bottom .35s cubic-bezier(.2,.8,.2,1),opacity .25s,transform .25s}
+.wa-f{display:flex;align-items:center;justify-content:flex-end;transition:width .5s cubic-bezier(.2,.8,.2,1),border-radius .5s,bottom .35s cubic-bezier(.2,.8,.2,1),opacity .25s,transform .25s}
 .wa-f .ic{flex:none;margin:0 13px}
-.wa-f .wa-msg{max-width:0;overflow:hidden;opacity:0;white-space:nowrap;font-size:13.5px;font-weight:600;line-height:1;transition:max-width .35s cubic-bezier(.2,.8,.2,1),opacity .2s,padding .35s}
-.wa-f:hover{width:auto;border-radius:27px}
+.wa-f .wa-msg{max-width:0;overflow:hidden;opacity:0;white-space:nowrap;font-size:13.5px;font-weight:600;line-height:1;transition:max-width .5s cubic-bezier(.2,.8,.2,1),opacity .28s,padding .5s}
+.wa-f:hover{width:auto;border-radius:var(--pill)}
 .wa-f:hover .wa-msg{max-width:260px;opacity:1;padding-left:18px}
 .wa-f:hover:after{opacity:0}
 .notes-t{display:inline-flex;gap:.4em;align-items:center;font-size:12px;font-weight:600;color:#1c1c1c;background:var(--lime);border-radius:var(--pill);padding:3px 10px}
