@@ -9,6 +9,7 @@ import sharp from 'sharp'
 
 import { Users } from './collections/Users'
 import { Media } from './collections/Media'
+import { Logos } from './collections/Logos'
 import { Categorias } from './collections/Categorias'
 import { Produtos } from './collections/Produtos'
 import { Banners } from './collections/Banners'
@@ -51,6 +52,7 @@ const REBUILD_ON_CHANGE = [
   'imprensa',
   'tags',
   'media',
+  'logos',
 ]
 
 // Conexao ao Postgres. Preferimos parametros SEPARADOS (PGHOST/PGPORT/PGUSER/
@@ -101,6 +103,8 @@ export default buildConfig({
     Cases,
     Imprensa,
     Tags,
+    // Logos das marcas (marquee da home). FB-6.
+    Logos,
     // Revenda
     Revendedores,
     // Sistema
@@ -142,6 +146,7 @@ export default buildConfig({
           s3Storage({
             collections: {
               media: true,
+              logos: true,
             },
             bucket: process.env.S3_BUCKET as string,
             config: {
