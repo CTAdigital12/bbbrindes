@@ -349,6 +349,15 @@ body.drawer-on .wa-f,body.wa-hide .wa-f{opacity:0;pointer-events:none;transform:
 .wa-f{transition:bottom .35s cubic-bezier(.2,.8,.2,1),opacity .25s,transform .25s}
 .wa-f:after{content:"";position:absolute;inset:0;border-radius:50%;box-shadow:0 0 0 0 rgba(37,211,102,.5);animation:ring 2.4s infinite}
 @keyframes ring{70%{box-shadow:0 0 0 16px rgba(37,211,102,0)}100%{box-shadow:0 0 0 0 rgba(37,211,102,0)}}
+/* Hover: botao redondo expande numa pilula pra esquerda (ancorado a direita)
+   revelando a mensagem de urgencia; o texto colapsa sozinho (max-width:0) pra
+   nao cortar o anel pulsante. */
+.wa-f{display:flex;align-items:center;justify-content:flex-end;transition:width .35s cubic-bezier(.2,.8,.2,1),border-radius .35s,bottom .35s cubic-bezier(.2,.8,.2,1),opacity .25s,transform .25s}
+.wa-f .ic{flex:none;margin:0 13px}
+.wa-f .wa-msg{max-width:0;overflow:hidden;opacity:0;white-space:nowrap;font-size:13.5px;font-weight:600;line-height:1;transition:max-width .35s cubic-bezier(.2,.8,.2,1),opacity .2s,padding .35s}
+.wa-f:hover{width:auto;border-radius:27px}
+.wa-f:hover .wa-msg{max-width:260px;opacity:1;padding-left:18px}
+.wa-f:hover:after{opacity:0}
 .notes-t{display:inline-flex;gap:.4em;align-items:center;font-size:12px;font-weight:600;color:#1c1c1c;background:var(--lime);border-radius:var(--pill);padding:3px 10px}
 .notes-t:hover{background:#fff}
 .toast{position:fixed;left:50%;top:92px;transform:translate(-50%,-20px);opacity:0;z-index:90;background:var(--deep);color:#fff;border-radius:var(--pill);padding:12px 20px;display:flex;gap:10px;align-items:center;font-size:14px;font-weight:500;box-shadow:var(--sh-2);transition:.3s;pointer-events:none}

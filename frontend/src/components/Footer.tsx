@@ -106,6 +106,11 @@ export default function Footer({ config }: { config: SiteConfig }) {
         rel="noopener"
         aria-label="Falar no WhatsApp"
       >
+        {/* Mensagem revelada no hover (expande o botao numa pilula); aria-hidden
+            porque o aria-label ja da o nome acessivel do link. */}
+        <span className="wa-msg" aria-hidden="true">
+          Com urgência? Fala no WhatsApp
+        </span>
         <Icon name="brand-whatsapp" />
       </a>
     </>
