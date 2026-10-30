@@ -14,7 +14,7 @@ import Link from "next/link";
 
 // PDP (galeria + configurador + barra de compra fixa) espelhando a funcao
 // produto() do mockup funcional da Joy, com as classes verbatim do design-system.css
-// (.pd, .gal, .thumbs, .stage, .ring, .fl, .pinfo, .sub, .blk, .colors, .seg2,
+// (.pd, .gal, .thumbs, .stage, .ring, .fl, .pinfo, .sub, .blk, .colors,
 // .seg, .step, .warn, .buy#buyrow, .assure, .sticky-buy#sbuy). Dado REAL do
 // Payload (getProdutoBySlug); cores e imagens de produto.cores / produto.imagens.
 
@@ -46,7 +46,6 @@ export default function ProdutoView({ produto }: { produto: Produto }) {
   const [corNome, setCorNome] = useState(cores[0]?.nome ?? "");
   const [imgIdx, setImgIdx] = useState(0);
   const [qtd, setQtd] = useState(minQtd);
-  const [pers, setPers] = useState<"transfer" | "serigrafia">("transfer");
   const [sbOn, setSbOn] = useState(false);
   const [toastMsg, setToastMsg] = useState("");
   const [videoOpen, setVideoOpen] = useState(false);
@@ -222,26 +221,6 @@ export default function ProdutoView({ produto }: { produto: Produto }) {
                 </div>
               </div>
             )}
-
-            <div>
-              <div className="lbl">Personalização</div>
-              <div className="seg2">
-                <button
-                  type="button"
-                  className={pers === "transfer" ? "on" : ""}
-                  onClick={() => setPers("transfer")}
-                >
-                  <b>Heat transfer</b>Cores ilimitadas, ideal para logos com degradê
-                </button>
-                <button
-                  type="button"
-                  className={pers === "serigrafia" ? "on" : ""}
-                  onClick={() => setPers("serigrafia")}
-                >
-                  <b>Serigrafia</b>Até 4 cores, acabamento sólido e durável
-                </button>
-              </div>
-            </div>
 
             <div>
               <div className="lbl">

@@ -50,6 +50,21 @@ export default function ProdutoDetalheView({ produto }: { produto: Produto }) {
           { rotulo: "Pedido mínimo", valor: "500 unidades" },
         ];
 
+  // Metodos de impressao (impressao.metodos, da planilha): citados aqui como
+  // informacao, ja que o cliente nao escolhe mais a tecnica no orcamento (ela
+  // depende da arte e nao muda o preco). Com specs reais do painel, so adiciona
+  // a linha "Personalização" se ainda nao houver uma de impressao/personalizacao;
+  // no fallback, troca o texto generico pelo metodo real do produto.
+  const temSpecsReais = Boolean(d?.especificacoes && d.especificacoes.length);
+  const metodos = produto.metodosImpressao?.trim();
+  const specsFinais = !metodos
+    ? specs
+    : temSpecsReais
+      ? specs.some((s) => /impress|personaliza/i.test(s.rotulo))
+        ? specs
+        : [...specs, { rotulo: "Personalização", valor: metodos }]
+      : specs.map((s) => (/personaliza/i.test(s.rotulo) ? { ...s, valor: metodos } : s));
+
   const ben =
     d?.beneficios && d.beneficios.length
       ? d.beneficios
@@ -114,7 +129,7 @@ export default function ProdutoDetalheView({ produto }: { produto: Produto }) {
           <h2 className="h">Especificações</h2>
           <table className="sp">
             <tbody>
-              {specs.map((s) => (
+              {specsFinais.map((s) => (
                 <tr key={s.rotulo}>
                   <td>{s.rotulo}</td>
                   <td>{s.valor}</td>

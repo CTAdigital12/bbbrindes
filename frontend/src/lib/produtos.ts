@@ -36,6 +36,7 @@ type ProdutoDoc = {
   faixaPreco?: Produto["faixaPreco"];
   destaques?: Produto["destaques"];
   logistica?: { materiaPrima?: string };
+  impressao?: { metodos?: string };
 };
 
 // Cor sem hex definido (o dado de cor estruturado ainda nao veio do Plinio):
@@ -122,6 +123,7 @@ function mapear(doc: ProdutoDoc): Produto {
     imagemAmbientada: urlDaImagem(doc.imagemAmbientada),
     videoUrl: doc.videoUrl || undefined,
     quantidadeMinima: typeof doc.quantidadeMinima === "number" ? doc.quantidadeMinima : undefined,
+    metodosImpressao: doc.impressao?.metodos?.trim() || undefined,
   };
 }
 

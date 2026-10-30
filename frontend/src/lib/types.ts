@@ -42,6 +42,10 @@ export type Produto = {
   // Quantidade minima de pedido (Payload: quantidadeMinima). Opcional; quando
   // ausente a PDP assume 500 (minimo padrao da fabrica).
   quantidadeMinima?: number;
+  // Metodos de impressao/personalizacao aceitos (Payload: impressao.metodos, texto
+  // da planilha, ex.: "Serigrafia cilindrica/ tampografia"). Opcional; exibido como
+  // informacao na PDP (o cliente nao escolhe mais a tecnica: depende da arte).
+  metodosImpressao?: string;
 };
 
 // Blocos da pagina de produto simulados no wireframe (S03-11). Espelham a
