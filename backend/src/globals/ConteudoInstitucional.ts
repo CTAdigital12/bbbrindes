@@ -90,6 +90,22 @@ export const ConteudoInstitucional: GlobalConfig = {
             { name: 'desc', type: 'text', required: true },
           ],
         },
+        {
+          name: 'fotoFabrica',
+          type: 'upload',
+          relationTo: 'media',
+          admin: { description: 'Foto de destaque da fabrica (topo do bloco). Vazio = usa a imagem padrao do site.' },
+        },
+        {
+          name: 'galeria',
+          type: 'array',
+          label: 'Galeria de fotos',
+          admin: { description: 'Fotos da fabrica/producao na faixa deslizante. Vazio = usa as fotos padrao do site.' },
+          fields: [
+            { name: 'imagem', type: 'upload', relationTo: 'media', required: true },
+            { name: 'legenda', type: 'text' },
+          ],
+        },
       ],
     },
     {

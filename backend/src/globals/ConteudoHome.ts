@@ -101,7 +101,7 @@ export const ConteudoHome: GlobalConfig = {
       name: 'urgencia',
       type: 'group',
       label: 'Bloco de urgencia (agenda de fim de ano)',
-      admin: { description: 'O countdown e a imagem seguem no front; aqui e so a copy.' },
+      admin: { description: 'O countdown segue no front; a copy e a imagem sao editaveis aqui.' },
       fields: [
         { name: 'chip', type: 'text', defaultValue: 'Agenda de fim de ano' },
         { name: 'tituloInicio', type: 'text', defaultValue: 'Dezembro tem prazo.', admin: { description: 'Parte normal do titulo.' } },
@@ -109,6 +109,7 @@ export const ConteudoHome: GlobalConfig = {
         { name: 'texto', type: 'textarea', defaultValue: 'A produção de fim de ano é o pico do setor. Feche seu pedido de Natal até o fim de outubro e garanta a entrega antes das festas.' },
         { name: 'ctaLabel', type: 'text', defaultValue: 'Garantir meu prazo' },
         { name: 'ctaHref', type: 'text', defaultValue: '/campanha/natal' },
+        { name: 'imagem', type: 'upload', relationTo: 'media', admin: { description: 'Foto do bloco. Vazio = usa a imagem padrao do site.' } },
       ],
     },
     {
@@ -120,6 +121,7 @@ export const ConteudoHome: GlobalConfig = {
         { name: 'titulo', type: 'text', defaultValue: 'A nova geração dos brindes ecológicos' },
         { name: 'texto', type: 'text', defaultValue: 'Mais design. Menos impacto. Mais futuro.' },
         { name: 'ctaLabel', type: 'text', defaultValue: 'Ver linha ecológica' },
+        { name: 'imagem', type: 'upload', relationTo: 'media', admin: { description: 'Imagem de fundo do banner eco. Vazio = usa a imagem padrao do site.' } },
       ],
     },
     {
@@ -143,6 +145,7 @@ export const ConteudoHome: GlobalConfig = {
           fields: [{ name: 'texto', type: 'text', required: true }],
         },
         { name: 'ctaLabel', type: 'text', defaultValue: 'Ver linha ecológica' },
+        { name: 'imagem', type: 'upload', relationTo: 'media', admin: { description: 'Foto do bloco eco escuro. Vazio = usa a imagem padrao do site.' } },
       ],
     },
     {
