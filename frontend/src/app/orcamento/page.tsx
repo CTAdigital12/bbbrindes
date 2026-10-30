@@ -8,6 +8,7 @@ import { useState } from "react";
 import { useCart } from "@/lib/cart";
 import { imgSrc } from "@/lib/asset";
 import { WA } from "@/data/home-joy";
+import { mascaraTelefone } from "@/lib/mask";
 import Icon from "@/components/Icon";
 
 // Pagina de orcamento espelhando a funcao orcamento() do mockup funcional da
@@ -275,6 +276,7 @@ export default function OrcamentoPage() {
             id="f-nome"
             label="Nome"
             autoComplete="name"
+            maxLength={80}
             valor={form.nome}
             erro={erros.nome}
             onChange={(v) => setCampo("nome", v)}
@@ -283,6 +285,7 @@ export default function OrcamentoPage() {
             id="f-empresa"
             label="Empresa"
             autoComplete="organization"
+            maxLength={80}
             valor={form.empresa}
             erro={erros.empresa}
             onChange={(v) => setCampo("empresa", v)}
@@ -293,6 +296,7 @@ export default function OrcamentoPage() {
               label="E-mail corporativo"
               tipo="email"
               autoComplete="email"
+              maxLength={120}
               valor={form.email}
               erro={erros.email}
               onChange={(v) => setCampo("email", v)}
@@ -303,6 +307,8 @@ export default function OrcamentoPage() {
               inputMode="tel"
               autoComplete="tel"
               placeholder="(00) 00000-0000"
+              maxLength={15}
+              mask={mascaraTelefone}
               valor={form.telefone}
               erro={erros.telefone}
               onChange={(v) => setCampo("telefone", v)}
@@ -386,6 +392,8 @@ function Campo({
   inputMode,
   autoComplete,
   placeholder,
+  maxLength,
+  mask,
   onChange,
 }: {
   id: string;
@@ -396,6 +404,10 @@ function Campo({
   inputMode?: "numeric" | "tel" | "text" | "email";
   autoComplete?: string;
   placeholder?: string;
+  // Limite de caracteres do campo (evita input absurdo).
+  maxLength?: number;
+  // Formatador opcional aplicado a cada digitacao (ex.: mascara de telefone).
+  mask?: (v: string) => string;
   onChange: (v: string) => void;
 }) {
   return (
@@ -409,9 +421,10 @@ function Campo({
         inputMode={inputMode}
         autoComplete={autoComplete}
         placeholder={placeholder}
+        maxLength={maxLength}
         className={erro ? "err" : undefined}
         aria-invalid={erro || undefined}
-        onChange={(e) => onChange(e.target.value)}
+        onChange={(e) => onChange(mask ? mask(e.target.value) : e.target.value)}
       />
     </div>
   );

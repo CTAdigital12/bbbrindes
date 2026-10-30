@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useRef, useState } from "react";
+import { mascaraTelefone } from "@/lib/mask";
 import Icon from "@/components/Icon";
 
 // Motivos do mockup sac() (chegam na pessoa certa).
@@ -54,27 +55,36 @@ export default function SacPage() {
         <div className="row2">
           <div className="fld">
             <label>Nome</label>
-            <input required />
+            <input required maxLength={80} />
           </div>
           <div className="fld">
             <label>E-mail corporativo</label>
-            <input type="email" required />
+            <input type="email" required maxLength={120} />
           </div>
         </div>
         <div className="row2">
           <div className="fld">
             <label>Telefone / WhatsApp</label>
-            <input required inputMode="tel" />
+            {/* Mascara BR (00) 00000-0000; input nao controlado, formata no proprio value. */}
+            <input
+              required
+              inputMode="tel"
+              maxLength={15}
+              placeholder="(00) 00000-0000"
+              onChange={(e) => {
+                e.currentTarget.value = mascaraTelefone(e.currentTarget.value);
+              }}
+            />
           </div>
           <div className="fld">
             <label>Empresa</label>
-            <input />
+            <input maxLength={80} />
           </div>
         </div>
         <div className="row2">
           <div className="fld">
             <label>Número do pedido (opcional)</label>
-            <input />
+            <input maxLength={40} />
           </div>
           <div className="fld">
             <label>Motivo</label>
@@ -87,7 +97,7 @@ export default function SacPage() {
         </div>
         <div className="fld">
           <label>Mensagem</label>
-          <textarea required />
+          <textarea required maxLength={1000} />
         </div>
         <button type="submit" className="btn btn-deep btn-lg">
           Enviar
