@@ -77,6 +77,7 @@ export interface Config {
     imprensa: Imprensa;
     tags: Tag;
     logos: Logo;
+    'hero-slides': HeroSlide;
     revendedores: Revendedore;
     media: Media;
     users: User;
@@ -97,6 +98,7 @@ export interface Config {
     imprensa: ImprensaSelect<false> | ImprensaSelect<true>;
     tags: TagsSelect<false> | TagsSelect<true>;
     logos: LogosSelect<false> | LogosSelect<true>;
+    'hero-slides': HeroSlidesSelect<false> | HeroSlidesSelect<true>;
     revendedores: RevendedoresSelect<false> | RevendedoresSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
     users: UsersSelect<false> | UsersSelect<true>;
@@ -113,10 +115,14 @@ export interface Config {
   globals: {
     configuracoes: Configuracoe;
     'conteudo-home': ConteudoHome;
+    'conteudo-institucional': ConteudoInstitucional;
+    catalogos: Catalogo;
   };
   globalsSelect: {
     configuracoes: ConfiguracoesSelect<false> | ConfiguracoesSelect<true>;
     'conteudo-home': ConteudoHomeSelect<false> | ConteudoHomeSelect<true>;
+    'conteudo-institucional': ConteudoInstitucionalSelect<false> | ConteudoInstitucionalSelect<true>;
+    catalogos: CatalogosSelect<false> | CatalogosSelect<true>;
   };
   locale: null;
   widgets: {
@@ -587,6 +593,63 @@ export interface Logo {
   focalY?: number | null;
 }
 /**
+ * Carrossel principal da home. "Mensal" rotaciona (1 por mes, campo Mes 1-12); "Fixo" aparece sempre entre os meses. O destaque do titulo sai em verde lime.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "hero-slides".
+ */
+export interface HeroSlide {
+  id: number;
+  /**
+   * Nome interno (ex.: "Janeiro - Volta as aulas").
+   */
+  nome: string;
+  tipo: 'mensal' | 'fixo';
+  /**
+   * Mes do banner (1 = janeiro ... 12 = dezembro). So para o tipo Mensal.
+   */
+  mes?: number | null;
+  /**
+   * Ordem entre os fixos / desempate (menor primeiro).
+   */
+  ordem?: number | null;
+  ativo?: boolean | null;
+  theme?: ('dark' | 'cream') | null;
+  /**
+   * Etiqueta pequena acima do titulo (ex.: "Carnaval").
+   */
+  tag: string;
+  /**
+   * Nome do icone (ex.: sun, sparkles, droplet, heart, leaf).
+   */
+  icone?: string | null;
+  /**
+   * Parte do titulo antes do destaque.
+   */
+  tituloAntes?: string | null;
+  /**
+   * Parte destacada do titulo (verde lime).
+   */
+  tituloDestaque?: string | null;
+  /**
+   * Parte do titulo depois do destaque (pode ficar vazia).
+   */
+  tituloDepois?: string | null;
+  sub?: string | null;
+  ctaLabel?: string | null;
+  ctaHref?: string | null;
+  /**
+   * Imagem de fundo (desktop). Vazio = usa a imagem padrao do site.
+   */
+  imagemDesktop?: (number | null) | Media;
+  /**
+   * Imagem de fundo (mobile). Vazio = usa a imagem padrao do site.
+   */
+  imagemMobile?: (number | null) | Media;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "revendedores".
  */
@@ -768,6 +831,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'logos';
         value: number | Logo;
+      } | null)
+    | ({
+        relationTo: 'hero-slides';
+        value: number | HeroSlide;
       } | null)
     | ({
         relationTo: 'revendedores';
@@ -1067,6 +1134,30 @@ export interface LogosSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "hero-slides_select".
+ */
+export interface HeroSlidesSelect<T extends boolean = true> {
+  nome?: T;
+  tipo?: T;
+  mes?: T;
+  ordem?: T;
+  ativo?: T;
+  theme?: T;
+  tag?: T;
+  icone?: T;
+  tituloAntes?: T;
+  tituloDestaque?: T;
+  tituloDepois?: T;
+  sub?: T;
+  ctaLabel?: T;
+  ctaHref?: T;
+  imagemDesktop?: T;
+  imagemMobile?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "revendedores_select".
  */
 export interface RevendedoresSelect<T extends boolean = true> {
@@ -1328,7 +1419,7 @@ export interface ConteudoHome {
       }[]
     | null;
   /**
-   * O countdown e a imagem seguem no front; aqui e so a copy.
+   * O countdown segue no front; a copy e a imagem sao editaveis aqui.
    */
   urgencia?: {
     chip?: string | null;
@@ -1343,12 +1434,20 @@ export interface ConteudoHome {
     texto?: string | null;
     ctaLabel?: string | null;
     ctaHref?: string | null;
+    /**
+     * Foto do bloco. Vazio = usa a imagem padrao do site.
+     */
+    imagem?: (number | null) | Media;
   };
   ecoBanner?: {
     eyebrow?: string | null;
     titulo?: string | null;
     texto?: string | null;
     ctaLabel?: string | null;
+    /**
+     * Imagem de fundo do banner eco. Vazio = usa a imagem padrao do site.
+     */
+    imagem?: (number | null) | Media;
   };
   ecoLead?: {
     eyebrow?: string | null;
@@ -1361,6 +1460,10 @@ export interface ConteudoHome {
         }[]
       | null;
     ctaLabel?: string | null;
+    /**
+     * Foto do bloco eco escuro. Vazio = usa a imagem padrao do site.
+     */
+    imagem?: (number | null) | Media;
   };
   ctaFinal?: {
     titulo?: string | null;
@@ -1368,6 +1471,101 @@ export interface ConteudoHome {
     ctaLabel?: string | null;
     ctaHref?: string | null;
   };
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * Textos das paginas Quem somos e SAC. Em sustentabilidade, o icone usa o arquivo sustentabilidade-<icone>.svg em /img/icones.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "conteudo-institucional".
+ */
+export interface ConteudoInstitucional {
+  id: number;
+  quemSomos?: {
+    eyebrow?: string | null;
+    titulo?: string | null;
+    paragrafo1?: string | null;
+    paragrafo2?: string | null;
+    numeros?:
+      | {
+          valor: string;
+          rotulo: string;
+          id?: string | null;
+        }[]
+      | null;
+    /**
+     * Icone = slug do arquivo sustentabilidade-<icone>.svg.
+     */
+    sustentabilidade?:
+      | {
+          icone: string;
+          titulo: string;
+          id?: string | null;
+        }[]
+      | null;
+    /**
+     * A primeira ocupa a linha inteira em destaque no site.
+     */
+    selos?:
+      | {
+          sigla: string;
+          desc: string;
+          id?: string | null;
+        }[]
+      | null;
+    /**
+     * Foto de destaque da fabrica (topo do bloco). Vazio = usa a imagem padrao do site.
+     */
+    fotoFabrica?: (number | null) | Media;
+    /**
+     * Fotos da fabrica/producao na faixa deslizante. Vazio = usa as fotos padrao do site.
+     */
+    galeria?:
+      | {
+          imagem: number | Media;
+          legenda?: string | null;
+          id?: string | null;
+        }[]
+      | null;
+  };
+  sac?: {
+    titulo?: string | null;
+    texto?: string | null;
+    motivos?:
+      | {
+          texto: string;
+          id?: string | null;
+        }[]
+      | null;
+  };
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * Pagina /catalogos. A URL do flipbook e a do embed do heyzine (ex.: https://heyzine.com/flip-book/<id>.html).
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "catalogos".
+ */
+export interface Catalogo {
+  id: number;
+  titulo?: string | null;
+  intro?: string | null;
+  flipbookUrl?: string | null;
+  /**
+   * Atalhos exibidos abaixo do flipbook. URL vazia = abre o flipbook principal.
+   */
+  itens?:
+    | {
+        nome: string;
+        /**
+         * Opcional. Vazio = usa a URL do flipbook principal.
+         */
+        url?: string | null;
+        id?: string | null;
+      }[]
+    | null;
   updatedAt?: string | null;
   createdAt?: string | null;
 }
@@ -1450,6 +1648,7 @@ export interface ConteudoHomeSelect<T extends boolean = true> {
         texto?: T;
         ctaLabel?: T;
         ctaHref?: T;
+        imagem?: T;
       };
   ecoBanner?:
     | T
@@ -1458,6 +1657,7 @@ export interface ConteudoHomeSelect<T extends boolean = true> {
         titulo?: T;
         texto?: T;
         ctaLabel?: T;
+        imagem?: T;
       };
   ecoLead?:
     | T
@@ -1472,6 +1672,7 @@ export interface ConteudoHomeSelect<T extends boolean = true> {
               id?: T;
             };
         ctaLabel?: T;
+        imagem?: T;
       };
   ctaFinal?:
     | T
@@ -1480,6 +1681,83 @@ export interface ConteudoHomeSelect<T extends boolean = true> {
         texto?: T;
         ctaLabel?: T;
         ctaHref?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "conteudo-institucional_select".
+ */
+export interface ConteudoInstitucionalSelect<T extends boolean = true> {
+  quemSomos?:
+    | T
+    | {
+        eyebrow?: T;
+        titulo?: T;
+        paragrafo1?: T;
+        paragrafo2?: T;
+        numeros?:
+          | T
+          | {
+              valor?: T;
+              rotulo?: T;
+              id?: T;
+            };
+        sustentabilidade?:
+          | T
+          | {
+              icone?: T;
+              titulo?: T;
+              id?: T;
+            };
+        selos?:
+          | T
+          | {
+              sigla?: T;
+              desc?: T;
+              id?: T;
+            };
+        fotoFabrica?: T;
+        galeria?:
+          | T
+          | {
+              imagem?: T;
+              legenda?: T;
+              id?: T;
+            };
+      };
+  sac?:
+    | T
+    | {
+        titulo?: T;
+        texto?: T;
+        motivos?:
+          | T
+          | {
+              texto?: T;
+              id?: T;
+            };
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "catalogos_select".
+ */
+export interface CatalogosSelect<T extends boolean = true> {
+  titulo?: T;
+  intro?: T;
+  flipbookUrl?: T;
+  itens?:
+    | T
+    | {
+        nome?: T;
+        url?: T;
+        id?: T;
       };
   updatedAt?: T;
   createdAt?: T;

@@ -9,6 +9,7 @@ import sharp from 'sharp'
 
 import { Users } from './collections/Users'
 import { Media } from './collections/Media'
+import { HeroSlides } from './collections/HeroSlides'
 import { Logos } from './collections/Logos'
 import { Categorias } from './collections/Categorias'
 import { Produtos } from './collections/Produtos'
@@ -20,6 +21,7 @@ import { Imprensa } from './collections/Imprensa'
 import { Tags } from './collections/Tags'
 import { Revendedores } from './collections/Revendedores'
 import { LogsEntrega } from './collections/LogsEntrega'
+import { Catalogos } from './globals/Catalogos'
 import { Configuracoes } from './globals/Configuracoes'
 import { ConteudoHome } from './globals/ConteudoHome'
 import { ConteudoInstitucional } from './globals/ConteudoInstitucional'
@@ -54,6 +56,7 @@ const REBUILD_ON_CHANGE = [
   'tags',
   'media',
   'logos',
+  'hero-slides',
 ]
 
 // Conexao ao Postgres. Preferimos parametros SEPARADOS (PGHOST/PGPORT/PGUSER/
@@ -106,6 +109,8 @@ export default buildConfig({
     Tags,
     // Logos das marcas (marquee da home). FB-6.
     Logos,
+    // Banners do carrossel principal da home (mensal + fixo). FB-6 midia.
+    HeroSlides,
     // Revenda
     Revendedores,
     // Sistema
@@ -129,6 +134,8 @@ export default buildConfig({
     ConteudoHome,
     // Conteudo institucional (Quem somos + SAC). FB-6 Fase 6.
     ConteudoInstitucional,
+    // Catalogo digital (flipbook heyzine + cards). FB-6 midia.
+    Catalogos,
   ],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',
