@@ -19,6 +19,7 @@ import { Imprensa } from './collections/Imprensa'
 import { Revendedores } from './collections/Revendedores'
 import { LogsEntrega } from './collections/LogsEntrega'
 import { Configuracoes } from './globals/Configuracoes'
+import { ConteudoHome } from './globals/ConteudoHome'
 import { withRebuildHooks } from './hooks/triggerDeploy'
 import { orcamentoEndpoint } from './endpoints/orcamento'
 
@@ -116,6 +117,8 @@ export default buildConfig({
   globals: [
     // Configuracoes gerais do site (contato, redes, selos, blurb). FB-6.
     Configuracoes,
+    // Conteudo da home (selos, diferenciais, depoimentos, FAQ, urgencia, eco, CTA). FB-6 Fase 5.
+    ConteudoHome,
   ],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',
