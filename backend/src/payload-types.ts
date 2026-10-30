@@ -76,9 +76,11 @@ export interface Config {
     cases: Case;
     imprensa: Imprensa;
     tags: Tag;
+    logos: Logo;
     revendedores: Revendedore;
     media: Media;
     users: User;
+    'logs-entrega': LogsEntrega;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -94,9 +96,11 @@ export interface Config {
     cases: CasesSelect<false> | CasesSelect<true>;
     imprensa: ImprensaSelect<false> | ImprensaSelect<true>;
     tags: TagsSelect<false> | TagsSelect<true>;
+    logos: LogosSelect<false> | LogosSelect<true>;
     revendedores: RevendedoresSelect<false> | RevendedoresSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
     users: UsersSelect<false> | UsersSelect<true>;
+    'logs-entrega': LogsEntregaSelect<false> | LogsEntregaSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -108,9 +112,11 @@ export interface Config {
   fallbackLocale: null;
   globals: {
     configuracoes: Configuracoe;
+    'conteudo-home': ConteudoHome;
   };
   globalsSelect: {
     configuracoes: ConfiguracoesSelect<false> | ConfiguracoesSelect<true>;
+    'conteudo-home': ConteudoHomeSelect<false> | ConteudoHomeSelect<true>;
   };
   locale: null;
   widgets: {
@@ -296,6 +302,10 @@ export interface Produto {
     tabelaB2B?: boolean | null;
   };
   /**
+   * Minimo de unidades por pedido, exibido na PDP (ex.: "minimo 500 unidades"). Padrao 500.
+   */
+  quantidadeMinima?: number | null;
+  /**
    * Faixa exibida no catalogo. O preco exato vem do CRM.
    */
   faixaPreco?: ('ate-3-99' | '4-a-15' | 'acima-de-15') | null;
@@ -346,6 +356,8 @@ export interface Categoria {
   createdAt: string;
 }
 /**
+ * Imagens ate 15 MB. Sao convertidas pra WebP e reduzidas pro maximo de 2400px no lado maior. Dimensoes recomendadas: foto de produto ~1200x1200px, logo de cliente ~600x300px (fundo transparente), banner/hero ~1920x1080px, icone de categoria ~240x240px.
+ *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "media".
  */
@@ -550,6 +562,31 @@ export interface Imprensa {
   createdAt: string;
 }
 /**
+ * Logos das marcas no marquee da home. Suba o arquivo (SVG ou PNG) e defina a ordem.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "logos".
+ */
+export interface Logo {
+  id: number;
+  nome: string;
+  /**
+   * Ordem no marquee (menor primeiro).
+   */
+  ordem?: number | null;
+  updatedAt: string;
+  createdAt: string;
+  url?: string | null;
+  thumbnailURL?: string | null;
+  filename?: string | null;
+  mimeType?: string | null;
+  filesize?: number | null;
+  width?: number | null;
+  height?: number | null;
+  focalX?: number | null;
+  focalY?: number | null;
+}
+/**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "revendedores".
  */
@@ -624,6 +661,55 @@ export interface User {
   collection: 'users';
 }
 /**
+ * Auditoria dos pedidos de orcamento enviados pelo site. modo "stub"/status "simulado" = o CRM ainda nao esta conectado (o lead chegou ao backend, mas a entrega ao comercial e pelo WhatsApp ate a integracao real ser ligada).
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "logs-entrega".
+ */
+export interface LogsEntrega {
+  id: number;
+  /**
+   * Id interno da submissao (gerado no backend).
+   */
+  requisicaoId: string;
+  status: 'simulado' | 'entregue' | 'falhou' | 'reenviado';
+  modo: 'stub' | 'real';
+  /**
+   * Id do lead no CRM, quando a entrega real (n8n) estiver ligada.
+   */
+  crmId?: string | null;
+  /**
+   * Empresa informada no pedido (usada pelo comercial pra identificar).
+   */
+  empresa?: string | null;
+  /**
+   * E-mail parcialmente mascarado (LGPD; sem PII completa em claro).
+   */
+  emailMascarado?: string | null;
+  /**
+   * Telefone com so os ultimos 4 digitos (LGPD).
+   */
+  telefoneMascarado?: string | null;
+  /**
+   * Quantos produtos diferentes no pedido.
+   */
+  qtdItens?: number | null;
+  /**
+   * Soma das quantidades do carrinho.
+   */
+  totalUnidades?: number | null;
+  /**
+   * Marcou o consentimento LGPD antes de enviar.
+   */
+  consentimento?: boolean | null;
+  /**
+   * Mensagem de erro quando a entrega falhou.
+   */
+  erro?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv".
  */
@@ -680,6 +766,10 @@ export interface PayloadLockedDocument {
         value: number | Tag;
       } | null)
     | ({
+        relationTo: 'logos';
+        value: number | Logo;
+      } | null)
+    | ({
         relationTo: 'revendedores';
         value: number | Revendedore;
       } | null)
@@ -690,6 +780,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'users';
         value: number | User;
+      } | null)
+    | ({
+        relationTo: 'logs-entrega';
+        value: number | LogsEntrega;
       } | null);
   globalSlug?: string | null;
   user:
@@ -833,6 +927,7 @@ export interface ProdutosSelect<T extends boolean = true> {
         tabelaRevenda?: T;
         tabelaB2B?: T;
       };
+  quantidadeMinima?: T;
   faixaPreco?: T;
   destaques?: T;
   crm?:
@@ -953,6 +1048,25 @@ export interface TagsSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "logos_select".
+ */
+export interface LogosSelect<T extends boolean = true> {
+  nome?: T;
+  ordem?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  url?: T;
+  thumbnailURL?: T;
+  filename?: T;
+  mimeType?: T;
+  filesize?: T;
+  width?: T;
+  height?: T;
+  focalX?: T;
+  focalY?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "revendedores_select".
  */
 export interface RevendedoresSelect<T extends boolean = true> {
@@ -1069,6 +1183,25 @@ export interface UsersSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "logs-entrega_select".
+ */
+export interface LogsEntregaSelect<T extends boolean = true> {
+  requisicaoId?: T;
+  status?: T;
+  modo?: T;
+  crmId?: T;
+  empresa?: T;
+  emailMascarado?: T;
+  telefoneMascarado?: T;
+  qtdItens?: T;
+  totalUnidades?: T;
+  consentimento?: T;
+  erro?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv_select".
  */
 export interface PayloadKvSelect<T extends boolean = true> {
@@ -1151,6 +1284,94 @@ export interface Configuracoe {
   createdAt?: string | null;
 }
 /**
+ * Textos dos blocos da home (selos, diferenciais, depoimentos, FAQ, urgencia, eco, CTA final). Os icones usam o nome do arquivo SVG em /img/icones (ex.: para diferenciais, o arquivo e diferencial-<icone>.svg).
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "conteudo-home".
+ */
+export interface ConteudoHome {
+  id: number;
+  /**
+   * Icone = nome do icone (ex.: building-factory-2, package, truck-delivery, certificate).
+   */
+  selosConfianca?:
+    | {
+        icone: string;
+        titulo: string;
+        sub?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Icone = slug do arquivo diferencial-<icone>.svg em /img/icones.
+   */
+  diferenciais?:
+    | {
+        icone: string;
+        titulo: string;
+        sub?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  depoimentos?:
+    | {
+        texto: string;
+        autor: string;
+        id?: string | null;
+      }[]
+    | null;
+  faq?:
+    | {
+        pergunta: string;
+        resposta: string;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * O countdown e a imagem seguem no front; aqui e so a copy.
+   */
+  urgencia?: {
+    chip?: string | null;
+    /**
+     * Parte normal do titulo.
+     */
+    tituloInicio?: string | null;
+    /**
+     * Parte destacada (verde lime).
+     */
+    tituloDestaque?: string | null;
+    texto?: string | null;
+    ctaLabel?: string | null;
+    ctaHref?: string | null;
+  };
+  ecoBanner?: {
+    eyebrow?: string | null;
+    titulo?: string | null;
+    texto?: string | null;
+    ctaLabel?: string | null;
+  };
+  ecoLead?: {
+    eyebrow?: string | null;
+    titulo?: string | null;
+    texto?: string | null;
+    linhas?:
+      | {
+          texto: string;
+          id?: string | null;
+        }[]
+      | null;
+    ctaLabel?: string | null;
+  };
+  ctaFinal?: {
+    titulo?: string | null;
+    texto?: string | null;
+    ctaLabel?: string | null;
+    ctaHref?: string | null;
+  };
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "configuracoes_select".
  */
@@ -1180,6 +1401,85 @@ export interface ConfiguracoesSelect<T extends boolean = true> {
     | {
         nome?: T;
         id?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "conteudo-home_select".
+ */
+export interface ConteudoHomeSelect<T extends boolean = true> {
+  selosConfianca?:
+    | T
+    | {
+        icone?: T;
+        titulo?: T;
+        sub?: T;
+        id?: T;
+      };
+  diferenciais?:
+    | T
+    | {
+        icone?: T;
+        titulo?: T;
+        sub?: T;
+        id?: T;
+      };
+  depoimentos?:
+    | T
+    | {
+        texto?: T;
+        autor?: T;
+        id?: T;
+      };
+  faq?:
+    | T
+    | {
+        pergunta?: T;
+        resposta?: T;
+        id?: T;
+      };
+  urgencia?:
+    | T
+    | {
+        chip?: T;
+        tituloInicio?: T;
+        tituloDestaque?: T;
+        texto?: T;
+        ctaLabel?: T;
+        ctaHref?: T;
+      };
+  ecoBanner?:
+    | T
+    | {
+        eyebrow?: T;
+        titulo?: T;
+        texto?: T;
+        ctaLabel?: T;
+      };
+  ecoLead?:
+    | T
+    | {
+        eyebrow?: T;
+        titulo?: T;
+        texto?: T;
+        linhas?:
+          | T
+          | {
+              texto?: T;
+              id?: T;
+            };
+        ctaLabel?: T;
+      };
+  ctaFinal?:
+    | T
+    | {
+        titulo?: T;
+        texto?: T;
+        ctaLabel?: T;
+        ctaHref?: T;
       };
   updatedAt?: T;
   createdAt?: T;
