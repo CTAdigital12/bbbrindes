@@ -4,8 +4,19 @@
 // cadastrou), cai no mock de data/*. Assim que houver conteudo real no painel,
 // ele substitui o placeholder. A fonte muda; a tela nao.
 
-import type { Banner, Case, Categoria, ConteudoHome, Materia, Post, SiteConfig } from "@/lib/types";
+import type {
+  Banner,
+  CatalogoDigital,
+  Case,
+  Categoria,
+  ConteudoHome,
+  ConteudoInstitucional,
+  Materia,
+  Post,
+  SiteConfig,
+} from "@/lib/types";
 import type { Campanha } from "@/data/campanhas";
+import type { HeroSlide } from "@/data/home-joy";
 import { posts as postsMock } from "@/data/blog";
 import { cases as casesMock } from "@/data/cases";
 import { materias as materiasMock } from "@/data/imprensa";
@@ -13,7 +24,7 @@ import { banners as bannersMock, miniBanners as miniBannersMock } from "@/data/b
 import { campanhas as campanhasMock, campanhaPorSlug } from "@/data/campanhas";
 import { categorias as categoriasMock } from "@/data/categorias";
 import { configMock } from "@/data/config";
-import { TRUST, DIF, QUOTES, FAQ } from "@/data/home-joy";
+import { TRUST, DIF, QUOTES, FAQ, LOGOS, nb, orderedHeroSlides } from "@/data/home-joy";
 import { lexicalToPlainText, payloadFind, payloadGlobal, toDateOnly } from "@/lib/payload";
 
 type PostDoc = {
@@ -270,6 +281,14 @@ export async function getConfig(): Promise<SiteConfig> {
 
 // ---- Conteudo da home (global `conteudo-home`, FB-6 Fase 5) ----
 
+// Campo de upload do Payload: com depth>=1 vem como objeto com url; sem depth (ou
+// sem imagem) vem como id/numero ou null. urlDeUpload() extrai a url com seguranca.
+type UploadRef = { url?: string } | number | null;
+
+function urlDeUpload(ref: UploadRef): string | undefined {
+  return ref && typeof ref === "object" ? ref.url : undefined;
+}
+
 // Shape cru do global (tudo opcional: um global parcial nao quebra o build).
 type ConteudoHomeDoc = {
   selosConfianca?: { icone?: string; titulo?: string; sub?: string }[];
@@ -283,14 +302,16 @@ type ConteudoHomeDoc = {
     texto?: string;
     ctaLabel?: string;
     ctaHref?: string;
+    imagem?: UploadRef;
   };
-  ecoBanner?: { eyebrow?: string; titulo?: string; texto?: string; ctaLabel?: string };
+  ecoBanner?: { eyebrow?: string; titulo?: string; texto?: string; ctaLabel?: string; imagem?: UploadRef };
   ecoLead?: {
     eyebrow?: string;
     titulo?: string;
     texto?: string;
     linhas?: { texto?: string }[];
     ctaLabel?: string;
+    imagem?: UploadRef;
   };
   ctaFinal?: { titulo?: string; texto?: string; ctaLabel?: string; ctaHref?: string };
 };
@@ -312,12 +333,14 @@ function conteudoHomeMock(): ConteudoHome {
         "A produção de fim de ano é o pico do setor. Feche seu pedido de Natal até o fim de outubro e garanta a entrega antes das festas.",
       ctaLabel: "Garantir meu prazo",
       ctaHref: "/campanha/natal",
+      imagem: "/img/foto/MV02406GC-super-bowl-green-fibras-colors-500ml.webp",
     },
     ecoBanner: {
       eyebrow: "Linha Green",
       titulo: "A nova geração dos brindes ecológicos",
       texto: "Mais design. Menos impacto. Mais futuro.",
       ctaLabel: "Ver linha ecológica",
+      imagem: "/img/banners/home-hero-fixo-2-linha-ecologica.webp",
     },
     ecoLead: {
       eyebrow: "Brindes ecológicos",
@@ -326,6 +349,7 @@ function conteudoHomeMock(): ConteudoHome {
         "Fabricados com fibras naturais de coco e madeira de reflorestamento. Produto reciclável, de uso permanente, livre de BPA.",
       linhas: ["Premium", "Green Fibras", "Green Plasticaria", "Green Reversa"],
       ctaLabel: "Ver linha ecológica",
+      imagem: "/img/foto/MV02146G-copo-mini-roma-ecologico-green-fibras-300ml.webp",
     },
     ctaFinal: {
       titulo: "Monte seu orçamento. Um especialista responde com a proposta.",
@@ -367,7 +391,8 @@ function preferir(doGlobal: string | undefined, doMock: string): string {
 export async function getConteudoHome(): Promise<ConteudoHome> {
   const mock = conteudoHomeMock();
   try {
-    const doc = await payloadGlobal<ConteudoHomeDoc>("conteudo-home");
+    // depth: 1 traz as imagens dos blocos (upload) como objeto com url.
+    const doc = await payloadGlobal<ConteudoHomeDoc>("conteudo-home", { depth: 1 });
 
     const selosG = (doc.selosConfianca ?? [])
       .map((s) => ({ icone: s.icone ?? "", titulo: s.titulo ?? "", sub: s.sub ?? "" }))
@@ -444,12 +469,15 @@ export async function getConteudoHome(): Promise<ConteudoHome> {
         ctaLabel: preferir(doc.urgencia?.ctaLabel, mock.urgencia.ctaLabel),
         // href e slug, nao prose: mantem o global quando preenchido.
         ctaHref: doc.urgencia?.ctaHref || mock.urgencia.ctaHref,
+        // imagem: upload do painel quando houver, senao a foto padrao do site.
+        imagem: urlDeUpload(doc.urgencia?.imagem ?? null) || mock.urgencia.imagem,
       },
       ecoBanner: {
         eyebrow: preferir(doc.ecoBanner?.eyebrow, mock.ecoBanner.eyebrow),
         titulo: preferir(doc.ecoBanner?.titulo, mock.ecoBanner.titulo),
         texto: preferir(doc.ecoBanner?.texto, mock.ecoBanner.texto),
         ctaLabel: preferir(doc.ecoBanner?.ctaLabel, mock.ecoBanner.ctaLabel),
+        imagem: urlDeUpload(doc.ecoBanner?.imagem ?? null) || mock.ecoBanner.imagem,
       },
       ecoLead: {
         eyebrow: preferir(doc.ecoLead?.eyebrow, mock.ecoLead.eyebrow),
@@ -457,6 +485,7 @@ export async function getConteudoHome(): Promise<ConteudoHome> {
         texto: preferir(doc.ecoLead?.texto, mock.ecoLead.texto),
         linhas,
         ctaLabel: preferir(doc.ecoLead?.ctaLabel, mock.ecoLead.ctaLabel),
+        imagem: urlDeUpload(doc.ecoLead?.imagem ?? null) || mock.ecoLead.imagem,
       },
       ctaFinal: {
         titulo: preferir(doc.ctaFinal?.titulo, mock.ctaFinal.titulo),
@@ -467,6 +496,279 @@ export async function getConteudoHome(): Promise<ConteudoHome> {
     };
   } catch {
     return mock;
+  }
+}
+
+// ---- Conteudo institucional (global `conteudo-institucional`, FB-6 Fase 6) ----
+
+type ConteudoInstitucionalDoc = {
+  quemSomos?: {
+    eyebrow?: string;
+    titulo?: string;
+    paragrafo1?: string;
+    paragrafo2?: string;
+    numeros?: { valor?: string; rotulo?: string }[];
+    sustentabilidade?: { icone?: string; titulo?: string }[];
+    selos?: { sigla?: string; desc?: string }[];
+    fotoFabrica?: UploadRef;
+    galeria?: { imagem?: UploadRef; legenda?: string }[];
+  };
+  sac?: { titulo?: string; texto?: string; motivos?: { texto?: string }[] };
+};
+
+// Estado atual no ar das paginas Quem somos e SAC (hoje inline nas pages). Usado
+// quando o global nao responde ou vier vazio, pra pagina nao regredir. As imagens
+// ficam como caminho estatico (o loader resolve upload OU este path; a page usa
+// imgSrc() uniforme).
+function conteudoInstitucionalMock(): ConteudoInstitucional {
+  return {
+    quemSomos: {
+      eyebrow: "Quem somos",
+      titulo: "Somos fábrica, não revenda.",
+      paragrafo1:
+        "A BB Brindes, empresa do Grupo BB, é uma indústria brasileira de brindes corporativos. Produção própria, escala nacional e atendimento comercial direto.",
+      paragrafo2:
+        "Atendemos empresas e revendedores em todo o país, com catálogo amplo, personalização da sua marca e compromisso com prazo e qualidade.",
+      numeros: [
+        { valor: "27 anos", rotulo: "de mercado" },
+        { valor: "500 un.", rotulo: "pedido mínimo" },
+        { valor: "100%", rotulo: "produção nacional" },
+        { valor: "5", rotulo: "certificações de qualidade" },
+      ],
+      sustentabilidade: [
+        { icone: "livres-de-bpa-e-reciclados", titulo: "Produtos livres de BPA e materiais reciclados" },
+        { icone: "menos-plastico-virgem", titulo: "Redução de plástico virgem na linha ecológica" },
+        { icone: "controle-de-qualidade", titulo: "Produção própria com controle de qualidade" },
+      ],
+      selos: [
+        { sigla: "SMETA 4 Pilares", desc: "Trabalho, saúde e segurança, meio ambiente e ética" },
+        { sigla: "NBR NM 300", desc: "Segurança de brinquedos (Inmetro)" },
+        { sigla: "SGP", desc: "Auditoria de fornecedor" },
+        { sigla: "PS&C", desc: "Auditoria de fornecedor" },
+        { sigla: "GMP", desc: "Boas práticas de fabricação" },
+      ],
+      fotoFabrica: "/img/institucional/inst-01.webp",
+      galeria: [
+        { imagem: "/img/institucional/inst-05.webp", legenda: "Máquina de injeção e sopro na fábrica" },
+        { imagem: "/img/institucional/inst-04.webp", legenda: "Produção de squeezes da linha ecológica" },
+        { imagem: "/img/institucional/inst-02.webp", legenda: "Lote de squeezes personalizados" },
+        { imagem: "/img/institucional/inst-03.webp", legenda: "Produtos em In Mold Label" },
+        { imagem: "/img/institucional/inst-06.webp", legenda: "Estande da BB Brindes em feira do setor" },
+        { imagem: "/img/institucional/inst-07.webp", legenda: "BB Brindes em feira do setor" },
+      ],
+    },
+    sac: {
+      titulo: "SAC BB Brindes",
+      texto:
+        "Conta o que aconteceu. Selecione o motivo abaixo para que a sua mensagem chegue direto na pessoa certa. Retornamos em até 24 horas úteis.",
+      motivos: [
+        "Status do pedido",
+        "Problema com produto",
+        "Divergência de quantidade ou item",
+        "Prazo de entrega",
+        "Nota fiscal e documentos",
+        "Aprovação de arte",
+        "Elogio",
+        "Outro",
+      ],
+    },
+  };
+}
+
+// Le o global com fallback POR CAMPO (texto/array/imagem vazio cai no mock). Os
+// defaultValue do backend ja vem acentuados e canonicos, entao usa o global direto
+// quando preenchido. depth: 1 traz as imagens (fotoFabrica e galeria) como url.
+export async function getConteudoInstitucional(): Promise<ConteudoInstitucional> {
+  const mock = conteudoInstitucionalMock();
+  try {
+    const doc = await payloadGlobal<ConteudoInstitucionalDoc>("conteudo-institucional", { depth: 1 });
+    const qs = doc.quemSomos;
+    const sac = doc.sac;
+
+    const numeros = (qs?.numeros ?? [])
+      .map((n) => ({ valor: n.valor ?? "", rotulo: n.rotulo ?? "" }))
+      .filter((n) => n.valor && n.rotulo);
+    const sustentabilidade = (qs?.sustentabilidade ?? [])
+      .map((s) => ({ icone: s.icone ?? "", titulo: s.titulo ?? "" }))
+      .filter((s) => s.icone && s.titulo);
+    const selos = (qs?.selos ?? [])
+      .map((s) => ({ sigla: s.sigla ?? "", desc: s.desc ?? "" }))
+      .filter((s) => s.sigla && s.desc);
+    const galeria = (qs?.galeria ?? [])
+      .map((g) => ({ imagem: urlDeUpload(g.imagem ?? null) ?? "", legenda: g.legenda ?? "" }))
+      .filter((g) => g.imagem);
+    const motivos = (sac?.motivos ?? []).map((m) => m.texto ?? "").filter(Boolean);
+
+    return {
+      quemSomos: {
+        eyebrow: qs?.eyebrow || mock.quemSomos.eyebrow,
+        titulo: qs?.titulo || mock.quemSomos.titulo,
+        paragrafo1: qs?.paragrafo1 || mock.quemSomos.paragrafo1,
+        paragrafo2: qs?.paragrafo2 || mock.quemSomos.paragrafo2,
+        numeros: numeros.length ? numeros : mock.quemSomos.numeros,
+        sustentabilidade: sustentabilidade.length ? sustentabilidade : mock.quemSomos.sustentabilidade,
+        selos: selos.length ? selos : mock.quemSomos.selos,
+        fotoFabrica: urlDeUpload(qs?.fotoFabrica ?? null) || mock.quemSomos.fotoFabrica,
+        galeria: galeria.length ? galeria : mock.quemSomos.galeria,
+      },
+      sac: {
+        titulo: sac?.titulo || mock.sac.titulo,
+        texto: sac?.texto || mock.sac.texto,
+        motivos: motivos.length ? motivos : mock.sac.motivos,
+      },
+    };
+  } catch {
+    return mock;
+  }
+}
+
+// ---- Catalogo digital (global `catalogos`, FB-6 midia) ----
+
+type CatalogosDoc = {
+  titulo?: string;
+  intro?: string;
+  flipbookUrl?: string;
+  itens?: { nome?: string; url?: string }[];
+};
+
+function catalogosMock(): CatalogoDigital {
+  return {
+    titulo: "Catálogo digital",
+    intro: "Folheie online e compartilhe o link com quem decide a compra.",
+    flipbookUrl: "https://heyzine.com/flip-book/aa2476761e.html",
+    itens: [
+      { nome: "Catálogo BB Brindes 2027", url: "" },
+      { nome: "Linha Green (ecológicos)", url: "" },
+      { nome: "Datas comemorativas", url: "" },
+    ],
+  };
+}
+
+export async function getCatalogos(): Promise<CatalogoDigital> {
+  const mock = catalogosMock();
+  try {
+    const doc = await payloadGlobal<CatalogosDoc>("catalogos");
+    const itens = (doc.itens ?? [])
+      .map((i) => ({ nome: i.nome ?? "", url: i.url ?? "" }))
+      .filter((i) => i.nome);
+    return {
+      titulo: doc.titulo || mock.titulo,
+      intro: doc.intro || mock.intro,
+      flipbookUrl: doc.flipbookUrl || mock.flipbookUrl,
+      itens: itens.length ? itens : mock.itens,
+    };
+  } catch {
+    return mock;
+  }
+}
+
+// ---- Hero slides (collection `hero-slides`, FB-6 midia) ----
+
+type HeroSlideDoc = {
+  id?: number | string;
+  nome?: string;
+  tipo?: "mensal" | "fixo";
+  mes?: number;
+  ordem?: number;
+  ativo?: boolean;
+  theme?: "dark" | "cream";
+  tag?: string;
+  icone?: string;
+  tituloAntes?: string;
+  tituloDestaque?: string;
+  tituloDepois?: string;
+  sub?: string;
+  ctaLabel?: string;
+  ctaHref?: string;
+  imagemDesktop?: UploadRef;
+  imagemMobile?: UploadRef;
+};
+
+// Escapa HTML pra injetar texto do painel no titulo/sub do hero (renderizados com
+// dangerouslySetInnerHTML) sem abrir XSS; so o <span class="hl"> do destaque, que
+// nos controlamos, vai cru.
+function escaparHtml(s: string): string {
+  return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+}
+
+// Recompoe o titulo do hero: antes + destaque (verde lime) + depois. Aplica o
+// anti-viuva (nb) por segmento ja escapado, pra nao glueir dentro das tags.
+function montarTituloHero(antes: string, destaque: string, depois: string): string {
+  const partes: string[] = [];
+  if (antes.trim()) partes.push(nb(escaparHtml(antes.trim())));
+  if (destaque.trim()) partes.push(`<span class="hl">${nb(escaparHtml(destaque.trim()))}</span>`);
+  if (depois.trim()) partes.push(nb(escaparHtml(depois.trim())));
+  return partes.join(" ");
+}
+
+// Slide do painel sem imagem cai aqui: a `key` sintetica nao bate com nenhum
+// arquivo /img/banners/home-hero-*, entao resolve-se uma imagem padrao valida.
+const HERO_FALLBACK_IMG = "/img/banners/home-hero-fixo-1-fabrica-propria.webp";
+
+// Carrossel principal da home. Replica a rotacao do mock (slide do mes corrente,
+// depois os 2 fixos por ordem, depois os demais meses por mes) com os slides do
+// painel. Cai no mock (orderedHeroSlides) se a collection estiver vazia ou o
+// backend nao responder, pra home nao regredir.
+export async function getHeroSlides(monthIdx: number): Promise<HeroSlide[]> {
+  try {
+    const docs = await payloadFind<HeroSlideDoc>("hero-slides", { sort: "ordem", depth: 1 });
+    const ativos = docs.filter((d) => d.ativo !== false);
+    if (ativos.length === 0) return orderedHeroSlides(monthIdx);
+
+    const porOrdem = (a: HeroSlideDoc, b: HeroSlideDoc) => (a.ordem ?? 0) - (b.ordem ?? 0);
+    const mesAtual = (((monthIdx % 12) + 12) % 12) + 1; // 1..12
+    const fixos = ativos.filter((d) => d.tipo === "fixo").sort(porOrdem);
+    const mensais = ativos.filter((d) => d.tipo !== "fixo");
+    const doMes = mensais.filter((d) => d.mes === mesAtual).sort(porOrdem);
+    const outrosMeses = mensais
+      .filter((d) => d.mes !== mesAtual)
+      .sort((a, b) => (a.mes ?? 0) - (b.mes ?? 0) || porOrdem(a, b));
+
+    const ordenados = [...doMes, ...fixos, ...outrosMeses];
+
+    return ordenados.map((d, i) => {
+      const imgDesktop = urlDeUpload(d.imagemDesktop ?? null);
+      const imgMobile = urlDeUpload(d.imagemMobile ?? null);
+      return {
+        key: `hero-${d.id ?? i}`,
+        theme: d.theme === "cream" ? "cream" : "dark",
+        tag: d.tag ?? "",
+        icon: d.icone || "sparkles",
+        title: montarTituloHero(d.tituloAntes ?? "", d.tituloDestaque ?? "", d.tituloDepois ?? ""),
+        sub: d.sub ? nb(escaparHtml(d.sub)) : "",
+        cta: d.ctaLabel || "Ver mais",
+        href: d.ctaHref || "/catalogo",
+        imgDesktop: imgDesktop || HERO_FALLBACK_IMG,
+        imgMobile: imgMobile || imgDesktop || HERO_FALLBACK_IMG,
+      };
+    });
+  } catch {
+    return orderedHeroSlides(monthIdx);
+  }
+}
+
+// ---- Logos do marquee (collection `logos`, FB-6) ----
+
+type LogoDoc = { nome?: string; ordem?: number; url?: string };
+
+// Logos estaticos como fallback (/img/logos/<slug>.svg). A home usa imgSrc() na
+// url, que resolve tanto o caminho estatico quanto a URL absoluta do painel.
+function logosMock(): { nome: string; url: string }[] {
+  return LOGOS.map((l) => ({ nome: l, url: `/img/logos/${l}.svg` }));
+}
+
+// Logos das marcas no marquee (collection `logos`, upload proprio SVG/PNG). Cai
+// nos SVGs estaticos se a collection estiver vazia ou o backend nao responder.
+export async function getLogos(): Promise<{ nome: string; url: string }[]> {
+  try {
+    const docs = await payloadFind<LogoDoc>("logos", { sort: "ordem", depth: 0 });
+    const reais = docs
+      .filter((d) => typeof d.url === "string" && d.url.length > 0)
+      .map((d) => ({ nome: d.nome ?? "", url: d.url as string }));
+    if (reais.length === 0) return logosMock();
+    return reais;
+  } catch {
+    return logosMock();
   }
 }
 

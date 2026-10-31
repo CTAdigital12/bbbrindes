@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import Icon from "@/components/Icon";
-import { img } from "@/lib/asset";
+import { img, imgSrc } from "@/lib/asset";
 import { WA, type HeroSlide } from "@/data/home-joy";
 
 // Slider do hero (identidade Joy): autoplay 6s, dots com barra de progresso,
@@ -38,10 +38,18 @@ export default function HeroSlider({ slides }: { slides: HeroSlide[] }) {
           <picture>
             <source
               media="(max-width:760px)"
-              srcSet={img(`/img/banners/home-hero-mobile-${m.key}.webp`)}
+              srcSet={
+                m.imgMobile
+                  ? imgSrc(m.imgMobile)
+                  : img(`/img/banners/home-hero-mobile-${m.key}.webp`)
+              }
             />
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img className="bg" src={img(`/img/banners/home-hero-${m.key}.webp`)} alt="" />
+            <img
+              className="bg"
+              src={m.imgDesktop ? imgSrc(m.imgDesktop) : img(`/img/banners/home-hero-${m.key}.webp`)}
+              alt=""
+            />
           </picture>
           <div className="ov anim">
             <span className="tag">

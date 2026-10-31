@@ -13,6 +13,8 @@ import {
   getCases,
   getCategorias,
   getConteudoHome,
+  getHeroSlides,
+  getLogos,
   getMaterias,
   getPosts,
 } from "@/lib/content";
@@ -20,9 +22,7 @@ import { img, imgSrc } from "@/lib/asset";
 import {
   WA,
   nb,
-  orderedHeroSlides,
   nextCamps,
-  LOGOS,
   POSTS,
   CAT_ICON,
   CAMP_TILE,
@@ -66,22 +66,34 @@ export default async function HomePage() {
   // Dado REAL do Payload: categorias (faixa), produtos (rail Lancamentos),
   // produtos ecologicos (pgrid Eco), campanhas e agora cases/imprensa/blog
   // (getCases/getMaterias/getPosts, com fallback no mock) = FB6-3.3.
-  const [categorias, campanhas, produtos, produtosEco, cases, materias, posts, conteudo] =
-    await Promise.all([
-      getCategorias(),
-      getCampanhas(),
-      getProdutos(),
-      getProdutosEcologicos(),
-      getCases(),
-      getMaterias(),
-      getPosts(),
-      getConteudoHome(),
-    ]);
-
   // Mes corrente resolvido no build (export estatico): ordena o hero e aponta as
   // 2 proximas campanhas.
   const monthIdx = new Date().getMonth();
-  const slides = orderedHeroSlides(monthIdx);
+
+  const [
+    categorias,
+    campanhas,
+    produtos,
+    produtosEco,
+    cases,
+    materias,
+    posts,
+    conteudo,
+    slides,
+    logos,
+  ] = await Promise.all([
+    getCategorias(),
+    getCampanhas(),
+    getProdutos(),
+    getProdutosEcologicos(),
+    getCases(),
+    getMaterias(),
+    getPosts(),
+    getConteudoHome(),
+    getHeroSlides(monthIdx),
+    getLogos(),
+  ]);
+
   const nx = nextCamps(monthIdx);
 
   const lancamentos = produtos.slice(0, 8);
@@ -162,9 +174,9 @@ export default async function HomePage() {
           Marcas que já escolheram a <b>BB Brindes</b>
         </div>
         <div className="mq">
-          {[...LOGOS, ...LOGOS].map((l, i) => (
+          {[...logos, ...logos].map((l, i) => (
             // eslint-disable-next-line @next/next/no-img-element
-            <img key={`${l}-${i}`} src={img(`/img/logos/${l}.svg`)} alt={l} />
+            <img key={`${l.nome}-${i}`} src={imgSrc(l.url)} alt={l.nome} />
           ))}
         </div>
       </div>
@@ -252,7 +264,7 @@ export default async function HomePage() {
           <div className="ph">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
-              src={img("/img/foto/MV02406GC-super-bowl-green-fibras-colors-500ml.webp")}
+              src={imgSrc(conteudo.urgencia.imagem)}
               alt="Bowl personalizado Coca-Cola"
               loading="lazy"
             />
@@ -288,7 +300,7 @@ export default async function HomePage() {
           <Link className="eco-bn" href="/catalogo?categoria=green-fibras">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
-              src={img("/img/banners/home-hero-fixo-2-linha-ecologica.webp")}
+              src={imgSrc(conteudo.ecoBanner.imagem)}
               alt=""
               loading="lazy"
             />
@@ -325,7 +337,7 @@ export default async function HomePage() {
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 className="lph"
-                src={img("/img/foto/MV02146G-copo-mini-roma-ecologico-green-fibras-300ml.webp")}
+                src={imgSrc(conteudo.ecoLead.imagem)}
                 alt="Copo Green Fibras personalizado"
                 loading="lazy"
               />

@@ -144,16 +144,53 @@ export type ConteudoHome = {
     texto: string;
     ctaLabel: string;
     ctaHref: string;
+    // URL resolvida da foto do bloco (backend ou padrao estatico). Sempre
+    // presente: o loader cai na imagem padrao quando o global nao tem upload.
+    imagem: string;
   };
-  ecoBanner: { eyebrow: string; titulo: string; texto: string; ctaLabel: string };
+  ecoBanner: { eyebrow: string; titulo: string; texto: string; ctaLabel: string; imagem: string };
   ecoLead: {
     eyebrow: string;
     titulo: string;
     texto: string;
     linhas: string[];
     ctaLabel: string;
+    imagem: string;
   };
   ctaFinal: { titulo: string; texto: string; ctaLabel: string; ctaHref: string };
+};
+
+// Conteudo editavel das paginas institucionais (global `conteudo-institucional`,
+// FB-6 Fase 6): Quem somos (intro, numeros, sustentabilidade, certificacoes,
+// foto da fabrica + galeria) e SAC (intro + motivos). O front le via
+// getConteudoInstitucional(), com fallback no mock enquanto o global nao
+// estiver disponivel. fotoFabrica e galeria[].imagem vem como URL resolvida
+// (backend ou caminho estatico); use imgSrc() direto. A linha do tempo segue no
+// front. `icone` em sustentabilidade = slug do arquivo sustentabilidade-<icone>.svg.
+export type ConteudoInstitucional = {
+  quemSomos: {
+    eyebrow: string;
+    titulo: string;
+    paragrafo1: string;
+    paragrafo2: string;
+    numeros: { valor: string; rotulo: string }[];
+    sustentabilidade: { icone: string; titulo: string }[];
+    selos: { sigla: string; desc: string }[];
+    fotoFabrica: string;
+    galeria: { imagem: string; legenda: string }[];
+  };
+  sac: { titulo: string; texto: string; motivos: string[] };
+};
+
+// Conteudo editavel da pagina /catalogos (global `catalogos`, FB-6 midia):
+// titulo/intro, a URL do flipbook (heyzine, embed) e os cards de atalho. O
+// front le via getCatalogos(), com fallback no mock. itens[].url vazia = abre o
+// flipbook principal.
+export type CatalogoDigital = {
+  titulo: string;
+  intro: string;
+  flipbookUrl: string;
+  itens: { nome: string; url: string }[];
 };
 
 // Visao exclusiva do revendedor (preco e estoque por produto).

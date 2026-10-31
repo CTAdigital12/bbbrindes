@@ -1,36 +1,12 @@
-"use client";
-
 import Link from "next/link";
-import { useRef, useState } from "react";
-import { mascaraTelefone } from "@/lib/mask";
-import Icon from "@/components/Icon";
+import SacForm from "@/components/SacForm";
+import { getConteudoInstitucional } from "@/lib/content";
 
-// Motivos do mockup sac() (chegam na pessoa certa).
-const MOTIVOS = [
-  "Status do pedido",
-  "Problema com produto",
-  "Divergência de quantidade ou item",
-  "Prazo de entrega",
-  "Nota fiscal e documentos",
-  "Aprovação de arte",
-  "Elogio",
-  "Outro",
-];
-
-// Espelha sac(): form.form + toast de confirmacao + reset. Sem envio real
-// (integracao com CRM entra depois), como no mockup (data-act="sacf").
-export default function SacPage() {
-  const formRef = useRef<HTMLFormElement>(null);
-  const timer = useRef<number | undefined>(undefined);
-  const [toast, setToast] = useState(false);
-
-  function enviar(e: React.FormEvent) {
-    e.preventDefault();
-    formRef.current?.reset();
-    setToast(true);
-    if (timer.current) window.clearTimeout(timer.current);
-    timer.current = window.setTimeout(() => setToast(false), 2600);
-  }
+// Pagina do SAC. A copy (titulo/intro) e os motivos vem do global
+// `conteudo-institucional` (getConteudoInstitucional), com fallback no mock. O
+// form em si (interativo) fica no client component SacForm.
+export default async function SacPage() {
+  const { sac } = await getConteudoInstitucional();
 
   return (
     <div className="wrap">
@@ -38,76 +14,11 @@ export default function SacPage() {
         <Link href="/">Início</Link>/<span>SAC</span>
       </div>
       <div className="ptitle">
-        <h1>SAC BB Brindes</h1>
-        <p>
-          Conta o que aconteceu. Selecione o motivo abaixo para que a sua mensagem chegue direto na
-          pessoa certa. Retornamos em até 24 horas úteis.
-        </p>
+        <h1>{sac.titulo}</h1>
+        <p>{sac.texto}</p>
       </div>
 
-      <form
-        ref={formRef}
-        className="form"
-        style={{ position: "static", maxWidth: "640px" }}
-        noValidate
-        onSubmit={enviar}
-      >
-        <div className="row2">
-          <div className="fld">
-            <label>Nome</label>
-            <input required maxLength={80} />
-          </div>
-          <div className="fld">
-            <label>E-mail corporativo</label>
-            <input type="email" required maxLength={120} />
-          </div>
-        </div>
-        <div className="row2">
-          <div className="fld">
-            <label>Telefone / WhatsApp</label>
-            {/* Mascara BR (00) 00000-0000; input nao controlado, formata no proprio value. */}
-            <input
-              required
-              inputMode="tel"
-              maxLength={15}
-              placeholder="(00) 00000-0000"
-              onChange={(e) => {
-                e.currentTarget.value = mascaraTelefone(e.currentTarget.value);
-              }}
-            />
-          </div>
-          <div className="fld">
-            <label>Empresa</label>
-            <input maxLength={80} />
-          </div>
-        </div>
-        <div className="row2">
-          <div className="fld">
-            <label>Número do pedido (opcional)</label>
-            <input maxLength={40} />
-          </div>
-          <div className="fld">
-            <label>Motivo</label>
-            <select>
-              {MOTIVOS.map((o) => (
-                <option key={o}>{o}</option>
-              ))}
-            </select>
-          </div>
-        </div>
-        <div className="fld">
-          <label>Mensagem</label>
-          <textarea required maxLength={1000} />
-        </div>
-        <button type="submit" className="btn btn-deep btn-lg">
-          Enviar
-        </button>
-      </form>
-
-      <div className={`toast${toast ? " on" : ""}`} role="status" aria-live="polite">
-        <Icon name="circle-check" />
-        <span>Mensagem enviada. Retornamos em até 24 horas úteis.</span>
-      </div>
+      <SacForm motivos={sac.motivos} />
     </div>
   );
 }
