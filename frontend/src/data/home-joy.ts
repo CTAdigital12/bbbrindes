@@ -24,6 +24,11 @@ export type HeroSlide = {
   sub: string;
   cta: string;
   href: string;
+  // URLs de imagem quando o slide vem da collection `hero-slides` (FB-6 midia).
+  // Quando ausentes (slides do mock), o HeroSlider deriva a imagem da `key`
+  // (/img/banners/home-hero-${key}.webp). imgMobile cai no imgDesktop se vazio.
+  imgDesktop?: string;
+  imgMobile?: string;
 };
 
 // Banner rotativo de cada mes (1 por mes). Copy provisoria do mockup.
