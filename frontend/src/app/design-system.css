@@ -558,9 +558,10 @@ h2.h{font-size:24px;letter-spacing:-.02em;font-weight:600;margin:0 0 16px}
   .eco{grid-template-columns:1fr}
   .tgrid{grid-template-columns:repeat(2,1fr)}
   .fgrid{grid-template-columns:1fr 1fr}
-  /* Em iPad/celular a barra de categorias quebra em 2 linhas em vez de rolar
-     numa linha so (pedido do cliente). flex-wrap so quebra quando nao cabe. */
-  nav.cats .wrap{flex-wrap:wrap;height:auto;overflow-x:visible;row-gap:6px;padding-block:8px}
+  /* Em iPad/celular a barra de categorias vira 2 fileiras que rolam na
+     horizontal, em vez de 1 linha so (pedido do cliente). Grid com 2 linhas e
+     flow em coluna: os chips preenchem coluna a coluna e o resto desliza. */
+  nav.cats .wrap{display:grid;grid-auto-flow:column;grid-template-rows:repeat(2,auto);grid-auto-columns:max-content;gap:6px 4px;height:auto;overflow-x:auto;padding-block:6px}
 }
 @media (max-width:760px){
   body{font-size:14.5px}
@@ -572,7 +573,7 @@ h2.h{font-size:24px;letter-spacing:-.02em;font-weight:600;margin:0 0 16px}
   .search{display:none}
   .hact .rev{display:none}
   .menu-m,.menu-m.xbtn{display:grid}
-  nav.cats .wrap{padding:8px 10px}
+  nav.cats .wrap{padding:6px 10px}
   .hgrid{grid-template-columns:1fr}
   .slider{aspect-ratio:716/480}
   .slide .ov{left:5.6%;top:10%;width:56%;gap:3.4cqw}
