@@ -29,7 +29,11 @@ export const slugField = (from = 'nome'): Field => ({
   index: true,
   admin: {
     position: 'sidebar',
-    description: 'URL amigavel em kebab-case. Gerado a partir do nome se ficar vazio.',
+    // readOnly (bug 03/11): o endereco e gerado do nome e fica BLOQUEADO pra
+    // edicao. Com o campo editavel, o cliente colou a URL de uma imagem aqui e
+    // quebrou a URL da PDP. O hook beforeValidate segue gerando o slug no servidor.
+    readOnly: true,
+    description: 'Endereco da pagina (gerado do nome). Bloqueado para edicao.',
   },
   hooks: {
     beforeValidate: [formatSlug(from)],

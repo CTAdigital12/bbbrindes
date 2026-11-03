@@ -174,7 +174,13 @@ export const Produtos: CollectionConfig = {
           type: 'text',
           admin: { description: 'Cor em hexadecimal, ex.: #1a2b3c (opcional).' },
         },
-        { name: 'imagem', type: 'upload', relationTo: 'media', admin: { description: 'Foto na cor.' } },
+        {
+          name: 'imagem',
+          type: 'upload',
+          relationTo: 'media',
+          filterOptions: { mimeType: { contains: 'image' } },
+          admin: { description: 'Foto na cor.' },
+        },
       ],
     },
 
@@ -184,13 +190,15 @@ export const Produtos: CollectionConfig = {
       type: 'upload',
       relationTo: 'media',
       hasMany: true,
-      admin: { description: 'Galeria do produto. A primeira e a principal.' },
+      filterOptions: { mimeType: { contains: 'image' } },
+      admin: { description: 'Galeria do produto. A primeira e a principal. Suba ou escolha da Media.' },
     },
     {
       name: 'imagemAmbientada',
       type: 'upload',
       relationTo: 'media',
       label: 'Imagem ambientada (lifestyle)',
+      filterOptions: { mimeType: { contains: 'image' } },
     },
     {
       name: 'videoUrl',
