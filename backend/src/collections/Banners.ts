@@ -1,11 +1,14 @@
 import type { CollectionConfig } from 'payload'
 
-// Banners editaveis da home. Uma colecao so cobre o carrossel principal e os
-// mini banners: o campo `posicao` diferencia (evita duas colecoes quase iguais).
+// Collection LEGADA. O hero do site le a collection `hero-slides` ("Banners do
+// hero"), NAO esta; e nenhuma pagina do front usa getBanners. Fica escondida do
+// admin (admin.hidden) pra nao confundir com "Banners do hero": o cliente tentava
+// desativar o hero AQUI e nada acontecia (bug 03/11). Reversivel: hidden=false.
 export const Banners: CollectionConfig = {
   slug: 'banners',
   labels: { singular: 'Banner', plural: 'Banners' },
   admin: {
+    hidden: true,
     useAsTitle: 'titulo',
     group: 'Conteudo',
     defaultColumns: ['titulo', 'posicao', 'ativo', 'ordem'],
