@@ -19,6 +19,11 @@ export const Media: CollectionConfig = {
       name: 'alt',
       type: 'text',
       required: true,
+      label: 'Descricao da imagem',
+      admin: {
+        description:
+          'Descreva em poucas palavras o que aparece, ex.: "Squeeze 550 ml verde com a marca Oi". Serve pro Google entender a imagem e pra quem usa leitor de tela.',
+      },
     },
   ],
   upload: {
