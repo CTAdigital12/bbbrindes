@@ -20,23 +20,14 @@ import ProductCardJoy from "@/components/ProductCardJoy";
 // preco). A leitura inicial dos filtros vem da querystring (?categoria=, ?q=,
 // ?material=, ?aplicacao=, ?cor=); mudancas na pagina ficam em estado local.
 
-type Grupo = "categoria" | "material" | "aplicacao" | "cor";
+type Grupo = "categoria" | "material" | "aplicacao";
 type Facetas = Record<Grupo, string[]>;
 type Ord = "rel" | "novo" | "az";
 
 // Taxonomia fixa dos filtros, igual ao mockup. Material e as 6 aplicacoes de
-// data/produtos.ts; cor com a bolinha (hex do COR do mockup).
+// data/produtos.ts. (Filtro de cor removido a pedido do Plinio: "a pessoa nao
+// filtra por cor".)
 const MATERIAIS = ["Fibra natural", "Plastico"];
-const CORES: { valor: string; cor: string }[] = [
-  { valor: "Natural", cor: "#d9c7a6" },
-  { valor: "Fibra", cor: "#6b4a33" },
-  { valor: "Verde", cor: "#3f8f3a" },
-  { valor: "Azul", cor: "#1f4fb4" },
-  { valor: "Vermelho", cor: "#c8202c" },
-  { valor: "Roxo", cor: "#5a2d91" },
-  { valor: "Branco", cor: "#f7f7f7" },
-  { valor: "Preto", cor: "#2a2a2a" },
-];
 
 const norm = (s: string) =>
   s.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase();
@@ -52,7 +43,6 @@ export default function CatalogoClient({ produtos = produtosMock }: { produtos?:
     categoria: sp.getAll("categoria"),
     material: sp.getAll("material"),
     aplicacao: sp.getAll("aplicacao"),
-    cor: sp.getAll("cor"),
   }));
   const [ord, setOrd] = useState<Ord>(() => toOrd(sp.get("ord")));
   const [filtrosAbertos, setFiltrosAbertos] = useState(false);
@@ -74,7 +64,6 @@ export default function CatalogoClient({ produtos = produtosMock }: { produtos?:
       categoria: sp.getAll("categoria"),
       material: sp.getAll("material"),
       aplicacao: sp.getAll("aplicacao"),
-      cor: sp.getAll("cor"),
     });
     setOrd(toOrd(sp.get("ord")));
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -154,11 +143,6 @@ export default function CatalogoClient({ produtos = produtosMock }: { produtos?:
         !(p.aplicacoes ?? []).some((a) => facetas.aplicacao.some((fa) => norm(fa) === norm(a)))
       )
         return false;
-      if (
-        facetas.cor.length &&
-        !(p.cores ?? []).some((c) => facetas.cor.some((fc) => norm(fc) === norm(c.nome)))
-      )
-        return false;
       if (nq) {
         const alvo = norm(`${p.nome} ${nomeCategoria(p.categoria)} ${p.descricao} ${p.material}`);
         if (!alvo.includes(nq)) return false;
@@ -186,7 +170,6 @@ export default function CatalogoClient({ produtos = produtosMock }: { produtos?:
     ...facetas.categoria.map((v) => ({ grupo: "categoria" as const, valor: v, rotulo: nomeCategoria(v) })),
     ...facetas.material.map((v) => ({ grupo: "material" as const, valor: v, rotulo: v })),
     ...facetas.aplicacao.map((v) => ({ grupo: "aplicacao" as const, valor: v, rotulo: v })),
-    ...facetas.cor.map((v) => ({ grupo: "cor" as const, valor: v, rotulo: v })),
   ];
 
   // Renderiza um grupo de filtro (grp() do mockup): titulo + checkboxes com .n.
@@ -277,16 +260,6 @@ export default function CatalogoClient({ produtos = produtosMock }: { produtos?:
               valor: a,
               rotulo: a,
               contagem: contar((p) => (p.aplicacoes ?? []).some((x) => norm(x) === norm(a))),
-            })),
-          )}
-          {grupo(
-            "Cor",
-            "cor",
-            CORES.map((c) => ({
-              valor: c.valor,
-              rotulo: c.valor,
-              cor: c.cor,
-              contagem: contar((p) => (p.cores ?? []).some((x) => norm(x.nome) === norm(c.valor))),
             })),
           )}
         </aside>
