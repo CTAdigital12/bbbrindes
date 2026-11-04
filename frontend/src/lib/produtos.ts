@@ -69,6 +69,14 @@ function categoriaPrincipal(cats?: CategoriaRef[]): string {
   return primeira && typeof primeira === "object" ? primeira.slug ?? "" : "";
 }
 
+// Todos os slugs de categoria do produto (ate 3). O produto pode pertencer a mais
+// de uma (ex.: Chaveiro + Green Plasticaria); o catalogo filtra por pertencimento.
+function categoriasSlugs(cats?: CategoriaRef[]): string[] {
+  return (cats ?? [])
+    .map((c) => (c && typeof c === "object" ? c.slug ?? "" : ""))
+    .filter((s): s is string => s.length > 0);
+}
+
 function urlsDasImagens(imgs?: MediaRef[]): string[] {
   return (imgs ?? [])
     .map((i) => (typeof i === "object" ? i.url : undefined))
@@ -110,6 +118,7 @@ function mapear(doc: ProdutoDoc): Produto {
     slug: doc.slug,
     nome: doc.nome,
     categoria: categoriaPrincipal(doc.categorias),
+    categorias: categoriasSlugs(doc.categorias),
     descricao: doc.descricaoCurta ?? "",
     material: doc.logistica?.materiaPrima ?? "",
     aplicacoes: doc.idealPara ?? [],
