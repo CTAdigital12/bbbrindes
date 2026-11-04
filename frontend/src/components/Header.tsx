@@ -15,7 +15,7 @@ import type { SiteConfig } from "@/lib/types";
 // da Joy). Apontam pras rotas reais do App Router (/catalogo?categoria=slug).
 const CATS: { label: string; href: string; hot?: boolean; eco?: boolean }[] = [
   { label: "Todos os produtos", href: "/catalogo" },
-  { label: "Ecologicos", href: "/catalogo?categoria=green-plasticaria", eco: true },
+  { label: "Ecologicos", href: "/catalogo?categoria=green-plasticaria&categoria=green-fibras", eco: true },
   { label: "Copos", href: "/catalogo?categoria=copos" },
   { label: "Canecas e xicaras", href: "/catalogo?categoria=canecas-xicaras" },
   { label: "Squeezes", href: "/catalogo?categoria=squeezes" },
