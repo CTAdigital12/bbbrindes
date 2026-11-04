@@ -16,7 +16,12 @@ export type VariacaoCor = {
 export type Produto = {
   slug: string;
   nome: string;
-  categoria: string; // slug da categoria
+  categoria: string; // slug da categoria principal (breadcrumb, PDP, relacionados)
+  // Todas as categorias do produto (ate 3; Payload: `categorias`). O filtro e a
+  // contagem do catalogo casam por PERTENCIMENTO: um produto pode ser Chaveiro E
+  // Green Plasticaria e precisa aparecer nos dois. Opcional (o mock so preenche
+  // `categoria`); leia sempre via categoriasDoProduto().
+  categorias?: string[];
   descricao: string;
   material: string;
   aplicacoes: string[];
@@ -47,6 +52,12 @@ export type Produto = {
   // informacao na PDP (o cliente nao escolhe mais a tecnica: depende da arte).
   metodosImpressao?: string;
 };
+
+// Categorias do produto para filtrar/contar no catalogo, com fallback no primario
+// (o mock so preenche `categoria`). Garante que um produto apareca em TODAS as suas
+// categorias, nao so na principal.
+export const categoriasDoProduto = (p: Produto): string[] =>
+  p.categorias && p.categorias.length > 0 ? p.categorias : p.categoria ? [p.categoria] : [];
 
 // Blocos da pagina de produto simulados no wireframe (S03-11). Espelham a
 // estrutura de docs/pdp-modelo-squeeze.md. Campos "a confirmar" com o cliente

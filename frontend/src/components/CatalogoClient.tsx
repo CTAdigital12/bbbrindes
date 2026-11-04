@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import type { Produto } from "@/lib/types";
+import { categoriasDoProduto, type Produto } from "@/lib/types";
 import { categorias, nomeCategoria } from "@/data/categorias";
 import { aplicacoes, produtos as produtosMock } from "@/data/produtos";
 import { useCart } from "@/lib/cart";
@@ -146,7 +146,11 @@ export default function CatalogoClient({ produtos = produtosMock }: { produtos?:
   const resultados = useMemo(() => {
     const nq = norm(q);
     const lista = produtos.filter((p) => {
-      if (facetas.categoria.length && !facetas.categoria.includes(p.categoria)) return false;
+      if (
+        facetas.categoria.length &&
+        !categoriasDoProduto(p).some((c) => facetas.categoria.includes(c))
+      )
+        return false;
       if (facetas.material.length && !facetas.material.some((m) => norm(m) === norm(p.material)))
         return false;
       if (
@@ -258,7 +262,7 @@ export default function CatalogoClient({ produtos = produtosMock }: { produtos?:
             categorias.map((c) => ({
               valor: c.slug,
               rotulo: c.nome,
-              contagem: contar((p) => p.categoria === c.slug),
+              contagem: contar((p) => categoriasDoProduto(p).includes(c.slug)),
             })),
           )}
           {grupo(

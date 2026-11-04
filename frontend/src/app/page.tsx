@@ -1,6 +1,6 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
-import type { ConteudoHome } from "@/lib/types";
+import { categoriasDoProduto, type ConteudoHome } from "@/lib/types";
 import Icon from "@/components/Icon";
 import HeroSlider from "@/components/HeroSlider";
 import Countdown from "@/components/Countdown";
@@ -114,7 +114,7 @@ export default async function HomePage() {
   const materiasHome = materias.slice(0, 3);
   const postsHome = posts.slice(0, 3);
 
-  const contagem = (slug: string) => produtos.filter((p) => p.categoria === slug).length;
+  const contagem = (slug: string) => produtos.filter((p) => categoriasDoProduto(p).includes(slug)).length;
 
   return (
     <div>
