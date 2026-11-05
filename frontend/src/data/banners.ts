@@ -15,7 +15,7 @@ export const banners: Banner[] = [
     titulo: "Linha Green",
     subtitulo: "Industria sustentavel, produtos livres de BPA e cores inovadoras.",
     cta: "Conhecer Linha Green",
-    href: "/catalogo?categoria=green-plasticaria",
+    href: "/catalogo?categoria=green-plasticaria&categoria=green-fibras",
   },
   {
     id: "economicos",
