@@ -181,6 +181,25 @@ export default async function HomePage() {
         </div>
       </div>
 
+      {/* Lancamentos (dado REAL: getProdutos). Vem ACIMA de Categorias (pedido do
+          Plinio, D1): a 1a dobra do scroll ja mostra a vitrine de produto, nao so
+          a grade de categorias. */}
+      <section className="sec reveal">
+        <div className="wrap">
+          <SectionHead
+            title="Lançamentos"
+            sub="Novidades da linha Green Fibras."
+            link="/catalogo"
+            linkText="Ver todos"
+          />
+          <Rail id="tr-lanc">
+            {lancamentos.map((p) => (
+              <ProductCardJoy key={p.slug} produto={p} />
+            ))}
+          </Rail>
+        </div>
+      </section>
+
       {/* Categorias (dado REAL: getCategorias) */}
       <section className="sec reveal">
         <div className="wrap">
@@ -216,23 +235,6 @@ export default async function HomePage() {
               );
             })}
           </div>
-        </div>
-      </section>
-
-      {/* Lancamentos (dado REAL: getProdutos) */}
-      <section className="sec reveal">
-        <div className="wrap">
-          <SectionHead
-            title="Lançamentos"
-            sub="Novidades da linha Green Fibras."
-            link="/catalogo"
-            linkText="Ver todos"
-          />
-          <Rail id="tr-lanc">
-            {lancamentos.map((p) => (
-              <ProductCardJoy key={p.slug} produto={p} />
-            ))}
-          </Rail>
         </div>
       </section>
 
