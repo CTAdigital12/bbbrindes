@@ -139,7 +139,6 @@ export const CAT_ICON: Record<string, string> = {
   "to-go-viagem": "categoria-to-go-e-viagem",
   infantil: "categoria-infantil",
   "cordoes-costurados": "categoria-cordoes-e-costurados",
-  "in-mold-label": "categoria-in-mold-label",
   "projetos-especiais": "categoria-projetos-especiais",
 };
 

@@ -17,7 +17,6 @@ export const categorias: Categoria[] = [
   { slug: "to-go-viagem", nome: "To Go / Viagem" },
   { slug: "infantil", nome: "Infantil" },
   { slug: "cordoes-costurados", nome: "Cordoes e Costurados" },
-  { slug: "in-mold-label", nome: "In Mold Label" },
   { slug: "projetos-especiais", nome: "Projetos Especiais" },
 ];
 
