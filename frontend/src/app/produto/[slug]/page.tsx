@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { nomeCategoria } from "@/data/categorias";
+import { nomeCategoriaDe } from "@/lib/types";
+import { getCategorias } from "@/lib/content";
 import { getProdutoBySlug, getProdutoSlugs, getProdutos } from "@/lib/produtos";
 import ProdutoView from "@/components/ProdutoView";
 import ProdutoDetalheView from "@/components/ProdutoDetalheView";
@@ -50,6 +51,11 @@ export default async function ProdutoPage({ params }: { params: Params }) {
   const { slug } = await params;
   const produto = await getProdutoBySlug(slug);
   if (!produto) notFound();
+
+  // Categorias do admin (getCategorias, fallback no mock) pra resolver o nome de
+  // exibicao por slug no server (SEO/breadcrumb). O site publico le a mesma lista.
+  const categorias = await getCategorias();
+  const nomeCategoria = (slug: string) => nomeCategoriaDe(categorias, slug);
 
   // Relacionados por categoria, a partir do catalogo REAL (getProdutos; cai no
   // mock se o backend estiver fora no build), como o `rel` do produto() do mockup.

@@ -17,7 +17,8 @@ const poppins = Poppins({
 });
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import { getConfig } from "@/lib/content";
+import { getConfig, getCategorias } from "@/lib/content";
+import { CategoriasProvider } from "@/lib/categorias-context";
 import { SITE_URL, SITE_NAME, SITE_DESCRIPTION } from "@/lib/site";
 
 export const metadata: Metadata = {
@@ -52,9 +53,11 @@ const organizationLd = {
 };
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
-  // Configuracoes do site (contato, redes, selos, blurb) do Payload, com fallback
-  // no mock. Buscadas aqui (server) e passadas pro Header (client) e Footer.
-  const config = await getConfig();
+  // Configuracoes do site (contato, redes, selos, blurb) e categorias do Payload,
+  // com fallback no mock. Buscadas aqui (server): config vai pro Header/Footer e as
+  // categorias entram no CategoriasProvider pra todo componente client ler a lista
+  // do admin (menu, filtro do catalogo, cards, PDP).
+  const [config, categorias] = await Promise.all([getConfig(), getCategorias()]);
   return (
     <html lang="pt-BR">
       <body className={`${poppins.variable} ${poppins.className} flex min-h-screen flex-col`}>
@@ -64,11 +67,13 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         />
         <CartProvider>
           <CartUIProvider>
-            <Header config={config} />
-            <main className="flex-1">{children}</main>
-            <Footer config={config} />
-            <CartDrawer />
-            <ExitPopup />
+            <CategoriasProvider categorias={categorias}>
+              <Header config={config} />
+              <main className="flex-1">{children}</main>
+              <Footer config={config} />
+              <CartDrawer />
+              <ExitPopup />
+            </CategoriasProvider>
           </CartUIProvider>
         </CartProvider>
       </body>
