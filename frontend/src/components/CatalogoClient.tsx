@@ -27,12 +27,24 @@ type Ord = "rel" | "novo" | "az";
 // Taxonomia fixa dos filtros, igual ao mockup. Material e as 6 aplicacoes de
 // data/produtos.ts. (Filtro de cor removido a pedido do Plinio: "a pessoa nao
 // filtra por cor".)
-const MATERIAIS = ["Fibra natural", "Plastico"];
+const MATERIAIS = ["Fibra natural", "Plastico", "Plastico reciclado"];
 
 const norm = (s: string) =>
   s.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase();
 const toOrd = (v: string | null): Ord => (v === "novo" || v === "az" ? v : "rel");
 const ehNovo = (p: Produto) => (p.destaques ?? []).includes("lancamento");
+
+// Classifica o material (texto livre da planilha) nos 3 baldes do filtro que o
+// Plinio pediu: "recicl" (PLASTICO RECICLAVEL = linha Green Plasticaria), senao
+// "fibra" (Green Fibras), senao plastico comum (PP, PS, PSAI, PEAD...). Produto
+// sem material fica fora dos tres.
+const bucketMaterial = (material: string): string => {
+  const m = norm(material);
+  if (!m) return "";
+  if (m.includes("recicl")) return "Plastico reciclado";
+  if (m.includes("fibra")) return "Fibra natural";
+  return "Plastico";
+};
 
 export default function CatalogoClient({ produtos = produtosMock }: { produtos?: Produto[] }) {
   const sp = useSearchParams();
@@ -140,7 +152,7 @@ export default function CatalogoClient({ produtos = produtosMock }: { produtos?:
         !categoriasDoProduto(p).some((c) => facetas.categoria.includes(c))
       )
         return false;
-      if (facetas.material.length && !facetas.material.some((m) => norm(m) === norm(p.material)))
+      if (facetas.material.length && !facetas.material.includes(bucketMaterial(p.material)))
         return false;
       if (
         facetas.aplicacao.length &&
@@ -254,7 +266,7 @@ export default function CatalogoClient({ produtos = produtosMock }: { produtos?:
             MATERIAIS.map((m) => ({
               valor: m,
               rotulo: m,
-              contagem: contar((p) => norm(p.material) === norm(m)),
+              contagem: contar((p) => bucketMaterial(p.material) === m),
             })),
           )}
           {grupo(
