@@ -132,8 +132,9 @@ export default function ProdutoView({ produto }: { produto: Produto }) {
   }
   function escolherCor(i: number) {
     setCorNome(cores[i].nome);
-    // So troca o palco se a cor tem foto propria; senao limpa e o palco segue a galeria.
-    setCorImg(cores[i].imagem ?? null);
+    // So troca o palco quando a cor tem foto propria. Cor sem foto (ex. "Cristal"
+    // transparente) so muda o nome e MANTEM o palco como esta (nao reseta pra foto 0).
+    if (cores[i].imagem) setCorImg(cores[i].imagem);
   }
 
   function aoAdicionar() {
