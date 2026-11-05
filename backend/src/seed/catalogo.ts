@@ -7,7 +7,7 @@
 // Fonte: backend/src/seed/data/catalogo.json, gerado por
 // docs/importacao-catalogo/build-catalogo-json.py a partir do CSV bruto (o CSV e o
 // JSON ficam fora do repo, ver .gitignore). As categorias precisam existir antes
-// (rode seed:squeeze, que semeia as 15).
+// (rode seed:squeeze, que semeia as 14).
 //
 //   npm run seed:catalogo            (na pasta backend/)
 //   CATALOGO_DRY=1 npm run seed:catalogo   (valida o mapeamento sem gravar)
@@ -113,7 +113,7 @@ const run = async () => {
   }
   if (slugsFaltando.size > 0) {
     throw new Error(
-      `Categorias inexistentes no banco: ${[...slugsFaltando].join(', ')}. Rode seed:squeeze primeiro (ele semeia as 15 categorias).`,
+      `Categorias inexistentes no banco: ${[...slugsFaltando].join(', ')}. Rode seed:squeeze primeiro (ele semeia as 14 categorias).`,
     )
   }
 

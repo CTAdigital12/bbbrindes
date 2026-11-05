@@ -4,7 +4,7 @@
 //
 //   npm run seed:squeeze     (na pasta backend/)
 //
-// Semeia tambem as 15 categorias validadas (upsert por slug), porque o produto
+// Semeia tambem as 14 categorias validadas (upsert por slug), porque o produto
 // se relaciona a elas e o front/home passam a ler categorias reais.
 
 import path from 'path'
@@ -28,7 +28,7 @@ const paragrafo = (texto: string) => ({
   ],
 })
 
-// 15 categorias validadas (slug estavel, igual ao front). Grupo "ecologicos"
+// 14 categorias validadas (slug estavel, igual ao front). Grupo "ecologicos"
 // so agrupa a familia Green/Medalhas no topo da navegacao; nao e o mesmo que o
 // booleano `ecologico` do produto.
 const CATEGORIAS: { slug: string; nome: string; grupo: 'ecologicos' | 'geral' }[] = [
@@ -45,7 +45,6 @@ const CATEGORIAS: { slug: string; nome: string; grupo: 'ecologicos' | 'geral' }[
   { slug: 'to-go-viagem', nome: 'To Go / Viagem', grupo: 'geral' },
   { slug: 'infantil', nome: 'Infantil', grupo: 'geral' },
   { slug: 'cordoes-costurados', nome: 'Cordoes e Costurados', grupo: 'geral' },
-  { slug: 'in-mold-label', nome: 'In Mold Label', grupo: 'geral' },
   { slug: 'projetos-especiais', nome: 'Projetos Especiais', grupo: 'geral' },
 ]
 

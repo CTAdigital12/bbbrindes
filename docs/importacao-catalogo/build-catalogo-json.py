@@ -86,8 +86,8 @@ CAT_MAP = {
     "casaedecoracao": "casa-decoracao",
     "squeezes": "squeezes",
     "chaveiros": "chaveiros",
-    "inmoldlabel": "in-mold-label",
     "cordoesecosturados": "cordoes-costurados",
+    "projetosespeciais": "projetos-especiais",
 }
 
 

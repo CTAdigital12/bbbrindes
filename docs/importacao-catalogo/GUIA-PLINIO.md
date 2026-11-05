@@ -21,7 +21,7 @@ linha por produto. As colunas:
    e, depois, o preco e o estoque do ERP). Ex.: `squeeze-eco-500ml`. Use letras
    minusculas, sem espaco nem acento (troque espaco por hifen).
 2. `nome`: nome do produto como aparece no site. Ex.: `Squeeze Ecologico 500ml`.
-3. `categoria`: uma das 15 categorias exatas da lista abaixo.
+3. `categoria`: uma das 14 categorias exatas da lista abaixo.
 4. `descricao_curta`: 1 a 2 frases. E o resumo que aparece no card e vira a
    descricao do Google (SEO).
 5. `material`: material principal. Ex.: `Plastico`, `Inox`, `Ceramica`, `Bambu`.
@@ -51,7 +51,7 @@ linha por produto. As colunas:
 Regra geral: onde a coluna aceita mais de um valor, separe por ponto e virgula (`;`)
 dentro da mesma celula. Nao use virgula para isso.
 
-## As 15 categorias validas (use exatamente um destes nomes)
+## As 14 categorias validas (use exatamente um destes nomes)
 
 1. Ecologicos - Green Plasticaria
 2. Ecologicos - Green Fibras
@@ -66,8 +66,7 @@ dentro da mesma celula. Nao use virgula para isso.
 11. To Go / Viagem
 12. Infantil
 13. Cordoes e Costurados
-14. In Mold Label
-15. Projetos Especiais
+14. Projetos Especiais
 
 ## As imagens (a parte que mais evita erro)
 
