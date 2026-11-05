@@ -416,8 +416,15 @@ body.drawer-on .wa-f,body.wa-hide .wa-f{opacity:0;pointer-events:none;transform:
 /* produto */
 .pd{display:grid;grid-template-columns:1.05fr .95fr;gap:44px;margin-top:18px;align-items:start}
 .gal{position:sticky;top:140px;display:grid;grid-template-columns:76px 1fr;gap:14px}
-.thumbs{display:grid;gap:10px;align-content:start;max-height:560px;overflow:auto;scrollbar-width:none}
-.thumbs button{width:76px;height:76px;border-radius:14px;background:var(--g-card);padding:8px;box-shadow:inset 0 0 0 1.5px transparent;transition:.15s}
+/* Coluna de miniaturas: altura travada em 6 thumbs inteiras (6*76 + 5*10 = 506px)
+   pra nunca cortar uma imagem no meio. Produtos com muitas fotos (ex.: squeezes
+   com ate 15) rolam; a barra de rolagem fina aparece so quando ha mais itens
+   (indicador), e o scroll-snap encaixa sempre numa thumb inteira. */
+.thumbs{display:grid;gap:10px;align-content:start;max-height:calc(6 * 76px + 5 * 10px);overflow-y:auto;scroll-snap-type:y proximity;scrollbar-width:thin;scrollbar-color:var(--line) transparent}
+.thumbs::-webkit-scrollbar{width:5px}
+.thumbs::-webkit-scrollbar-thumb{background:var(--line);border-radius:5px}
+.thumbs::-webkit-scrollbar-track{background:transparent}
+.thumbs button{width:76px;height:76px;border-radius:14px;background:var(--g-card);padding:8px;box-shadow:inset 0 0 0 1.5px transparent;transition:.15s;scroll-snap-align:start}
 .thumbs button.on{box-shadow:inset 0 0 0 2px var(--deep)}
 .thumbs img{width:100%;height:100%;object-fit:contain}
 .stage{position:relative;aspect-ratio:1;border-radius:26px;background:var(--g-card);display:grid;place-items:center;overflow:hidden;box-shadow:var(--sh-1);cursor:zoom-in}
@@ -427,7 +434,12 @@ body.drawer-on .wa-f,body.wa-hide .wa-f{opacity:0;pointer-events:none;transform:
    ou largo) passa a ocupar a mesma fracao do palco, com margem uniforme. Antes
    era 62%x78% (caixa retangular), que deixava os altos gigantes (travavam em
    78% de altura) e os largos pequenos (travavam em 62% de largura, ~32% alt). */
-.stage img{width:70%;height:70%;object-fit:contain;filter:drop-shadow(0 26px 26px rgba(0,40,25,.2));transition:transform .2s}
+/* position:absolute faz o box 70%x70% resolver contra o palco. Sem isso, com o
+   aspect-ratio:1 do .stage o height:70% de um filho in-flow nao resolvia (virava a
+   altura intrinseca da imagem), a imagem estourava o palco e cortava a base,
+   principalmente em fotos estreitas (ex.: squeeze 165x591). Agora fica centralizada
+   e inteira, nos 70% do palco. */
+.stage img{position:absolute;top:15%;left:15%;width:70%;height:70%;object-fit:contain;filter:drop-shadow(0 26px 26px rgba(0,40,25,.2));transition:transform .2s}
 .stage .fl{position:absolute;left:18px;top:18px;display:flex;gap:6px;flex-wrap:wrap}
 /* halo decorativo atras do produto. NAO usar a classe "ring": colide com o
    utilitario .ring do Tailwind (box-shadow azul padrao) e desenha um anel azul. */
@@ -617,7 +629,7 @@ h2.h{font-size:24px;letter-spacing:-.02em;font-weight:600;margin:0 0 16px}
   .filt.on{transform:none}
   .pd{grid-template-columns:1fr;gap:20px}
   .gal{position:static;grid-template-columns:1fr}
-  .thumbs{grid-auto-flow:column;order:2;overflow-x:auto}
+  .thumbs{grid-auto-flow:column;order:2;overflow-x:auto;overflow-y:visible;max-height:none;scroll-snap-type:x proximity}
   .specs{grid-template-columns:1fr;gap:28px}
   .seg{grid-template-columns:repeat(2,1fr)}
   .sticky-buy .wrap{height:auto;padding:10px 16px}
