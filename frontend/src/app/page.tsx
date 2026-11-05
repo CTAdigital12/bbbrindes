@@ -275,27 +275,9 @@ export default async function HomePage() {
         </div>
       </div>
 
-      {/* Campanhas e datas (dado REAL: getCampanhas, filtrado pelos que tem tile) */}
-      <section className="sec reveal">
-        <div className="wrap">
-          <SectionHead
-            title="Campanhas e datas"
-            sub="Cada data tem uma página com os brindes mais pedidos. O pedido sai melhor quando fecha com 40 a 60 dias de antecedência."
-          />
-          <div className="tgrid6">
-            {camposComTile.map((c) => (
-              <Link className="tile" href={`/campanha/${c.slug}`} key={c.slug}>
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={img(`/img/banners/home-campanha-${CAMP_TILE[c.slug]}.webp`)} alt="" loading="lazy" />
-                <span className="lb">{c.nome}</span>
-                {nx.includes(c.slug) ? <span className="nx">PRÓXIMA</span> : null}
-              </Link>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Eco: lead escuro + pgrid de produtos ecologicos (dado REAL) */}
+      {/* Eco: lead escuro + pgrid de produtos ecologicos (dado REAL). Troca de lugar
+          com Campanhas (pedido do Plinio, D2): Eco sobe pra ca e Campanhas desce pra
+          logo antes de "Por que a BB Brindes". */}
       <section className="sec reveal">
         <div className="wrap">
           {/* Eco banner (Linha Green) - mockup 28/10 */}
@@ -350,6 +332,27 @@ export default async function HomePage() {
                 <ProductCardJoy key={p.slug} produto={p} />
               ))}
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Campanhas e datas (dado REAL: getCampanhas, filtrado pelos que tem tile).
+          Desceu pra logo antes de "Por que a BB Brindes" (D2, troca com o bloco Eco). */}
+      <section className="sec reveal">
+        <div className="wrap">
+          <SectionHead
+            title="Campanhas e datas"
+            sub="Cada data tem uma página com os brindes mais pedidos. O pedido sai melhor quando fecha com 40 a 60 dias de antecedência."
+          />
+          <div className="tgrid6">
+            {camposComTile.map((c) => (
+              <Link className="tile" href={`/campanha/${c.slug}`} key={c.slug}>
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={img(`/img/banners/home-campanha-${CAMP_TILE[c.slug]}.webp`)} alt="" loading="lazy" />
+                <span className="lb">{c.nome}</span>
+                {nx.includes(c.slug) ? <span className="nx">PRÓXIMA</span> : null}
+              </Link>
+            ))}
           </div>
         </div>
       </section>
