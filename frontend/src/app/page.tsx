@@ -120,6 +120,24 @@ export default async function HomePage() {
     <div>
       <h1 className="sr-only">BB Brindes - brindes corporativos personalizados</h1>
 
+      {/* CTA de orcamento com SLA no topo (D3): a promessa de resposta rapida logo
+          de cara, antes do hero, levando pro fluxo de orcamento. */}
+      <div className="wrap">
+        <div className="sla">
+          <span className="sla-tx">
+            <Icon name="clock" />
+            <span className="sla-cp">
+              <b>Peça seu orçamento e receba a proposta em até 2 horas.</b>
+              <small>Um especialista responde no horário comercial. Sem pagamento online.</small>
+            </span>
+          </span>
+          <Link className="btn btn-cta" href="/catalogo">
+            Começar meu orçamento
+            <Icon name="arrow-right" />
+          </Link>
+        </div>
+      </div>
+
       {/* Hero: slider rotativo + 2 banners laterais */}
       <section className="hero">
         <div className="wrap hgrid">
