@@ -163,7 +163,11 @@ export default function ProdutoView({ produto }: { produto: Produto }) {
               <button
                 key={`${src}-${i}`}
                 type="button"
-                className={!corImg && i === imgIdx ? "on" : ""}
+                // Destaca a miniatura cuja foto e a que esta no palco, seja por
+                // navegacao (imgIdx) ou pela foto da cor (corImg). Quando o backend
+                // alinhar imagens[]=cores[] e preencher cores[].imagem, clicar numa
+                // cor destaca a miniatura certa sozinho.
+                className={imgSrc(src) === stageSrc ? "on" : ""}
                 onClick={() => escolherThumb(i)}
                 aria-label={`Imagem ${i + 1}`}
               >
