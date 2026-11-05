@@ -434,7 +434,12 @@ body.drawer-on .wa-f,body.wa-hide .wa-f{opacity:0;pointer-events:none;transform:
    ou largo) passa a ocupar a mesma fracao do palco, com margem uniforme. Antes
    era 62%x78% (caixa retangular), que deixava os altos gigantes (travavam em
    78% de altura) e os largos pequenos (travavam em 62% de largura, ~32% alt). */
-.stage img{width:70%;height:70%;object-fit:contain;filter:drop-shadow(0 26px 26px rgba(0,40,25,.2));transition:transform .2s}
+/* position:absolute faz o box 70%x70% resolver contra o palco. Sem isso, com o
+   aspect-ratio:1 do .stage o height:70% de um filho in-flow nao resolvia (virava a
+   altura intrinseca da imagem), a imagem estourava o palco e cortava a base,
+   principalmente em fotos estreitas (ex.: squeeze 165x591). Agora fica centralizada
+   e inteira, nos 70% do palco. */
+.stage img{position:absolute;top:15%;left:15%;width:70%;height:70%;object-fit:contain;filter:drop-shadow(0 26px 26px rgba(0,40,25,.2));transition:transform .2s}
 .stage .fl{position:absolute;left:18px;top:18px;display:flex;gap:6px;flex-wrap:wrap}
 /* halo decorativo atras do produto. NAO usar a classe "ring": colide com o
    utilitario .ring do Tailwind (box-shadow azul padrao) e desenha um anel azul. */
