@@ -19,6 +19,7 @@ import { Posts } from './collections/Posts'
 import { Cases } from './collections/Cases'
 import { Imprensa } from './collections/Imprensa'
 import { Tags } from './collections/Tags'
+import { Depoimentos } from './collections/Depoimentos'
 import { Revendedores } from './collections/Revendedores'
 import { LogsEntrega } from './collections/LogsEntrega'
 import { Catalogos } from './globals/Catalogos'
@@ -57,6 +58,7 @@ const REBUILD_ON_CHANGE = [
   'media',
   'logos',
   'hero-slides',
+  'depoimentos',
 ]
 
 // Conexao ao Postgres. Preferimos parametros SEPARADOS (PGHOST/PGPORT/PGUSER/
@@ -107,6 +109,8 @@ export default buildConfig({
     Cases,
     Imprensa,
     Tags,
+    // Depoimentos de clientes (home + cases). FB-6 conectividade.
+    Depoimentos,
     // Logos das marcas (marquee da home). FB-6.
     Logos,
     // Banners do carrossel principal da home (mensal + fixo). FB-6 midia.

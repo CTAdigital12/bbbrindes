@@ -138,5 +138,41 @@ export const ConteudoInstitucional: GlobalConfig = {
         },
       ],
     },
+    {
+      name: 'linhaDoTempo',
+      type: 'array',
+      label: 'Linha do tempo',
+      admin: {
+        description:
+          'Marcos da historia do Grupo BB. Aparece completa no Quem somos e, nos itens marcados "Destaque no resumo", no teaser da pagina de produto.',
+      },
+      defaultValue: [
+        {
+          ano: '2000',
+          titulo: 'Como tudo começou',
+          texto:
+            'A trajetória do Grupo BB nasceu de uma decisão corajosa. Em Curitiba, no ano 2000, Plínio Bevervanso transformou a compra da flauta de formatura em capital inicial, alugando uma pequena sala de 30 m² por três meses. Um pequeno passo que deu início a uma grande história de sucesso empresarial.',
+          destaqueResumo: false,
+        },
+        { ano: '2001', titulo: 'BB Business', texto: 'A partir de uma parceria especial na sala de aula do curso de administração, nasce a BB Business.', destaqueResumo: true },
+        { ano: '2002', titulo: 'Ecossistema Grupo BB', texto: 'O Ecossistema Grupo BB é desenhado e os primeiros funcionários começam a assumir os desafios do empreendimento.', destaqueResumo: false },
+        { ano: '2003', titulo: 'Primeira expansão', texto: 'Com crescimento contínuo e busca por inovação e pioneirismo, o Grupo BB conclui sua primeira fase de expansão.', destaqueResumo: false },
+        { ano: '2004', titulo: 'Atuação nacional', texto: 'A nova sede e a expansão dos negócios marcam o início da atuação nacional do Grupo, com equipe comercial presente em 9 estados.', destaqueResumo: true },
+        { ano: '2006', titulo: 'Expansão internacional', texto: 'Parcerias de negócios para importação de produtos, insumos e equipamentos industriais.', destaqueResumo: false },
+        { ano: '2007', titulo: 'Fábrica na Bahia', texto: 'Instalação da unidade na Bahia, consolidando a mudança de portfólio e a produção própria no mercado promocional.', destaqueResumo: true },
+        { ano: '2010', titulo: 'Liga da Esperança', texto: 'O Grupo BB cria o projeto social Liga da Esperança para ampliar a empregabilidade, incentivar o desenvolvimento acadêmico e fortalecer a integração comunitária.', destaqueResumo: false },
+        { ano: '2012', titulo: 'Primeiro copo ecossustentável', texto: 'Com parceiros de ensino e pesquisa, lança o primeiro copo ecossustentável do Brasil e consolida a construção da Linha Green.', destaqueResumo: true },
+        { ano: '2015', titulo: 'Reconhecimento nos EUA', texto: 'O Grupo BB avança na internacionalização em feiras globais e é reconhecido no Going Green Design Point pela Linha Green.', destaqueResumo: false },
+        { ano: '2022', titulo: 'Plasticaria', texto: 'Lança a startup cleantech Plasticaria, com a Lowtech, focada em educação ambiental, economia circular e mobiliário de plástico reciclado.', destaqueResumo: true },
+        { ano: '2024', titulo: 'BB Store', texto: 'O Grupo lança a BB Store, com e-commerce e presença em marketplaces para atuar em utilidades, giftware e licensing.', destaqueResumo: false },
+        { ano: '2026', titulo: 'BB Plastics', texto: 'A BB Plastics amplia sua capacidade produtiva e fortalece a atuação em eletrodomésticos, cosméticos e automotivo.', destaqueResumo: true },
+      ],
+      fields: [
+        { name: 'ano', type: 'text', required: true },
+        { name: 'titulo', type: 'text', required: true },
+        { name: 'texto', type: 'textarea', required: true },
+        { name: 'destaqueResumo', type: 'checkbox', label: 'Destaque no resumo (teaser do produto)', defaultValue: false },
+      ],
+    },
   ],
 }
