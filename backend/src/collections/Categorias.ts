@@ -2,7 +2,7 @@ import type { CollectionConfig } from 'payload'
 
 import { slugField } from '../fields/slug'
 
-// As 15 categorias validadas (revisao Plinio). Green Plasticaria, Green Fibras e
+// As 14 categorias validadas (revisao Plinio). Green Plasticaria, Green Fibras e
 // Medalhas e Trofeus formam a familia "Ecologicos" (grupo no topo). "Datas
 // Comemorativas" nao e categoria: vive em Campanhas.
 export const Categorias: CollectionConfig = {
