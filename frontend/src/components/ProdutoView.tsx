@@ -6,7 +6,7 @@ import { type MouseEvent, useEffect, useRef, useState } from "react";
 import type { Produto } from "@/lib/types";
 import { useCart } from "@/lib/cart";
 import { useCartUI } from "@/lib/cart-ui";
-import { nomeCategoria } from "@/data/categorias";
+import { useNomeCategoria } from "@/lib/categorias-context";
 import { WA, nb } from "@/data/home-joy";
 import { imgSrc } from "@/lib/asset";
 import Icon from "@/components/Icon";
@@ -26,6 +26,7 @@ type GalItem = { cor: string; src: string };
 export default function ProdutoView({ produto }: { produto: Produto }) {
   const { adicionar } = useCart();
   const { abrir } = useCartUI();
+  const nomeCategoria = useNomeCategoria();
 
   const cores = produto.cores ?? [];
   const imagens = produto.imagens ?? [];

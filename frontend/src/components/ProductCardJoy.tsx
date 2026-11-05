@@ -3,7 +3,7 @@
 import Link from "next/link";
 import type { Produto } from "@/lib/types";
 import { imgSrc } from "@/lib/asset";
-import { nomeCategoria } from "@/data/categorias";
+import { useNomeCategoria } from "@/lib/categorias-context";
 import { nb } from "@/data/home-joy";
 import { useCart } from "@/lib/cart";
 import { useCartUI } from "@/lib/cart-ui";
@@ -65,6 +65,7 @@ export default function ProductCardJoy({
   quickActions?: boolean;
   onQuickview?: (produto: Produto) => void;
 }) {
+  const nomeCategoria = useNomeCategoria();
   // Foto real do produto (cutout limpo), camada de baixo do painel. Fallback no
   // mockup se o produto nao tiver foto (edge raro).
   const fotoReal = imgSrc(produto.imagens?.[0]) || imgSrc(produto.imagemAmbientada);

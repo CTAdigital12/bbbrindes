@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
-import { categorias } from "@/data/categorias";
+import { useCategorias } from "@/lib/categorias-context";
 import { campanhaPorSlug, type Campanha } from "@/data/campanhas";
 
 // Logo clicavel que abre um submenu com a arvore principal do site (S01-11).
@@ -26,6 +26,7 @@ const datasComemorativas: Campanha[] = ["carnaval", "dia-da-mulher", "dia-das-ma
 const itemClasse = "block rounded px-2 py-1.5 text-sm text-wf-text hover:bg-wf-bg hover:text-wf-accent";
 
 export default function LogoMenu() {
+  const categorias = useCategorias();
   const [aberto, setAberto] = useState(false);
   const wrapRef = useRef<HTMLDivElement>(null);
   const botaoRef = useRef<HTMLButtonElement>(null);

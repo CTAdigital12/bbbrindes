@@ -59,6 +59,13 @@ export type Produto = {
 export const categoriasDoProduto = (p: Produto): string[] =>
   p.categorias && p.categorias.length > 0 ? p.categorias : p.categoria ? [p.categoria] : [];
 
+// Nome de exibicao de uma categoria a partir da lista vinda do admin (getCategorias,
+// com fallback no mock). Funcao pura: serve tanto server (produto/[slug]) quanto
+// client (via useNomeCategoria). Cai no proprio slug quando a categoria nao esta na
+// lista. Substitui o nomeCategoria fixo de data/categorias.ts no site publico.
+export const nomeCategoriaDe = (categorias: Categoria[], slug: string): string =>
+  categorias.find((c) => c.slug === slug)?.nome ?? slug;
+
 // Blocos da pagina de produto simulados no wireframe (S03-11). Espelham a
 // estrutura de docs/pdp-modelo-squeeze.md. Campos "a confirmar" com o cliente
 // ficam em pendencias, exibidos com marca visivel para nao publicar dado errado.

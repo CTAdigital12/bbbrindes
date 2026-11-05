@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { categoriasDoProduto, type Produto } from "@/lib/types";
-import { categorias, nomeCategoria } from "@/data/categorias";
+import { useCategorias, useNomeCategoria } from "@/lib/categorias-context";
 import { aplicacoes, produtos as produtosMock } from "@/data/produtos";
 import { useCart } from "@/lib/cart";
 import { useCartUI } from "@/lib/cart-ui";
@@ -49,6 +49,11 @@ const bucketMaterial = (material: string): string => {
 export default function CatalogoClient({ produtos = produtosMock }: { produtos?: Produto[] }) {
   const sp = useSearchParams();
   const spKey = sp.toString();
+
+  // Categorias e nome por slug vindos do admin (CategoriasProvider no layout), no
+  // lugar da lista fixa. nomeCategoria e estavel (useCallback), seguro nas deps.
+  const categorias = useCategorias();
+  const nomeCategoria = useNomeCategoria();
 
   // Filtros de facetas (checkbox) ficam em estado; inicializam da querystring.
   const [facetas, setFacetas] = useState<Facetas>(() => ({
@@ -169,7 +174,7 @@ export default function CatalogoClient({ produtos = produtosMock }: { produtos?:
     if (ord === "az") return [...lista].sort((a, b) => a.nome.localeCompare(b.nome));
     if (ord === "novo") return [...lista].sort((a, b) => Number(ehNovo(b)) - Number(ehNovo(a)));
     return lista;
-  }, [produtos, facetas, q, novo, ord]);
+  }, [produtos, facetas, q, novo, ord, nomeCategoria]);
 
   // Titulo dinamico da .ptitle (mesma regra do mockup).
   const titulo =
