@@ -11,6 +11,10 @@ export type Categoria = {
 export type VariacaoCor = {
   nome: string;
   hex: string;
+  // Foto do produto NESTA cor (Payload: cores[].imagem, upload). Opcional e hoje
+  // vazia em todo o catalogo (o importador nao casa foto<->cor). Quando preenchida,
+  // clicar na cor na PDP troca a foto principal; enquanto nula, a bolinha e so swatch.
+  imagem?: string;
 };
 
 export type Produto = {

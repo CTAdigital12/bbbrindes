@@ -21,8 +21,6 @@ import Link from "next/link";
 const PASSO = 100;
 const fmt = (n: number) => n.toLocaleString("pt-BR");
 
-type GalItem = { cor: string; src: string };
-
 export default function ProdutoView({ produto }: { produto: Produto }) {
   const { adicionar } = useCart();
   const { abrir } = useCartUI();
@@ -30,13 +28,14 @@ export default function ProdutoView({ produto }: { produto: Produto }) {
 
   const cores = produto.cores ?? [];
   const imagens = produto.imagens ?? [];
-  // Sincronia cor<->imagem: quando ha uma foto por cor (mesma quantidade), cada
-  // miniatura representa uma cor; clicar numa troca a outra (o Squeeze-modelo tem
-  // 1 foto por cor). Fora disso as miniaturas sao so as imagens do produto.
-  const synced = imagens.length > 0 && imagens.length === cores.length;
-  const gal: GalItem[] = synced
-    ? cores.map((c, i) => ({ cor: c.nome, src: imagens[i] }))
-    : imagens.map((src) => ({ cor: "", src }));
+  // Seletor de cor DESACOPLADO da foto: a bolinha e um swatch (nome/hex) e so troca
+  // a foto principal quando aquela cor tem foto propria (cores[i].imagem). Hoje esse
+  // campo e nulo em todo o catalogo (o importador nao casa foto<->cor: as fotos tem
+  // nome generico), entao clicar numa cor so muda o nome, sem trocar a imagem. Isso
+  // mata o bug de "clica numa cor, aparece outra" (os dois arrays vinham em ordens
+  // diferentes e o pareamento por indice era coincidencia). Quando o backend popular
+  // cores[].imagem, a troca "acende" sozinha. A galeria de miniaturas segue sendo a
+  // navegacao por todas as fotos do produto.
 
   // Quantidade minima do pedido: vem do Payload por produto (quantidadeMinima),
   // com fallback em 500 (minimo padrao da fabrica) para produtos sem o campo. Os
@@ -46,6 +45,9 @@ export default function ProdutoView({ produto }: { produto: Produto }) {
 
   const [corNome, setCorNome] = useState(cores[0]?.nome ?? "");
   const [imgIdx, setImgIdx] = useState(0);
+  // Foto da cor selecionada, quando a cor tem foto propria (cores[i].imagem); null
+  // = a bolinha e so swatch e o palco segue a galeria (imgIdx).
+  const [corImg, setCorImg] = useState<string | null>(cores[0]?.imagem ?? null);
   const [qtd, setQtd] = useState(minQtd);
   const [sbOn, setSbOn] = useState(false);
   const [toastMsg, setToastMsg] = useState("");
@@ -71,7 +73,7 @@ export default function ProdutoView({ produto }: { produto: Produto }) {
     (produto.detalhe?.selos ?? []).some((s) => /bpa/i.test(s)) ||
     (produto.tags ?? []).some((t) => /bpa/i.test(t));
 
-  const stageSrc = imgSrc(gal[imgIdx]?.src);
+  const stageSrc = imgSrc(corImg ?? imagens[imgIdx]);
   const mainSrc = imgSrc(imagens[0]);
   const waText = `${WA}?text=${encodeURIComponent("Olá! Quero um orçamento de " + produto.nome)}`;
 
@@ -126,12 +128,12 @@ export default function ProdutoView({ produto }: { produto: Produto }) {
 
   function escolherThumb(i: number) {
     setImgIdx(i);
-    const c = gal[i]?.cor;
-    if (c) setCorNome(c);
+    setCorImg(null); // navegou na galeria: descarta a foto-de-cor e volta pra galeria
   }
   function escolherCor(i: number) {
     setCorNome(cores[i].nome);
-    if (synced) setImgIdx(i);
+    // So troca o palco se a cor tem foto propria; senao limpa e o palco segue a galeria.
+    setCorImg(cores[i].imagem ?? null);
   }
 
   function aoAdicionar() {
@@ -145,7 +147,7 @@ export default function ProdutoView({ produto }: { produto: Produto }) {
       nome: produto.nome,
       cor: corNome,
       quantidade: qtd,
-      imagem: gal[imgIdx]?.src ?? imagens[0],
+      imagem: corImg ?? imagens[imgIdx] ?? imagens[0],
     });
     abrir();
     toast("Adicionado ao orçamento");
@@ -157,15 +159,15 @@ export default function ProdutoView({ produto }: { produto: Produto }) {
         {/* Galeria: coluna de miniaturas + palco com zoom */}
         <div className="gal">
           <div className="thumbs">
-            {gal.map((g, i) => (
+            {imagens.map((src, i) => (
               <button
-                key={`${g.src}-${i}`}
+                key={`${src}-${i}`}
                 type="button"
-                className={i === imgIdx ? "on" : ""}
+                className={!corImg && i === imgIdx ? "on" : ""}
                 onClick={() => escolherThumb(i)}
                 aria-label={`Imagem ${i + 1}`}
               >
-                <img src={imgSrc(g.src)} alt="" />
+                <img src={imgSrc(src)} alt="" />
               </button>
             ))}
           </div>
