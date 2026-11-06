@@ -1138,3 +1138,23 @@ catalogo real, porque a listagem e o generateStaticParams do front vem do MOCK; 
 real no publico (o slug dele esta no mock). PROXIMO: ligar a listagem do catalogo e o
 generateStaticParams no backend (mudanca de front, com validacao visual), sabendo que a maioria entra
 sem foto (placeholder) ate as imagens do Plinio.
+
+## 06/11/2026 14:31 BRT: FB-6, fechamento do reskin friendly do admin
+
+Epico eKyte 10941087. Branch feat/admin-reskin-friendly sincronizado com origin/master
+9a512fb, preservando os arquivos preparados e a validacao visual local ja aprovada pelo Fabio.
+O reskin torna duraveis as cores verdes, o menu lateral, a marca BB e o dashboard de boas-vindas.
+Ajustes finais: icone B unico que cabe no topo, primeiro nome Fabio e alerta que abre a lista
+filtrada de produtos sem foto. Links do dashboard usam o componente Link do Next para passar no lint.
+ImportMap preserva S3ClientUploadHandler e registra os tres componentes customizados.
+Incluidos os scripts seed-linha-do-tempo.ts e smoke-prod.mjs; payload-types.ts permanece fora do commit.
+Nenhum schema ou dado de producao alterado nesta sessao. O seed ja executado anteriormente nao foi repetido.
+
+Validacao: TypeScript e lint dos arquivos alterados aprovados; build isolado de producao aprovado
+antes e depois do ajuste de Link. Renderizacao dos componentes confirma Fabio,
+B unico, quatro atalhos e URL do filtro. A API confirmou 9 produtos sem foto, todos sem imagens.
+Smoke antes do deploy: produtos/categorias/configuracoes/institucional/depoimentos em 200;
+155 produtos, 14 categorias e 2 depoimentos. A contagem de produtos considera a remocao do item de teste.
+
+Proximo passo desta entrega: commit, push como Fabio-raizhe, PR e merge, seguido de
+railway up backend --path-as-root e verificacao da producao. A2 e cargas de dados seguem fora deste lote.
