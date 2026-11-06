@@ -80,3 +80,15 @@ exibir um link clicavel usando a mesma origem de Ver site e Ver no site. Produto
 nao publicados mostram o endereco previsto sem link. Nenhuma mudanca de dominio/DNS.
 Publicacao da etapa aprovada autorizada: commit, push como Fabio-raizhe, PR, merge
 apos checks e deploy do backend. Sem schema, seed ou alteracao de cadastro.
+
+## Compatibilidade de relacionamentos, 06/11/2026 17:13 BRT
+
+Primeira publicacao confirmada pelo PR121, Railway932b614f SUCCESS e Actions42284942571
+SUCCESS. API com155 produtos,14 categorias,13 campanhas,14 banners. Sem carga/migracao.
+
+A revisao encontrou que o Payload usa as mesmas views nas paginas completas e nos
+drawers de relacionamento. O complemento preserva as views nativas nesses drawers,
+incluindo filtros, selecao e callbacks de salvar no formulario pai. O layout aprovado
+continua nas paginas completas. As props do servidor sao filtradas por allowlist antes
+de montar a alternativa nativa no cliente. Cinco testes de regressao somados aos12
+anteriores passaram, assim como lint/tipos/build. Nao ha alteracao adicional do site.

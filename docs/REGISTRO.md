@@ -1246,3 +1246,26 @@ revalidados apos a correcao; build local final aprovado. Link corrigido tambem
 conferido no Chrome, com pagina real em 200. Front mantem os 42
 testes aprovados e builds real/vazio da etapa anterior, sem nova alteracao funcional.
 Proximo passo autorizado: commit/push/PR/merge e railway up do backend desta branch.
+
+### 06/11/2026 17:13 BRT: publicacao confirmada e compatibilidade dos seletores
+
+PR #121 mergeado: commit 0976603, master e5ad9c8. Push Fabio-raizhe. Railway deployment
+932b614f-d62a-4aec-bcbf-9e55d038507d SUCCESS; Actions 42284942571 SUCCESS. API 200:
+155 produtos, 14 categorias, 13 campanhas e 14 banners. Logo nova e login em 200.
+Chrome confirmou rota privada redirecionando ao login, sem erro de pagina. Produto
+no Pages em 200 e sitemap com 155 produtos. Conferencia autenticada manual pendente.
+
+Fabio reforcou preservar os cadastros porque Plinio pode estar testando; informou nao
+saber se ele esta mexendo neste momento, e que nao quer encontrar o painel vazio.
+Nenhum cadastro, imagem, usuario, schema ou variavel foi alterado por estes deploys.
+
+A revisao identificou que views personalizadas de Produtos tambem sao usadas pelos
+drawers de relacionamento. Branch fix/admin-product-drawers criada da master e5ad9c8.
+Correcao isolada: paginas completas usam o visual aprovado; seletores e formularios
+embutidos usam DefaultListView/DefaultEditView do Payload. Preserva filtros, selecao e
+callbacks do formulario pai. Allowlist de props cliente evita serializar req/payload/
+usuario. Nao altera layout de outras areas nem contratos de API.
+
+17 testes do admin aprovados (cinco novos de regressao), lint com complexidade ate10,
+TypeScript e build Payload aprovados. Front sem mudancas adicionais. Proximo passo:
+publicar exclusivamente esta correcao de compatibilidade e repetir smoke de leitura.
