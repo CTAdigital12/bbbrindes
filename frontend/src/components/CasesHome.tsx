@@ -30,7 +30,8 @@ export default function CasesHome({ cases, inicial }: { cases: Case[]; inicial: 
     <div className="cases">
       {sel.map((c) => (
         // Sem foto por case (decisao 27/10): faixa de marca com o nome do cliente.
-        <Link className="case case-text" href="/cases" key={c.slug}>
+        // Clique leva direto ao case na /cases (ancora #slug, F2).
+        <Link className="case case-text" href={`/cases#${c.slug}`} key={c.slug}>
           <div className="ph ph-brand">
             <span className="cli">{c.cliente}</span>
           </div>
