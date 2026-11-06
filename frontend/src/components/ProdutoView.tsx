@@ -206,6 +206,15 @@ export default function ProdutoView({ produto }: { produto: Produto }) {
               <span className="v">{corNome}</span>
             </div>
           )}
+
+          {/* Botao "Ver video" na area de midia, a esquerda, junto da galeria (E3,
+              benchmark Amazon). Antes ficava espremido no configurador, a direita. */}
+          {embedUrl && (
+            <button type="button" className="vbtn" onClick={() => setVideoOpen(true)}>
+              <Icon name="camera" />
+              Ver vídeo do produto
+            </button>
+          )}
         </div>
 
         {/* Informacoes + configurador */}
@@ -244,16 +253,6 @@ export default function ProdutoView({ produto }: { produto: Produto }) {
             <div>
               <div className="lbl">
                 Quantidade <span>mínimo {fmt(minQtd)} unidades</span>
-                {embedUrl && (
-                  <button
-                    type="button"
-                    className="vbtn"
-                    onClick={() => setVideoOpen(true)}
-                  >
-                    <Icon name="camera" />
-                    Ver vídeo do produto
-                  </button>
-                )}
               </div>
               <div className="seg">
                 {presets.map((n) => (
