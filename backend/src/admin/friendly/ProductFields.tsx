@@ -8,10 +8,10 @@ import { fieldValue, plainText, richText } from './product-data'
 import { photo, type Product } from './model'
 import { MediaPicker } from './MediaPicker'
 
-export type FieldProps = { product: Product; change: (field: string, value: unknown) => void; disabled?: boolean }
-export function ProductField({ product, change, field, label, multiline = false, type = 'text', disabled = false, help }: FieldProps & { field: string; label: string; multiline?: boolean; type?: string; help?: string }) {
+export type FieldProps = { product: Product; change: (field: string, value: unknown) => void; disabled?: boolean; errorField?: string }
+export function ProductField({ product, change, field, label, multiline = false, type = 'text', disabled = false, errorField, help }: FieldProps & { field: string; label: string; multiline?: boolean; type?: string; help?: string }) {
   const id = `bb-${field.replaceAll('.', '-')}`
-  return <div className="fld"><label htmlFor={id}>{label}</label>{multiline ? <textarea id={id} rows={4} value={fieldValue(product, field)} disabled={disabled} onChange={e => change(field, e.target.value)} /> : <input className="inp" id={id} type={type} min={type === 'number' ? 1 : undefined} value={fieldValue(product, field)} disabled={disabled} onChange={e => change(field, type === 'number' ? (e.target.value ? Number(e.target.value) : null) : e.target.value)} />}{help ? <span className="help">{help}</span> : null}</div>
+  return <div className="fld"><label htmlFor={id}>{label}</label>{multiline ? <textarea id={id} aria-invalid={errorField === id} aria-describedby={errorField === id ? 'bb-product-error' : undefined} rows={4} value={fieldValue(product, field)} disabled={disabled} onChange={e => change(field, e.target.value)} /> : <input className="inp" id={id} aria-invalid={errorField === id} aria-describedby={errorField === id ? 'bb-product-error' : undefined} type={type} min={type === 'number' ? 1 : undefined} value={fieldValue(product, field)} disabled={disabled} onChange={e => change(field, type === 'number' ? (e.target.value ? Number(e.target.value) : null) : e.target.value)} />}{help ? <span className="help">{help}</span> : null}</div>
 }
 function General(props: FieldProps) {
   const { product, change, disabled } = props
