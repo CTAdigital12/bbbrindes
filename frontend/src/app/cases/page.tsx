@@ -34,7 +34,7 @@ export default async function CasesPage() {
           via .cases-blog; a home segue no grid de 3 (.cases puro). F3. */}
       <div className="cases cases-blog">
         {cases.map((c) => (
-          <article className="case case-text" key={c.slug}>
+          <article className="case case-text" id={c.slug} key={c.slug}>
             <div className="ph ph-brand">
               <span className="cli">{c.cliente}</span>
             </div>
