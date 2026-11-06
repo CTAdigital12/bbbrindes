@@ -1,7 +1,7 @@
 // Loader de produto (S03-02 piloto): le o produto do Payload e mapeia para o
 // tipo Produto que a PDP ja usa, com fallback pro mock. Assim a PDP renderiza o
-// dado real (ex.: Squeeze 300ml) sem mudar a UI; produtos que ainda nao existem
-// no Payload continuam vindo do mock.
+// dado real (ex.: Squeeze 300ml) sem mudar a UI. Produto removido ou nao
+// publicado nao volta ao mock; o fallback existente fica restrito a falha de API.
 
 import type { Produto, ProdutoDetalhe, VariacaoCor } from "@/lib/types";
 import {
@@ -15,6 +15,7 @@ type CategoriaRef = { slug?: string; nome?: string } | number;
 type MediaRef = { url?: string } | number;
 
 type ProdutoDoc = {
+  canais?: { site?: boolean | null };
   slug: string;
   nome: string;
   subtitulo?: string;
@@ -146,7 +147,7 @@ export async function getProdutoBySlug(slug: string): Promise<Produto | undefine
       limit: 1,
       where: { "where[slug][equals]": slug },
     });
-    if (docs[0]) return mapear(docs[0]);
+    return docs[0] && docs[0].canais?.site !== false ? mapear(docs[0]) : undefined;
   } catch {
     // cai no mock abaixo
   }
@@ -159,14 +160,15 @@ export async function getProdutoBySlug(slug: string): Promise<Produto | undefine
 // slugs do mock: o build nunca quebra, no pior caso sobem so os de exemplo.
 export async function getProdutoSlugs(): Promise<string[]> {
   try {
-    const docs = await payloadFind<{ slug?: string }>("produtos", {
+    const docs = await payloadFind<{ slug?: string; canais?: { site?: boolean | null } }>("produtos", {
       depth: 0,
       limit: 1000,
     });
     const slugs = docs
+      .filter((doc) => doc.canais?.site !== false)
       .map((d) => d.slug)
       .filter((s): s is string => typeof s === "string" && s.length > 0);
-    if (slugs.length > 0) return slugs;
+    return slugs;
   } catch {
     // cai no mock abaixo
   }
@@ -179,7 +181,7 @@ export async function getProdutoSlugs(): Promise<string[]> {
 export async function getProdutos(): Promise<Produto[]> {
   try {
     const docs = await payloadFind<ProdutoDoc>("produtos", { depth: 1, limit: 1000 });
-    if (docs.length > 0) return docs.map(mapear);
+    return docs.filter((doc) => doc.canais?.site !== false).map(mapear);
   } catch {
     // cai no mock abaixo
   }
@@ -187,10 +189,10 @@ export async function getProdutos(): Promise<Produto[]> {
 }
 
 // So os ecologicos, para a faixa "Brindes Ecologicos" da home. Deriva da lista
-// real pelo flag `ecologico`; cai no mock se a lista real veio vazia/fora do ar.
+// real pelo flag `ecologico`; usa o mock somente quando a API falha.
 export async function getProdutosEcologicos(): Promise<Produto[]> {
   const todos = await getProdutos();
   if (todos === produtosMock) return produtosEcologicosMock();
   const eco = todos.filter((p) => (p.tags ?? []).includes("ecologico"));
-  return eco.length > 0 ? eco : produtosEcologicosMock();
+  return eco;
 }

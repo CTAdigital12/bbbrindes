@@ -1,5 +1,5 @@
 import type { MetadataRoute } from "next";
-import { produtos } from "@/data/produtos";
+import { getProdutos } from "@/lib/produtos";
 import { getCampanhas } from "@/lib/campanhas";
 import { posts } from "@/data/blog";
 import { pageUrl } from "@/lib/site";
@@ -12,7 +12,7 @@ export const dynamic = "force-static";
 // que tambem estao bloqueadas no robots.ts. Gerado estaticamente no build
 // (output: export).
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const campanhas = await getCampanhas();
+  const [campanhas, produtos] = await Promise.all([getCampanhas(), getProdutos()]);
   const estaticas: { path: string; priority: number; freq: MetadataRoute.Sitemap[number]["changeFrequency"] }[] = [
     { path: "/", priority: 1.0, freq: "weekly" },
     { path: "/catalogo", priority: 0.9, freq: "weekly" },

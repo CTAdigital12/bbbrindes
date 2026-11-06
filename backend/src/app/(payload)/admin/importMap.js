@@ -21,10 +21,14 @@ import { StrikethroughFeatureClient as StrikethroughFeatureClient_e70f5e05f09f93
 import { UnderlineFeatureClient as UnderlineFeatureClient_e70f5e05f09f93e00b997edb1ef0c864 } from '@payloadcms/richtext-lexical/client'
 import { BoldFeatureClient as BoldFeatureClient_e70f5e05f09f93e00b997edb1ef0c864 } from '@payloadcms/richtext-lexical/client'
 import { ItalicFeatureClient as ItalicFeatureClient_e70f5e05f09f93e00b997edb1ef0c864 } from '@payloadcms/richtext-lexical/client'
+import { default as default_c1420cbfc119d4b0e1b301fc64a5a7c1 } from '../../../admin/friendly/ProductEditView'
+import { default as default_f6a7246a4d0be13cf40176aea6522b9c } from '../../../admin/friendly/ProductsListView'
+import { default as default_5dcc8573114f65df8953a595762315f6 } from '../../../admin/friendly/AdminSidebar'
+import { default as default_82ee5e1b86670bfce7843f3aee455384 } from '../../../admin/friendly/AdminHeader'
 import { default as default_963bbb901cf0bd3cbe95504095aea492 } from '../../../admin/components/BrandIcon'
 import { default as default_2162058de0645498cd641d6b478d2e9c } from '../../../admin/components/BrandLogo'
-import { default as default_6d87a3223a4fc1e6256af14367f08d75 } from '../../../admin/components/WelcomeDashboard'
 import { S3ClientUploadHandler as S3ClientUploadHandler_f97aa6c64367fa259c5bc0567239ef24 } from '@payloadcms/storage-s3/client'
+import { default as default_ee67e7ec90c35d5f08c13d59f503b648 } from '../../../admin/friendly/DashboardView'
 import { CollectionCards as CollectionCards_f9c02e79a4aed9a3924487c0cd4cafb1 } from '@payloadcms/next/rsc'
 
 /** @type import('payload').ImportMap */
@@ -52,9 +56,13 @@ export const importMap = {
   "@payloadcms/richtext-lexical/client#UnderlineFeatureClient": UnderlineFeatureClient_e70f5e05f09f93e00b997edb1ef0c864,
   "@payloadcms/richtext-lexical/client#BoldFeatureClient": BoldFeatureClient_e70f5e05f09f93e00b997edb1ef0c864,
   "@payloadcms/richtext-lexical/client#ItalicFeatureClient": ItalicFeatureClient_e70f5e05f09f93e00b997edb1ef0c864,
+  "/admin/friendly/ProductEditView#default": default_c1420cbfc119d4b0e1b301fc64a5a7c1,
+  "/admin/friendly/ProductsListView#default": default_f6a7246a4d0be13cf40176aea6522b9c,
+  "/admin/friendly/AdminSidebar#default": default_5dcc8573114f65df8953a595762315f6,
+  "/admin/friendly/AdminHeader#default": default_82ee5e1b86670bfce7843f3aee455384,
   "/admin/components/BrandIcon#default": default_963bbb901cf0bd3cbe95504095aea492,
   "/admin/components/BrandLogo#default": default_2162058de0645498cd641d6b478d2e9c,
-  "/admin/components/WelcomeDashboard#default": default_6d87a3223a4fc1e6256af14367f08d75,
   "@payloadcms/storage-s3/client#S3ClientUploadHandler": S3ClientUploadHandler_f97aa6c64367fa259c5bc0567239ef24,
+  "/admin/friendly/DashboardView#default": default_ee67e7ec90c35d5f08c13d59f503b648,
   "@payloadcms/next/rsc#CollectionCards": CollectionCards_f9c02e79a4aed9a3924487c0cd4cafb1
 }
