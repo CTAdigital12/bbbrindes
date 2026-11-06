@@ -28,7 +28,7 @@ type ProdutoDoc = {
   categorias?: CategoriaRef[];
   ecologico?: boolean;
   selos?: Record<string, boolean>;
-  cores?: { nome: string; hex?: string }[];
+  cores?: { nome: string; hex?: string; imagem?: MediaRef }[];
   imagens?: MediaRef[];
   imagemAmbientada?: MediaRef;
   videoUrl?: string;
@@ -112,6 +112,7 @@ function mapear(doc: ProdutoDoc): Produto {
   const cores: VariacaoCor[] = (doc.cores ?? []).map((c) => ({
     nome: c.nome,
     hex: hexDaCor(c.nome, c.hex),
+    imagem: urlDaImagem(c.imagem),
   }));
 
   return {
