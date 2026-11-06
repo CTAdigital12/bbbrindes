@@ -14,7 +14,9 @@ type Params = Promise<{ slug: string }>;
 
 export async function generateStaticParams() {
   const slugs = await getCampanhaSlugs();
-  return slugs.map((slug) => ({ slug }));
+  // O export do Next exige ao menos um parametro. Sem campanhas publicadas,
+  // este caminho nao e linkado e renderiza somente a pagina 404.
+  return (slugs.length ? slugs : ["__sem_campanhas__"]).map((slug) => ({ slug }));
 }
 
 export async function generateMetadata({ params }: { params: Params }): Promise<Metadata> {
@@ -72,20 +74,7 @@ const PASSOS: [titulo: string, texto: string][] = [
   ["Receba no prazo", "Fabricamos e entregamos em todo o Brasil."],
 ];
 
-// Curadoria padrao campanha -> produto quando a campanha nao tem produtos
-// mapeados no painel: prioriza ecologicos (carro-chefe) e lancamentos, 8 itens.
-function curadoria(todos: Produto[]): Produto[] {
-  const peso = (p: Produto) =>
-    ((p.tags ?? []).includes("ecologico") ? 2 : 0) +
-    ((p.destaques ?? []).includes("lancamento") ? 1 : 0);
-  return [...todos].sort((a, b) => peso(b) - peso(a)).slice(0, 8);
-}
-
-// Landing de campanha (destino de anuncios/LPs). Espelha a campanha() do mockup
-// funcional da Joy. Server component: le a campanha real do Payload
-// (getCampanhaBySlug) com hero/chamada/conteudo/produtos; cai no mock quando a
-// campanha ainda nao esta no painel. Os produtos vem da relacao da campanha; sem
-// relacao, usa uma curadoria sensata sobre o catalogo real.
+// Conteudo e selecao de produtos publicados pelo cadastro de Campanhas.
 export default async function CampanhaPage({ params }: { params: Params }) {
   const { slug } = await params;
   const c = await getCampanhaBySlug(slug);
@@ -105,13 +94,13 @@ export default async function CampanhaPage({ params }: { params: Params }) {
       : "";
 
   // Produtos em destaque: a relacao da campanha (na ordem do painel), resolvida
-  // contra o catalogo real; sem relacao (ou nenhum resolvido), cai na curadoria.
+  // contra o catalogo real. Selecao vazia no painel permanece vazia no site.
   const todos = await getProdutos();
   const porSlug = new Map(todos.map((p) => [p.slug, p]));
   const mapeados = (c.produtos ?? [])
     .map((s) => porSlug.get(s))
     .filter((p): p is Produto => Boolean(p));
-  const itens = mapeados.length > 0 ? mapeados : curadoria(todos);
+  const itens = mapeados;
 
   const paragrafos = c.conteudo ? c.conteudo.split("\n\n").filter(Boolean) : [];
 
@@ -178,7 +167,7 @@ export default async function CampanhaPage({ params }: { params: Params }) {
           </section>
         ) : null}
 
-        <section className="sec">
+        {itens.length > 0 ? <section className="sec">
           <SectionHead
             title={`Mais pedidos para ${c.nome}`}
             sub="Produtos do catálogo com o apelo da data."
@@ -190,7 +179,7 @@ export default async function CampanhaPage({ params }: { params: Params }) {
               <ProductCardJoy key={p.slug} produto={p} />
             ))}
           </div>
-        </section>
+        </section> : null}
 
         <section className="sec">
           <SectionHead title="Como funciona" />

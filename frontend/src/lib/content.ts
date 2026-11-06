@@ -15,13 +15,11 @@ import type {
   Post,
   SiteConfig,
 } from "@/lib/types";
-import type { Campanha } from "@/data/campanhas";
 import type { HeroSlide } from "@/data/home-joy";
 import { posts as postsMock } from "@/data/blog";
 import { cases as casesMock } from "@/data/cases";
 import { materias as materiasMock } from "@/data/imprensa";
 import { banners as bannersMock, miniBanners as miniBannersMock } from "@/data/banners";
-import { campanhas as campanhasMock, campanhaPorSlug } from "@/data/campanhas";
 import { categorias as categoriasMock } from "@/data/categorias";
 import { configMock } from "@/data/config";
 import { TRUST, DIF, QUOTES, FAQ, LOGOS, nb, orderedHeroSlides } from "@/data/home-joy";
@@ -136,78 +134,7 @@ export async function getBanners(): Promise<{ carrossel: Banner[]; mini: Banner[
   }
 }
 
-type CampanhaDoc = { slug: string; nome: string; mes?: string; ativo?: boolean };
-
-export async function getCampanhas(): Promise<Campanha[]> {
-  try {
-    const docs = await payloadFind<CampanhaDoc>("campanhas");
-    const ativas = docs.filter((d) => d.ativo !== false);
-    if (ativas.length === 0) return campanhasMock;
-    return ativas.map((d) => ({ slug: d.slug, nome: d.nome, mes: d.mes ?? "" }));
-  } catch {
-    return campanhasMock;
-  }
-}
-
-type CampanhaFullDoc = {
-  slug: string;
-  nome: string;
-  mes?: string;
-  chamada?: string;
-  imagem?: { url?: string } | number;
-  conteudo?: unknown; // richText
-  produtos?: ({ slug?: string } | number)[];
-  ativo?: boolean;
-};
-
-// Uma campanha completa (landing): hero, chamada, conteudo e produtos em
-// destaque, para a pagina campanha/[slug]. depth: 1 traz a URL da imagem e o
-// slug dos produtos relacionados. Cai no mock (slug/nome/mes) se o backend
-// falhar ou a campanha nao existir no painel; a landing trata os campos ricos
-// ausentes com o comportamento padrao do mockup.
-export async function getCampanhaBySlug(slug: string): Promise<Campanha | undefined> {
-  try {
-    const docs = await payloadFind<CampanhaFullDoc>("campanhas", {
-      depth: 1,
-      limit: 1,
-      where: { "where[slug][equals]": slug },
-    });
-    const d = docs[0];
-    if (d && d.ativo !== false) {
-      return {
-        slug: d.slug,
-        nome: d.nome,
-        mes: d.mes ?? "",
-        chamada: d.chamada || undefined,
-        imagem: typeof d.imagem === "object" ? d.imagem?.url : undefined,
-        conteudo: lexicalToPlainText(d.conteudo) || undefined,
-        produtos: (d.produtos ?? [])
-          .map((p) => (typeof p === "object" ? p.slug : undefined))
-          .filter((s): s is string => typeof s === "string" && s.length > 0),
-      };
-    }
-  } catch {
-    // cai no mock abaixo
-  }
-  return campanhaPorSlug(slug);
-}
-
-// Slugs de TODAS as campanhas ativas do backend, para o generateStaticParams
-// gerar uma landing por campanha publicada. Fallback nos slugs do mock se o
-// backend cair no build (mesma regra das PDPs).
-export async function getCampanhaSlugs(): Promise<string[]> {
-  try {
-    const docs = await payloadFind<CampanhaDoc>("campanhas", { depth: 0, limit: 100 });
-    const slugs = docs
-      .filter((d) => d.ativo !== false)
-      .map((d) => d.slug)
-      .filter((s): s is string => typeof s === "string" && s.length > 0);
-    if (slugs.length > 0) return slugs;
-  } catch {
-    // cai no mock abaixo
-  }
-  return campanhasMock.map((c) => c.slug);
-}
+export { getCampanhas, getCampanhaBySlug, getCampanhaSlugs } from "./campanhas";
 
 type CategoriaDoc = { slug: string; nome: string; icone?: { url?: string } | number };
 
