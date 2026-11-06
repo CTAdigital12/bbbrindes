@@ -1192,3 +1192,13 @@ historico cumulativo. Nenhum arquivo novo supera 400 linhas. payload-types.ts ge
 
 Aguardando o aceite visual do Fabio conforme regra 27 do CLAUDE.md antes de push/PR. Depois: PR, merge,
 rebuild do Pages, deploy backend para os textos de ajuda da collection e smoke. Cadastros ja estao no admin.
+### 06/11/2026 15:16 BRT: aceite visual recebido e arte de Ano Novo concluida
+
+Fabio aprovou explicitamente: Aprovado, pode publicar. A regra 27 esta atendida para esta integracao.
+Ano Novo recebeu arte propria (adaptacao da arte BB existente via image_gen, verde/dourado, sem copy nova).
+Arquivos WebP versionados em frontend/public/img/banners; prompt e origem em docs/campanhas-ano-novo-arte.md.
+Script idempotente seed-campanha-ano-novo.ts preenche somente imagem ausente, preservando os demais campos.
+Executado: campanha id13, media1310. API de producao confirmou 13 campanhas ativas e 13 com imagem.
+A verificacao do admin aqui foi pelos dados/configuracao que alimentam a tela, sem sessao autenticada no navegador.
+O frontend continua com selecao inicial de produtos preservada; curadoria comercial especifica pode ser editada no painel.
+Publicacao autorizada: push Fabio-raizhe, PR, merge e deploy dos textos de ajuda do backend.

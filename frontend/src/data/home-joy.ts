@@ -143,8 +143,8 @@ export const CAT_ICON: Record<string, string> = {
 };
 
 // slug da campanha (getCampanhas) -> base do arquivo do tile em /img/banners/
-// (home-campanha-<base>.webp). Campanhas sem entrada aqui (ex.: ano-novo) nao
-// tem tile e sao omitidas da grade.
+// Artes iniciais da migracao. A imagem editada no painel tem prioridade.
+// Campanhas novas sem arte continuam visiveis com o fundo da marca.
 export const CAMP_TILE: Record<string, string> = {
   carnaval: "carnaval",
   "dia-da-mulher": "dia-da-mulher",
@@ -157,6 +157,7 @@ export const CAMP_TILE: Record<string, string> = {
   "outubro-rosa": "outubro-rosa",
   "black-friday": "black-friday",
   natal: "natal",
+  "ano-novo": "ano-novo",
   "volta-as-aulas": "volta-s-aulas",
 };
 
