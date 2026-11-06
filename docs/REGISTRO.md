@@ -1269,3 +1269,23 @@ usuario. Nao altera layout de outras areas nem contratos de API.
 17 testes do admin aprovados (cinco novos de regressao), lint com complexidade ate10,
 TypeScript e build Payload aprovados. Front sem mudancas adicionais. Proximo passo:
 publicar exclusivamente esta correcao de compatibilidade e repetir smoke de leitura.
+
+### 06/11/2026 17:23 BRT: lockfile para deploy isolado do backend
+
+PR122 mergeado (commit16cb1b6, master665fbf2), Actions42286686761 SUCCESS. Deploys
+5c8ebd67 e fcfab2cb falharam na instalacao, por pacotes AWS SDK transitivos recem
+publicados dependerem de versoes ainda ausentes no registro. A tentativa repetida
+ocorreu apos confirmar o primeiro pacote disponivel, mas encontrou outro na mesma
+situacao. A versao ativa continuou932b614f(PR121), API200 com155 produtos. Nenhuma
+mudanca de dados, schema ou variavel. Fabio foi informado durante a verificacao.
+
+Causa do empacotamento: upload backend --path-as-root nao inclui pnpm-lock da raiz.
+Branch chore/backend-deploy-lockfile criada da master665fbf2. Lockfile isolado gerado
+com o importador backend e resolucoes identicas as do lockfile principal. Zero novas
+dependencias/resolucoes; principal inalterado. Instalacao limpa e congelada aprovada,
+seguida de build Payload completo aprovado com as dependencias dessa copia isolada.
+
+Arquivo gerado backend/pnpm-lock.yaml tem9920 linhas; grafo integro nao pode ser
+partido, justificando regra18. Procedimento em docs/backend-deploy-lockfile.md.
+Proximo passo: publicar somente esse ajuste de empacotamento para concluir o deploy
+da compatibilidade dos seletores, mantendo os cadastros e as APIs atuais.
