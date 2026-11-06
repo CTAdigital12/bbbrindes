@@ -75,6 +75,9 @@ export default function ProdutoView({ produto }: { produto: Produto }) {
 
   const stageSrc = imgSrc(corImg ?? imagens[imgIdx]);
   const mainSrc = imgSrc(imagens[0]);
+  // Hex da cor selecionada, para a bolinha do rotulo de cor que fica embaixo da
+  // foto (.corcap). Deriva do nome (o state guarda o nome); cai na 1a cor se nao casar.
+  const corHex = (cores.find((c) => c.nome === corNome) ?? cores[0])?.hex;
   const waText = `${WA}?text=${encodeURIComponent("Olá! Quero um orçamento de " + produto.nome)}`;
 
   // Barra de compra fixa: aparece quando o #buyrow sai da viewport por cima
@@ -193,6 +196,16 @@ export default function ProdutoView({ produto }: { produto: Produto }) {
               <span className="chip chip-sage">Reciclável</span>
             </div>
           </div>
+
+          {/* Nome da cor em destaque, logo abaixo da foto (E2). Antes ficava so
+              no rotulo pequeno do configurador, no canto; agora acompanha a imagem. */}
+          {cores.length > 0 && (
+            <div className="corcap" aria-live="polite">
+              <span className="dot" style={{ background: corHex }} />
+              <span className="k">Cor</span>
+              <span className="v">{corNome}</span>
+            </div>
+          )}
         </div>
 
         {/* Informacoes + configurador */}
@@ -212,9 +225,7 @@ export default function ProdutoView({ produto }: { produto: Produto }) {
           <div className="blk">
             {cores.length > 0 && (
               <div>
-                <div className="lbl">
-                  Cor <span id="corl">{corNome}</span>
-                </div>
+                <div className="lbl">Cor</div>
                 <div className="colors">
                   {cores.map((c, i) => (
                     <button
