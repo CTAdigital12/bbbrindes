@@ -1158,3 +1158,37 @@ Smoke antes do deploy: produtos/categorias/configuracoes/institucional/depoiment
 
 Proximo passo desta entrega: commit, push como Fabio-raizhe, PR e merge, seguido de
 railway up backend --path-as-root e verificacao da producao. A2 e cargas de dados seguem fora deste lote.
+## 06/11/2026 15:03 BRT: FB-6, campanhas do painel como fonte do site
+
+Prioridade solicitada pelo Fabio apos a Joy encontrar Campanhas vazio enquanto a Black aparecia na home.
+Branch fix/fb6-campanhas-painel-site, worktree isolado bbbrindes-campanhas, base origin/master 45a33c6.
+
+Carga APLICADA em producao: as 13 campanhas da base atual do site, 12 artes existentes enviadas/reutilizadas
+na Media e 8 produtos iniciais por campanha. Esta selecao reproduz o criterio anterior do site
+(ecologicos/lancamentos); nao representa curadoria comercial nova. Ano Novo segue sem arte, como na base.
+Seed idempotente src/scripts/seed-campanhas.ts: simulacao por padrao; exige CAMPANHAS_APPLY=1 para gravar;
+preserva campanhas existentes. Repeticao apos a carga: 0 criadas, 13 preservadas. Nenhum schema alterado.
+O token de rebuild foi removido somente do processo local do seed para evitar publicacoes durante a carga;
+as variaveis e os hooks do servidor continuam intactos.
+
+Integracao preparada: menu desktop/mobile, grade da home e sitemap leem as campanhas publicadas do painel.
+Nome, mes, imagem e produtos acompanham o cadastro. Inativos e listas vazias nao voltam ao mock.
+Falha de API impede o build e preserva a publicacao anterior. Remover todos os produtos deixa a selecao
+vazia no site. Banners com CTA para /campanha/slug deixam de apontar para campanhas retiradas;
+banners de catalogo e institucionais mantem seu controle proprio em Banners do hero.
+Rotacao da home usa o mes do cadastro, incluindo a virada do ano. Campanha nova sem arte ganha card verde.
+Caso sem campanhas tratado no export do Next: parametro tecnico nao linkado, com resposta de pagina 404.
+
+Validacoes: 39 testes aprovados; lint e TypeScript do front aprovados; build do front com 13 paginas
+aprovado. Build com API local sem campanhas tambem aprovado, sem paginas antigas nem campanhas no sitemap.
+Smoke da producao aprovado: produtos 155, categorias 14, depoimentos 2; cinco endpoints em 200.
+Navegador desktop/mobile: 13 links no menu, Black Friday com imagem valida e 8 produtos, sem erros de pagina.
+Preview: http://localhost:3042/bbbrindes/ e /bbbrindes/campanha/black-friday/ .
+Cache de fetch do worktree isolado limpo apos detectar snapshot parcial da carga; rebuild final confirmou 13.
+
+Arquivos existentes longos mantidos por contexto: page.tsx apenas delega campanhas ao novo CampanhasHome;
+content.ts remove a implementacao de campanhas para o modulo dedicado lib/campanhas.ts. REGISTRO.md e
+historico cumulativo. Nenhum arquivo novo supera 400 linhas. payload-types.ts gerado pelo CLI fora do commit.
+
+Aguardando o aceite visual do Fabio conforme regra 27 do CLAUDE.md antes de push/PR. Depois: PR, merge,
+rebuild do Pages, deploy backend para os textos de ajuda da collection e smoke. Cadastros ja estao no admin.

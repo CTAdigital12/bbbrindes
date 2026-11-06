@@ -10,6 +10,7 @@ export const Campanhas: CollectionConfig = {
   admin: {
     useAsTitle: 'nome',
     group: 'Conteudo',
+    description: 'Campanhas publicadas no site: nome, imagem, texto e produtos. Apos salvar, a publicacao automatica leva alguns minutos. Os banners da home ficam em Banners do hero.',
     defaultColumns: ['nome', 'mes', 'ativo'],
   },
   access: {
@@ -33,6 +34,6 @@ export const Campanhas: CollectionConfig = {
       hasMany: true,
       admin: { description: 'Produtos em destaque na campanha.' },
     },
-    { name: 'ativo', type: 'checkbox', defaultValue: true },
+    { name: 'ativo', type: 'checkbox', defaultValue: true, admin: { description: 'Publicar no menu, na home e na pagina da campanha. Desmarque para retirar do site na proxima publicacao.' } },
   ],
 }

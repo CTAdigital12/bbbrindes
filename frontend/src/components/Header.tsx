@@ -6,9 +6,9 @@ import { useEffect, useState } from "react";
 import { useCart } from "@/lib/cart";
 import { useCartUI } from "@/lib/cart-ui";
 import Icon from "@/components/Icon";
-import { campanhas } from "@/data/campanhas";
-import { CAMP_TILE } from "@/data/home-joy";
-import { img } from "@/lib/asset";
+import type { Campanha } from "@/data/campanhas";
+import { imagemCampanha } from "@/lib/campanhas-vitrine";
+import { imgSrc } from "@/lib/asset";
 import type { SiteConfig } from "@/lib/types";
 
 // Links de categoria da barra de navegacao (subconjunto curado, igual ao mockup
@@ -40,7 +40,7 @@ const PROMESSAS: { icon: string; texto: string }[] = [
   { icon: "certificate", texto: "Atoxidade certificada" },
 ];
 
-export default function Header({ config }: { config: SiteConfig }) {
+export default function Header({ config, campanhas }: { config: SiteConfig; campanhas: Campanha[] }) {
   const { totalItens } = useCart();
   const { abrir } = useCartUI();
   const router = useRouter();
@@ -159,7 +159,7 @@ export default function Header({ config }: { config: SiteConfig }) {
                 </Link>
               );
             })}
-            <button
+            {campanhas.length > 0 ? <button
               type="button"
               className={`ddb${campOpen ? " on" : ""}`}
               onClick={() => setCampOpen((o) => !o)}
@@ -168,10 +168,10 @@ export default function Header({ config }: { config: SiteConfig }) {
               <Icon name="alarm" />
               Campanhas
               <Icon name="chevron-down" />
-            </button>
-            <Link href="/campanha/natal" className="hot">
-              Natal
-            </Link>
+            </button> : null}
+            {campanhas.some((c) => c.slug === "natal") ? <Link href="/campanha/natal" className="hot">
+              {campanhas.find((c) => c.slug === "natal")?.nome}
+            </Link> : null}
             <Link href="/quem-somos">Quem somos</Link>
             <Link href="/cases">Cases</Link>
           </div>
@@ -185,16 +185,18 @@ export default function Header({ config }: { config: SiteConfig }) {
               <span>Uma pagina para cada data, com os brindes mais pedidos.</span>
             </div>
             <div className="ddg">
-              {campanhas
-                .filter((c) => CAMP_TILE[c.slug])
-                .map((c) => (
-                  <Link key={c.slug} href={`/campanha/${c.slug}`} className="tile">
+              {campanhas.map((c) => {
+                const imagem = imagemCampanha(c);
+                return (
+                  <Link key={c.slug} href={`/campanha/${c.slug}`} className="tile"
+                    style={!imagem ? { backgroundColor: "#004431" } : undefined}>
                     {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src={img(`/img/banners/home-campanha-${CAMP_TILE[c.slug]}.webp`)} alt="" />
+                    {imagem ? <img src={imgSrc(imagem)} alt="" /> : null}
                     <span className="lb">{c.nome}</span>
                     <span className="mes">{c.mes}</span>
                   </Link>
-                ))}
+                );
+              })}
             </div>
           </div>
         </div>
@@ -244,6 +246,12 @@ export default function Header({ config }: { config: SiteConfig }) {
               </Link>
             ))}
           </nav>
+
+          {campanhas.length > 0 ? <nav className="mt-5 flex flex-col border-t border-brand-line pt-4" aria-label="Campanhas">
+            <span className="px-1 pb-1 text-xs font-semibold uppercase tracking-wide text-brand-muted">Campanhas</span>
+            {campanhas.map((c) => <Link key={c.slug} href={`/campanha/${c.slug}`}
+              className="rounded-pill px-3 py-2 text-[15px] font-medium text-brand-ink hover:bg-brand-cream">{c.nome}</Link>)}
+          </nav> : null}
 
           <nav className="mt-5 flex flex-col border-t border-brand-line pt-4">
             <span className="px-1 pb-1 text-xs font-semibold uppercase tracking-wide text-brand-muted">

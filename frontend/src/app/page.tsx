@@ -8,6 +8,8 @@ import RevealInit from "@/components/RevealInit";
 import Rail from "@/components/Rail";
 import ProductCardJoy from "@/components/ProductCardJoy";
 import CasesHome from "@/components/CasesHome";
+import CampanhasHome from "@/components/CampanhasHome";
+import { bannerCampanhaPublicado } from "@/lib/campanhas-vitrine";
 import { getProdutos, getProdutosEcologicos } from "@/lib/produtos";
 import {
   getCampanhas,
@@ -23,10 +25,8 @@ import { img, imgSrc } from "@/lib/asset";
 import {
   WA,
   nb,
-  nextCamps,
   POSTS,
   CAT_ICON,
-  CAMP_TILE,
 } from "@/data/home-joy";
 
 // Capas ilustrativas (POSTS do mockup) cicladas sobre os posts reais na home,
@@ -95,11 +95,8 @@ export default async function HomePage() {
     getLogos(),
   ]);
 
-  const nx = nextCamps(monthIdx);
-
   const lancamentos = produtos.slice(0, 8);
   const eco = produtosEco.slice(0, 6);
-  const camposComTile = campanhas.filter((c) => CAMP_TILE[c.slug]);
 
   // Cases/imprensa/blog reais, limitados ao que a home exibe (3 cada). Os
   // loaders ja caem no mock quando a collection esta vazia. A /cases mostra
@@ -142,7 +139,7 @@ export default async function HomePage() {
       {/* Hero: slider rotativo + 2 banners laterais */}
       <section className="hero">
         <div className="wrap hgrid">
-          <HeroSlider slides={slides} />
+          <HeroSlider slides={slides.filter((slide) => bannerCampanhaPublicado(slide.href, campanhas))} />
           <div className="side">
             <Link className="sbn" href="/catalogo?categoria=infantil">
               {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -355,26 +352,7 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* Campanhas e datas (dado REAL: getCampanhas, filtrado pelos que tem tile).
-          Desceu pra logo antes de "Por que a BB Brindes" (D2, troca com o bloco Eco). */}
-      <section className="sec reveal">
-        <div className="wrap">
-          <SectionHead
-            title="Campanhas e datas"
-            sub="Cada data tem uma página com os brindes mais pedidos. O pedido sai melhor quando fecha com 40 a 60 dias de antecedência."
-          />
-          <div className="tgrid6">
-            {camposComTile.map((c) => (
-              <Link className="tile" href={`/campanha/${c.slug}`} key={c.slug}>
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={img(`/img/banners/home-campanha-${CAMP_TILE[c.slug]}.webp`)} alt="" loading="lazy" />
-                <span className="lb">{c.nome}</span>
-                {nx.includes(c.slug) ? <span className="nx">PRÓXIMA</span> : null}
-              </Link>
-            ))}
-          </div>
-        </div>
-      </section>
+      <CampanhasHome campanhas={campanhas} monthIdx={monthIdx} />
 
       {/* Por que a BB Brindes (diferenciais do mockup) */}
       <section className="sec reveal">

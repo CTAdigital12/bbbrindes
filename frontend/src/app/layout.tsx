@@ -17,7 +17,7 @@ const poppins = Poppins({
 });
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import { getConfig, getCategorias } from "@/lib/content";
+import { getConfig, getCategorias, getCampanhas } from "@/lib/content";
 import { CategoriasProvider } from "@/lib/categorias-context";
 import { SITE_URL, SITE_NAME, SITE_DESCRIPTION } from "@/lib/site";
 
@@ -57,7 +57,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   // com fallback no mock. Buscadas aqui (server): config vai pro Header/Footer e as
   // categorias entram no CategoriasProvider pra todo componente client ler a lista
   // do admin (menu, filtro do catalogo, cards, PDP).
-  const [config, categorias] = await Promise.all([getConfig(), getCategorias()]);
+  const [config, categorias, campanhas] = await Promise.all([getConfig(), getCategorias(), getCampanhas()]);
   return (
     <html lang="pt-BR">
       <body className={`${poppins.variable} ${poppins.className} flex min-h-screen flex-col`}>
@@ -68,7 +68,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <CartProvider>
           <CartUIProvider>
             <CategoriasProvider categorias={categorias}>
-              <Header config={config} />
+              <Header config={config} campanhas={campanhas} />
               <main className="flex-1">{children}</main>
               <Footer config={config} />
               <CartDrawer />

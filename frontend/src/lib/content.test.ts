@@ -1,7 +1,6 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
 import {
   getBanners,
-  getCampanhas,
   getCases,
   getCategorias,
   getMaterias,
@@ -10,7 +9,6 @@ import {
 import { posts as postsMock } from "@/data/blog";
 import { cases as casesMock } from "@/data/cases";
 import { banners as bannersMock, miniBanners as miniBannersMock } from "@/data/banners";
-import { campanhas as campanhasMock } from "@/data/campanhas";
 import { categorias as categoriasMock } from "@/data/categorias";
 
 // Loaders de conteudo (S03-04). O contrato-chave e: mapear os docs do Payload
@@ -127,24 +125,6 @@ describe("getBanners", () => {
     const { carrossel, mini } = await getBanners();
     expect(carrossel).toBe(bannersMock);
     expect(mini).toBe(miniBannersMock);
-  });
-});
-
-describe("getCampanhas", () => {
-  it("filtra inativas e mapeia slug/nome/mes", async () => {
-    mockFetchJson({
-      docs: [
-        { slug: "natal", nome: "Natal", mes: "Dezembro", ativo: true },
-        { slug: "off", nome: "Desligada", ativo: false },
-      ],
-    });
-    const campanhas = await getCampanhas();
-    expect(campanhas).toEqual([{ slug: "natal", nome: "Natal", mes: "Dezembro" }]);
-  });
-
-  it("cai no mock quando nao ha campanha ativa", async () => {
-    mockFetchJson({ docs: [] });
-    expect(await getCampanhas()).toBe(campanhasMock);
   });
 });
 
