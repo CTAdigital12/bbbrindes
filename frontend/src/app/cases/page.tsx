@@ -30,7 +30,9 @@ export default async function CasesPage() {
         </p>
       </div>
 
-      <div className="cases">
+      {/* No desktop vira "blog corrido" (faixa de marca a esquerda, texto ao lado),
+          via .cases-blog; a home segue no grid de 3 (.cases puro). F3. */}
+      <div className="cases cases-blog">
         {cases.map((c) => (
           <article className="case case-text" key={c.slug}>
             <div className="ph ph-brand">
