@@ -7,6 +7,7 @@ import Countdown from "@/components/Countdown";
 import RevealInit from "@/components/RevealInit";
 import Rail from "@/components/Rail";
 import ProductCardJoy from "@/components/ProductCardJoy";
+import CasesHome from "@/components/CasesHome";
 import { getProdutos, getProdutosEcologicos } from "@/lib/produtos";
 import {
   getCampanhas,
@@ -406,21 +407,9 @@ export default async function HomePage() {
             link="/cases"
             linkText="Ver cases"
           />
-          <div className="cases">
-            {casesHome.map((c) => (
-              // Mesmo tratamento da pagina /cases: sem foto por case (decisao
-              // 27/10), faixa de marca com o nome do cliente. Clique -> /cases.
-              <Link className="case case-text" href="/cases" key={c.slug}>
-                <div className="ph ph-brand">
-                  <span className="cli">{c.cliente}</span>
-                </div>
-                <div className="bd">
-                  {c.segmento ? <small>{c.segmento}</small> : null}
-                  <h3>{nb(c.titulo)}</h3>
-                </div>
-              </Link>
-            ))}
-          </div>
+          {/* 3 cases aleatorios (F1). O sorteio e client-side (CasesHome) pra
+              variar a cada visita; casesHome (destaques) e o fallback do SSR. */}
+          <CasesHome cases={cases} inicial={casesHome} />
           <div className="quotes">
             {conteudo.depoimentos.map((q) => (
               <div className="qt" key={q.autor}>
