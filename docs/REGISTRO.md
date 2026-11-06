@@ -1316,3 +1316,30 @@ Fabio conferiu a previa e respondeu: "Aprovado, pode publicar". Regra27 atendida
 esta correcao. Base remota continua4ae9a05; autorfabio/emailoficial e contaFabio-raizhe
 conferidos. Publicar somente o isolamento CSS dos cartoes, responsividade e a melhoria
 da previa que reproduz o CSS real. Sem alteracao de dados ou comportamento de API.
+
+## 06/11/2026 18:09 BRT: validacao de cores e orientacao durante publicacao
+
+Fabio aprovou Novo produto e pediu mensagem amigavel para Cores1>Nome. Depois
+confirmou que a pagina de um cadastro recente surgiu apos o rebuild e pediu tratar
+a404preta. Frente passa a focar essas mensagens; nenhum novo modulo do mock iniciado.
+Branchfix/admin-product-validation criada deorigin/master3b13af0, sem outros deltas.
+
+Corvazia bloqueada antes do envio, com nome/numero emPT, aba correta, foco e destaque.
+Erro estruturado Payload tratado no cliente sem perder os valores. Aviso persistente
+junto ao endereco do produto explica que o site atualiza em alguns minutos. Mensagem
+de salvar sem publicar diferenciada. Sem alteracao de API/schema/cadastros.
+
+404propria BB Brindes substitui a tela padrao. Texto condicional para cadastro recente,
+botoesretry/catalogo/inicio, mesmo cabecalho/rodape e status404/noindex preservados.
+Sem artes novas. Detalhes e referencias emdocs/produtos-mensagens-publicacao.md.
+67testes(25admin+42front),lint,tipo ebuilds completos aprovados. Chrome validou erro
+local/servidor sem perda e postagem somente em memoria;404em6cenarios incluindo dark
+mode/celular,botao retry e produtoexistente200. Previa404localhost3047 e admin3044.
+Sem commit,push,PR oudeploy neste lote. Aguarda aceite visual da nova404(regra27).
+
+### 06/11/2026 18:12 BRT: mensagens e pagina amigavel aprovadas
+
+Fabio aprovou explicitamente a nova pagina404 para publicar junto das mensagens de
+validacao: "Aprovado, pode publicar". Regra27 atendida. Baseorigin/master permanece
+3b13af0; autorfabio/emailoficial e contaFabio-raizhe conferidos. Publicacao autorizada
+somente deste lote, sem schema, carga, exclusao de dados ou artes novas.

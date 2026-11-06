@@ -1,10 +1,8 @@
+import { RequestError } from './api-errors'
 export async function requestJSON<T>(url: string, options: RequestInit = {}): Promise<T> {
   const response = await fetch(url, { credentials: 'same-origin', ...options })
   const result = await response.json().catch(() => ({}))
-  if (!response.ok) {
-    const messages = result.errors?.map((error: { message?: string }) => error.message).filter(Boolean)
-    throw new Error(messages?.join(' ') || result.message || 'Não foi possível concluir. Tente novamente.')
-  }
+  if (!response.ok) throw new RequestError(response.status, result)
   return result as T
 }
 export async function uploadImage(file: File) {

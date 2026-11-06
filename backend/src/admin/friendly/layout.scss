@@ -86,3 +86,8 @@ body:has(.bb-admin) .app-header, body:has(.bb-admin) .template-default__nav-togg
 .bb-admin .checks input { flex:none; }
 
 .bb-admin .btn { margin:0; }
+
+.bb-admin [aria-invalid='true'] { border-color:#b42318; }
+.bb-admin [aria-invalid='true']:focus { border-color:#b42318; box-shadow:0 0 0 1px #b42318; }
+
+.bb-admin .bb-publication-help { flex-basis:100%; }

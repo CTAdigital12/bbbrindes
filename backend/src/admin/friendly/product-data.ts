@@ -1,3 +1,4 @@
+import { getProductIssue } from './product-validation'
 import { mediaID, type Product } from './model'
 const editable = ['nome', 'codigoSite', 'codigoCigam', 'subtitulo', 'headline', 'descricaoCurta', 'descricaoCompleta', 'beneficios', 'idealPara', 'diferenciais', 'categorias', 'ecologico', 'quantidadeMinima', 'imagens', 'imagemAmbientada', 'cores', 'videoUrl', 'selos', 'seo', 'especificacoes', 'logistica', 'impressao', 'canais', 'argumentoComercial', 'faixaPreco', 'destaques'] as const
 export function plainText(value: unknown): string {
@@ -34,12 +35,9 @@ export function copyProduct(product: Product): Product {
   return copy
 }
 export function validateProduct(product: Product): string | undefined {
-  if (!product.nome.trim()) return 'Preencha o nome do produto.'
-  if (!product.codigoSite.trim()) return 'Preencha o código do produto.'
-  const count = product.categorias?.length ?? 0
-  if (count < 1 || count > 3) return 'Selecione de uma a três categorias.'
-  if ((product.quantidadeMinima ?? 500) < 1) return 'A quantidade mínima deve ser maior que zero.'
+  return getProductIssue(product)?.message
 }
+
 export function setProductField(product: Product, field: string, value: unknown): Product {
   const [group, child] = field.split('.')
   if (!child) return { ...product, [group]: value }

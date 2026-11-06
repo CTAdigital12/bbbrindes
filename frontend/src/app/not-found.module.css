@@ -1,0 +1,16 @@
+.page { padding-top:64px; padding-bottom:64px; }
+.card { max-width:740px; margin:0 auto; padding:48px 36px; background:var(--white); color:var(--ink); border:1px solid var(--line); border-radius:var(--r); box-shadow:var(--sh-1); text-align:center; }
+.icon { display:grid; place-items:center; width:64px; height:64px; margin:0 auto 20px; border-radius:50%; background:var(--cream); color:var(--deep); }
+.icon svg { width:30px; height:30px; }
+.eyebrow { margin:0 0 8px; color:var(--deep); font-size:13px; font-weight:600; }
+.card h1 { margin:0 0 18px; color:var(--deep); font-size:clamp(26px,4vw,36px); font-weight:600; line-height:1.2; }
+.card p { max-width:580px; margin-left:auto; margin-right:auto; }
+.secondary { margin-top:12px; color:var(--muted); font-size:14px; }
+.actions { display:flex; flex-wrap:wrap; justify-content:center; gap:12px; margin-top:28px; }
+.home { margin-top:22px; font-size:14px; }
+@media(max-width:600px) {
+  .page { padding-top:32px; padding-bottom:32px; }
+  .card { padding:30px 20px; }
+  .actions { flex-direction:column; }
+  .actions > * { width:100%; }
+}
