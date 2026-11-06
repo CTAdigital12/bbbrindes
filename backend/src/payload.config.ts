@@ -97,6 +97,23 @@ export default buildConfig({
     importMap: {
       baseDir: path.resolve(dirname),
     },
+    // Reskin "friendly" (mock da Joy): trava no tema claro (o mock e claro, e
+    // evita que overrides de cor fiquem estranhos no escuro) e poe o sufixo da
+    // marca no titulo das abas. O branding de cor fica no app/(payload)/custom.scss.
+    theme: 'light',
+    meta: {
+      titleSuffix: ' · BB Brindes',
+    },
+    // Componentes custom da marca (Camada B). Paths relativos ao importMap.baseDir
+    // (= src). ATENCAO: mexer aqui exige regenerar o importMap COM o ambiente de
+    // prod (S3 ligado), senao o admin fica em branco. Ver runbook do deploy.
+    components: {
+      graphics: {
+        Icon: '/admin/components/BrandIcon',
+        Logo: '/admin/components/BrandLogo',
+      },
+      beforeDashboard: ['/admin/components/WelcomeDashboard'],
+    },
   },
   collections: [
     // Catalogo

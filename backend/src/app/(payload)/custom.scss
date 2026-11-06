@@ -1,1 +1,210 @@
-/* Estilos custom do painel Payload. Vazio por ora. */
+/*
+ * Identidade BB Brindes no painel admin (reskin "friendly", base no mock da Joy).
+ * CAMADA A: so cor/estilo seguro, via variaveis do proprio Payload + selettores
+ * conhecidos. Nao adiciona componente custom (nao mexe no importMap) e nao altera
+ * comportamento. O chrome completo do mock (sidebar verde escuro, logo, dashboard
+ * de boas-vindas) vem na CAMADA B, que precisa de componentes custom.
+ *
+ * Paleta da marca: verde profundo #004431, verde #51ad46, lima #abe375.
+ * Nao envolvo em @layer de proposito: CSS sem camada vence o CSS "layered" do
+ * Payload, entao estas regras ganham sem precisar de !important.
+ */
+
+:root {
+  /* O Payload pinta acoes/destaques (botao "+", toggles ligados, chips, toasts,
+     selecao) com a escala "success". Troco a rampa 50->950 por VERDE da marca,
+     mantendo a progressao clara->escura pra o modo escuro continuar coerente. */
+  --color-success-50: rgb(236, 246, 239);
+  --color-success-100: rgb(214, 237, 221);
+  --color-success-150: rgb(183, 223, 195);
+  --color-success-200: rgb(150, 208, 168);
+  --color-success-250: rgb(117, 193, 141);
+  --color-success-300: rgb(88, 178, 116);
+  --color-success-350: rgb(66, 164, 96);
+  --color-success-400: rgb(55, 148, 82);
+  --color-success-450: rgb(49, 133, 71);
+  --color-success-500: rgb(42, 120, 63);
+  --color-success-550: rgb(35, 107, 55);
+  --color-success-600: rgb(28, 94, 47);
+  --color-success-650: rgb(22, 82, 40);
+  --color-success-700: rgb(17, 70, 34);
+  --color-success-750: rgb(13, 60, 29);
+  --color-success-800: rgb(10, 51, 25);
+  --color-success-850: rgb(7, 43, 21);
+  --color-success-900: rgb(5, 34, 17);
+  --color-success-950: rgb(3, 26, 13);
+
+  /* Contorno de foco na cor da marca (acessibilidade mantida: 2px solido). */
+  --accessibility-outline: 2px solid rgb(42, 120, 63);
+}
+
+/* Botao primario (Salvar, Criar, Publicar) no verde profundo da marca, em vez
+   do preto padrao do Payload (--theme-elevation-800). Selector confirmado no
+   styles.css do @payloadcms/ui. */
+.btn--style-primary {
+  --bg-color: #004431;
+  --hover-bg: #00301f;
+  --box-shadow: none;
+  --color: #ffffff;
+}
+
+/* O estado "desabilitado" segue cinza (nao herdar o verde). */
+.btn--style-primary.btn--disabled {
+  --bg-color: var(--theme-elevation-200);
+  --color: var(--theme-elevation-800);
+  --hover-bg: var(--theme-elevation-200);
+}
+
+/*
+ * Menu lateral verde escuro (a assinatura visual do mock da Joy).
+ * Classes confirmadas no @payloadcms/next/dist/prod/styles.css: .nav (container),
+ * .nav__link (itens), .nav__label / .nav-group__toggle (titulos de secao),
+ * .nav__link-indicator (barra de "ativo"), .nav__controls (conta/sair no rodape).
+ * So cor: nao mexe em tamanho/posicao, entao o colapso do menu segue funcionando.
+ */
+.nav {
+  background: #0f241b;
+  border-left-color: #0b1b14;
+  border-right-color: #0b1b14;
+  color: #c7d6cc;
+}
+
+/* Itens do menu: claro no escuro, branco no hover (sem sublinhado). */
+.nav .nav__link {
+  color: #c7d6cc;
+}
+.nav a.nav__link:hover,
+.nav a.nav__link:focus-visible {
+  color: #ffffff;
+  text-decoration: none;
+}
+
+/* Titulos de secao (Catalogo, Conteudo, Revenda, Sistema). */
+.nav .nav__label,
+.nav .nav-group__toggle {
+  color: #8fa597;
+}
+.nav .nav-group__toggle:hover,
+.nav .nav-group__toggle:focus-visible {
+  color: #ffffff;
+}
+
+/* Setinha de abrir/fechar grupo no tom do menu. */
+.nav .nav-group__indicator svg .stroke,
+.nav .nav-group__toggle svg .stroke,
+.nav .nav-group__toggle svg line,
+.nav .nav-group__toggle svg path {
+  stroke: #8fa597;
+}
+
+/* Barra do item ATIVO em lima (destaque da marca). */
+.nav .nav__link-indicator {
+  background: #abe375;
+}
+
+/* Rodape do menu (conta, sair). */
+.nav .nav__controls a,
+.nav .nav__controls button {
+  color: #c7d6cc;
+}
+.nav .nav__controls a:hover,
+.nav .nav__controls button:hover {
+  color: #ffffff;
+}
+
+/*
+ * Bloco de boas-vindas no topo do Dashboard (componente WelcomeDashboard,
+ * beforeDashboard). Atalhos no estilo dos cards do mock + alerta "sem foto".
+ */
+.bb-welcome {
+  margin-bottom: 26px;
+}
+.bb-welcome__hi {
+  font-size: 24px;
+  font-weight: 600;
+  margin: 0 0 4px;
+  color: var(--theme-elevation-900);
+}
+.bb-welcome__sub {
+  margin: 0 0 16px;
+  color: var(--theme-elevation-500);
+}
+.bb-welcome__alert {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+  color: rgb(120, 70, 13);
+  background: rgb(249, 242, 237);
+  border: 1px solid rgb(243, 212, 186);
+  border-radius: 10px;
+  padding: 11px 14px;
+  margin-bottom: 16px;
+  font-size: 14px;
+  font-weight: 500;
+}
+.bb-welcome__alert:hover {
+  background: rgb(248, 232, 219);
+}
+.bb-welcome__alert-dot {
+  flex: none;
+  min-width: 26px;
+  height: 26px;
+  padding: 0 7px;
+  border-radius: 8px;
+  background: rgb(185, 108, 13);
+  color: #fff;
+  font-weight: 700;
+  display: grid;
+  place-items: center;
+}
+.bb-welcome__cards {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
+}
+@media (max-width: 1024px) {
+  .bb-welcome__cards {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (max-width: 640px) {
+  .bb-welcome__cards {
+    grid-template-columns: 1fr;
+  }
+}
+.bb-welcome__card {
+  display: grid;
+  gap: 5px;
+  padding: 16px;
+  text-decoration: none;
+  background: var(--theme-elevation-0);
+  border: 1px solid var(--theme-elevation-150);
+  border-radius: 10px;
+  transition:
+    border-color 0.15s ease,
+    transform 0.15s ease;
+}
+.bb-welcome__card:hover {
+  border-color: #004431;
+  transform: translateY(-1px);
+}
+.bb-welcome__card b {
+  font-size: 15px;
+  color: var(--theme-elevation-900);
+}
+.bb-welcome__card span {
+  font-size: 12.5px;
+  color: var(--theme-elevation-500);
+}
+
+/*
+ * O slot do icone da marca no topo (.step-nav__home) e 18x18px. Garante que a
+ * marca BB escale pra dentro dele sem cortar, em qualquer contexto que o Payload
+ * renderize o Icon.
+ */
+.step-nav__home svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
