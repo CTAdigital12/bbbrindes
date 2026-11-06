@@ -1202,3 +1202,47 @@ Executado: campanha id13, media1310. API de producao confirmou 13 campanhas ativ
 A verificacao do admin aqui foi pelos dados/configuracao que alimentam a tela, sem sessao autenticada no navegador.
 O frontend continua com selecao inicial de produtos preservada; curadoria comercial especifica pode ser editada no painel.
 Publicacao autorizada: push Fabio-raizhe, PR, merge e deploy dos textos de ajuda do backend.
+## 06/11/2026 16:41 BRT: FB-6, admin conforme mock da Joy, previa para Fabio
+
+Fabio autorizou implementar e definiu que ele fara a validacao visual. Nova branch
+feature/admin-mockup-fiel em worktree bbbrindes-admin-mockup, base origin/master 247657e.
+Primeira etapa: menu/barra, dashboard, lista e editor de Produtos. Estilos, logo e icones
+reaproveitados do HTML BB-Brindes_Admin-Mockup (2).html. Nenhuma imagem criada.
+Mapeamento e limites documentados em docs/admin-mockup-fiel.md.
+
+API e schema existentes preservados. Editor com salvamento parcial, fotos/biblioteca,
+cores, categorias, selos, ficha, SEO e comercial; preco/estoque somente leitura. O site
+passa a respeitar canais.site em listas/PDP/sitemap. Sem novo rascunho versionado,
+agendamento, lixeira ou roles. Descricao editada como texto simples, mantendo Lexical
+original quando intocado. Outros modulos continuam nativos, acessiveis no novo menu.
+
+Validacoes: 54 testes aprovados, lint, TypeScript, builds backend/frontend e export
+com catalogo vazio aprovados. Chrome verificou filtros, paginas, abas, save parcial,
+erro sem perda, duplicacao, publicar/despublicar, biblioteca, upload local, ordem de
+fotos, modal e menu movel. ImportMap com S3 regenerado, handler preservado. Sem alteracao
+de payload-types.ts. Arquivos novos ate 400 linhas, funcoes novas com complexidade ate 10;
+pagina existente de produto recebe apenas ajuste localizado para export vazio.
+
+Previa http://localhost:3044/admin usa os componentes reais com GETs publicos da base
+atual e escritas somente em memoria local. Conferencia autenticada do save real segue
+pendente. Sem alteracao de dados de producao, sem commit/push/PR/deploy desta etapa.
+Proximo: Fabio validar Painel/Produtos; ajustar feedback e obter aceite explicito antes
+de push/PR conforme regra 27. Nao gerar artes: material faltante deve vir da designer Joy.
+
+### 06/11/2026 16:59 BRT: aceite visual do Fabio e correcao do endereco de produto
+
+Fabio aprovou explicitamente a previa: "ta aprovado". Regra 27 atendida para menu,
+painel e Produtos. Publicacao autorizada conforme fluxo combinado. Tambem apontou
+que o endereco mostrado no editor abria a pagina nao encontrada do site antigo.
+Conferido: https://bbbrindes.com.br/produto/copo-mug-550ml-ecologico-colors = 404;
+https://ctadigital12.github.io/bbbrindes/produto/copo-mug-550ml-ecologico-colors/ = 200.
+Causa: texto de URL fixo herdado do mock. Corrigido para usar a mesma origem atual dos
+botoes Ver site/Ver no site, com link clicavel para produto publicado. Nao publicado
+mostra apenas o endereco previsto. Sem mudanca de dominio, DNS ou site antigo.
+
+Base remota reconferida: origin/master continua 247657e. Autor fabio e conta ativa
+Fabio-raizhe conferidos. Lint com limite de complexidade, 12 testes de admin e tipos
+revalidados apos a correcao; build local final aprovado. Link corrigido tambem
+conferido no Chrome, com pagina real em 200. Front mantem os 42
+testes aprovados e builds real/vazio da etapa anterior, sem nova alteracao funcional.
+Proximo passo autorizado: commit/push/PR/merge e railway up do backend desta branch.

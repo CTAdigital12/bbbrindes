@@ -1,10 +1,10 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
-import { getProdutoBySlug } from "./produtos";
+import { getProdutoBySlug, getProdutos, getProdutoSlugs, getProdutosEcologicos } from "./produtos";
 import { produtoPorSlug } from "@/data/produtos";
 
 // Loader de produto (S03-02 piloto). Contrato: mapear o produto do Payload para
-// o tipo da PDP e, quando a API falha OU o slug nao existe no Payload, cair no
-// mock. O fetch e mockado para exercitar os dois caminhos.
+// o tipo da PDP e usar o fallback apenas se a API falha. Respostas vazias ou
+// produtos nao publicados nao ressuscitam o mock.
 
 function mockFetchJson(body: unknown) {
   vi.stubGlobal(
@@ -78,9 +78,30 @@ describe("getProdutoBySlug", () => {
     expect(p).toEqual(produtoPorSlug("squeeze-300ml-personalizado"));
   });
 
-  it("cai no mock quando o slug nao existe no Payload", async () => {
+  it("nao ressuscita um produto removido pela base inicial", async () => {
     mockFetchJson({ docs: [] });
-    const p = await getProdutoBySlug("squeeze-300ml-personalizado");
-    expect(p).toEqual(produtoPorSlug("squeeze-300ml-personalizado"));
+    expect(await getProdutoBySlug("squeeze-300ml-personalizado")).toBeUndefined();
+  });
+});
+
+
+describe("visibilidade editada no painel", () => {
+  it("retira da pagina um produto despublicado", async () => {
+    mockFetchJson({ docs: [{ slug: "squeeze-300ml-personalizado", canais: { site: false } }] });
+    expect(await getProdutoBySlug("squeeze-300ml-personalizado")).toBeUndefined();
+    expect(await getProdutos()).toEqual([]);
+    expect(await getProdutoSlugs()).toEqual([]);
+    expect(await getProdutosEcologicos()).toEqual([]);
+  });
+  it("base vazia nao volta ao catalogo inicial", async () => {
+    mockFetchJson({ docs: [] });
+    expect(await getProdutos()).toEqual([]);
+    expect(await getProdutoSlugs()).toEqual([]);
+    expect(await getProdutosEcologicos()).toEqual([]);
+  });
+  it("produtos antigos sem flag continuam publicados", async () => {
+    mockFetchJson({ docs: [{ slug: "legado", nome: "Legado" }, { slug: "oculto", canais: { site: false } }] });
+    expect(await getProdutoSlugs()).toEqual(["legado"]);
+    expect((await getProdutos()).map(p => p.slug)).toEqual(["legado"]);
   });
 });

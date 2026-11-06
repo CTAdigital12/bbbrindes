@@ -1,0 +1,1 @@
+export default { test: { environment: 'node', include: ['tests/admin/**/*.test.ts'] }, resolve: { alias: { vitest: new URL('../frontend/node_modules/vitest', import.meta.url).pathname.replace(/^\/(.:)/, '$1') } } }

@@ -19,7 +19,8 @@ export async function generateStaticParams() {
   // cair no build). Antes isto lia `produtos` (mock), entao os 150+ produtos reais
   // nunca ganhavam pagina e davam 404 pro cliente.
   const slugs = await getProdutoSlugs();
-  return slugs.map((slug) => ({ slug }));
+  // Mantem o export valido quando todos os produtos estao despublicados.
+  return (slugs.length ? slugs : ["__sem_produtos__"]).map((slug) => ({ slug }));
 }
 
 export async function generateMetadata({ params }: { params: Params }): Promise<Metadata> {

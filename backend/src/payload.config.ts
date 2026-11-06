@@ -112,7 +112,9 @@ export default buildConfig({
         Icon: '/admin/components/BrandIcon',
         Logo: '/admin/components/BrandLogo',
       },
-      beforeDashboard: ['/admin/components/WelcomeDashboard'],
+      header: ['/admin/friendly/AdminHeader'],
+      Nav: '/admin/friendly/AdminSidebar',
+      views: { dashboard: { Component: '/admin/friendly/DashboardView' } },
     },
   },
   collections: [

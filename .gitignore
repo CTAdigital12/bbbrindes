@@ -29,3 +29,6 @@ Thumbs.db
 # Payload (backend, a partir da Sprint 1)
 backend/dist/
 backend/build/
+
+# Artefatos da previa local do admin
+backend/preview/.build/

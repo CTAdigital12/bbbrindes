@@ -21,6 +21,10 @@ export const Produtos: CollectionConfig = {
     useAsTitle: 'nome',
     group: 'Catalogo',
     defaultColumns: ['nome', 'codigoSite', 'ecologico'],
+    components: { views: {
+      list: { Component: '/admin/friendly/ProductsListView' },
+      edit: { root: { Component: '/admin/friendly/ProductEditView' } },
+    } },
   },
   access: {
     read: () => true,
