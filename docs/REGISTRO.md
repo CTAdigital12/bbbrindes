@@ -1289,3 +1289,30 @@ Arquivo gerado backend/pnpm-lock.yaml tem9920 linhas; grafo integro nao pode ser
 partido, justificando regra18. Procedimento em docs/backend-deploy-lockfile.md.
 Proximo passo: publicar somente esse ajuste de empacotamento para concluir o deploy
 da compatibilidade dos seletores, mantendo os cadastros e as APIs atuais.
+
+## 06/11/2026 17:39 BRT: coluna direita do editor de Produtos
+
+Fabio reportou no print de producao que Novo produto estourava horizontalmente.
+Branch fix/admin-product-editor-overflow criada da origin/master4ae9a05 atualizada.
+Causa reproduzida com CSS real do Payload: .card nativo aplica display:flex,padding e
+largura aos cartoes do mock. Em1280px, a pagina chegava a1536px de largura. A previa
+anterior nao importava os estilos nativos e por isso ocultava essa colisao.
+
+Correcao somente visual: cartoes personalizados usam bb-card; botoes recebem margin0;
+colunas/controles podem encolher e editor empilha em telas ate1000px. Cartoes nativos,
+seletores, salvamento e APIs mantidos. Previa passou a carregar os stylesheets reais
+publicos do Payload antes dos estilos locais e a reproduzir a classe da moldura.
+
+Chrome:24 combinacoes de criacao,edicao,painel,listagem em1440/1280/1024/900/768/390px,
+zero overflow horizontal ou controles fora dos cartoes, zero erro de pagina.17 testes
+admin, lint, TypeScript e build final aprovados. Screenshots antes/depois emTEMP.
+Previa http://localhost:3044/admin/collections/produtos/create pronta para Fabio.
+Sem gravacao em producao; sem commit,push,PR ou deploy desta correcao. Aguardando
+aceite visual conforme regra27 antes de publicar.
+
+### 06/11/2026 17:43 BRT: correcao visual aprovada para publicacao
+
+Fabio conferiu a previa e respondeu: "Aprovado, pode publicar". Regra27 atendida para
+esta correcao. Base remota continua4ae9a05; autorfabio/emailoficial e contaFabio-raizhe
+conferidos. Publicar somente o isolamento CSS dos cartoes, responsividade e a melhoria
+da previa que reproduz o CSS real. Sem alteracao de dados ou comportamento de API.

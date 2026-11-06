@@ -44,7 +44,8 @@ body:has(.bb-admin) .app-header, body:has(.bb-admin) .template-default__nav-togg
 .bb-admin .bb-page h3 { font-size:16px; }
 .bb-admin .act a { color:var(--ink); text-decoration:none; }
 @media(max-width:1000px) {
-  .bb-admin .edit { grid-template-columns:minmax(0,1fr) 280px; }
+  .bb-admin .edit { grid-template-columns:minmax(0,1fr); }
+  .bb-admin .edit .rail { position:static; }
   .bb-admin .dash { grid-template-columns:repeat(2,1fr); }
 }
 @media(max-width:760px) {
@@ -78,3 +79,10 @@ body:has(.bb-admin) .app-header, body:has(.bb-admin) .template-default__nav-togg
   .bb-admin .pv-prod { grid-template-columns:1fr; }
 }
 .bb-admin .perma a, .bb-admin .perma code { overflow-wrap:anywhere; min-width:0; }
+
+/* Colunas e controles podem encolher sem empurrar a pagina horizontalmente. */
+.bb-admin .edit > *, .bb-admin .edit .rail > * { min-width:0; }
+.bb-admin .pub .bb-flex, .bb-admin .pub .line { flex-wrap:wrap; }
+.bb-admin .checks input { flex:none; }
+
+.bb-admin .btn { margin:0; }

@@ -92,3 +92,12 @@ incluindo filtros, selecao e callbacks de salvar no formulario pai. O layout apr
 continua nas paginas completas. As props do servidor sao filtradas por allowlist antes
 de montar a alternativa nativa no cliente. Cinco testes de regressao somados aos12
 anteriores passaram, assim como lint/tipos/build. Nao ha alteracao adicional do site.
+
+## Coluna direita do editor, 06/11/2026 17:39 BRT (correcao local)
+
+O print real de Novo produto revelou conflito com .card do Payload, que usa flex e
+padding. A previa agora carrega os stylesheets reais do Payload para reproduzir essa
+interacao. Os cartoes do mock usam classe exclusiva bb-card, sem mudar os nativos.
+Margens de botoes contidas; editor empilhado abaixo de1000px. Em1280px, largura total
+caiu de1536 para1280.24 casos no Chrome entre390 e1440px passaram, sem estouro.
+Aceite visual do Fabio recebido em06/11/2026, registrado17:43BRT: "Aprovado, pode publicar". Nenhum dado/API alterado.

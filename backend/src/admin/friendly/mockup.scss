@@ -67,10 +67,10 @@ textarea{min-height:76px;resize:vertical}
 .search{width:240px}
 
 /* cartões e tabelas */
-.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--sh)}
-.card .hd{display:flex;align-items:center;gap:10px;padding:12px 16px;border-bottom:1px solid var(--line-2);font-weight:600}
-.card .hd .sp{flex:1}
-.card .bd{padding:16px}
+.bb-card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--sh)}
+.bb-card .hd{display:flex;align-items:center;gap:10px;padding:12px 16px;border-bottom:1px solid var(--line-2);font-weight:600}
+.bb-card .hd .sp{flex:1}
+.bb-card .bd{padding:16px}
 table.list{width:100%;border-collapse:collapse;background:#fff;border:1px solid var(--line);border-radius:var(--r);overflow:hidden;box-shadow:var(--sh)}
 .list th{font-weight:600;text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);font-size:13px;color:var(--muted);background:#fbfcf9}
 .list td{padding:10px 12px;border-bottom:1px solid var(--line-2);vertical-align:middle}
