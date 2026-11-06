@@ -23,14 +23,14 @@ export function Dashboard({ data, name, greeting }: { data: DashboardData; name:
     <div className="ph"><h1>Painel</h1></div><p className="sub">{greeting}, {name}. O que você quer fazer hoje?</p>
     <div className="dash">{shortcuts.map(([icon, title, text, href]) => <Link className="qa" href={href} key={href}><span className="ic"><Icon name={icon} /></span><b>{title}</b><span>{text}</span></Link>)}</div>
     <div className="dcols">
-      <div className="card"><div className="hd">Precisa de atenção</div><div className="bd">{alerts.map(alert => <div className="alert" key={alert.title}>
+      <div className="bb-card"><div className="hd">Precisa de atenção</div><div className="bd">{alerts.map(alert => <div className="alert" key={alert.title}>
         <span className={`dot ${alert.tone}`}>{alert.count}</span><div className="tx">{alert.title}<span>{alert.text}</span></div><Link className="btn sm ghost" href={alert.href}>{alert.action}</Link>
       </div>)}</div></div>
-      <div className="bb-stack"><div className="card"><div className="hd">No ar agora na página inicial<span className="sp" /><Link className="lnk" href="/admin/collections/hero-slides">Gerenciar</Link></div>
+      <div className="bb-stack"><div className="bb-card"><div className="hd">No ar agora na página inicial<span className="sp" /><Link className="lnk" href="/admin/collections/hero-slides">Gerenciar</Link></div>
         <div className="bd"><div className="live">{data.highlights.map(banner => <figure key={banner.id}>
           {banner.image ? <img src={banner.image} alt={banner.name} /> : <div className="nofoto">Sem imagem</div>}<figcaption>{banner.name} · {banner.period}</figcaption>
         </figure>)}</div><p className="help bb-small">Primeiros destaques do carrossel.</p></div></div>
-        <div className="card"><div className="hd">Atualizações recentes</div><div className="bd act">{data.activity.map(item => <div key={item.href}><time title={dateLabel(item.date)}>{dateLabel(item.date).slice(0, 5)}</time><Link href={item.href}>{item.title}</Link></div>)}</div></div>
+        <div className="bb-card"><div className="hd">Atualizações recentes</div><div className="bd act">{data.activity.map(item => <div key={item.href}><time title={dateLabel(item.date)}>{dateLabel(item.date).slice(0, 5)}</time><Link href={item.href}>{item.title}</Link></div>)}</div></div>
       </div>
     </div>
   </section></div>

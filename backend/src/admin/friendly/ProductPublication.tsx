@@ -9,7 +9,7 @@ function saveLabel(product: Product, original: Product, saving: boolean) {
   return original.id && published(product) ? 'Atualizar' : 'Publicar'
 }
 export function ProductPublication({ product, original, dirty, disabled, saving, onSave, onPreview }: Props) {
-  return <div className="card pub"><div className="hd">Publicar</div><div className="bd">
+  return <div className="bb-card pub"><div className="hd">Publicar</div><div className="bd">
     <div className="bb-flex"><button type="button" className="btn sm ghost" disabled={disabled} onClick={() => onSave(false)}>Salvar sem publicar</button><span className="sp" /><button type="button" className="btn sm ghost" onClick={onPreview}><Icon name="eye" />Visualizar</button></div>
     <div className="line">Status: <b>{published(product) ? 'Publicado' : 'Não publicado'}</b></div>
     <div className="line">Última alteração: <b>{dateLabel(product.updatedAt)}</b></div>
