@@ -19,11 +19,12 @@ async function all(collection) {
   return rows;
 }
 async function readFixtures() {
-  const [products, categories, media, banners, settings] = await Promise.all([
+  const [products, categories, media, banners, settings, home] = await Promise.all([
     all('produtos'), all('categorias'), all('media'), all('hero-slides'),
     fetch(backend + '/api/globals/configuracoes').then(r => r.json()),
+    fetch(backend + '/api/globals/conteudo-home?depth=1').then(r => r.json()),
   ]);
-  return { products, categories, media, banners, certifications: settings.selos?.length || 0 };
+  return { products, categories, media, banners, certifications: settings.selos?.length || 0, home };
 }
 function hydrate(product, data) {
   const resolve = value => typeof value === 'number' ? data.media.find(m => m.id === value) || value : value;
@@ -83,6 +84,18 @@ async function saveHero(req, url, data) {
   data.banners[index] = updated;
   return { doc: updated };
 }
+async function saveHomeGlobal(req, data) {
+  let body = '';
+  for await (const chunk of req) body += chunk;
+  const changes = JSON.parse(body);
+  const resolve = value => typeof value === 'number' ? data.media.find(m => m.id === value) || value : value;
+  const hydrated = { ...changes };
+  for (const group of ['urgencia', 'ecoBanner', 'ecoLead']) {
+    if (hydrated[group]) hydrated[group] = { ...hydrated[group], imagem: resolve(hydrated[group].imagem) };
+  }
+  data.home = { ...data.home, ...hydrated };
+  return data.home;
+}
 function fixtureAPI(data) {
   let failWrite = false;
   const routes = [
@@ -98,6 +111,10 @@ function fixtureAPI(data) {
       if (failWrite) { failWrite = false; throw new Error('Falha simulada: alterações não foram salvas.'); }
       return saveHero(req, url, data);
     } })),
+    { method: 'POST', match: url => url.pathname === '/api/globals/conteudo-home', run: async (req) => {
+      if (failWrite) { failWrite = false; throw new Error('Falha simulada: alterações não foram salvas.'); }
+      return saveHomeGlobal(req, data);
+    } },
   ];
   return async (req, res, url) => {
     const route = routes.find(route => route.method === req.method && route.match(url));

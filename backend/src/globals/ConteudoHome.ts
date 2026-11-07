@@ -19,6 +19,9 @@ export const ConteudoHome: GlobalConfig = {
     group: 'Conteudo',
     description:
       'Textos dos blocos da home (selos, diferenciais, depoimentos, FAQ, urgencia, eco, CTA final). Os icones usam o nome do arquivo SVG em /img/icones (ex.: para diferenciais, o arquivo e diferencial-<icone>.svg).',
+    components: { views: {
+      edit: { root: { Component: '/admin/home/HomeEditView' } },
+    } },
   },
   access: {
     read: () => true,
