@@ -1402,3 +1402,36 @@ conferir no deploy; a validação de Fabio é pela prévia 3044.
 
 Sem commit, push, PR ou deploy. Nenhuma arte gerada e nenhum dado de produção alterado.
 Aguarda aceite visual específico de Banners (regra 27) antes de publicar.
+
+## 07/11/2026 15:25 BRT: Página inicial amigável (global conteudo-home)
+
+Banners do hero já foram publicados (PR #126, master c23a744; backend via railway up).
+Depois Fabio pediu para seguir e escolheu: Página inicial fiel ao mock V.home, com prévia
+completa de todos os blocos, mas entregue em PARTES menores (validando cada uma na prévia 3044).
+
+Confirmado na doc oficial do Payload: global aceita view de edição customizada
+(admin.components.views.edit) e update de global é POST /api/globals/:slug (depth suportado).
+
+Entregue (Partes 1 a 3, aprovadas por Fabio na prévia):
+1. Parte 1: fundação + selos de confiança + diferenciais + bloco de urgência + prévia ao vivo.
+2. Parte 2: banner eco (Linha Green) + bloco eco escuro (com linhas e imagem) + prévia.
+3. Parte 3: depoimentos + FAQ + CTA final + prévia. Editor completo (8 blocos).
+
+Como foi feito: novos arquivos em backend/src/admin/home (home-model, HomeIcon, home-data,
+HomePreview, HomeBlocks, HomeEditor, HomeEditView). O editor carrega o global inteiro, edita
+em acordeões com arrays (adicionar/remover/reordenar), imagens pela biblioteca (reusa
+HeroImageField) e prévia ao vivo fiel ao site. O save manda TODOS os blocos (nenhum some),
+mapeia imagem para id e preserva ids das linhas. Validação amigável PT cobra icone/titulo dos
+selos e diferenciais, texto/autor dos depoimentos e pergunta/resposta do FAQ.
+
+Parte 4 (fechamento): a collection/global conteudo-home passou a apontar o edit para
+/admin/home/HomeEditView; importMap recebeu a entrada (S3ClientUploadHandler preservado);
+SCSS bb-home-* dentro de .bb-admin; prévia 3044 integrada (rota + save em memória). SEM schema
+novo. Diferenciais na prévia carregam o SVG real do site; ícones dos selos desenhados no admin.
+
+Checks: tsc do backend sem erro; 46 testes de admin (8 novos de home-data); arquivos < 400
+linhas. Prévia 3044 valida cada parte (save e2e conferido por HTTP: textos, arrays, imagens
+viram objeto com url, tudo restaurado). Sem alterar dados de produção.
+
+Fabio validou as partes na prévia e autorizou seguir. Deploy do backend (railway up) entregue
+como bloco para Fabio rodar (regra railway/deploy). Autor fabio/email oficial, conta Fabio-raizhe.

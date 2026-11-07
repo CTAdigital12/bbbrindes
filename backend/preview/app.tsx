@@ -12,11 +12,13 @@ import { HeroList } from '../src/admin/hero/HeroList'
 import { HeroEditor } from '../src/admin/hero/HeroEditor'
 import { copyHero, newHero } from '../src/admin/hero/hero-data'
 import type { HeroBanner } from '../src/admin/hero/hero-model'
+import { HomeEditor } from '../src/admin/home/HomeEditor'
+import type { HomeContent } from '../src/admin/home/home-model'
 import type { Banner, Category, Media, Product } from '../src/admin/friendly/model'
 import '../src/admin/friendly/mockup.scss'
 import '../src/admin/friendly/layout.scss'
 import './preview.css'
-type Data = { products: Product[]; categories: Category[]; media: Media[]; banners: Banner[]; certifications: number }
+type Data = { products: Product[]; categories: Category[]; media: Media[]; banners: Banner[]; certifications: number; home: HomeContent }
 async function main() {
  const response = await fetch('/preview-data')
  const data: Data = await response.json()
@@ -31,7 +33,8 @@ async function main() {
  else if (parts[1] === 'collections' && parts[2] === 'produtos' && parts[3]) page = previewProduct(data, parts[3], query.get('copiar'))
  else if (pathname === '/admin/collections/hero-slides') page = <HeroList initial={banners} />
  else if (parts[1] === 'collections' && parts[2] === 'hero-slides' && parts[3]) page = previewHero(banners, parts[3], query.get('copiar'))
- else if (pathname !== '/admin') page = <div className="bb-admin"><section className="bb-page"><h1>{items.find(item => item.href === pathname)?.label ?? 'Área do painel'}</h1><p>Esta área será adaptada na próxima etapa. O primeiro conjunto contempla Painel, Produtos e Banners.</p><Link href="/admin">Voltar ao painel</Link></section></div>
+ else if (pathname === '/admin/globals/conteudo-home') page = <HomeEditor initial={data.home} />
+ else if (pathname !== '/admin') page = <div className="bb-admin"><section className="bb-page"><h1>{items.find(item => item.href === pathname)?.label ?? 'Área do painel'}</h1><p>Esta área será adaptada na próxima etapa. O primeiro conjunto contempla Painel, Produtos, Banners e Página inicial.</p><Link href="/admin">Voltar ao painel</Link></section></div>
  createRoot(document.getElementById('root')!).render(<><AdminBar name="Fabio" /><AdminNavigation items={items} more={MORE_ITEMS} /><div className="bb-preview-content template-default__wrap">{page}</div><aside className="bb-preview-note"><b>Prévia local para validação</b>Dados atuais do catálogo. Edições nesta prévia ficam somente na memória local e não alteram a produção.</aside></>)
 }
 main().catch(error => { document.getElementById('root')!.textContent = `Não foi possível abrir a prévia: ${error.message}` })

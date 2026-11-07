@@ -31,6 +31,7 @@ import { S3ClientUploadHandler as S3ClientUploadHandler_f97aa6c64367fa259c5bc056
 import { default as default_ee67e7ec90c35d5f08c13d59f503b648 } from '../../../admin/friendly/DashboardView'
 import { default as default_hero_list_view_8a1 } from '../../../admin/hero/HeroListView'
 import { default as default_hero_edit_view_8a2 } from '../../../admin/hero/HeroEditView'
+import { default as default_home_edit_view_8a3 } from '../../../admin/home/HomeEditView'
 import { CollectionCards as CollectionCards_f9c02e79a4aed9a3924487c0cd4cafb1 } from '@payloadcms/next/rsc'
 
 /** @type import('payload').ImportMap */
@@ -68,5 +69,6 @@ export const importMap = {
   "/admin/friendly/DashboardView#default": default_ee67e7ec90c35d5f08c13d59f503b648,
   "/admin/hero/HeroListView#default": default_hero_list_view_8a1,
   "/admin/hero/HeroEditView#default": default_hero_edit_view_8a2,
+  "/admin/home/HomeEditView#default": default_home_edit_view_8a3,
   "@payloadcms/next/rsc#CollectionCards": CollectionCards_f9c02e79a4aed9a3924487c0cd4cafb1
 }
