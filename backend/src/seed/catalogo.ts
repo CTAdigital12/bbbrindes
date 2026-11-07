@@ -36,12 +36,14 @@ type ProdutoJson = {
   nome: string
   slug: string
   subtitulo: string | null
+  headline: string | null
   descricaoCurta: string | null
   descricaoCompletaParagrafos: string[]
   beneficios: string[]
   idealPara: string[]
   diferenciais: string[]
   especificacoes: { rotulo: string; valor: string }[]
+  argumentoComercial: string | null
   categorias: string[]
   ecologico: boolean
   selos: Record<string, boolean>
@@ -129,12 +131,14 @@ const run = async () => {
       nome: p.nome,
       slug: p.slug,
       subtitulo: p.subtitulo ?? undefined,
+      headline: p.headline ?? undefined,
       descricaoCurta: p.descricaoCurta ?? undefined,
       descricaoCompleta: montarRichText(p.descricaoCompletaParagrafos),
       beneficios: p.beneficios,
       idealPara: p.idealPara,
       diferenciais: p.diferenciais,
       especificacoes: p.especificacoes,
+      argumentoComercial: p.argumentoComercial ?? undefined,
       categorias: p.categorias.map((s) => catId[s]),
       ecologico: p.ecologico,
       selos: montarSelos(p.selos),
