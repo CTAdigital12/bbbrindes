@@ -1,8 +1,8 @@
 import { describe, it, expect } from 'vitest'
-import { categoriaBody, catSaveIssue, copyCategoria, newCategoria, validateCategoria } from '../../src/admin/categorias/categoria-data'
+import { categoriaBody, catSaveIssue, copyCategoria, moverCategoria, newCategoria, ordenarCategorias, validateCategoria } from '../../src/admin/categorias/categoria-data'
 import { grupoLabel, grupoRank } from '../../src/admin/categorias/categoria-model'
 import { RequestError } from '../../src/admin/friendly/api-errors'
-import type { CategoriaDraft } from '../../src/admin/categorias/categoria-model'
+import type { CategoriaDraft, CategoriaRow } from '../../src/admin/categorias/categoria-model'
 const original: CategoriaDraft = {
   id: 4, nome: 'Copos', slug: 'copos', grupo: 'geral', ordem: 3,
   icone: { id: 70, url: 'https://m.test/70.webp' }, updatedAt: '2026-10-01T00:00:00.000Z',
@@ -48,5 +48,39 @@ describe('validacao, grupo e erro', () => {
   it('traduz erro do servidor', () => {
     const issue = catSaveIssue(new RequestError(400, { errors: [{ message: 'x', data: { errors: [{ path: 'nome', message: 'obrig' }] } }] }))
     expect(issue.field).toBe('bb-cat-nome')
+  })
+})
+describe('reordenacao (moverCategoria)', () => {
+  const rows: CategoriaRow[] = [
+    { id: 1, nome: 'Green Plasticaria', grupo: 'ecologicos', ordem: 0 },
+    { id: 2, nome: 'Green Fibras', grupo: 'ecologicos', ordem: 1 },
+    { id: 3, nome: 'Medalhas', grupo: 'ecologicos', ordem: 2 },
+    { id: 4, nome: 'Copos', grupo: 'geral', ordem: 3 },
+    { id: 5, nome: 'Canecas', grupo: 'geral', ordem: 4 },
+    { id: 6, nome: 'Chaveiros', grupo: 'geral', ordem: 5 },
+  ]
+  const ordemDe = (rs: CategoriaRow[], id: number) => rs.find(r => r.id === id)!.ordem
+  it('ordena ecologicos primeiro, depois geral', () => {
+    expect(ordenarCategorias(rows).map(r => r.id)).toEqual([1, 2, 3, 4, 5, 6])
+  })
+  it('descer troca com o vizinho do mesmo grupo (2 mudancas)', () => {
+    const out = moverCategoria(rows, 2, 'down')
+    expect(out.changes).toHaveLength(2)
+    expect(ordemDe(out.rows, 2)).toBe(2); expect(ordemDe(out.rows, 3)).toBe(1)
+    expect(ordenarCategorias(out.rows).map(r => r.id)).toEqual([1, 3, 2, 4, 5, 6])
+  })
+  it('subir o primeiro do grupo e no-op', () => {
+    expect(moverCategoria(rows, 1, 'up').changes).toHaveLength(0)
+  })
+  it('descer o ultimo e no-op', () => {
+    expect(moverCategoria(rows, 6, 'down').changes).toHaveLength(0)
+  })
+  it('nao cruza a fronteira de grupo (primeiro geral nao sobe para ecologicos)', () => {
+    expect(moverCategoria(rows, 4, 'up').changes).toHaveLength(0)
+  })
+  it('renumera mantendo ecologicos com a ordem menor', () => {
+    const out = moverCategoria(rows, 4, 'down')
+    expect(ordemDe(out.rows, 4)).toBe(4); expect(ordemDe(out.rows, 5)).toBe(3)
+    expect(ordenarCategorias(out.rows).map(r => r.id)).toEqual([1, 2, 3, 5, 4, 6])
   })
 })
