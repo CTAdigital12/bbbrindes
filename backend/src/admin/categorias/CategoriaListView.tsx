@@ -11,6 +11,7 @@ import { CategoriaList } from './CategoriaList'
 export default async function CategoriaListView(props: ListViewServerProps) {
   if (!props.user) redirect('/admin/login')
   const categorias = await readCategoriasRows({ payload: props.payload, user: props.user })
-  const friendly = <CategoriaList initial={categorias} canCreate={props.hasCreatePermission} />
+  const rights = props.permissions?.collections?.categorias
+  const friendly = <CategoriaList initial={categorias} canCreate={props.hasCreatePermission} canUpdate={Boolean(rights?.update)} />
   return <ProductsListBoundary friendly={friendly} native={<DefaultListView {...nativeListProps(props)} />} />
 }
