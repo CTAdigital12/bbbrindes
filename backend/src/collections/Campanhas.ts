@@ -12,6 +12,10 @@ export const Campanhas: CollectionConfig = {
     group: 'Conteudo',
     description: 'Campanhas publicadas no site: nome, imagem, texto e produtos. Apos salvar, a publicacao automatica leva alguns minutos. Os banners da home ficam em Banners do hero.',
     defaultColumns: ['nome', 'mes', 'ativo'],
+    components: { views: {
+      list: { Component: '/admin/campanhas/CampanhaListView' },
+      edit: { root: { Component: '/admin/campanhas/CampanhaEditView' } },
+    } },
   },
   access: {
     read: () => true,

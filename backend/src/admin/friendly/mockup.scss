@@ -433,4 +433,34 @@ tr.over td{box-shadow:inset 0 2px 0 var(--focus)}
 .bb-home-ctaf p{margin:0;font-size:10.5px;opacity:.85}
 @media(max-width:760px){.bb-home-quotes{grid-template-columns:1fr}}
 
+/* Campanhas: previa do card (grid da home) + resumo da pagina */
+.bb-camp-preview{display:grid;gap:10px}
+.bb-camp-preview-bar{display:flex;align-items:baseline;gap:8px;font-size:12.5px;color:var(--muted)}
+.bb-camp-preview-bar b{color:var(--ink)}
+.bb-camp-tile{position:relative;aspect-ratio:2.4/1;border-radius:14px;overflow:hidden;background:#004431;color:#fff;box-shadow:var(--sh)}
+.bb-camp-tile>img{position:absolute;inset:0 0 0 auto;width:52%;height:100%;object-fit:cover}
+.bb-camp-tile::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,#004431 38%,rgba(0,68,49,.55) 60%,rgba(0,68,49,0) 80%)}
+.bb-camp-mes{position:absolute;left:14px;top:12px;z-index:2;font-size:11px;font-weight:600;color:#cfe6d5}
+.bb-camp-nome{position:absolute;left:14px;bottom:14px;z-index:2;background:#1f5a44;color:#eafff0;font-weight:700;font-size:13px;border-radius:999px;padding:5px 12px;max-width:70%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.bb-camp-landing{background:#fff;border:1px solid var(--line);border-radius:12px;padding:14px;display:grid;gap:6px;box-shadow:var(--sh)}
+.bb-camp-sec{font-size:10.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.bb-camp-chamada{margin:0;font-size:14px;font-weight:600;color:var(--ink)}
+.bb-camp-texto{margin:0;font-size:12.5px;color:var(--muted);white-space:pre-wrap;max-height:160px;overflow:auto}
+.bb-camp-texto.bb-camp-empty{font-style:italic}
+.bb-camp-prod{font-size:11.5px;font-weight:600;color:var(--deep);background:#e7f1e6;border-radius:999px;padding:3px 10px;justify-self:start}
+.bb-camp-prod-list{margin:4px 0 0;padding-left:18px;display:grid;gap:2px;font-size:12.5px;color:var(--ink);max-height:140px;overflow:auto}
+.bb-camp-chips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px}
+.bb-camp-chip{display:inline-flex;align-items:center;gap:6px;background:#e7f1e6;color:var(--deep);border-radius:999px;padding:3px 6px 3px 11px;font-size:12.5px;font-weight:600}
+.bb-camp-chip button{border:0;background:rgba(0,68,49,.12);color:var(--deep);width:18px;height:18px;border-radius:50%;cursor:pointer;font-size:13px;line-height:1;display:grid;place-items:center}
+.bb-camp-chip button:hover{background:rgba(0,68,49,.25)}
+.bb-prod-count{font-size:12.5px;font-weight:600;color:var(--deep)}
+.bb-prod-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
+.bb-prod-item{position:relative;display:grid;gap:4px;padding:8px;border:1px solid var(--line);border-radius:10px;background:#fff;cursor:pointer;text-align:left}
+.bb-prod-item:hover{border-color:#b7c0b0}
+.bb-prod-item.sel{outline:2px solid var(--focus);outline-offset:-2px;background:#eef7f0}
+.bb-prod-item img{width:100%;aspect-ratio:1;object-fit:contain;background:#f1f3ed;border-radius:8px}
+.bb-prod-noimg{width:100%;aspect-ratio:1;border-radius:8px;border:1px dashed #d5a46a;background:#fff8ee;display:grid;place-items:center;color:var(--warn);font-size:11px}
+.bb-prod-nm{font-size:12px;font-weight:600;color:var(--ink);line-height:1.2}
+.bb-prod-cod{font-size:11px;color:var(--muted)}
+
 }

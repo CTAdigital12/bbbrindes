@@ -1435,3 +1435,27 @@ viram objeto com url, tudo restaurado). Sem alterar dados de produção.
 
 Fabio validou as partes na prévia e autorizou seguir. Deploy do backend (railway up) entregue
 como bloco para Fabio rodar (regra railway/deploy). Autor fabio/email oficial, conta Fabio-raizhe.
+
+## 07/11/2026 16:15 BRT: Campanhas amigáveis (collection campanhas)
+
+Depois da Página inicial, Fabio pediu para continuar e escolheu Campanhas. Fabio decidiu
+subir para testar em produção; optou por fechar o seletor de produtos e publicar o editor
+completo (sem a janela de regressão de produtos read-only).
+
+Entregue: tela amigável de Campanhas, substituindo a nativa.
+1. Lista (ligar/desligar, buscar, filtrar) com miniatura, mês, nº de produtos e status.
+2. Editor: nome, mês (sugestões), chamada, imagem (biblioteca/upload), texto da página
+   (textarea convertido para richText no salvar), chave de ativo, e seletor de produtos em
+   destaque (buscar em /api/produtos paginado, adicionar/remover por chips). Prévia ao vivo
+   do card (igual ao grid "Campanhas e datas") e do resumo da página.
+3. Gravação por PATCH parcial: slug protegido, imagem vira id, produtos viram ids.
+
+Técnico: views de servidor CampanhaListView/CampanhaEditView (overrideAccess:false + user,
+drawers nativos preservados); registradas em Campanhas.ts (components.views) e no importMap
+(S3 handler preservado). SCSS bb-camp-*/bb-prod-* em .bb-admin. Prévia 3044 integrada (rotas +
+save em memória + GET /api/produtos de busca). SEM schema novo.
+
+Checks: tsc do backend sem erro; 55 testes de admin (9 novos de campanha-data); arquivos < 400
+linhas. Prévia 3044: save e2e das campanhas 4/4 PASS + seletor de produtos 4/4 PASS (lista
+paginada 156 produtos, busca por nome, imagem no thumb, salvar nova seleção). Sem alterar dados
+de produção. Deploy do backend (railway up) entregue como bloco para Fabio. Conta Fabio-raizhe.
