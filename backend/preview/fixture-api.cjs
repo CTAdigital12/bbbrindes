@@ -19,12 +19,13 @@ async function all(collection) {
   return rows;
 }
 async function readFixtures() {
-  const [products, categories, media, banners, settings, home] = await Promise.all([
+  const [products, categories, media, banners, settings, home, campanhas] = await Promise.all([
     all('produtos'), all('categorias'), all('media'), all('hero-slides'),
     fetch(backend + '/api/globals/configuracoes').then(r => r.json()),
     fetch(backend + '/api/globals/conteudo-home?depth=1').then(r => r.json()),
+    all('campanhas'),
   ]);
-  return { products, categories, media, banners, certifications: settings.selos?.length || 0, home };
+  return { products, categories, media, banners, certifications: settings.selos?.length || 0, home, campanhas };
 }
 function hydrate(product, data) {
   const resolve = value => typeof value === 'number' ? data.media.find(m => m.id === value) || value : value;
@@ -96,12 +97,43 @@ async function saveHomeGlobal(req, data) {
   data.home = { ...data.home, ...hydrated };
   return data.home;
 }
+function productsPage(url, data) {
+  const q = (url.searchParams.get('where[nome][contains]') || '').toLowerCase();
+  const limit = Number(url.searchParams.get('limit') || 24);
+  const page = Number(url.searchParams.get('page') || 1);
+  const filtered = data.products.filter(p => (p.nome || '').toLowerCase().includes(q));
+  return { docs: filtered.slice((page - 1) * limit, page * limit), totalPages: Math.max(1, Math.ceil(filtered.length / limit)), totalDocs: filtered.length };
+}
+function hydrateCampanha(c, data) {
+  const resolveMedia = v => typeof v === 'number' ? data.media.find(m => m.id === v) || v : v;
+  const resolveProd = v => typeof v === 'number' ? data.products.find(p => p.id === v) || v : v;
+  return { ...c, imagem: resolveMedia(c.imagem), produtos: (c.produtos || []).map(resolveProd) };
+}
+async function saveCampanha(req, url, data) {
+  let body = '';
+  for await (const chunk of req) body += chunk;
+  const changes = JSON.parse(body);
+  let id = Number(url.pathname.split('/')[3]);
+  let index = data.campanhas.findIndex(c => c.id === id);
+  if (req.method === 'POST') {
+    id = Math.max(0, ...data.campanhas.map(c => c.id)) + 1;
+    index = data.campanhas.length;
+    data.campanhas.push({ id });
+  }
+  const original = data.campanhas[index];
+  if (!original) throw new Error('Campanha não encontrada');
+  const slug = original.slug || String(changes.nome || original.nome || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().replace(/[^a-z0-9]+/g, '-');
+  const updated = hydrateCampanha({ ...original, ...changes, id, slug, updatedAt: new Date().toISOString() }, data);
+  data.campanhas[index] = updated;
+  return { doc: updated };
+}
 function fixtureAPI(data) {
   let failWrite = false;
   const routes = [
     { method: 'GET', match: url => url.pathname === '/preview-data', run: () => data },
     { method: 'POST', match: url => url.pathname === '/preview-control', run: () => { failWrite = true; return { ok: true }; } },
     { method: 'GET', match: url => url.pathname === '/api/media', run: (_req, url) => mediaPage(url, data) },
+    { method: 'GET', match: url => url.pathname === '/api/produtos', run: (_req, url) => productsPage(url, data) },
     { method: 'POST', match: url => url.pathname === '/api/media', run: (req, url) => upload(req, url, data) },
     ...['POST', 'PATCH'].map(method => ({ method, match: url => /^\/api\/produtos(?:\/\d+)?$/.test(url.pathname), run: async (req, url) => {
       if (failWrite) { failWrite = false; throw new Error('Falha simulada: alterações não foram salvas.'); }
@@ -115,6 +147,10 @@ function fixtureAPI(data) {
       if (failWrite) { failWrite = false; throw new Error('Falha simulada: alterações não foram salvas.'); }
       return saveHomeGlobal(req, data);
     } },
+    ...['POST', 'PATCH'].map(method => ({ method, match: url => /^\/api\/campanhas(?:\/\d+)?$/.test(url.pathname), run: async (req, url) => {
+      if (failWrite) { failWrite = false; throw new Error('Falha simulada: alterações não foram salvas.'); }
+      return saveCampanha(req, url, data);
+    } })),
   ];
   return async (req, res, url) => {
     const route = routes.find(route => route.method === req.method && route.match(url));
