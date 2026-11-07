@@ -11,7 +11,12 @@ export const Categorias: CollectionConfig = {
   admin: {
     useAsTitle: 'nome',
     group: 'Catalogo',
+    description: 'Categorias do catalogo: grade da home (estilo iFood) e menu de produtos. Ecologicos ficam no topo; a ordem define a sequencia.',
     defaultColumns: ['nome', 'grupo', 'ordem'],
+    components: { views: {
+      list: { Component: '/admin/categorias/CategoriaListView' },
+      edit: { root: { Component: '/admin/categorias/CategoriaEditView' } },
+    } },
   },
   access: {
     read: () => true,

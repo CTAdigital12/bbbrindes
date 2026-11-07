@@ -18,11 +18,15 @@ import { CampanhaList } from '../src/admin/campanhas/CampanhaList'
 import { CampanhaEditor } from '../src/admin/campanhas/CampanhaEditor'
 import { copyCampanha, newCampanha } from '../src/admin/campanhas/campanha-data'
 import type { CampanhaRow } from '../src/admin/campanhas/campanha-model'
+import { CategoriaList } from '../src/admin/categorias/CategoriaList'
+import { CategoriaEditor } from '../src/admin/categorias/CategoriaEditor'
+import { copyCategoria, newCategoria } from '../src/admin/categorias/categoria-data'
+import type { CategoriaRow } from '../src/admin/categorias/categoria-model'
 import type { Banner, Category, Media, Product } from '../src/admin/friendly/model'
 import '../src/admin/friendly/mockup.scss'
 import '../src/admin/friendly/layout.scss'
 import './preview.css'
-type Data = { products: Product[]; categories: Category[]; media: Media[]; banners: Banner[]; certifications: number; home: HomeContent; campanhas: CampanhaRow[] }
+type Data = { products: Product[]; categories: Category[]; media: Media[]; banners: Banner[]; certifications: number; home: HomeContent; campanhas: CampanhaRow[]; categoriasRows: CategoriaRow[] }
 async function main() {
  const response = await fetch('/preview-data')
  const data: Data = await response.json()
@@ -40,6 +44,8 @@ async function main() {
  else if (pathname === '/admin/globals/conteudo-home') page = <HomeEditor initial={data.home} />
  else if (pathname === '/admin/collections/campanhas') page = <CampanhaList initial={data.campanhas} />
  else if (parts[1] === 'collections' && parts[2] === 'campanhas' && parts[3]) page = previewCampanha(data.campanhas, parts[3], query.get('copiar'))
+ else if (pathname === '/admin/collections/categorias') page = <CategoriaList initial={data.categoriasRows} />
+ else if (parts[1] === 'collections' && parts[2] === 'categorias' && parts[3]) page = previewCategoria(data.categoriasRows, parts[3], query.get('copiar'))
  else if (pathname !== '/admin') page = <div className="bb-admin"><section className="bb-page"><h1>{items.find(item => item.href === pathname)?.label ?? 'Área do painel'}</h1><p>Esta área será adaptada na próxima etapa. O primeiro conjunto contempla Painel, Produtos, Banners, Página inicial e Campanhas.</p><Link href="/admin">Voltar ao painel</Link></section></div>
  createRoot(document.getElementById('root')!).render(<><AdminBar name="Fabio" /><AdminNavigation items={items} more={MORE_ITEMS} /><div className="bb-preview-content template-default__wrap">{page}</div><aside className="bb-preview-note"><b>Prévia local para validação</b>Dados atuais do catálogo. Edições nesta prévia ficam somente na memória local e não alteram a produção.</aside></>)
 }
@@ -62,4 +68,10 @@ function previewCampanha(campanhas: CampanhaRow[], id: string, copy: string | nu
  const source = campanhas.find(c => c.id === Number(id === 'create' ? copy : id))
  if (id === 'create') return <CampanhaEditor initial={source ? copyCampanha(source) : newCampanha()} />
  return source ? <CampanhaEditor initial={source} /> : <div className="bb-admin"><section className="bb-page">Campanha não encontrada</section></div>
+}
+
+function previewCategoria(categorias: CategoriaRow[], id: string, copy: string | null) {
+ const source = categorias.find(c => c.id === Number(id === 'create' ? copy : id))
+ if (id === 'create') return <CategoriaEditor initial={source ? copyCategoria(source) : newCategoria()} />
+ return source ? <CategoriaEditor initial={source} produtosCount={source.produtosCount} /> : <div className="bb-admin"><section className="bb-page">Categoria não encontrada</section></div>
 }

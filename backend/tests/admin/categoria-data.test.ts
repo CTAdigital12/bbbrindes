@@ -1,0 +1,52 @@
+import { describe, it, expect } from 'vitest'
+import { categoriaBody, catSaveIssue, copyCategoria, newCategoria, validateCategoria } from '../../src/admin/categorias/categoria-data'
+import { grupoLabel, grupoRank } from '../../src/admin/categorias/categoria-model'
+import { RequestError } from '../../src/admin/friendly/api-errors'
+import type { CategoriaDraft } from '../../src/admin/categorias/categoria-model'
+const original: CategoriaDraft = {
+  id: 4, nome: 'Copos', slug: 'copos', grupo: 'geral', ordem: 3,
+  icone: { id: 70, url: 'https://m.test/70.webp' }, updatedAt: '2026-10-01T00:00:00.000Z',
+}
+describe('gravacao da categoria', () => {
+  it('envia apenas o campo alterado', () => {
+    expect(categoriaBody({ ...original, ordem: 5 }, original)).toEqual({ ordem: 5 })
+  })
+  it('nao envia slug (protegido) nem nada quando igual', () => {
+    expect(categoriaBody(original, original)).toEqual({})
+    expect(categoriaBody({ ...original, nome: 'Copos e Taças' }, original)).not.toHaveProperty('slug')
+  })
+  it('normaliza icone para id e ordem para numero', () => {
+    const body = categoriaBody({ ...original, icone: { id: 90 }, ordem: '7' as unknown as number }, original)
+    expect(body.icone).toBe(90); expect(body.ordem).toBe(7)
+    expect(categoriaBody({ ...original, icone: null }, original).icone).toBe(null)
+  })
+  it('ordem invalida vira 0', () => {
+    expect(categoriaBody({ ...original, ordem: NaN }, original).ordem).toBe(0)
+  })
+})
+describe('duplicacao e novo', () => {
+  it('a copia nasce sem id e sem slug, com sufixo', () => {
+    const copy = copyCategoria(original)
+    expect(copy.id).toBeUndefined(); expect(copy.slug).toBeUndefined()
+    expect(copy.nome).toBe('Copos (cópia)'); expect(copy.grupo).toBe('geral')
+  })
+  it('nova categoria comeca no grupo geral e ordem 0', () => {
+    const nova = newCategoria()
+    expect(nova.grupo).toBe('geral'); expect(nova.ordem).toBe(0); expect(nova.nome).toBe('')
+  })
+})
+describe('validacao, grupo e erro', () => {
+  it('cobra o nome', () => {
+    expect(validateCategoria(original)).toBeUndefined()
+    expect(validateCategoria({ ...original, nome: ' ' })?.field).toBe('bb-cat-nome')
+  })
+  it('rotula e ordena os grupos (ecologicos no topo)', () => {
+    expect(grupoLabel('ecologicos')).toBe('Ecológicos')
+    expect(grupoLabel(undefined)).toBe('Geral')
+    expect(grupoRank('ecologicos')).toBeLessThan(grupoRank('geral'))
+  })
+  it('traduz erro do servidor', () => {
+    const issue = catSaveIssue(new RequestError(400, { errors: [{ message: 'x', data: { errors: [{ path: 'nome', message: 'obrig' }] } }] }))
+    expect(issue.field).toBe('bb-cat-nome')
+  })
+})
