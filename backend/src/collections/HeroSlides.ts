@@ -18,6 +18,10 @@ export const HeroSlides: CollectionConfig = {
     defaultColumns: ['nome', 'tipo', 'mes', 'ordem', 'ativo'],
     description:
       'Carrossel principal da home. "Mensal" rotaciona (1 por mes, campo Mes 1-12); "Fixo" aparece sempre entre os meses. O destaque do titulo sai em verde lime.',
+    components: { views: {
+      list: { Component: '/admin/hero/HeroListView' },
+      edit: { root: { Component: '/admin/hero/HeroEditView' } },
+    } },
   },
   access: {
     read: () => true,

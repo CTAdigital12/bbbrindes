@@ -639,8 +639,11 @@ const HERO_FALLBACK_IMG = "/img/banners/home-hero-fixo-1-fabrica-propria.webp";
 export async function getHeroSlides(monthIdx: number): Promise<HeroSlide[]> {
   try {
     const docs = await payloadFind<HeroSlideDoc>("hero-slides", { sort: "ordem", depth: 1 });
+    // A resposta real do painel manda, mesmo vazia ou com tudo inativo: nao
+    // ressuscita exemplos (o painel e a fonte da verdade; o HeroSlider trata []).
+    // O fallback pro mock fica so no catch (falha de rede/timeout/status != 2xx),
+    // para o build nao ficar sem hero quando o backend esta inacessivel.
     const ativos = docs.filter((d) => d.ativo !== false);
-    if (ativos.length === 0) return orderedHeroSlides(monthIdx);
 
     const porOrdem = (a: HeroSlideDoc, b: HeroSlideDoc) => (a.ordem ?? 0) - (b.ordem ?? 0);
     const mesAtual = (((monthIdx % 12) + 12) % 12) + 1; // 1..12

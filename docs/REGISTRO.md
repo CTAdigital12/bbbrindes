@@ -1343,3 +1343,62 @@ Fabio aprovou explicitamente a nova pagina404 para publicar junto das mensagens 
 validacao: "Aprovado, pode publicar". Regra27 atendida. Baseorigin/master permanece
 3b13af0; autorfabio/emailoficial e contaFabio-raizhe conferidos. Publicacao autorizada
 somente deste lote, sem schema, carga, exclusao de dados ou artes novas.
+
+## 07/11/2026 12:58 BRT: handoff para continuidade no Claude
+
+Fabio pediu resumo detalhado, memória e documentação para continuar em outro chat.
+Conferência somente de leitura: HEAD/origin/master bc442a1, PRs #119 a #125 mergeados,
+Railway 9975b15e SUCCESS e Actions 42294926756 SUCCESS.
+APIs HTTP 200: 156 produtos, 14 categorias, 13 campanhas, 14 hero-slides e 1218 mídias.
+
+Banners do hero está apenas iniciado na branch feature/admin-hero-friendly:
+seis arquivos untracked em admin/hero e nulabilidade em friendly/model.ts.
+Ainda faltam editor, SCSS, integração, prévia em memória, importMap e testes.
+Sem commit, push, PR ou deploy desta frente. Bug vazio/todos inativos ainda não corrigido.
+
+Criados docs/HANDOFF-CLAUDE-ADMIN-HERO-2026-11-07.md e docs/admin-hero-friendly.md.
+Memória específica criada e indexada; notas anteriores apontam para este estado.
+Preservar esboços e cadastros. Próximo: concluir, testar, abrir prévia e obter
+aceite visual específico de Banners antes de publicar. Nenhuma arte ou dado alterado.
+Documentação permanece local. REGISTRO.md mantido como histórico cumulativo.
+
+## 07/11/2026 13:20 BRT: Banners do hero concluídos para validação na prévia
+
+Frente feature/admin-hero-friendly, base bc442a1. Lista e editor de Banners do hero
+adaptados ao mock da Joy, com os campos REAIS da collection hero-slides (sem copiar os
+controles fictícios do mock: nada de datas início/fim, posição lateral ou agendamento).
+
+O que foi feito nesta sessão:
+1. Revisados e mantidos os seis esboços (hero-model, hero-data, HeroIcon, HeroList,
+   HeroListRow, HeroPreview). Acrescentados ICON_OPTIONS/THEME_OPTIONS no modelo e o
+   helper heroStatus nos dados.
+2. Editor novo: HeroEditor.tsx + HeroFields.tsx + HeroImageField.tsx. Nome interno,
+   imagens desktop/mobile (biblioteca + upload até 15 MB, reutilizando MediaPicker/
+   uploadImage), etiqueta com ícone, título em três partes (destaque em verde),
+   texto de apoio, botão (texto + link validado), tipo mensal/fixo, mês, ordem, tema
+   e chave de ativo. Gravação por PATCH parcial; criação por POST; prévia imediata.
+3. Views privadas de servidor: HeroListView.tsx e HeroEditView.tsx, com auth
+   (redirect /admin/login), permissões por hero-slides e Local API overrideAccess:false
+   + user. Preservam o formulário nativo dentro de drawers (reutilizam a fronteira de
+   NativeProductViews e o filtro de props do servidor).
+4. Collection hero-slides passou a apontar list/edit para as views amigáveis.
+   importMap.js recebeu HeroListView e HeroEditView (S3ClientUploadHandler preservado).
+5. SCSS bb-hero-* dentro de .bb-admin (mockup.scss): prévia fiel ao carrossel real
+   (tema escuro/claro, etiqueta com ícone, destaque verde, dois CTAs) e controles do
+   editor. Classes novas isoladas, sem colidir com .card do Payload.
+6. Prévia 3044 integrada: rota de Banners no app.tsx e CRUD em memória no
+   fixture-api.cjs (grava só na memória, nunca na produção).
+7. Bug do frontend corrigido: getHeroSlides em content.ts só cai nos exemplos locais
+   quando o backend FALHA (catch); resposta real vazia ou com tudo inativo é
+   respeitada (retorna []). HeroSlider.tsx trata slides=[] sem caixa vazia nem divisão
+   por zero (early return após os hooks), preservando os banners laterais da home.
+8. Exclusão de banner deixada FORA de propósito (evitar apagar cadastros reais de
+   Fabio/Plínio; o handoff marca exclusão como opcional). Duplicar continua disponível.
+
+Checks verdes: tsc do backend sem erro; 38 testes admin (13 novos de hero-data);
+46 testes frontend (4 novos de getHeroSlides, +content.test); next lint do frontend
+sem avisos. Build e importMap do admin real (generate:importmap com ambiente S3) a
+conferir no deploy; a validação de Fabio é pela prévia 3044.
+
+Sem commit, push, PR ou deploy. Nenhuma arte gerada e nenhum dado de produção alterado.
+Aguarda aceite visual específico de Banners (regra 27) antes de publicar.

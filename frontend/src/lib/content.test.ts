@@ -3,9 +3,11 @@ import {
   getBanners,
   getCases,
   getCategorias,
+  getHeroSlides,
   getMaterias,
   getPosts,
 } from "./content";
+import { orderedHeroSlides } from "@/data/home-joy";
 import { posts as postsMock } from "@/data/blog";
 import { cases as casesMock } from "@/data/cases";
 import { banners as bannersMock, miniBanners as miniBannersMock } from "@/data/banners";
@@ -152,5 +154,35 @@ describe("getMaterias", () => {
     expect(materias[0].id).toBe("7");
     expect(materias[0].data).toBe("2026-04-12");
     expect(materias[0].url).toBe("#");
+  });
+});
+
+describe("getHeroSlides", () => {
+  it("respeita o painel vazio e NAO ressuscita exemplos", async () => {
+    mockFetchJson({ docs: [] });
+    expect(await getHeroSlides(0)).toEqual([]);
+  });
+
+  it("respeita o painel com todos os banners inativos", async () => {
+    mockFetchJson({ docs: [{ id: 1, tipo: "fixo", ativo: false }] });
+    expect(await getHeroSlides(0)).toHaveLength(0);
+  });
+
+  it("ordena mes corrente, fixos (por ordem) e demais meses", async () => {
+    mockFetchJson({
+      docs: [
+        { id: 1, tipo: "mensal", mes: 1, ordem: 1, ativo: true },
+        { id: 2, tipo: "fixo", ordem: 1, ativo: true },
+        { id: 3, tipo: "fixo", ordem: 0, ativo: true },
+        { id: 4, tipo: "mensal", mes: 2, ordem: 1, ativo: true },
+      ],
+    });
+    const slides = await getHeroSlides(0); // monthIdx 0 => janeiro
+    expect(slides.map((s) => s.key)).toEqual(["hero-1", "hero-3", "hero-2", "hero-4"]);
+  });
+
+  it("cai nos exemplos locais SO quando o backend falha", async () => {
+    mockFetchError();
+    expect(await getHeroSlides(0)).toEqual(orderedHeroSlides(0));
   });
 });
