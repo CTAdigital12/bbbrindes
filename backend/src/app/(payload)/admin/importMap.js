@@ -34,6 +34,8 @@ import { default as default_hero_edit_view_8a2 } from '../../../admin/hero/HeroE
 import { default as default_home_edit_view_8a3 } from '../../../admin/home/HomeEditView'
 import { default as default_camp_list_view_8a4 } from '../../../admin/campanhas/CampanhaListView'
 import { default as default_camp_edit_view_8a5 } from '../../../admin/campanhas/CampanhaEditView'
+import { default as default_cat_list_view_8a6 } from '../../../admin/categorias/CategoriaListView'
+import { default as default_cat_edit_view_8a7 } from '../../../admin/categorias/CategoriaEditView'
 import { CollectionCards as CollectionCards_f9c02e79a4aed9a3924487c0cd4cafb1 } from '@payloadcms/next/rsc'
 
 /** @type import('payload').ImportMap */
@@ -74,5 +76,7 @@ export const importMap = {
   "/admin/home/HomeEditView#default": default_home_edit_view_8a3,
   "/admin/campanhas/CampanhaListView#default": default_camp_list_view_8a4,
   "/admin/campanhas/CampanhaEditView#default": default_camp_edit_view_8a5,
+  "/admin/categorias/CategoriaListView#default": default_cat_list_view_8a6,
+  "/admin/categorias/CategoriaEditView#default": default_cat_edit_view_8a7,
   "@payloadcms/next/rsc#CollectionCards": CollectionCards_f9c02e79a4aed9a3924487c0cd4cafb1
 }

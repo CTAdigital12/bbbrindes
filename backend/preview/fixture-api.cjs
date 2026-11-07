@@ -25,7 +25,10 @@ async function readFixtures() {
     fetch(backend + '/api/globals/conteudo-home?depth=1').then(r => r.json()),
     all('campanhas'),
   ]);
-  return { products, categories, media, banners, certifications: settings.selos?.length || 0, home, campanhas };
+  const countByCat = new Map();
+  for (const p of products) for (const c of (p.categorias || [])) { const id = typeof c === 'number' ? c : c && c.id; if (id != null) countByCat.set(id, (countByCat.get(id) || 0) + 1); }
+  const categoriasRows = categories.map(c => ({ ...c, produtosCount: countByCat.get(c.id) || 0 }));
+  return { products, categories, media, banners, certifications: settings.selos?.length || 0, home, campanhas, categoriasRows };
 }
 function hydrate(product, data) {
   const resolve = value => typeof value === 'number' ? data.media.find(m => m.id === value) || value : value;
@@ -127,6 +130,28 @@ async function saveCampanha(req, url, data) {
   data.campanhas[index] = updated;
   return { doc: updated };
 }
+function hydrateCategoria(c, data) {
+  const resolveMedia = v => typeof v === 'number' ? data.media.find(m => m.id === v) || v : v;
+  return { ...c, icone: resolveMedia(c.icone) };
+}
+async function saveCategoria(req, url, data) {
+  let body = '';
+  for await (const chunk of req) body += chunk;
+  const changes = JSON.parse(body);
+  let id = Number(url.pathname.split('/')[3]);
+  let index = data.categoriasRows.findIndex(c => c.id === id);
+  if (req.method === 'POST') {
+    id = Math.max(0, ...data.categoriasRows.map(c => c.id)) + 1;
+    index = data.categoriasRows.length;
+    data.categoriasRows.push({ id, produtosCount: 0 });
+  }
+  const original = data.categoriasRows[index];
+  if (!original) throw new Error('Categoria não encontrada');
+  const slug = original.slug || String(changes.nome || original.nome || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().replace(/[^a-z0-9]+/g, '-');
+  const updated = hydrateCategoria({ ...original, ...changes, id, slug, produtosCount: original.produtosCount || 0, updatedAt: new Date().toISOString() }, data);
+  data.categoriasRows[index] = updated;
+  return { doc: updated };
+}
 function fixtureAPI(data) {
   let failWrite = false;
   const routes = [
@@ -150,6 +175,10 @@ function fixtureAPI(data) {
     ...['POST', 'PATCH'].map(method => ({ method, match: url => /^\/api\/campanhas(?:\/\d+)?$/.test(url.pathname), run: async (req, url) => {
       if (failWrite) { failWrite = false; throw new Error('Falha simulada: alterações não foram salvas.'); }
       return saveCampanha(req, url, data);
+    } })),
+    ...['POST', 'PATCH'].map(method => ({ method, match: url => /^\/api\/categorias(?:\/\d+)?$/.test(url.pathname), run: async (req, url) => {
+      if (failWrite) { failWrite = false; throw new Error('Falha simulada: alterações não foram salvas.'); }
+      return saveCategoria(req, url, data);
     } })),
   ];
   return async (req, res, url) => {
