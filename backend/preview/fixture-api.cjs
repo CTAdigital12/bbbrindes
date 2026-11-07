@@ -62,6 +62,27 @@ async function saveProduct(req, url, data) {
   data.products[index] = updated;
   return { doc: updated };
 }
+function hydrateHero(banner, data) {
+  const resolve = value => typeof value === 'number' ? data.media.find(m => m.id === value) || value : value;
+  return { ...banner, imagemDesktop: resolve(banner.imagemDesktop), imagemMobile: resolve(banner.imagemMobile) };
+}
+async function saveHero(req, url, data) {
+  let body = '';
+  for await (const chunk of req) body += chunk;
+  const changes = JSON.parse(body);
+  let id = Number(url.pathname.split('/')[3]);
+  let index = data.banners.findIndex(b => b.id === id);
+  if (req.method === 'POST') {
+    id = Math.max(0, ...data.banners.map(b => b.id)) + 1;
+    index = data.banners.length;
+    data.banners.push({ id });
+  }
+  const original = data.banners[index];
+  if (!original) throw new Error('Banner não encontrado');
+  const updated = hydrateHero({ ...original, ...changes, id, updatedAt: new Date().toISOString() }, data);
+  data.banners[index] = updated;
+  return { doc: updated };
+}
 function fixtureAPI(data) {
   let failWrite = false;
   const routes = [
@@ -72,6 +93,10 @@ function fixtureAPI(data) {
     ...['POST', 'PATCH'].map(method => ({ method, match: url => /^\/api\/produtos(?:\/\d+)?$/.test(url.pathname), run: async (req, url) => {
       if (failWrite) { failWrite = false; throw new Error('Falha simulada: alterações não foram salvas.'); }
       return saveProduct(req, url, data);
+    } })),
+    ...['POST', 'PATCH'].map(method => ({ method, match: url => /^\/api\/hero-slides(?:\/\d+)?$/.test(url.pathname), run: async (req, url) => {
+      if (failWrite) { failWrite = false; throw new Error('Falha simulada: alterações não foram salvas.'); }
+      return saveHero(req, url, data);
     } })),
   ];
   return async (req, res, url) => {

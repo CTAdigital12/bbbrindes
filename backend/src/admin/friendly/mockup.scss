@@ -319,4 +319,45 @@ tr.over td{box-shadow:inset 0 2px 0 var(--focus)}
 }
 @media(prefers-reduced-motion:reduce){*{transition:none!important}}
 
+/* Banners do hero (FB-6): editor + previa fiel ao carrossel da home */
+.bb-hero-icon-field{display:flex;gap:8px;align-items:center}
+.bb-hero-icon-field .inp{flex:1}
+.bb-hero-icon-preview{width:34px;height:34px;flex:none;border:1px solid var(--line);border-radius:8px;display:grid;place-items:center;background:#e7f1e6;color:var(--deep)}
+.bb-hero-icon-preview svg{width:19px;height:19px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.bb-hero-title-hl{border-color:var(--green);box-shadow:inset 3px 0 0 var(--lime)}
+.bb-hero-ativo{margin:14px 0 0}
+.bb-hero-situacao{flex-wrap:wrap;margin-top:12px}
+.bb-hero-list-help{margin:0;color:var(--muted);font-size:12.5px}
+
+.bb-hero-preview{display:grid;gap:8px}
+.bb-hero-preview-bar{display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--muted)}
+.bb-hero-preview-bar b{color:var(--ink)}
+.bb-hero-site{border:1px solid var(--line);border-radius:12px;overflow:hidden;background:#0e1a14;box-shadow:var(--sh);width:100%;margin:0 auto;transition:width .2s}
+.bb-hero-site.bb-hero-mobile{width:min(360px,100%)}
+.bb-hero-site-nav{display:flex;align-items:center;gap:10px;padding:10px 14px;background:#fff;border-bottom:1px solid #e6e8df}
+.bb-hero-site-nav img{height:16px;width:auto;filter:invert(23%) sepia(53%) saturate(1000%) hue-rotate(118deg) brightness(60%)}
+.bb-hero-site-nav span{margin-left:auto;font-size:10px;background:#f99b37;color:#fff;border-radius:999px;padding:3px 9px;font-weight:600}
+.bb-hero-surface{position:relative;aspect-ratio:1656/480;background-position:center;background-size:cover;background-color:#123;display:flex;align-items:center;isolation:isolate}
+.bb-hero-site.bb-hero-mobile .bb-hero-surface{aspect-ratio:716/480}
+.bb-hero-surface::before{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(90deg,rgba(6,18,12,.85) 0%,rgba(6,18,12,.45) 52%,rgba(6,18,12,0) 82%)}
+.bb-hero-surface.bb-hero-cream::before{background:linear-gradient(90deg,rgba(247,246,239,.92) 0%,rgba(247,246,239,.5) 55%,rgba(247,246,239,0) 85%)}
+.bb-hero-copy{color:#fff;padding:0 0 0 5%;max-width:48%;display:grid;gap:7px}
+.bb-hero-site.bb-hero-mobile .bb-hero-copy{max-width:74%}
+.bb-hero-surface.bb-hero-cream .bb-hero-copy{color:var(--ink)}
+.bb-hero-tag{display:inline-flex;align-items:center;gap:6px;width:fit-content;font-size:10.5px;font-weight:600;letter-spacing:.02em;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.25);color:#fff;border-radius:999px;padding:3px 10px}
+.bb-hero-surface.bb-hero-cream .bb-hero-tag{background:rgba(0,68,49,.1);border-color:rgba(0,68,49,.2);color:var(--deep)}
+.bb-hero-tag svg{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.bb-hero-copy h3{margin:0;font-size:clamp(14px,2.1vw,26px);line-height:1.12;font-weight:700;text-wrap:balance}
+.bb-hero-copy h3 mark{background:none;color:var(--lime);font-weight:inherit}
+.bb-hero-surface.bb-hero-cream .bb-hero-copy h3 mark{color:var(--green)}
+.bb-hero-copy p{margin:0;font-size:clamp(10px,1.1vw,13px);opacity:.9}
+.bb-hero-ctas{display:flex;gap:8px;flex-wrap:wrap;margin-top:4px}
+.bb-hero-cta,.bb-hero-wa{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:700;border-radius:999px;padding:6px 13px;white-space:nowrap}
+.bb-hero-cta{background:var(--lime);color:var(--deep-2)}
+.bb-hero-cta svg{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.bb-hero-wa{background:transparent;border:1px solid rgba(255,255,255,.55);color:#fff}
+.bb-hero-surface.bb-hero-cream .bb-hero-wa{border-color:rgba(0,68,49,.4);color:var(--deep)}
+.bb-hero-dialog{height:auto;width:min(880px,100%)}
+.bb-hero-dialog-body{padding:18px;overflow:auto}
+
 }

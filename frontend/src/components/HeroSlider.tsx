@@ -15,8 +15,8 @@ export default function HeroSlider({ slides }: { slides: HeroSlide[] }) {
   const [idx, setIdx] = useState(0);
   const [paused, setPaused] = useState(false);
 
-  const go = (i: number) => setIdx(((i % n) + n) % n);
-  const step = (d: number) => setIdx((p) => (((p + d) % n) + n) % n);
+  const go = (i: number) => n && setIdx(((i % n) + n) % n);
+  const step = (d: number) => n && setIdx((p) => (((p + d) % n) + n) % n);
 
   useEffect(() => {
     if (paused || n <= 1) return;
@@ -25,6 +25,12 @@ export default function HeroSlider({ slides }: { slides: HeroSlide[] }) {
   }, [paused, n]);
 
   const creamOn = slides[idx]?.theme === "cream";
+
+  // Painel sem banners ativos (resposta real vazia): nao renderiza o carrossel,
+  // evitando caixa vazia e divisao por zero. Os 2 banners laterais da home ficam
+  // fora deste componente (page.tsx) e continuam aparecendo. Hooks acima ja
+  // rodaram, entao o early return nao quebra a ordem dos hooks.
+  if (n === 0) return null;
 
   return (
     <div

@@ -15,7 +15,7 @@ export type Product = {
   crm?: { preco?: number | null; estoque?: number | null };
   argumentoComercial?: string; faixaPreco?: string; destaques?: string[]; updatedAt?: string;
 }
-export type Banner = { id: number; nome: string; tipo?: string; mes?: number; ativo?: boolean; imagemDesktop?: MediaRef; imagemMobile?: MediaRef; updatedAt?: string }
+export type Banner = { id: number; nome: string; tipo?: string; mes?: number | null; ativo?: boolean | null; imagemDesktop?: MediaRef; imagemMobile?: MediaRef; updatedAt?: string }
 export const SITE_URL = 'https://ctadigital12.github.io/bbbrindes'
 export const photo = (value: MediaRef | undefined): Media | undefined => value && typeof value === 'object' ? value : undefined
 export const mediaID = (value: MediaRef | undefined): number | undefined => typeof value === 'number' ? value : value?.id
