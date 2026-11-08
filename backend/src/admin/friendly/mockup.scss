@@ -636,6 +636,7 @@ tr.over td{box-shadow:inset 0 2px 0 var(--focus)}
 .bb-cfg-hint{margin:2px 0 12px;color:var(--muted);font-size:12.5px}
 .bb-cfg-selos{display:grid;gap:8px;margin-bottom:10px}
 .bb-cfg-selo{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center;padding:8px;border:1px solid var(--line);border-radius:9px;background:#fbfcf8}
+.bb-cfg-selo-acts{display:flex;gap:8px;align-items:center}
 .bb-cfg-preview{display:grid;gap:8px}
 .bb-cfg-preview-bar{display:flex;align-items:baseline;gap:8px;font-size:12.5px;color:var(--muted)}
 .bb-cfg-preview-bar b{color:var(--ink)}
