@@ -7,6 +7,11 @@ export const Users: CollectionConfig = {
   admin: {
     useAsTitle: 'email',
     group: 'Sistema',
+    description: 'Administradores que entram no painel. Cada um acessa com o proprio e-mail e senha.',
+    components: { views: {
+      list: { Component: '/admin/users/UserListView' },
+      edit: { root: { Component: '/admin/users/UserEditView' } },
+    } },
   },
   auth: true,
   fields: [

@@ -28,6 +28,22 @@ function mockOrcamentos() {
     { id: 3, requisicaoId: 'req-e5f6', status: 'falhou', modo: 'real', empresa: 'Auto Pecas Sul', emailMascarado: 'v***@autosul.com', telefoneMascarado: '****-7733', qtdItens: 2, totalUnidades: 200, consentimento: true, erro: 'Timeout ao chamar o n8n (ECONNRESET).', createdAt: new Date(now - 2 * 864e5).toISOString() },
   ];
 }
+// users e revendedores sao colecoes de auth (403 sem login na API publica), entao a
+// previa usa amostras locais so pra validar o visual. Nunca toca producao.
+function mockUsers() {
+  return [
+    { id: 1, email: 'admin@bbbrindes.com.br', createdAt: '2026-01-10T00:00:00.000Z' },
+    { id: 2, email: 'plinio@bbbrindes.com.br', createdAt: '2026-03-02T00:00:00.000Z' },
+    { id: 3, email: 'comercial@bbbrindes.com.br', createdAt: '2026-06-18T00:00:00.000Z' },
+  ];
+}
+function mockRevendedores() {
+  return [
+    { id: 1, empresa: 'Brindes Center LTDA', nomeFantasia: 'Brindes Center', cnpj: '12.345.678/0001-90', responsavel: 'Carlos Souza', telefone: '(41) 3333-1000', whatsapp: '(41) 99999-1000', site: 'brindescenter.com.br', email: 'contato@brindescenter.com.br', nivel: '2', ativo: true, enderecoEntrega: { logradouro: 'Rua das Industrias, 100', bairro: 'Cidade Industrial', cidade: 'Curitiba', uf: 'PR', cep: '81000-000' }, notas: '' },
+    { id: 2, empresa: 'Eco Promo Distribuidora', nomeFantasia: 'Eco Promo', cnpj: '98.765.432/0001-10', responsavel: 'Marina Lima', telefone: '(11) 4000-2000', whatsapp: '', site: '', email: 'marina@ecopromo.com.br', nivel: null, ativo: false, enderecoEntrega: {}, notas: 'Cadastro novo, aguardando aprovacao.' },
+    { id: 3, empresa: 'Top Gifts Comercio', nomeFantasia: 'Top Gifts', cnpj: '45.111.222/0001-33', responsavel: 'Rafael Dias', telefone: '', whatsapp: '(31) 98888-3000', site: 'topgifts.com.br', email: 'rafael@topgifts.com.br', nivel: '1', ativo: true, enderecoEntrega: { cidade: 'Belo Horizonte', uf: 'MG' }, notas: '' },
+  ];
+}
 async function readFixtures() {
   const [products, categories, media, banners, settings, home, campanhas, cases, imprensa, posts, depoimentos, logos, catalogos, institucional, tags] = await Promise.all([
     all('produtos'), all('categorias'), all('media'), all('hero-slides'),
@@ -45,7 +61,7 @@ async function readFixtures() {
   const usoTag = new Map();
   for (const doc of [...posts, ...cases, ...imprensa]) for (const t of (doc.tags || [])) { const id = typeof t === 'number' ? t : t && t.id; if (id != null) usoTag.set(id, (usoTag.get(id) || 0) + 1); }
   const tagsRows = tags.map(t => ({ ...t, usosCount: usoTag.get(t.id) || 0 }));
-  return { products, categories, media, banners, certifications: settings.selos?.length || 0, home, campanhas, categoriasRows, cases, imprensa, posts, depoimentos, logos, orcamentos: mockOrcamentos(), config: settings, catalogos, institucional, tags: tagsRows };
+  return { products, categories, media, banners, certifications: settings.selos?.length || 0, home, campanhas, categoriasRows, cases, imprensa, posts, depoimentos, logos, orcamentos: mockOrcamentos(), config: settings, catalogos, institucional, tags: tagsRows, users: mockUsers(), revendedores: mockRevendedores() };
 }
 function hydrate(product, data) {
   const resolve = value => typeof value === 'number' ? data.media.find(m => m.id === value) || value : value;
@@ -300,6 +316,19 @@ function fixtureAPI(data) {
     ...['POST', 'PATCH'].map(method => ({ method, match: url => /^\/api\/tags(?:\/\d+)?$/.test(url.pathname), run: async (req, url) => {
       if (failWrite) { failWrite = false; throw new Error('Falha simulada: alterações não foram salvas.'); }
       return saveDoc(req, url, data, { key: 'tags', media: [], slugFrom: 'nome' });
+    } })),
+    ...['POST', 'PATCH'].map(method => ({ method, match: url => /^\/api\/users(?:\/\d+)?$/.test(url.pathname), run: async (req, url) => {
+      if (failWrite) { failWrite = false; throw new Error('Falha simulada: alterações não foram salvas.'); }
+      return saveDoc(req, url, data, { key: 'users', media: [], slugFrom: null });
+    } })),
+    { method: 'DELETE', match: url => /^\/api\/users\/\d+$/.test(url.pathname), run: async (_req, url) => {
+      const id = Number(url.pathname.split('/')[3]);
+      data.users = data.users.filter(u => u.id !== id);
+      return { message: 'removido' };
+    } },
+    ...['POST', 'PATCH'].map(method => ({ method, match: url => /^\/api\/revendedores(?:\/\d+)?$/.test(url.pathname), run: async (req, url) => {
+      if (failWrite) { failWrite = false; throw new Error('Falha simulada: alterações não foram salvas.'); }
+      return saveDoc(req, url, data, { key: 'revendedores', media: [], slugFrom: null });
     } })),
   ];
   return async (req, res, url) => {

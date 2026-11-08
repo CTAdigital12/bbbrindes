@@ -45,7 +45,15 @@ export const Revendedores: CollectionConfig = {
   admin: {
     useAsTitle: 'empresa',
     group: 'Revenda',
+    description:
+      'Contas do portal de revenda. Aprovar (Ativo) libera o login e exige a tabela de preco (nivel) no mesmo passo. Dados com PII: so o admin ve a lista completa.',
     defaultColumns: ['empresa', 'cnpj', 'nivel', 'ativo'],
+    components: {
+      views: {
+        list: { Component: '/admin/revendedores/RevendedorListView' },
+        edit: { root: { Component: '/admin/revendedores/RevendedorEditView' } },
+      },
+    },
   },
   access: {
     // So o admin cria (a solicitacao publica vai para o Leads2b, nao cria
