@@ -48,6 +48,11 @@ import { default as default_logos_list_view_8b9 } from '../../../admin/logos/Log
 import { default as default_logos_edit_view_8c1 } from '../../../admin/logos/LogoEditView'
 import { default as default_midia_list_view_8c2 } from '../../../admin/midia/MidiaListView'
 import { default as default_orc_list_view_8c3 } from '../../../admin/orcamentos/OrcamentoListView'
+import { default as default_cfg_edit_view_8c4 } from '../../../admin/configuracoes/ConfiguracoesEditView'
+import { default as default_catdig_edit_view_8c5 } from '../../../admin/catalogos/CatalogosEditView'
+import { default as default_inst_edit_view_8c6 } from '../../../admin/institucional/InstitucionalEditView'
+import { default as default_tags_list_view_8c7 } from '../../../admin/tags/TagListView'
+import { default as default_tags_edit_view_8c8 } from '../../../admin/tags/TagEditView'
 import { CollectionCards as CollectionCards_f9c02e79a4aed9a3924487c0cd4cafb1 } from '@payloadcms/next/rsc'
 
 /** @type import('payload').ImportMap */
@@ -102,5 +107,10 @@ export const importMap = {
   "/admin/logos/LogoEditView#default": default_logos_edit_view_8c1,
   "/admin/midia/MidiaListView#default": default_midia_list_view_8c2,
   "/admin/orcamentos/OrcamentoListView#default": default_orc_list_view_8c3,
+  "/admin/configuracoes/ConfiguracoesEditView#default": default_cfg_edit_view_8c4,
+  "/admin/catalogos/CatalogosEditView#default": default_catdig_edit_view_8c5,
+  "/admin/institucional/InstitucionalEditView#default": default_inst_edit_view_8c6,
+  "/admin/tags/TagListView#default": default_tags_list_view_8c7,
+  "/admin/tags/TagEditView#default": default_tags_edit_view_8c8,
   "@payloadcms/next/rsc#CollectionCards": CollectionCards_f9c02e79a4aed9a3924487c0cd4cafb1
 }

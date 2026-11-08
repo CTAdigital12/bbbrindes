@@ -16,6 +16,9 @@ export const ConteudoInstitucional: GlobalConfig = {
     group: 'Conteudo',
     description:
       'Textos das paginas Quem somos e SAC. Em sustentabilidade, o icone usa o arquivo sustentabilidade-<icone>.svg em /img/icones.',
+    components: { views: {
+      edit: { root: { Component: '/admin/institucional/InstitucionalEditView' } },
+    } },
   },
   access: {
     read: () => true,
