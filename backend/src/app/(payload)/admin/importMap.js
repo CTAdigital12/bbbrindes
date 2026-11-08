@@ -53,6 +53,10 @@ import { default as default_catdig_edit_view_8c5 } from '../../../admin/catalogo
 import { default as default_inst_edit_view_8c6 } from '../../../admin/institucional/InstitucionalEditView'
 import { default as default_tags_list_view_8c7 } from '../../../admin/tags/TagListView'
 import { default as default_tags_edit_view_8c8 } from '../../../admin/tags/TagEditView'
+import { default as default_users_list_view_8d1 } from '../../../admin/users/UserListView'
+import { default as default_users_edit_view_8d2 } from '../../../admin/users/UserEditView'
+import { default as default_rev_list_view_8d3 } from '../../../admin/revendedores/RevendedorListView'
+import { default as default_rev_edit_view_8d4 } from '../../../admin/revendedores/RevendedorEditView'
 import { CollectionCards as CollectionCards_f9c02e79a4aed9a3924487c0cd4cafb1 } from '@payloadcms/next/rsc'
 
 /** @type import('payload').ImportMap */
@@ -112,5 +116,9 @@ export const importMap = {
   "/admin/institucional/InstitucionalEditView#default": default_inst_edit_view_8c6,
   "/admin/tags/TagListView#default": default_tags_list_view_8c7,
   "/admin/tags/TagEditView#default": default_tags_edit_view_8c8,
+  "/admin/users/UserListView#default": default_users_list_view_8d1,
+  "/admin/users/UserEditView#default": default_users_edit_view_8d2,
+  "/admin/revendedores/RevendedorListView#default": default_rev_list_view_8d3,
+  "/admin/revendedores/RevendedorEditView#default": default_rev_edit_view_8d4,
   "@payloadcms/next/rsc#CollectionCards": CollectionCards_f9c02e79a4aed9a3924487c0cd4cafb1
 }
