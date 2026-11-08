@@ -28,8 +28,11 @@ body:has(.bb-admin) .app-header, body:has(.bb-admin) .template-default__nav-togg
 .bb-admin .bb-spec-row { display:grid; grid-template-columns:1fr 1fr auto; gap:8px; margin-bottom:10px; }
 .bb-admin .bb-editor-body { padding-top:4px; }
 .bb-admin .bb-order { position:absolute; bottom:4px; right:4px; border:1px solid var(--line); border-radius:5px; background:#fff; cursor:pointer; }
-.bb-admin .bb-color-row { grid-template-columns:32px minmax(100px,1fr) minmax(140px,1fr) auto; }
+.bb-admin .bb-color-row { grid-template-columns:auto minmax(100px,1fr) minmax(140px,1fr) auto; }
+.bb-admin .bb-swatch-cell { display:flex; flex-direction:column; align-items:center; gap:2px; }
 .bb-admin .bb-swatch-input { width:28px; height:28px; border:0; padding:0; background:none; }
+.bb-admin .bb-swatch-note { font-size:10px; line-height:1.1; color:var(--muted); text-align:center; }
+.bb-admin button.bb-swatch-clear { border:0; background:none; padding:0; cursor:pointer; text-decoration:underline; }
 .bb-admin .bb-media-modal { grid-template-rows:auto auto minmax(0,1fr) auto; }
 .bb-admin .bb-picker-toolbar { padding:14px 18px; margin:0; border-bottom:1px solid var(--line); }
 .bb-admin .bb-picker-content { padding:18px; overflow:auto; }

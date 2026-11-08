@@ -1,7 +1,8 @@
 import { RequestError } from '../friendly/api-errors'
 import type { Media } from '../friendly/model'
-// Logica pura da biblioteca de Midia. A unica edicao amigavel e a descricao (alt),
-// obrigatoria (SEO + leitor de tela). Upload e exclusao usam a API direto.
+// Logica pura da biblioteca de Midia. No editor amigavel da pra editar a descricao
+// (alt, obrigatoria por SEO + leitor de tela) e substituir o arquivo da imagem.
+// Upload de imagem nova e exclusao usam a API direto.
 export type MidiaIssue = { message: string; field?: string }
 export const MIDIA_PATH = '/admin/collections/media'
 // PATCH parcial: so manda alt quando mudou.

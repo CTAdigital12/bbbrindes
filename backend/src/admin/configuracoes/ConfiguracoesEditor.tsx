@@ -29,6 +29,7 @@ export function ConfiguracoesEditor({ initial, canSave = true }: { initial: Conf
   function setRede(field: string, value: string) { setConfig(c => ({ ...c, redes: { ...c.redes, [field]: value } })); clear() }
   function setDescricao(value: string) { setConfig(c => ({ ...c, descricao: value })); clear() }
   function setSelos(next: { id?: string; nome?: string }[]) { setConfig(c => ({ ...c, selos: next })); clear() }
+  function moveSelo(from: number, to: number) { if (to < 0 || to >= selos.length) return; const next = [...selos]; next.splice(to, 0, next.splice(from, 1)[0]); setSelos(next) }
   async function save() {
     const issue = validateConfig(config)
     if (issue) { setError(issue); return }
@@ -71,7 +72,11 @@ export function ConfiguracoesEditor({ initial, canSave = true }: { initial: Conf
         <div className="in"><p className="sub bb-cfg-hint">Siglas exibidas na faixa de selos do rodapé (ex.: SGP, GMP, NM300).</p>
           <div className="bb-cfg-selos">{selos.map((s, i) => <div className="bb-cfg-selo" key={i}>
             <input className="inp" aria-label={`Selo ${i + 1}`} placeholder="Ex.: SGP" value={s.nome || ''} disabled={disabled} onChange={e => setSelos(selos.map((it, idx) => idx === i ? { ...it, nome: e.target.value } : it))} />
-            <button type="button" className="lnk red" aria-label={`Remover selo ${i + 1}`} disabled={disabled} onClick={() => setSelos(selos.filter((_, idx) => idx !== i))}>Remover</button>
+            <div className="bb-cfg-selo-acts">
+              <button type="button" className="lnk" aria-label={`Mover selo ${i + 1} para cima`} disabled={disabled || i === 0} onClick={() => moveSelo(i, i - 1)}>↑</button>
+              <button type="button" className="lnk" aria-label={`Mover selo ${i + 1} para baixo`} disabled={disabled || i === selos.length - 1} onClick={() => moveSelo(i, i + 1)}>↓</button>
+              <button type="button" className="lnk red" aria-label={`Remover selo ${i + 1}`} disabled={disabled} onClick={() => setSelos(selos.filter((_, idx) => idx !== i))}>Remover</button>
+            </div>
           </div>)}</div>
           <button type="button" className="btn sm" disabled={disabled} onClick={() => setSelos([...selos, { nome: '' }])}>+ Adicionar selo</button>
         </div>
