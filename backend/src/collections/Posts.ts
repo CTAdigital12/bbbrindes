@@ -9,7 +9,12 @@ export const Posts: CollectionConfig = {
   admin: {
     useAsTitle: 'titulo',
     group: 'Conteudo',
+    description: 'Artigos do blog da BB Brindes. O mais recente aparece primeiro, pela data.',
     defaultColumns: ['titulo', 'data'],
+    components: { views: {
+      list: { Component: '/admin/posts/PostListView' },
+      edit: { root: { Component: '/admin/posts/PostEditView' } },
+    } },
   },
   access: {
     read: () => true,

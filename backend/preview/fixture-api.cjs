@@ -18,17 +18,27 @@ async function all(collection) {
   }
   return rows;
 }
+// Logs de entrega exigem login na API publica (403 sem token), entao a previa usa
+// uma amostra local so pra validar o visual da caixa de entrada (memoria, nunca prod).
+function mockOrcamentos() {
+  const now = Date.now();
+  return [
+    { id: 1, requisicaoId: 'req-a1b2', status: 'simulado', modo: 'stub', empresa: 'Padaria do Ze', emailMascarado: 'c***@padaria.com', telefoneMascarado: '****-4821', qtdItens: 3, totalUnidades: 450, consentimento: true, createdAt: new Date(now - 36e5).toISOString() },
+    { id: 2, requisicaoId: 'req-c3d4', status: 'entregue', modo: 'real', crmId: 'CRM-7781', empresa: 'Clinica Vida', emailMascarado: 'm***@vida.com.br', telefoneMascarado: '****-1190', qtdItens: 5, totalUnidades: 1200, consentimento: true, createdAt: new Date(now - 864e5).toISOString() },
+    { id: 3, requisicaoId: 'req-e5f6', status: 'falhou', modo: 'real', empresa: 'Auto Pecas Sul', emailMascarado: 'v***@autosul.com', telefoneMascarado: '****-7733', qtdItens: 2, totalUnidades: 200, consentimento: true, erro: 'Timeout ao chamar o n8n (ECONNRESET).', createdAt: new Date(now - 2 * 864e5).toISOString() },
+  ];
+}
 async function readFixtures() {
-  const [products, categories, media, banners, settings, home, campanhas] = await Promise.all([
+  const [products, categories, media, banners, settings, home, campanhas, cases, imprensa, posts, depoimentos, logos] = await Promise.all([
     all('produtos'), all('categorias'), all('media'), all('hero-slides'),
     fetch(backend + '/api/globals/configuracoes').then(r => r.json()),
     fetch(backend + '/api/globals/conteudo-home?depth=1').then(r => r.json()),
-    all('campanhas'),
+    all('campanhas'), all('cases'), all('imprensa'), all('posts'), all('depoimentos'), all('logos'),
   ]);
   const countByCat = new Map();
   for (const p of products) for (const c of (p.categorias || [])) { const id = typeof c === 'number' ? c : c && c.id; if (id != null) countByCat.set(id, (countByCat.get(id) || 0) + 1); }
   const categoriasRows = categories.map(c => ({ ...c, produtosCount: countByCat.get(c.id) || 0 }));
-  return { products, categories, media, banners, certifications: settings.selos?.length || 0, home, campanhas, categoriasRows };
+  return { products, categories, media, banners, certifications: settings.selos?.length || 0, home, campanhas, categoriasRows, cases, imprensa, posts, depoimentos, logos, orcamentos: mockOrcamentos() };
 }
 function hydrate(product, data) {
   const resolve = value => typeof value === 'number' ? data.media.find(m => m.id === value) || value : value;
@@ -152,6 +162,66 @@ async function saveCategoria(req, url, data) {
   data.categoriasRows[index] = updated;
   return { doc: updated };
 }
+// Config de cada colecao de conteudo editavel na previa: chave do array, campos de
+// midia a reidratar (id -> objeto) e de que campo gerar o slug (quando tem slug).
+const DOC_SAVERS = {
+  cases: { key: 'cases', media: ['logo', 'imagem'], slugFrom: 'titulo' },
+  imprensa: { key: 'imprensa', media: [], slugFrom: null },
+  posts: { key: 'posts', media: ['capa'], slugFrom: 'titulo' },
+  depoimentos: { key: 'depoimentos', media: ['foto'], slugFrom: null },
+};
+function hydrateMedia(doc, data, fields) {
+  const resolve = v => typeof v === 'number' ? data.media.find(m => m.id === v) || v : v;
+  const out = { ...doc };
+  for (const f of fields) if (f in out) out[f] = resolve(out[f]);
+  return out;
+}
+async function saveDoc(req, url, data, cfg) {
+  let body = '';
+  for await (const chunk of req) body += chunk;
+  const changes = JSON.parse(body || '{}');
+  const arr = data[cfg.key];
+  let id = Number(url.pathname.split('/')[3]);
+  let index = arr.findIndex(d => d.id === id);
+  if (req.method === 'POST') { id = Math.max(0, ...arr.map(d => d.id)) + 1; index = arr.length; arr.push({ id }); }
+  const original = arr[index];
+  if (!original) throw new Error('Registro nao encontrado');
+  const merged = { ...original, ...changes, id, updatedAt: new Date().toISOString() };
+  if (cfg.slugFrom) merged.slug = original.slug || String(changes[cfg.slugFrom] || original[cfg.slugFrom] || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().replace(/[^a-z0-9]+/g, '-');
+  const updated = hydrateMedia(merged, data, cfg.media);
+  arr[index] = updated;
+  return { doc: updated };
+}
+// Logos e colecao de UPLOAD: o editor manda multipart (file + _payload) para trocar
+// o arquivo, ou JSON (nome/ordem) para o resto. Guarda o arquivo como data URL.
+async function saveLogo(req, url, data) {
+  const request = new Request(url, { method: req.method, headers: req.headers, body: req, duplex: 'half' });
+  const form = await request.formData();
+  const payload = form.get('_payload') ? JSON.parse(form.get('_payload')) : {};
+  const file = form.get('file');
+  const arr = data.logos;
+  let id = Number(url.pathname.split('/')[3]);
+  let index = arr.findIndex(d => d.id === id);
+  if (req.method === 'POST') { id = Math.max(0, ...arr.map(d => d.id)) + 1; index = arr.length; arr.push({ id }); }
+  const original = arr[index] || { id };
+  const updated = { ...original, ...payload, id, updatedAt: new Date().toISOString() };
+  if (file && typeof file.arrayBuffer === 'function') {
+    updated.url = `data:${file.type};base64,${Buffer.from(await file.arrayBuffer()).toString('base64')}`;
+    updated.filename = file.name; updated.mimeType = file.type;
+  }
+  arr[index] = updated;
+  return { doc: updated };
+}
+async function saveMediaAlt(req, url, data) {
+  let body = '';
+  for await (const chunk of req) body += chunk;
+  const changes = JSON.parse(body || '{}');
+  const id = Number(url.pathname.split('/')[3]);
+  const item = data.media.find(m => m.id === id);
+  if (!item) throw new Error('Imagem nao encontrada');
+  if (typeof changes.alt === 'string') item.alt = changes.alt;
+  return { doc: item };
+}
 function fixtureAPI(data) {
   let failWrite = false;
   const routes = [
@@ -180,6 +250,19 @@ function fixtureAPI(data) {
       if (failWrite) { failWrite = false; throw new Error('Falha simulada: alterações não foram salvas.'); }
       return saveCategoria(req, url, data);
     } })),
+    ...['cases', 'imprensa', 'posts', 'depoimentos'].flatMap(slug => ['POST', 'PATCH'].map(method => ({ method, match: url => new RegExp(`^/api/${slug}(?:/\\d+)?$`).test(url.pathname), run: async (req, url) => {
+      if (failWrite) { failWrite = false; throw new Error('Falha simulada: alterações não foram salvas.'); }
+      return saveDoc(req, url, data, DOC_SAVERS[slug]);
+    } }))),
+    ...['POST', 'PATCH'].map(method => ({ method, match: url => /^\/api\/logos(?:\/\d+)?$/.test(url.pathname), run: async (req, url) => {
+      if (failWrite) { failWrite = false; throw new Error('Falha simulada: alterações não foram salvas.'); }
+      const ct = req.headers['content-type'] || '';
+      return ct.includes('multipart/form-data') ? saveLogo(req, url, data) : saveDoc(req, url, data, { key: 'logos', media: [], slugFrom: null });
+    } })),
+    { method: 'PATCH', match: url => /^\/api\/media\/\d+$/.test(url.pathname), run: async (req, url) => {
+      if (failWrite) { failWrite = false; throw new Error('Falha simulada: alterações não foram salvas.'); }
+      return saveMediaAlt(req, url, data);
+    } },
   ];
   return async (req, res, url) => {
     const route = routes.find(route => route.method === req.method && route.match(url));

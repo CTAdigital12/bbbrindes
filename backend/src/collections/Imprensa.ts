@@ -7,7 +7,12 @@ export const Imprensa: CollectionConfig = {
   admin: {
     useAsTitle: 'titulo',
     group: 'Conteudo',
+    description: 'Clipping de imprensa do site (BB Brindes e Grupo BB na midia). No card aparecem veiculo e titulo; data, resumo e link ficam salvos no painel. Apos salvar, a publicacao leva alguns minutos.',
     defaultColumns: ['veiculo', 'data', 'titulo'],
+    components: { views: {
+      list: { Component: '/admin/imprensa/ImprensaListView' },
+      edit: { root: { Component: '/admin/imprensa/ImprensaEditView' } },
+    } },
   },
   access: {
     read: () => true,

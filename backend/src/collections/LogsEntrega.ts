@@ -19,6 +19,9 @@ export const LogsEntrega: CollectionConfig = {
     defaultColumns: ['createdAt', 'status', 'modo', 'empresa', 'totalUnidades'],
     description:
       'Auditoria dos pedidos de orcamento enviados pelo site. modo "stub"/status "simulado" = o CRM ainda nao esta conectado (o lead chegou ao backend, mas a entrega ao comercial e pelo WhatsApp ate a integracao real ser ligada).',
+    components: { views: {
+      list: { Component: '/admin/orcamentos/OrcamentoListView' },
+    } },
   },
   access: {
     read: ({ req }) => Boolean(req.user),

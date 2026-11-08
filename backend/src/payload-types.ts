@@ -76,6 +76,7 @@ export interface Config {
     cases: Case;
     imprensa: Imprensa;
     tags: Tag;
+    depoimentos: Depoimento;
     logos: Logo;
     'hero-slides': HeroSlide;
     revendedores: Revendedore;
@@ -97,6 +98,7 @@ export interface Config {
     cases: CasesSelect<false> | CasesSelect<true>;
     imprensa: ImprensaSelect<false> | ImprensaSelect<true>;
     tags: TagsSelect<false> | TagsSelect<true>;
+    depoimentos: DepoimentosSelect<false> | DepoimentosSelect<true>;
     logos: LogosSelect<false> | LogosSelect<true>;
     'hero-slides': HeroSlidesSelect<false> | HeroSlidesSelect<true>;
     revendedores: RevendedoresSelect<false> | RevendedoresSelect<true>;
@@ -564,6 +566,21 @@ export interface Imprensa {
    * Tags pra distribuir/relacionar com blog, cases e imprensa.
    */
   tags?: (number | Tag)[] | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "depoimentos".
+ */
+export interface Depoimento {
+  id: number;
+  texto: string;
+  autor: string;
+  empresa?: string | null;
+  foto?: (number | null) | Media;
+  ordem?: number | null;
+  ativo?: boolean | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -1100,6 +1117,20 @@ export interface ImprensaSelect<T extends boolean = true> {
   resumo?: T;
   url?: T;
   tags?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "depoimentos_select".
+ */
+export interface DepoimentosSelect<T extends boolean = true> {
+  texto?: T;
+  autor?: T;
+  empresa?: T;
+  foto?: T;
+  ordem?: T;
+  ativo?: T;
   updatedAt?: T;
   createdAt?: T;
 }

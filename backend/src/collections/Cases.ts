@@ -9,7 +9,12 @@ export const Cases: CollectionConfig = {
   admin: {
     useAsTitle: 'titulo',
     group: 'Conteudo',
+    description: 'Cases e prova social do site: cliente, segmento, titulo e resumo. O card usa a faixa de marca com o nome do cliente. Apos salvar, a publicacao leva alguns minutos.',
     defaultColumns: ['cliente', 'segmento'],
+    components: { views: {
+      list: { Component: '/admin/cases/CaseListView' },
+      edit: { root: { Component: '/admin/cases/CaseEditView' } },
+    } },
   },
   access: {
     read: () => true,

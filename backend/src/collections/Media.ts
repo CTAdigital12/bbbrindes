@@ -10,6 +10,9 @@ export const Media: CollectionConfig = {
     group: 'Sistema',
     description:
       'Imagens ate 15 MB. Sao convertidas pra WebP e reduzidas pro maximo de 2400px no lado maior. Dimensoes recomendadas: foto de produto ~1200x1200px, logo de cliente ~600x300px (fundo transparente), banner/hero ~1920x1080px, icone de categoria ~240x240px.',
+    components: { views: {
+      list: { Component: '/admin/midia/MidiaListView' },
+    } },
   },
   access: {
     read: () => true,
