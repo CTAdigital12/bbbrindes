@@ -103,6 +103,13 @@ export default buildConfig({
     theme: 'light',
     meta: {
       titleSuffix: ' · BB Brindes',
+      // Favicon da aba (Payload v3 admin.meta.icons): marca BB (duas bolinhas) servida
+      // de backend/public. SVG primeiro (nitido em qualquer tamanho), PNG como fallback.
+      // Sao URLs estaticas, nao componentes: NAO mexe no importMap.
+      icons: [
+        { rel: 'icon', type: 'image/svg+xml', url: '/admin-icon.svg' },
+        { rel: 'icon', type: 'image/png', url: '/admin-icon.png' },
+      ],
     },
     // Componentes custom da marca (Camada B). Paths relativos ao importMap.baseDir
     // (= src). ATENCAO: mexer aqui exige regenerar o importMap COM o ambiente de
