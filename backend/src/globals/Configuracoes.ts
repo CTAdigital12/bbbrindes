@@ -12,6 +12,11 @@ export const Configuracoes: GlobalConfig = {
   label: 'Configuracoes do site',
   admin: {
     group: 'Sistema',
+    description:
+      'Dados de contato, redes sociais, texto e selos do rodape do site. Editavel pelo cliente; salvar dispara o rebuild do site.',
+    components: { views: {
+      edit: { root: { Component: '/admin/configuracoes/ConfiguracoesEditView' } },
+    } },
   },
   access: {
     read: () => true,

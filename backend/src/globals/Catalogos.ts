@@ -15,6 +15,9 @@ export const Catalogos: GlobalConfig = {
     group: 'Conteudo',
     description:
       'Pagina /catalogos. A URL do flipbook e a do embed do heyzine (ex.: https://heyzine.com/flip-book/<id>.html).',
+    components: { views: {
+      edit: { root: { Component: '/admin/catalogos/CatalogosEditView' } },
+    } },
   },
   access: {
     read: () => true,

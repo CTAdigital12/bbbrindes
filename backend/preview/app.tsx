@@ -45,11 +45,21 @@ import type { LogoRow } from '../src/admin/logos/logo-model'
 import { MidiaList } from '../src/admin/midia/MidiaList'
 import { OrcamentoList } from '../src/admin/orcamentos/OrcamentoList'
 import type { OrcamentoRow } from '../src/admin/orcamentos/orcamento-model'
+import { ConfiguracoesEditor } from '../src/admin/configuracoes/ConfiguracoesEditor'
+import type { ConfigContent } from '../src/admin/configuracoes/configuracoes-model'
+import { CatalogosEditor } from '../src/admin/catalogos/CatalogosEditor'
+import type { CatalogoContent } from '../src/admin/catalogos/catalogos-model'
+import { InstitucionalEditor } from '../src/admin/institucional/InstitucionalEditor'
+import type { InstitucionalContent } from '../src/admin/institucional/institucional-model'
+import { TagList } from '../src/admin/tags/TagList'
+import { TagEditor } from '../src/admin/tags/TagEditor'
+import { copyTag, newTag } from '../src/admin/tags/tags-data'
+import type { TagRow } from '../src/admin/tags/tags-model'
 import type { Banner, Category, Media, Product } from '../src/admin/friendly/model'
 import '../src/admin/friendly/mockup.scss'
 import '../src/admin/friendly/layout.scss'
 import './preview.css'
-type Data = { products: Product[]; categories: Category[]; media: Media[]; banners: Banner[]; certifications: number; home: HomeContent; campanhas: CampanhaRow[]; categoriasRows: CategoriaRow[]; cases: CaseRow[]; imprensa: ImprensaRow[]; posts: PostRow[]; depoimentos: DepoimentoRow[]; logos: LogoRow[]; orcamentos: OrcamentoRow[] }
+type Data = { products: Product[]; categories: Category[]; media: Media[]; banners: Banner[]; certifications: number; home: HomeContent; campanhas: CampanhaRow[]; categoriasRows: CategoriaRow[]; cases: CaseRow[]; imprensa: ImprensaRow[]; posts: PostRow[]; depoimentos: DepoimentoRow[]; logos: LogoRow[]; orcamentos: OrcamentoRow[]; config: ConfigContent; catalogos: CatalogoContent; institucional: InstitucionalContent; tags: TagRow[] }
 async function main() {
  const response = await fetch('/preview-data')
  const data: Data = await response.json()
@@ -81,6 +91,11 @@ async function main() {
  else if (parts[1] === 'collections' && parts[2] === 'logos' && parts[3]) page = previewLogo(data.logos, parts[3], query.get('copiar'))
  else if (pathname === '/admin/collections/media') page = <MidiaList />
  else if (pathname === '/admin/collections/logs-entrega') page = <OrcamentoList initial={data.orcamentos} />
+ else if (pathname === '/admin/globals/configuracoes') page = <ConfiguracoesEditor initial={data.config} />
+ else if (pathname === '/admin/globals/catalogos') page = <CatalogosEditor initial={data.catalogos} />
+ else if (pathname === '/admin/globals/conteudo-institucional') page = <InstitucionalEditor initial={data.institucional} />
+ else if (pathname === '/admin/collections/tags') page = <TagList initial={data.tags} />
+ else if (parts[1] === 'collections' && parts[2] === 'tags' && parts[3]) page = previewTag(data.tags, parts[3], query.get('copiar'))
  else if (pathname !== '/admin') page = <div className="bb-admin"><section className="bb-page"><h1>{items.find(item => item.href === pathname)?.label ?? 'Área do painel'}</h1><p>Esta área será adaptada na próxima etapa. O primeiro conjunto contempla Painel, Produtos, Banners, Página inicial e Campanhas.</p><Link href="/admin">Voltar ao painel</Link></section></div>
  createRoot(document.getElementById('root')!).render(<><AdminBar name="Fabio" /><AdminNavigation items={items} more={MORE_ITEMS} /><div className="bb-preview-content template-default__wrap">{page}</div><aside className="bb-preview-note"><b>Prévia local para validação</b>Dados atuais do catálogo. Edições nesta prévia ficam somente na memória local e não alteram a produção.</aside></>)
 }
@@ -136,4 +151,9 @@ function previewLogo(rows: LogoRow[], id: string, _copy: string | null) {
  const s = rows.find(c => c.id === Number(id))
  if (id === 'create') return <LogoEditor initial={newLogo()} />
  return s ? <LogoEditor initial={s} /> : naoAchou('Logo')
+}
+function previewTag(rows: TagRow[], id: string, copy: string | null) {
+ const s = rows.find(c => c.id === Number(id === 'create' ? copy : id))
+ if (id === 'create') return <TagEditor initial={s ? copyTag(s) : newTag()} />
+ return s ? <TagEditor initial={s} usosCount={s.usosCount} /> : naoAchou('Tag')
 }

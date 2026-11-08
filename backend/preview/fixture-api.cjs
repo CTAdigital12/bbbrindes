@@ -29,16 +29,23 @@ function mockOrcamentos() {
   ];
 }
 async function readFixtures() {
-  const [products, categories, media, banners, settings, home, campanhas, cases, imprensa, posts, depoimentos, logos] = await Promise.all([
+  const [products, categories, media, banners, settings, home, campanhas, cases, imprensa, posts, depoimentos, logos, catalogos, institucional, tags] = await Promise.all([
     all('produtos'), all('categorias'), all('media'), all('hero-slides'),
     fetch(backend + '/api/globals/configuracoes').then(r => r.json()),
     fetch(backend + '/api/globals/conteudo-home?depth=1').then(r => r.json()),
     all('campanhas'), all('cases'), all('imprensa'), all('posts'), all('depoimentos'), all('logos'),
+    fetch(backend + '/api/globals/catalogos').then(r => r.json()),
+    fetch(backend + '/api/globals/conteudo-institucional?depth=1').then(r => r.json()),
+    all('tags'),
   ]);
   const countByCat = new Map();
   for (const p of products) for (const c of (p.categorias || [])) { const id = typeof c === 'number' ? c : c && c.id; if (id != null) countByCat.set(id, (countByCat.get(id) || 0) + 1); }
   const categoriasRows = categories.map(c => ({ ...c, produtosCount: countByCat.get(c.id) || 0 }));
-  return { products, categories, media, banners, certifications: settings.selos?.length || 0, home, campanhas, categoriasRows, cases, imprensa, posts, depoimentos, logos, orcamentos: mockOrcamentos() };
+  // Uso das tags: soma a relacao `tags` em posts + cases + imprensa (como as categorias contam produtos).
+  const usoTag = new Map();
+  for (const doc of [...posts, ...cases, ...imprensa]) for (const t of (doc.tags || [])) { const id = typeof t === 'number' ? t : t && t.id; if (id != null) usoTag.set(id, (usoTag.get(id) || 0) + 1); }
+  const tagsRows = tags.map(t => ({ ...t, usosCount: usoTag.get(t.id) || 0 }));
+  return { products, categories, media, banners, certifications: settings.selos?.length || 0, home, campanhas, categoriasRows, cases, imprensa, posts, depoimentos, logos, orcamentos: mockOrcamentos(), config: settings, catalogos, institucional, tags: tagsRows };
 }
 function hydrate(product, data) {
   const resolve = value => typeof value === 'number' ? data.media.find(m => m.id === value) || value : value;
@@ -222,6 +229,21 @@ async function saveMediaAlt(req, url, data) {
   if (typeof changes.alt === 'string') item.alt = changes.alt;
   return { doc: item };
 }
+// Globals: o editor ignora a resposta (faz setOriginal local), entao basta mesclar
+// o corpo e responder 200. Institucional reidrata as imagens (fotoFabrica + galeria).
+async function saveGlobalDoc(req, data, key, hydrate) {
+  let body = '';
+  for await (const chunk of req) body += chunk;
+  const changes = JSON.parse(body || '{}');
+  const merged = { ...data[key], ...changes };
+  data[key] = hydrate ? hydrate(merged, data) : merged;
+  return data[key];
+}
+function hydrateInstitucional(content, data) {
+  const resolve = v => typeof v === 'number' ? data.media.find(m => m.id === v) || v : v;
+  if (content.quemSomos) content.quemSomos = { ...content.quemSomos, fotoFabrica: resolve(content.quemSomos.fotoFabrica), galeria: (content.quemSomos.galeria || []).map(g => ({ ...g, imagem: resolve(g.imagem) })) };
+  return content;
+}
 function fixtureAPI(data) {
   let failWrite = false;
   const routes = [
@@ -263,6 +285,22 @@ function fixtureAPI(data) {
       if (failWrite) { failWrite = false; throw new Error('Falha simulada: alterações não foram salvas.'); }
       return saveMediaAlt(req, url, data);
     } },
+    { method: 'POST', match: url => url.pathname === '/api/globals/configuracoes', run: async (req) => {
+      if (failWrite) { failWrite = false; throw new Error('Falha simulada: alterações não foram salvas.'); }
+      return saveGlobalDoc(req, data, 'config');
+    } },
+    { method: 'POST', match: url => url.pathname === '/api/globals/catalogos', run: async (req) => {
+      if (failWrite) { failWrite = false; throw new Error('Falha simulada: alterações não foram salvas.'); }
+      return saveGlobalDoc(req, data, 'catalogos');
+    } },
+    { method: 'POST', match: url => url.pathname === '/api/globals/conteudo-institucional', run: async (req) => {
+      if (failWrite) { failWrite = false; throw new Error('Falha simulada: alterações não foram salvas.'); }
+      return saveGlobalDoc(req, data, 'institucional', hydrateInstitucional);
+    } },
+    ...['POST', 'PATCH'].map(method => ({ method, match: url => /^\/api\/tags(?:\/\d+)?$/.test(url.pathname), run: async (req, url) => {
+      if (failWrite) { failWrite = false; throw new Error('Falha simulada: alterações não foram salvas.'); }
+      return saveDoc(req, url, data, { key: 'tags', media: [], slugFrom: 'nome' });
+    } })),
   ];
   return async (req, res, url) => {
     const route = routes.find(route => route.method === req.method && route.match(url));

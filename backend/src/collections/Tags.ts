@@ -12,6 +12,11 @@ export const Tags: CollectionConfig = {
     group: 'Conteudo',
     useAsTitle: 'nome',
     defaultColumns: ['nome', 'slug'],
+    description: 'Tags compartilhadas para distribuir e cruzar conteudo entre blog, cases e imprensa.',
+    components: { views: {
+      list: { Component: '/admin/tags/TagListView' },
+      edit: { root: { Component: '/admin/tags/TagEditView' } },
+    } },
   },
   access: {
     read: () => true,
