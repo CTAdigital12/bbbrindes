@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import { requestJSON } from '../friendly/api'
 import { Icon } from '../friendly/icons'
 import { HeroImageField } from '../hero/HeroImageField'
+import { TagPicker } from '../friendly/TagPicker'
 import { plainText, richText } from '../friendly/product-data'
 import { postBody, postSaveIssue, validatePost } from './post-data'
 import { POST_PATH, tagLabel, toDateInput, type PostDraft, type PostIssue, type Tag } from './post-model'
@@ -19,6 +20,7 @@ export function PostEditor({ initial, canSave = true }: { initial: PostDraft; ca
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState<PostIssue>()
   const [message, setMessage] = useState('')
+  const [tagPicker, setTagPicker] = useState(false)
   const dirty = JSON.stringify(post) !== JSON.stringify(original)
   const disabled = !canSave || saving
   const tags = tagList(post)
@@ -59,9 +61,10 @@ export function PostEditor({ initial, canSave = true }: { initial: PostDraft; ca
         <div className="fld"><label htmlFor="bb-post-resumo">Resumo</label><textarea id="bb-post-resumo" rows={3} value={post.resumo || ''} disabled={disabled} onChange={e => change('resumo', e.target.value)} /><span className="help">Chamada curta exibida no card do blog.</span></div>
         <HeroImageField label="Capa do post" help="Imagem de capa exibida no card e no topo do artigo." value={post.capa} disabled={disabled} onChange={v => change('capa', v)} />
         <div className="fld"><label htmlFor="bb-post-conteudo">Conteúdo</label><textarea id="bb-post-conteudo" rows={10} value={plainText(post.conteudo)} disabled={disabled} onChange={e => change('conteudo', richText(e.target.value))} /><span className="help">Texto do artigo. Uma linha em branco separa os parágrafos.</span></div>
-        <div className="fld"><span className="lbl">Tags <span className="opt">({tags.length})</span></span>{tags.length ? <div className="bb-blog-chips">{tags.map(t => <span className="bb-blog-chip-rm" key={t.id}>{tagLabel(t)}<button type="button" aria-label={`Remover ${tagLabel(t)}`} disabled={disabled} onClick={() => change('tags', tags.filter(x => x.id !== t.id))}>×</button></span>)}</div> : <span className="help">Nenhuma tag marcada.</span>}<span className="help">As tags vêm do conteúdo. Para criar tags novas, use o menu Tags.</span></div>
+        <div className="fld"><span className="lbl">Tags <span className="opt">({tags.length})</span></span>{tags.length ? <div className="bb-blog-chips">{tags.map(t => <span className="bb-blog-chip-rm" key={t.id}>{tagLabel(t)}<button type="button" aria-label={`Remover ${tagLabel(t)}`} disabled={disabled} onClick={() => change('tags', tags.filter(x => x.id !== t.id))}>×</button></span>)}</div> : <span className="help">Nenhuma tag marcada.</span>}<button type="button" className="btn sm" disabled={disabled} onClick={() => setTagPicker(true)}>Gerenciar tags</button><span className="help">Marque as tags deste post. Para criar tags novas, use o menu Tags.</span></div>
       </div><div className="pub"><div className="line" style={{ padding: '0 16px 12px' }}>{dirty ? <span className="bb-warning">Alterações ainda não salvas</span> : <span className="help">Tudo salvo.</span>}</div><div className="foot"><Link className="lnk" href={POST_PATH}>Cancelar</Link><button type="button" className="btn pri" disabled={disabled} onClick={() => void save()}>{saving ? 'Salvando…' : 'Salvar post'}</button></div></div></div>
     </div>
     <div className="prev"><PostPreview post={post} /></div></div>
+    {tagPicker ? <TagPicker initial={tags.map(t => ({ id: t.id, nome: tagLabel(t), slug: t.slug }))} onApply={list => change('tags', list)} onClose={() => setTagPicker(false)} /> : null}
   </section></div>
 }

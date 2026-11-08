@@ -21,6 +21,22 @@ export function altSaveIssue(cause: unknown): MidiaIssue {
   }
   return { message: cause instanceof Error ? cause.message : 'Nao foi possivel salvar a descricao. Tente novamente.' }
 }
+// Troca de arquivo: so imagem, ate 15 MB (mesmo limite do upload de imagem nova).
+export const MIDIA_ACCEPT = 'image/*'
+export const MIDIA_MAX_BYTES = 15 * 1024 * 1024
+export function validateReplaceFile(file: File | null): MidiaIssue | undefined {
+  if (!file) return { message: 'Escolha a nova imagem.', field: 'bb-midia-file' }
+  if (!file.type.startsWith('image/')) return { message: 'Escolha um arquivo de imagem.', field: 'bb-midia-file' }
+  if (file.size > MIDIA_MAX_BYTES) return { message: 'A imagem deve ter ate 15 MB.', field: 'bb-midia-file' }
+  return undefined
+}
+export function replaceSaveIssue(cause: unknown): MidiaIssue {
+  if (cause instanceof RequestError) {
+    if (cause.fields.some(f => f.path === 'file')) return { message: 'Confira o arquivo da imagem.', field: 'bb-midia-file' }
+    if (cause.fields.length) return { message: 'Confira os campos e tente trocar novamente.' }
+  }
+  return { message: cause instanceof Error ? cause.message : 'Nao foi possivel trocar o arquivo. Tente novamente.' }
+}
 // Legenda curta do tamanho do arquivo, quando a API traz filesize (bytes).
 export function fileSizeLabel(media: Pick<Media, 'filename'> & { filesize?: number | null }): string {
   const bytes = media.filesize

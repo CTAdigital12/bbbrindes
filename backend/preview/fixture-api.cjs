@@ -140,6 +140,17 @@ function productsPage(url, data) {
   const filtered = data.products.filter(p => (p.nome || '').toLowerCase().includes(q));
   return { docs: filtered.slice((page - 1) * limit, page * limit), totalPages: Math.max(1, Math.ceil(filtered.length / limit)), totalDocs: filtered.length };
 }
+// Lista paginada de tags para o TagPicker (cases/blog/imprensa). Espelha a API
+// publica do Payload (?limit&page&where[nome][contains]&sort=nome).
+function tagsPage(url, data) {
+  const q = (url.searchParams.get('where[nome][contains]') || '').toLowerCase();
+  const limit = Number(url.searchParams.get('limit') || 24);
+  const page = Number(url.searchParams.get('page') || 1);
+  const filtered = data.tags
+    .filter(t => (t.nome || '').toLowerCase().includes(q))
+    .sort((a, b) => (a.nome || '').localeCompare(b.nome || '', 'pt-BR'));
+  return { docs: filtered.slice((page - 1) * limit, page * limit), totalPages: Math.max(1, Math.ceil(filtered.length / limit)), totalDocs: filtered.length };
+}
 function hydrateCampanha(c, data) {
   const resolveMedia = v => typeof v === 'number' ? data.media.find(m => m.id === v) || v : v;
   const resolveProd = v => typeof v === 'number' ? data.products.find(p => p.id === v) || v : v;
@@ -245,6 +256,25 @@ async function saveMediaAlt(req, url, data) {
   if (typeof changes.alt === 'string') item.alt = changes.alt;
   return { doc: item };
 }
+// Substituir arquivo (multipart): troca a imagem em si mantendo a descricao. Guarda
+// o novo arquivo como data URL em memoria (como o upload de imagem nova). Nao e um
+// arquivo real; so valida o fluxo na previa, nunca persiste em prod.
+async function saveMediaFile(req, url, data) {
+  const request = new Request(url, { method: req.method, headers: req.headers, body: req, duplex: 'half' });
+  const form = await request.formData();
+  const payload = form.get('_payload') ? JSON.parse(form.get('_payload')) : {};
+  const file = form.get('file');
+  const id = Number(url.pathname.split('/')[3]);
+  const item = data.media.find(m => m.id === id);
+  if (!item) throw new Error('Imagem nao encontrada');
+  if (file && typeof file.arrayBuffer === 'function') {
+    item.url = `data:${file.type};base64,${Buffer.from(await file.arrayBuffer()).toString('base64')}`;
+    item.filename = file.name; item.mimeType = file.type;
+  }
+  if (typeof payload.alt === 'string' && payload.alt.trim()) item.alt = payload.alt;
+  item.updatedAt = new Date().toISOString();
+  return { doc: item };
+}
 // Globals: o editor ignora a resposta (faz setOriginal local), entao basta mesclar
 // o corpo e responder 200. Institucional reidrata as imagens (fotoFabrica + galeria).
 async function saveGlobalDoc(req, data, key, hydrate) {
@@ -267,6 +297,7 @@ function fixtureAPI(data) {
     { method: 'POST', match: url => url.pathname === '/preview-control', run: () => { failWrite = true; return { ok: true }; } },
     { method: 'GET', match: url => url.pathname === '/api/media', run: (_req, url) => mediaPage(url, data) },
     { method: 'GET', match: url => url.pathname === '/api/produtos', run: (_req, url) => productsPage(url, data) },
+    { method: 'GET', match: url => url.pathname === '/api/tags', run: (_req, url) => tagsPage(url, data) },
     { method: 'POST', match: url => url.pathname === '/api/media', run: (req, url) => upload(req, url, data) },
     ...['POST', 'PATCH'].map(method => ({ method, match: url => /^\/api\/produtos(?:\/\d+)?$/.test(url.pathname), run: async (req, url) => {
       if (failWrite) { failWrite = false; throw new Error('Falha simulada: alterações não foram salvas.'); }
@@ -299,7 +330,8 @@ function fixtureAPI(data) {
     } })),
     { method: 'PATCH', match: url => /^\/api\/media\/\d+$/.test(url.pathname), run: async (req, url) => {
       if (failWrite) { failWrite = false; throw new Error('Falha simulada: alterações não foram salvas.'); }
-      return saveMediaAlt(req, url, data);
+      const ct = req.headers['content-type'] || '';
+      return ct.includes('multipart/form-data') ? saveMediaFile(req, url, data) : saveMediaAlt(req, url, data);
     } },
     { method: 'POST', match: url => url.pathname === '/api/globals/configuracoes', run: async (req) => {
       if (failWrite) { failWrite = false; throw new Error('Falha simulada: alterações não foram salvas.'); }

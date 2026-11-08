@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import { requestJSON } from '../friendly/api'
 import { Icon } from '../friendly/icons'
 import { HeroImageField } from '../hero/HeroImageField'
+import { TagPicker } from '../friendly/TagPicker'
 import { caseBody, caseSaveIssue, caseTags, validateCase } from './cases-data'
 import { CASE_PATH, type CaseDraft, type CaseIssue } from './cases-model'
 import { CasePreview } from './CasePreview'
@@ -15,6 +16,7 @@ export function CaseEditor({ initial, canSave = true }: { initial: CaseDraft; ca
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState<CaseIssue>()
   const [message, setMessage] = useState('')
+  const [tagPicker, setTagPicker] = useState(false)
   const dirty = JSON.stringify(caseItem) !== JSON.stringify(original)
   const disabled = !canSave || saving
   const tags = caseTags(caseItem)
@@ -60,9 +62,10 @@ export function CaseEditor({ initial, canSave = true }: { initial: CaseDraft; ca
         </div>
         <HeroImageField label="Logo do cliente" help="Opcional. O site usa hoje a faixa de marca com o nome; o logo fica guardado para uso futuro." value={caseItem.logo} disabled={disabled} onChange={v => change('logo', v)} />
         <HeroImageField label="Imagem do case" help="Opcional. Guardada no painel; hoje o card não exibe foto por case." value={caseItem.imagem} disabled={disabled} onChange={v => change('imagem', v)} />
-        <div className="fld"><span className="lbl">Tags <span className="opt">({tags.length})</span></span>{tags.length ? <div className="bb-cases-tags">{tags.map(t => <span className="bb-cases-tag" key={t.id}>{t.nome}</span>)}</div> : <span className="help">Nenhuma tag.</span>}<span className="help">As tags são mantidas ao salvar. A edição de tags fica no formulário completo do Payload.</span></div>
+        <div className="fld"><span className="lbl">Tags <span className="opt">({tags.length})</span></span>{tags.length ? <div className="bb-camp-chips">{tags.map(t => <span className="bb-camp-chip" key={t.id}>{t.nome}<button type="button" aria-label={`Remover ${t.nome}`} disabled={disabled} onClick={() => change('tags', tags.filter(x => x.id !== t.id))}>×</button></span>)}</div> : <span className="help">Nenhuma tag.</span>}<button type="button" className="btn sm" disabled={disabled} onClick={() => setTagPicker(true)}>Gerenciar tags</button><span className="help">Marque as tags deste case. Para criar tags novas, use o menu Tags.</span></div>
       </div><div className="pub"><div className="line" style={{ padding: '0 16px 12px' }}>{dirty ? <span className="bb-warning">Alterações ainda não salvas</span> : <span className="help">Tudo salvo.</span>}</div><div className="foot"><Link className="lnk" href={CASE_PATH}>Cancelar</Link><button type="button" className="btn pri" disabled={disabled} onClick={() => void save()}>{saving ? 'Salvando…' : 'Salvar case'}</button></div></div></div>
     </div>
     <div className="prev"><CasePreview caseItem={caseItem} /></div></div>
+    {tagPicker ? <TagPicker initial={tags} onApply={list => change('tags', list)} onClose={() => setTagPicker(false)} /> : null}
   </section></div>
 }

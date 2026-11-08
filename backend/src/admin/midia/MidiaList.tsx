@@ -43,9 +43,9 @@ export function MidiaList({ canUpdate = true }: { canUpdate?: boolean }) {
       setMessage(`${uploaded.length} imagem(ns) enviada(s). Lembre de escrever a descricao de cada uma.`)
     } catch (cause) { setError((cause as Error).message) } finally { setLoading(false) }
   }
-  function onSaved(doc: Media) {
+  function onSaved(doc: Media, note = 'Descricao salva.') {
     setImages(previous => previous.map(m => m.id === doc.id ? { ...m, ...doc } : m))
-    setEditing(undefined); setMessage('Descricao salva.')
+    setEditing(undefined); setMessage(note)
   }
   const visible = soSemAlt ? images.filter(semDescricao) : images
   return <div className="bb-admin"><section className="bb-page">

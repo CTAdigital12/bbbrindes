@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { requestJSON } from '../friendly/api'
 import { Icon } from '../friendly/icons'
+import { TagPicker } from '../friendly/TagPicker'
 import { dateInputValue, imprensaBody, imprensaSaveIssue, materiaTags, validateImprensa } from './imprensa-data'
 import { IMPRENSA_PATH, type ImprensaDraft, type ImprensaIssue } from './imprensa-model'
 import { ImprensaPreview } from './ImprensaPreview'
@@ -14,6 +15,7 @@ export function ImprensaEditor({ initial, canSave = true }: { initial: ImprensaD
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState<ImprensaIssue>()
   const [message, setMessage] = useState('')
+  const [tagPicker, setTagPicker] = useState(false)
   const dirty = JSON.stringify(materia) !== JSON.stringify(original)
   const disabled = !canSave || saving
   const tags = materiaTags(materia)
@@ -53,9 +55,10 @@ export function ImprensaEditor({ initial, canSave = true }: { initial: ImprensaD
         </div>
         <div className="fld"><label htmlFor="bb-imp-url">Link da matéria</label><input className="inp" id="bb-imp-url" type="url" placeholder="https://" value={materia.url || ''} disabled={disabled} onChange={e => change('url', e.target.value)} /><span className="help">Endereço da matéria no site do veículo.</span></div>
         <div className="fld"><label htmlFor="bb-imp-resumo">Resumo</label><textarea id="bb-imp-resumo" rows={4} value={materia.resumo || ''} disabled={disabled} onChange={e => change('resumo', e.target.value)} /><span className="help">Resumo da matéria (guardado no painel).</span></div>
-        <div className="fld"><span className="lbl">Tags <span className="opt">({tags.length})</span></span>{tags.length ? <div className="bb-imp-tags">{tags.map(t => <span className="bb-imp-tag" key={t.id}>{t.nome}</span>)}</div> : <span className="help">Nenhuma tag.</span>}<span className="help">As tags são mantidas ao salvar. A edição de tags fica no formulário completo do Payload.</span></div>
+        <div className="fld"><span className="lbl">Tags <span className="opt">({tags.length})</span></span>{tags.length ? <div className="bb-camp-chips">{tags.map(t => <span className="bb-camp-chip" key={t.id}>{t.nome}<button type="button" aria-label={`Remover ${t.nome}`} disabled={disabled} onClick={() => change('tags', tags.filter(x => x.id !== t.id))}>×</button></span>)}</div> : <span className="help">Nenhuma tag.</span>}<button type="button" className="btn sm" disabled={disabled} onClick={() => setTagPicker(true)}>Gerenciar tags</button><span className="help">Marque as tags desta matéria. Para criar tags novas, use o menu Tags.</span></div>
       </div><div className="pub"><div className="line" style={{ padding: '0 16px 12px' }}>{dirty ? <span className="bb-warning">Alterações ainda não salvas</span> : <span className="help">Tudo salvo.</span>}</div><div className="foot"><Link className="lnk" href={IMPRENSA_PATH}>Cancelar</Link><button type="button" className="btn pri" disabled={disabled} onClick={() => void save()}>{saving ? 'Salvando…' : 'Salvar matéria'}</button></div></div></div>
     </div>
     <div className="prev"><ImprensaPreview materia={materia} /></div></div>
+    {tagPicker ? <TagPicker initial={tags} onApply={list => change('tags', list)} onClose={() => setTagPicker(false)} /> : null}
   </section></div>
 }
