@@ -12,7 +12,7 @@ export function dashboardData(products: Product[], banners: Banner[], media: Med
   return {
     mediaCount, certifications, activity,
     withoutPhoto: products.filter(missingPhoto).length,
-    colorsWithoutPhoto: products.reduce((sum, p) => sum + (p.cores ?? []).filter(c => !c.imagem).length, 0),
+    productsWithMissingColorPhoto: missingColors.length,
     firstMissingColor: missingColors[0]?.id,
     bannersWithoutMobile: live.filter(b => !b.imagemMobile).length,
     unpublished: products.filter(p => !published(p)).length,
