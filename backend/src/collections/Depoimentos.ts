@@ -12,6 +12,10 @@ export const Depoimentos: CollectionConfig = {
     group: 'Conteudo',
     defaultColumns: ['autor', 'empresa', 'ativo', 'ordem'],
     description: 'Depoimentos de clientes exibidos na home e na pagina de cases.',
+    components: { views: {
+      list: { Component: '/admin/depoimentos/DepoimentoListView' },
+      edit: { root: { Component: '/admin/depoimentos/DepoimentoEditView' } },
+    } },
   },
   access: {
     read: () => true,

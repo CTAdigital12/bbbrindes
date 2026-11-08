@@ -13,6 +13,10 @@ export const Logos: CollectionConfig = {
     useAsTitle: 'nome',
     defaultColumns: ['nome', 'ordem'],
     description: 'Logos das marcas no marquee da home. Suba o arquivo (SVG ou PNG) e defina a ordem.',
+    components: { views: {
+      list: { Component: '/admin/logos/LogoListView' },
+      edit: { root: { Component: '/admin/logos/LogoEditView' } },
+    } },
   },
   access: {
     read: () => true,

@@ -36,6 +36,18 @@ import { default as default_camp_list_view_8a4 } from '../../../admin/campanhas/
 import { default as default_camp_edit_view_8a5 } from '../../../admin/campanhas/CampanhaEditView'
 import { default as default_cat_list_view_8a6 } from '../../../admin/categorias/CategoriaListView'
 import { default as default_cat_edit_view_8a7 } from '../../../admin/categorias/CategoriaEditView'
+import { default as default_cases_list_view_8b1 } from '../../../admin/cases/CaseListView'
+import { default as default_cases_edit_view_8b2 } from '../../../admin/cases/CaseEditView'
+import { default as default_imprensa_list_view_8b3 } from '../../../admin/imprensa/ImprensaListView'
+import { default as default_imprensa_edit_view_8b4 } from '../../../admin/imprensa/ImprensaEditView'
+import { default as default_posts_list_view_8b5 } from '../../../admin/posts/PostListView'
+import { default as default_posts_edit_view_8b6 } from '../../../admin/posts/PostEditView'
+import { default as default_dep_list_view_8b7 } from '../../../admin/depoimentos/DepoimentoListView'
+import { default as default_dep_edit_view_8b8 } from '../../../admin/depoimentos/DepoimentoEditView'
+import { default as default_logos_list_view_8b9 } from '../../../admin/logos/LogoListView'
+import { default as default_logos_edit_view_8c1 } from '../../../admin/logos/LogoEditView'
+import { default as default_midia_list_view_8c2 } from '../../../admin/midia/MidiaListView'
+import { default as default_orc_list_view_8c3 } from '../../../admin/orcamentos/OrcamentoListView'
 import { CollectionCards as CollectionCards_f9c02e79a4aed9a3924487c0cd4cafb1 } from '@payloadcms/next/rsc'
 
 /** @type import('payload').ImportMap */
@@ -78,5 +90,17 @@ export const importMap = {
   "/admin/campanhas/CampanhaEditView#default": default_camp_edit_view_8a5,
   "/admin/categorias/CategoriaListView#default": default_cat_list_view_8a6,
   "/admin/categorias/CategoriaEditView#default": default_cat_edit_view_8a7,
+  "/admin/cases/CaseListView#default": default_cases_list_view_8b1,
+  "/admin/cases/CaseEditView#default": default_cases_edit_view_8b2,
+  "/admin/imprensa/ImprensaListView#default": default_imprensa_list_view_8b3,
+  "/admin/imprensa/ImprensaEditView#default": default_imprensa_edit_view_8b4,
+  "/admin/posts/PostListView#default": default_posts_list_view_8b5,
+  "/admin/posts/PostEditView#default": default_posts_edit_view_8b6,
+  "/admin/depoimentos/DepoimentoListView#default": default_dep_list_view_8b7,
+  "/admin/depoimentos/DepoimentoEditView#default": default_dep_edit_view_8b8,
+  "/admin/logos/LogoListView#default": default_logos_list_view_8b9,
+  "/admin/logos/LogoEditView#default": default_logos_edit_view_8c1,
+  "/admin/midia/MidiaListView#default": default_midia_list_view_8c2,
+  "/admin/orcamentos/OrcamentoListView#default": default_orc_list_view_8c3,
   "@payloadcms/next/rsc#CollectionCards": CollectionCards_f9c02e79a4aed9a3924487c0cd4cafb1
 }
