@@ -12,7 +12,7 @@ const FILTERS = [
   ['ecologicos', 'Ecológicos', (c: CategoriaRow) => c.grupo === 'ecologicos'],
   ['geral', 'Geral', (c: CategoriaRow) => c.grupo !== 'ecologicos'],
 ] as const
-export function CategoriaList({ initial, canCreate = true, canUpdate = true }: { initial: CategoriaRow[]; canCreate?: boolean; canUpdate?: boolean }) {
+export function CategoriaList({ initial, canCreate = true, canUpdate = true, canDelete = true }: { initial: CategoriaRow[]; canCreate?: boolean; canUpdate?: boolean; canDelete?: boolean }) {
   const [rows, setRows] = useState(initial)
   const [filter, setFilter] = useState('todos')
   const [search, setSearch] = useState('')
@@ -36,6 +36,15 @@ export function CategoriaList({ initial, canCreate = true, canUpdate = true }: {
       setMessage('Nova ordem salva. O site pode levar alguns minutos para atualizar.')
     } catch (cause) { setRows(previous); setError((cause as Error).message) } finally { setBusy(false) }
   }
+  async function remove(categoria: CategoriaRow) {
+    if (!window.confirm(`Excluir "${categoria.nome}"? Esta ação não pode ser desfeita.`)) return
+    setBusy(true); setError(''); setMessage('')
+    try {
+      await requestJSON(`/api/categorias/${categoria.id}`, { method: 'DELETE' })
+      setRows(prev => prev.filter(c => c.id !== categoria.id))
+      setMessage('Categoria excluída.')
+    } catch (cause) { setError((cause as Error).message) } finally { setBusy(false) }
+  }
   return <div className="bb-admin"><section className="bb-page">
     <div className="ph"><h1>Categorias</h1>{canCreate ? <Link className="btn" href={`${CATEGORIA_PATH}/create`}><Icon name="plus" />Adicionar categoria</Link> : null}</div>
     <p className="sub">Categorias do catálogo: a grade da home e o menu de produtos. Os Ecológicos ficam agrupados no topo; use as setas para mudar a ordem dentro de cada grupo.</p>
@@ -47,11 +56,13 @@ export function CategoriaList({ initial, canCreate = true, canUpdate = true }: {
       key={c.id}
       categoria={c}
       canCreate={canCreate}
+      canDelete={canDelete}
       reorder={canReorder}
       busy={busy}
       canMoveUp={index > 0 && grupoRank(visible[index - 1].grupo) === grupoRank(c.grupo)}
       canMoveDown={index < visible.length - 1 && grupoRank(visible[index + 1].grupo) === grupoRank(c.grupo)}
       onMove={dir => void mover(c, dir)}
+      onRemove={() => void remove(c)}
     />)}{!visible.length ? <tr><td colSpan={canReorder ? 6 : 5} className="empty">Nenhuma categoria neste filtro.</td></tr> : null}</tbody></table></div>
   </section></div>
 }

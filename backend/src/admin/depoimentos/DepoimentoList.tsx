@@ -11,7 +11,7 @@ const FILTERS = [
   ['ativos', 'No ar', activeDepoimento],
   ['inativos', 'Inativos', (d: DepoimentoRow) => !activeDepoimento(d)],
 ] as const
-export function DepoimentoList({ initial, canCreate = true, canUpdate = true }: { initial: DepoimentoRow[]; canCreate?: boolean; canUpdate?: boolean }) {
+export function DepoimentoList({ initial, canCreate = true, canUpdate = true, canDelete = true }: { initial: DepoimentoRow[]; canCreate?: boolean; canUpdate?: boolean; canDelete?: boolean }) {
   const [rows, setRows] = useState(initial)
   const [filter, setFilter] = useState('todos')
   const [search, setSearch] = useState('')
@@ -43,6 +43,15 @@ export function DepoimentoList({ initial, canCreate = true, canUpdate = true }: 
       setMessage('Alteração salva. O site pode levar alguns minutos para atualizar.')
     } catch (cause) { setError((cause as Error).message) } finally { setBusy(false) }
   }
+  async function remove(dep: DepoimentoRow) {
+    if (!window.confirm(`Excluir o depoimento de "${dep.autor}"? Esta ação não pode ser desfeita.`)) return
+    setBusy(true); setError(''); setMessage('')
+    try {
+      await requestJSON(`/api/depoimentos/${dep.id}`, { method: 'DELETE' })
+      setRows(current => current.filter(item => item.id !== dep.id))
+      setMessage('Depoimento excluído.')
+    } catch (cause) { setError((cause as Error).message) } finally { setBusy(false) }
+  }
   return <div className="bb-admin"><section className="bb-page">
     <div className="ph"><h1>Depoimentos</h1>{canCreate ? <Link className="btn" href={`${DEPOIMENTO_PATH}/create`}><Icon name="plus" />Adicionar depoimento</Link> : null}</div>
     <p className="sub">Depoimentos de clientes exibidos na home e na página de cases. Use as setas para mudar a ordem e a chave para ligar e desligar.</p>
@@ -55,12 +64,14 @@ export function DepoimentoList({ initial, canCreate = true, canUpdate = true }: 
       depoimento={d}
       canCreate={canCreate}
       canUpdate={canUpdate}
+      canDelete={canDelete}
       reorder={canReorder}
       busy={busy}
       canMoveUp={index > 0}
       canMoveDown={index < visible.length - 1}
       onMove={dir => void mover(d, dir)}
       onToggle={() => void toggle(d)}
+      onRemove={() => void remove(d)}
     />)}{!visible.length ? <tr><td colSpan={canReorder ? 7 : 6} className="empty">Nenhum depoimento neste filtro.</td></tr> : null}</tbody></table></div>
   </section></div>
 }

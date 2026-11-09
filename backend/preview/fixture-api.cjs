@@ -362,6 +362,16 @@ function fixtureAPI(data) {
       if (failWrite) { failWrite = false; throw new Error('Falha simulada: alterações não foram salvas.'); }
       return saveDoc(req, url, data, { key: 'revendedores', media: [], slugFrom: null });
     } })),
+    // DELETE de documento pra todas as colecoes que dao pra criar (users ja esta acima).
+    // Mapeia o slug da API -> a chave do data que a lista le.
+    ...Object.entries({ produtos: 'products', 'hero-slides': 'banners', campanhas: 'campanhas', categorias: 'categoriasRows', cases: 'cases', imprensa: 'imprensa', posts: 'posts', depoimentos: 'depoimentos', logos: 'logos', tags: 'tags', revendedores: 'revendedores', media: 'media', 'logs-entrega': 'orcamentos' }).map(([slug, key]) => ({
+      method: 'DELETE', match: url => new RegExp(`^/api/${slug}/\\d+$`).test(url.pathname), run: async (_req, url) => {
+        if (failWrite) { failWrite = false; throw new Error('Falha simulada: não foi possível excluir.'); }
+        const id = Number(url.pathname.split('/')[3]);
+        if (Array.isArray(data[key])) data[key] = data[key].filter(d => d.id !== id);
+        return { message: 'excluido' };
+      },
+    })),
   ];
   return async (req, res, url) => {
     const route = routes.find(route => route.method === req.method && route.match(url));
