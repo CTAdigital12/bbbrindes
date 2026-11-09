@@ -7,7 +7,7 @@ import { activeCampanha } from './campanha-data'
 import { CAMPANHA_PATH, type CampanhaRow } from './campanha-model'
 import { CampanhaListRow } from './CampanhaListRow'
 const FILTERS = [['todos', 'Todas', (_c: CampanhaRow) => true], ['ativos', 'No ar', activeCampanha], ['inativos', 'Inativas', (c: CampanhaRow) => !activeCampanha(c)]] as const
-export function CampanhaList({ initial, canCreate = true, canUpdate = true }: { initial: CampanhaRow[]; canCreate?: boolean; canUpdate?: boolean }) {
+export function CampanhaList({ initial, canCreate = true, canUpdate = true, canDelete = true }: { initial: CampanhaRow[]; canCreate?: boolean; canUpdate?: boolean; canDelete?: boolean }) {
   const [rows, setRows] = useState(initial)
   const [filter, setFilter] = useState('todos')
   const [search, setSearch] = useState('')
@@ -23,12 +23,21 @@ export function CampanhaList({ initial, canCreate = true, canUpdate = true }: { 
       setMessage('Alteração salva. O site pode levar alguns minutos para atualizar.')
     } catch (cause) { setError((cause as Error).message) } finally { setBusy(undefined) }
   }
+  async function remove(c: CampanhaRow) {
+    if (!window.confirm(`Excluir "${c.nome}"? Esta ação não pode ser desfeita.`)) return
+    setBusy(c.id); setError(''); setMessage('')
+    try {
+      await requestJSON(`/api/campanhas/${c.id}`, { method: 'DELETE' })
+      setRows(current => current.filter(item => item.id !== c.id))
+      setMessage('Campanha excluída.')
+    } catch (cause) { setError((cause as Error).message) } finally { setBusy(undefined) }
+  }
   return <div className="bb-admin"><section className="bb-page">
     <div className="ph"><h1>Campanhas</h1>{canCreate ? <Link className="btn" href={`${CAMPANHA_PATH}/create`}><Icon name="plus" />Adicionar campanha</Link> : null}</div>
     <p className="sub">Datas e ações do site (menu, home e página da campanha). Ligue e desligue pela chave.</p>
     <div className="subsub">{FILTERS.map(([key, label, match], index) => <React.Fragment key={key}>{index ? <span className="sep">|</span> : null}<button type="button" className={filter === key ? 'on' : ''} onClick={() => setFilter(key)}>{label} <span className="n">({rows.filter(match).length})</span></button></React.Fragment>)}</div>
     <div className="toolbar"><span className="sp" /><input className="inp search" type="search" aria-label="Buscar campanhas" placeholder="Buscar campanhas…" value={search} onChange={event => setSearch(event.target.value)} /></div>
     {error ? <p className="bb-error" role="alert">{error}</p> : null}{message ? <p className="bb-success" role="status">{message}</p> : null}
-    <div className="bb-table-scroll"><table className="list"><thead><tr><th>Imagem</th><th>Campanha</th><th>Mês</th><th>Produtos</th><th>Status</th><th>Ativo</th></tr></thead><tbody>{visible.map(c => <CampanhaListRow key={c.id} campanha={c} busy={busy !== undefined} canCreate={canCreate} canUpdate={canUpdate} onToggle={() => void toggle(c)} />)}{!visible.length ? <tr><td colSpan={6} className="empty">Nenhuma campanha neste filtro.</td></tr> : null}</tbody></table></div>
+    <div className="bb-table-scroll"><table className="list"><thead><tr><th>Imagem</th><th>Campanha</th><th>Mês</th><th>Produtos</th><th>Status</th><th>Ativo</th></tr></thead><tbody>{visible.map(c => <CampanhaListRow key={c.id} campanha={c} busy={busy !== undefined} canCreate={canCreate} canUpdate={canUpdate} canDelete={canDelete} onToggle={() => void toggle(c)} onRemove={() => void remove(c)} />)}{!visible.length ? <tr><td colSpan={6} className="empty">Nenhuma campanha neste filtro.</td></tr> : null}</tbody></table></div>
   </section></div>
 }
