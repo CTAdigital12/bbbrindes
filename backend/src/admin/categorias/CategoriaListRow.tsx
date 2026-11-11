@@ -9,12 +9,33 @@ import { CATEGORIA_PATH, type CategoriaRow } from './categoria-model'
 type Props = {
   categoria: CategoriaRow; canCreate: boolean; canDelete?: boolean
   reorder?: boolean; busy?: boolean; canMoveUp?: boolean; canMoveDown?: boolean; onMove?: (dir: 'up' | 'down') => void; onRemove?: () => void
+  dragging?: boolean; dropTarget?: boolean
+  onDragStart?: () => void; onDragOver?: (event: React.DragEvent) => void; onDrop?: () => void; onDragEnd?: () => void
 }
-export function CategoriaListRow({ categoria, canCreate, canDelete = false, reorder = false, busy = false, canMoveUp = false, canMoveDown = false, onMove, onRemove }: Props) {
+// Item L: a linha pode ser arrastada (grip) pra reordenar. As setinhas continuam
+// pra quem navega por teclado / nao quer arrastar.
+export function CategoriaListRow({ categoria, canCreate, canDelete = false, reorder = false, busy = false, canMoveUp = false, canMoveDown = false, onMove, onRemove, dragging = false, dropTarget = false, onDragStart, onDragOver, onDrop, onDragEnd }: Props) {
   const icone = photo(categoria.icone)
   const eco = categoria.grupo === 'ecologicos'
-  return <tr aria-busy={busy}>
+  const rowStyle: React.CSSProperties = dragging ? { opacity: 0.4 } : dropTarget ? { boxShadow: 'inset 0 2px 0 0 var(--green, #0a7d4f)' } : {}
+  return <tr
+    aria-busy={busy}
+    draggable={reorder && !busy}
+    style={rowStyle}
+    onDragStart={reorder ? () => onDragStart?.() : undefined}
+    onDragOver={reorder ? onDragOver : undefined}
+    onDrop={reorder ? (event) => { event.preventDefault(); onDrop?.() } : undefined}
+    onDragEnd={reorder ? () => onDragEnd?.() : undefined}
+  >
     {reorder ? <td><div className="bb-cat-mv">
+      <span
+        className="bb-cat-grip"
+        aria-hidden="true"
+        title="Arraste para reordenar"
+        style={{ cursor: busy ? 'default' : 'grab', display: 'inline-flex', alignItems: 'center', color: 'var(--muted, #8a8a8a)', padding: '2px 0' }}
+      >
+        <svg width="12" height="16" viewBox="0 0 12 16" aria-hidden="true"><g fill="currentColor"><circle cx="3.5" cy="3" r="1.3" /><circle cx="8.5" cy="3" r="1.3" /><circle cx="3.5" cy="8" r="1.3" /><circle cx="8.5" cy="8" r="1.3" /><circle cx="3.5" cy="13" r="1.3" /><circle cx="8.5" cy="13" r="1.3" /></g></svg>
+      </span>
       <button type="button" className="bb-cat-mv-btn" aria-label={`Subir ${categoria.nome}`} disabled={busy || !canMoveUp} onClick={() => onMove?.('up')}><Icon name="chevron-up" /></button>
       <button type="button" className="bb-cat-mv-btn" aria-label={`Descer ${categoria.nome}`} disabled={busy || !canMoveDown} onClick={() => onMove?.('down')}><Icon name="chevron-down" /></button>
     </div></td> : null}

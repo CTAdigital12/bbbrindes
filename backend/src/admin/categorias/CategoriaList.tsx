@@ -3,7 +3,8 @@ import React, { useMemo, useState } from 'react'
 import Link from 'next/link'
 import { requestJSON } from '../friendly/api'
 import { Icon } from '../friendly/icons'
-import { moverCategoria, ordenarCategorias } from './categoria-data'
+import { moverCategoria, ordenarCategorias, reordenarPorArrasto } from './categoria-data'
+import type { OrdemChange } from './categoria-data'
 import { grupoRank } from './categoria-model'
 import { CATEGORIA_PATH, type CategoriaRow } from './categoria-model'
 import { CategoriaListRow } from './CategoriaListRow'
@@ -19,22 +20,37 @@ export function CategoriaList({ initial, canCreate = true, canUpdate = true, can
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState('')
   const [message, setMessage] = useState('')
+  const [dragId, setDragId] = useState<number | null>(null)
+  const [overId, setOverId] = useState<number | null>(null)
   const visible = useMemo(() => ordenarCategorias(rows
     .filter(FILTERS.find(f => f[0] === filter)![2])
     .filter(c => c.nome.toLocaleLowerCase('pt-BR').includes(search.toLocaleLowerCase('pt-BR')))), [rows, filter, search])
   // Reordenar so com a lista inteira a vista (sem busca). Mover e dentro do grupo.
   const canReorder = canUpdate && !search.trim()
-  async function mover(categoria: CategoriaRow, dir: 'up' | 'down') {
-    const result = moverCategoria(rows, categoria.id, dir)
-    if (!result.changes.length) return
+  // Persiste a nova ordem (setinhas E arrasto usam o mesmo caminho). Otimista: pinta
+  // a tela na hora e desfaz se a API recusar.
+  async function salvarOrdens(nextRows: CategoriaRow[], changes: OrdemChange[]) {
+    if (!changes.length) return
     const previous = rows
-    setRows(result.rows); setBusy(true); setError(''); setMessage('')
+    setRows(nextRows); setBusy(true); setError(''); setMessage('')
     try {
-      for (const change of result.changes) {
+      for (const change of changes) {
         await requestJSON(`/api/categorias/${change.id}`, { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ ordem: change.ordem }) })
       }
       setMessage('Nova ordem salva. O site pode levar alguns minutos para atualizar.')
     } catch (cause) { setRows(previous); setError((cause as Error).message) } finally { setBusy(false) }
+  }
+  async function mover(categoria: CategoriaRow, dir: 'up' | 'down') {
+    const result = moverCategoria(rows, categoria.id, dir)
+    await salvarOrdens(result.rows, result.changes)
+  }
+  async function soltar(targetId: number) {
+    const source = dragId
+    setDragId(null); setOverId(null)
+    if (source == null || source === targetId) return
+    const result = reordenarPorArrasto(rows, source, targetId)
+    if (!result.changes.length) return
+    await salvarOrdens(result.rows, result.changes)
   }
   async function remove(categoria: CategoriaRow) {
     if (!window.confirm(`Excluir "${categoria.nome}"? Esta ação não pode ser desfeita.`)) return
@@ -47,7 +63,7 @@ export function CategoriaList({ initial, canCreate = true, canUpdate = true, can
   }
   return <div className="bb-admin"><section className="bb-page">
     <div className="ph"><h1>Categorias</h1>{canCreate ? <Link className="btn" href={`${CATEGORIA_PATH}/create`}><Icon name="plus" />Adicionar categoria</Link> : null}</div>
-    <p className="sub">Categorias do catálogo: a grade da home e o menu de produtos. Os Ecológicos ficam agrupados no topo; use as setas para mudar a ordem dentro de cada grupo.</p>
+    <p className="sub">Categorias do catálogo: a grade da home e o menu de produtos. Os Ecológicos ficam agrupados no topo; arraste pela alça (ou use as setas) para mudar a ordem dentro de cada grupo.</p>
     <div className="subsub">{FILTERS.map(([key, label, match], index) => <React.Fragment key={key}>{index ? <span className="sep">|</span> : null}<button type="button" className={filter === key ? 'on' : ''} onClick={() => setFilter(key)}>{label} <span className="n">({rows.filter(match).length})</span></button></React.Fragment>)}</div>
     <div className="toolbar"><span className="sp" /><input className="inp search" type="search" aria-label="Buscar categorias" placeholder="Buscar categorias…" value={search} onChange={event => setSearch(event.target.value)} /></div>
     {canUpdate && search.trim() ? <p className="help">Limpe a busca para reordenar as categorias.</p> : null}
@@ -63,6 +79,12 @@ export function CategoriaList({ initial, canCreate = true, canUpdate = true, can
       canMoveDown={index < visible.length - 1 && grupoRank(visible[index + 1].grupo) === grupoRank(c.grupo)}
       onMove={dir => void mover(c, dir)}
       onRemove={() => void remove(c)}
+      dragging={dragId === c.id}
+      dropTarget={overId === c.id && dragId !== null && dragId !== c.id && grupoRank(c.grupo) === grupoRank(visible.find(v => v.id === dragId)?.grupo)}
+      onDragStart={() => setDragId(c.id)}
+      onDragOver={event => { if (dragId !== null && dragId !== c.id) { event.preventDefault(); setOverId(c.id) } }}
+      onDrop={() => void soltar(c.id)}
+      onDragEnd={() => { setDragId(null); setOverId(null) }}
     />)}{!visible.length ? <tr><td colSpan={canReorder ? 6 : 5} className="empty">Nenhuma categoria neste filtro.</td></tr> : null}</tbody></table></div>
   </section></div>
 }
