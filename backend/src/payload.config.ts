@@ -120,7 +120,16 @@ export default buildConfig({
       },
       header: ['/admin/friendly/AdminHeader'],
       Nav: '/admin/friendly/AdminSidebar',
-      views: { dashboard: { Component: '/admin/friendly/DashboardView' } },
+      views: {
+        dashboard: { Component: '/admin/friendly/DashboardView' },
+        // Item N (revisao do Plinio): lista TODOS os produtos com cor sem foto.
+        // Rota: /admin/produtos-cor-sem-foto. O botao "Resolver" do painel aponta
+        // pra ca (admin/friendly/Dashboard.tsx).
+        produtosCorSemFoto: {
+          Component: '/components/ColorPhotoGapsView',
+          path: '/produtos-cor-sem-foto',
+        },
+      },
     },
   },
   collections: [

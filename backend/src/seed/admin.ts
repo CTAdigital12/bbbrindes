@@ -44,7 +44,8 @@ try {
   } else {
     await payload.create({
       collection: 'users',
-      data: { email, password },
+      // O seed cria sempre um admin de acesso total (item J: niveis de acesso).
+      data: { email, password, role: 'admin' },
     })
     console.log(`Admin criado: ${email}`)
   }
