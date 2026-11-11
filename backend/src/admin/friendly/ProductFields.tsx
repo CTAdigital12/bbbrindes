@@ -7,6 +7,7 @@ import { ProductColors } from './ProductColors'
 import { fieldValue, plainText, richText } from './product-data'
 import { photo, type Product } from './model'
 import { MediaPicker } from './MediaPicker'
+import { CodigosPorCorView } from '../../components/produto/CodigosPorCorView'
 
 export type FieldProps = { product: Product; change: (field: string, value: unknown) => void; disabled?: boolean; errorField?: string }
 export function ProductField({ product, change, field, label, multiline = false, type = 'text', disabled = false, errorField, help }: FieldProps & { field: string; label: string; multiline?: boolean; type?: string; help?: string }) {
@@ -28,17 +29,39 @@ function General(props: FieldProps) {
   </>
 }
 function Photos(props: FieldProps) {
-  const [picker, setPicker] = React.useState(false)
+  // Item C: além da imagem ambientada, um slot "Imagem de dimensões" (o site abre no
+  // "ver dimensões"). Um único seletor de mídia atende os dois, pelo alvo em foco.
+  const [picker, setPicker] = React.useState<null | 'imagemAmbientada' | 'imagemDimensoes'>(null)
+  const slot = (field: 'imagemAmbientada' | 'imagemDimensoes', titulo: string, cta: string) => {
+    const img = photo(props.product[field])
+    return <div className="fld"><span className="lbl">{titulo}</span>{img?.url
+      ? <div className="imgset"><img src={img.url} alt={titulo} /><div className="i"><b>{titulo}</b><div className="acts"><button type="button" className="lnk" disabled={props.disabled} onClick={() => setPicker(field)}>Trocar</button><button type="button" className="lnk red" disabled={props.disabled} onClick={() => props.change(field, null)}>Remover</button></div></div></div>
+      : <button type="button" className="btn ghost" disabled={props.disabled} onClick={() => setPicker(field)}>{cta}</button>}</div>
+  }
   return <><div className="fld"><span className="lbl">Fotos do produto</span><ProductGallery images={props.product.imagens ?? []} onChange={images => props.change('imagens', images)} disabled={props.disabled} /></div>
     <ProductField {...props} field="videoUrl" label="Vídeo do produto (opcional)" help="Cole o link do YouTube." />
-    <div className="fld"><span className="lbl">Imagem ambientada</span>{photo(props.product.imagemAmbientada)?.url ? <div className="imgset"><img src={photo(props.product.imagemAmbientada)!.url!} alt="Imagem ambientada" /><div className="i"><b>Foto de apresentação</b><div className="acts"><button type="button" className="lnk" disabled={props.disabled} onClick={() => setPicker(true)}>Trocar</button><button type="button" className="lnk red" disabled={props.disabled} onClick={() => props.change('imagemAmbientada', null)}>Remover</button></div></div></div> : <button type="button" className="btn ghost" disabled={props.disabled} onClick={() => setPicker(true)}>Escolher imagem ambientada</button>}</div>
-    {picker ? <MediaPicker onClose={() => setPicker(false)} onSelect={images => props.change('imagemAmbientada', images[0])} /> : null}
+    {slot('imagemAmbientada', 'Imagem ambientada', 'Escolher imagem ambientada')}
+    {slot('imagemDimensoes', 'Imagem de dimensões', 'Escolher imagem de dimensões')}
+    {picker ? <MediaPicker onClose={() => setPicker(null)} onSelect={images => { props.change(picker, images[0]); setPicker(null) }} /> : null}
   </>
 }
 function Personalization(props: FieldProps) {
-  return <><ProductField {...props} field="impressao.metodos" label="Métodos de impressão" help="Preserve os métodos aplicáveis a este produto." /><div className="row2">{[
-    ['areaTransfer', 'Área de impressão: transfer'], ['areaTampografia', 'Área de impressão: tampografia'], ['areaSerigrafia', 'Área de impressão: serigrafia'], ['sleeve', 'Sleeve'],
-  ].map(([field, label]) => <ProductField {...props} key={field} field={`impressao.${field}`} label={label} />)}</div></>
+  // Item D: marca-se o método disponível (checkbox); a área/tamanho só aparece quando
+  // o método está marcado. Usa os mesmos campos do schema (impressao.metodoX/areaX).
+  const imp = (props.product.impressao ?? {}) as Record<string, unknown>
+  const metodos: [string, string, string][] = [
+    ['metodoTransfer', 'areaTransfer', 'Transfer'],
+    ['metodoTampografia', 'areaTampografia', 'Tampografia'],
+    ['metodoSerigrafia', 'areaSerigrafia', 'Serigrafia'],
+    ['metodoSleeve', 'sleeve', 'Sleeve'],
+  ]
+  return <><p className="sub">Marque os métodos de personalização disponíveis. A área ou tamanho de cada um aparece só quando o método está marcado.</p>
+    {metodos.map(([flag, area, label]) => <div className="fld" key={flag}>
+      <label className="bb-check"><input type="checkbox" checked={Boolean(imp[flag])} disabled={props.disabled} onChange={e => props.change(`impressao.${flag}`, e.target.checked)} />{label}</label>
+      {imp[flag] ? <ProductField {...props} field={`impressao.${area}`} label={`Área de impressão (${label.toLowerCase()})`} /> : null}
+    </div>)}
+    <ProductField {...props} field="impressao.metodos" label="Observações de impressão (opcional)" help="Texto livre, se precisar detalhar." />
+  </>
 }
 function Technical(props: FieldProps) {
   const rows = props.product.especificacoes ?? []
@@ -54,8 +77,13 @@ function SEO(props: FieldProps) {
     <div className="fld"><label htmlFor="bb-keywords">Palavras-chave</label><textarea id="bb-keywords" disabled={props.disabled} value={(keywords ?? []).join('\n')} onChange={e => props.change('seo.palavrasChave', e.target.value.split('\n').filter(Boolean))} /><span className="help">Uma palavra ou expressão por linha.</span></div></>
 }
 function Commercial(props: FieldProps) {
-  return <><div className="lock"><span>Informações internas do cadastro. Preço e estoque têm origem no CRM.</span></div>
-    <div className="row3"><ProductField {...props} field="crm.preco" label="Preço" disabled /><ProductField {...props} field="crm.estoque" label="Estoque" disabled /><ProductField {...props} field="codigoCigam" label="Código CIGAM" /></div><ProductField {...props} field="argumentoComercial" label="Argumento comercial" multiline /><ProductChannels {...props} /></>
+  // Item E: preço e estoque saíram daqui (vêm do CIGAM/CRM, nunca editados). Fica o
+  // código CIGAM e a relação de códigos por cor (read-only), que é o que vai ao CRM.
+  const cores = (props.product.cores ?? []).map(cor => ({ nome: cor.nome, codigo: cor.codigo }))
+  return <><div className="lock"><span>Informações internas do cadastro. Preço e estoque têm origem no CRM e não são editados aqui.</span></div>
+    <div className="fld" style={{ maxWidth: 320 }}><ProductField {...props} field="codigoCigam" label="Código CIGAM" help="Chave do produto no CRM/ERP." /></div>
+    <CodigosPorCorView cigam={props.product.codigoCigam} cores={cores} />
+    <ProductField {...props} field="argumentoComercial" label="Argumento comercial" multiline /><ProductChannels {...props} /></>
 }
 export const PRODUCT_TABS = [ ['geral', 'Geral'], ['fotos', 'Fotos e vídeo'], ['cores', 'Cores'], ['pers', 'Personalização'], ['ficha', 'Ficha técnica'], ['seo', 'SEO'], ['com', 'Comercial'] ] as const
 export function ProductFields({ tab, ...props }: FieldProps & { tab: string }) {
