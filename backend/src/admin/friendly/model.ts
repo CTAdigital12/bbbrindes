@@ -1,13 +1,16 @@
 export type Media = { id: number; url?: string | null; filename?: string | null; alt?: string | null; createdAt?: string; updatedAt?: string }
 export type MediaRef = Media | number | null
 export type Category = { id: number; nome: string; slug?: string; icone?: MediaRef }
-export type ProductColor = { id?: string; nome: string; hex?: string | null; imagem?: MediaRef }
+// `codigo` = codigo da cor na tabela mestra do CRM/Leads2b (item A/E da revisao
+// Plinio). Opcional: entradas antigas (texto livre) podem nao ter, e o site resolve
+// pelo nome. A paleta (ProductColors) preenche o codigo ao marcar a cor.
+export type ProductColor = { id?: string; nome: string; hex?: string | null; imagem?: MediaRef; codigo?: string | null }
 export type Product = {
   id?: number; nome: string; slug?: string; codigoSite: string; codigoCigam?: string;
   subtitulo?: string; headline?: string; descricaoCurta?: string; descricaoCompleta?: unknown;
   beneficios?: string[]; idealPara?: string[]; diferenciais?: string[];
   categorias?: (Category | number)[]; ecologico?: boolean; quantidadeMinima?: number | null;
-  imagens?: MediaRef[]; imagemAmbientada?: MediaRef; cores?: ProductColor[]; videoUrl?: string;
+  imagens?: MediaRef[]; imagemAmbientada?: MediaRef; imagemDimensoes?: MediaRef; cores?: ProductColor[]; videoUrl?: string;
   selos?: Record<string, boolean | null>; seo?: Record<string, unknown>;
   especificacoes?: { id?: string; rotulo: string; valor: string }[];
   logistica?: Record<string, unknown>; impressao?: Record<string, unknown>;

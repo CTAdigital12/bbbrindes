@@ -4,6 +4,7 @@ import React, { useState } from 'react'
 import { MediaPicker } from './MediaPicker'
 import { photo, type ProductColor } from './model'
 import type { FieldProps } from './ProductFields'
+import { PaletaCores } from '../../components/produto/PaletaCores'
 // Hex valido = #rrggbb. Vazio/nulo e legitimo: o site resolve o tom pelo nome da
 // cor (HEX_PADRAO em frontend/src/lib/produtos.ts), entao nao forcamos tonalidade.
 const isHex = (hex?: string | null) => /^#[0-9a-f]{6}$/i.test(hex || '')
@@ -11,7 +12,10 @@ export function ProductColors({ product, change, disabled, errorField }: FieldPr
   const [selected, setSelected] = useState<number>()
   const colors = product.cores ?? []
   function update(index: number, patch: Partial<ProductColor>) { change('cores', colors.map((color, i) => i === index ? { ...color, ...patch } : color)) }
-  return <><p className="sub">Informe o nome de cada cor e associe a foto correspondente. A tonalidade (bolinha) é opcional: em automático, o site escolhe o tom pelo nome da cor.</p>{colors.map((color, index) => <div className="cor bb-color-row" key={color.id ?? index}>
+  return <>
+    {/* Item A: paleta mestra da BB. Marque as cores que o produto tem (uma bolinha por cor). */}
+    <PaletaCores value={colors} onChange={next => change('cores', next)} disabled={disabled} />
+    <p className="sub">Para cada cor marcada acima, associe a foto correspondente. A tonalidade (bolinha) é opcional: em automático, o site escolhe o tom pelo nome da cor.</p>{colors.map((color, index) => <div className="cor bb-color-row" key={color.id ?? index}>
     <div className="bb-swatch-cell">
       <input className="bb-swatch-input" type="color" aria-label={`Tonalidade da cor ${index + 1}`} value={isHex(color.hex) ? color.hex! : '#cbd5e1'} onChange={e => update(index, { hex: e.target.value })} disabled={disabled} />
       {isHex(color.hex)

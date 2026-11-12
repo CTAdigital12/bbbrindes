@@ -188,7 +188,7 @@ export interface Produto {
   codigoCigam?: string | null;
   nome: string;
   /**
-   * URL amigavel em kebab-case. Gerado a partir do nome se ficar vazio.
+   * Endereco da pagina (gerado do nome). Bloqueado para edicao.
    */
   slug: string;
   /**
@@ -268,6 +268,60 @@ export interface Produto {
     | {
         nome: string;
         /**
+         * Codigo da cor na tabela mestra do CRM/Leads2b. Preenchido pela paleta; e o que vai no orcamento junto do CIGAM.
+         */
+        codigo?:
+          | (
+              | '01'
+              | '02'
+              | '03'
+              | '04'
+              | '05'
+              | '06'
+              | '07'
+              | '08'
+              | '09'
+              | '10'
+              | '11'
+              | '12'
+              | '13'
+              | '14'
+              | '15'
+              | '16'
+              | '17'
+              | '18'
+              | '30'
+              | '31'
+              | '32'
+              | '33'
+              | '34'
+              | '35'
+              | '36'
+              | '37'
+              | '38'
+              | '50'
+              | '51'
+              | '52'
+              | '53'
+              | '54'
+              | '55'
+              | '56'
+              | '57'
+              | '70'
+              | '71'
+              | '72'
+              | '73'
+              | '74'
+              | '75'
+              | '76'
+              | '77'
+              | '78'
+              | '79'
+              | '80'
+              | '99'
+            )
+          | null;
+        /**
          * Cor em hexadecimal, ex.: #1a2b3c (opcional).
          */
         hex?: string | null;
@@ -279,10 +333,14 @@ export interface Produto {
       }[]
     | null;
   /**
-   * Galeria do produto. A primeira e a principal.
+   * Galeria do produto. A primeira e a principal. Suba ou escolha da Media.
    */
   imagens?: (number | Media)[] | null;
   imagemAmbientada?: (number | null) | Media;
+  /**
+   * Desenho/foto com as medidas do produto. Exibida no site em "ver dimensoes". Recomendado: imagem com cotas legiveis.
+   */
+  imagemDimensoes?: (number | null) | Media;
   /**
    * Opcional. Link de video exibido na PDP.
    */
@@ -297,12 +355,22 @@ export interface Produto {
     dimensoesCaixaMaster?: string | null;
     pesoCaixaMaster?: string | null;
   };
+  /**
+   * Marque os metodos disponiveis; a area/tamanho de cada um abre so quando o metodo esta marcado.
+   */
   impressao?: {
-    metodos?: string | null;
+    metodoTransfer?: boolean | null;
     areaTransfer?: string | null;
+    metodoTampografia?: boolean | null;
     areaTampografia?: string | null;
+    metodoSerigrafia?: boolean | null;
     areaSerigrafia?: string | null;
+    metodoSleeve?: boolean | null;
     sleeve?: string | null;
+    /**
+     * Observacoes de impressao em texto livre (compatibilidade).
+     */
+    metodos?: string | null;
   };
   canais?: {
     site?: boolean | null;
@@ -321,23 +389,12 @@ export interface Produto {
    * Faixas da home onde o produto aparece.
    */
   destaques?: ('destaque' | 'mais-vendido' | 'lancamento')[] | null;
-  /**
-   * Origem: CRM (Leads2b) -> ERP. Placeholder ate a integracao (S03-09). Nao editar como fonte da verdade.
-   */
-  crm?: {
-    /**
-     * Preco unitario (BRL). Vem do CRM.
-     */
-    preco?: number | null;
-    /**
-     * Saldo em estoque. Vem do CRM.
-     */
-    estoque?: number | null;
-  };
   updatedAt: string;
   createdAt: string;
 }
 /**
+ * Categorias do catalogo: grade da home (estilo iFood) e menu de produtos. Ecologicos ficam no topo; a ordem define a sequencia.
+ *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "categorias".
  */
@@ -345,7 +402,7 @@ export interface Categoria {
   id: number;
   nome: string;
   /**
-   * URL amigavel em kebab-case. Gerado a partir do nome se ficar vazio.
+   * Endereco da pagina (gerado do nome). Bloqueado para edicao.
    */
   slug: string;
   /**
@@ -371,6 +428,9 @@ export interface Categoria {
  */
 export interface Media {
   id: number;
+  /**
+   * Descreva em poucas palavras o que aparece, ex.: "Squeeze 550 ml verde com a marca Oi". Serve pro Google entender a imagem e pra quem usa leitor de tela.
+   */
   alt: string;
   updatedAt: string;
   createdAt: string;
@@ -428,6 +488,8 @@ export interface Banner {
   createdAt: string;
 }
 /**
+ * Campanhas publicadas no site: nome, imagem, texto e produtos. Apos salvar, a publicacao automatica leva alguns minutos. Os banners da home ficam em Banners do hero.
+ *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "campanhas".
  */
@@ -435,7 +497,7 @@ export interface Campanha {
   id: number;
   nome: string;
   /**
-   * URL amigavel em kebab-case. Gerado a partir do nome se ficar vazio.
+   * Endereco da pagina (gerado do nome). Bloqueado para edicao.
    */
   slug: string;
   /**
@@ -466,11 +528,16 @@ export interface Campanha {
    * Produtos em destaque na campanha.
    */
   produtos?: (number | Produto)[] | null;
+  /**
+   * Publicar no menu, na home e na pagina da campanha. Desmarque para retirar do site na proxima publicacao.
+   */
   ativo?: boolean | null;
   updatedAt: string;
   createdAt: string;
 }
 /**
+ * Artigos do blog da BB Brindes. O mais recente aparece primeiro, pela data.
+ *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "posts".
  */
@@ -478,7 +545,7 @@ export interface Post {
   id: number;
   titulo: string;
   /**
-   * URL amigavel em kebab-case. Gerado a partir do nome se ficar vazio.
+   * Endereco da pagina (gerado do nome). Bloqueado para edicao.
    */
   slug: string;
   resumo?: string | null;
@@ -508,6 +575,8 @@ export interface Post {
   createdAt: string;
 }
 /**
+ * Tags compartilhadas para distribuir e cruzar conteudo entre blog, cases e imprensa.
+ *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "tags".
  */
@@ -515,13 +584,15 @@ export interface Tag {
   id: number;
   nome: string;
   /**
-   * URL amigavel em kebab-case. Gerado a partir do nome se ficar vazio.
+   * Endereco da pagina (gerado do nome). Bloqueado para edicao.
    */
   slug: string;
   updatedAt: string;
   createdAt: string;
 }
 /**
+ * Cases e prova social do site: cliente, segmento, titulo e resumo. O card usa a faixa de marca com o nome do cliente. Apos salvar, a publicacao leva alguns minutos.
+ *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "cases".
  */
@@ -530,7 +601,7 @@ export interface Case {
   cliente: string;
   titulo: string;
   /**
-   * URL amigavel em kebab-case. Gerado a partir do nome se ficar vazio.
+   * Endereco da pagina (gerado do nome). Bloqueado para edicao.
    */
   slug: string;
   segmento?: string | null;
@@ -552,6 +623,8 @@ export interface Case {
   createdAt: string;
 }
 /**
+ * Clipping de imprensa do site (BB Brindes e Grupo BB na midia). No card aparecem veiculo e titulo; data, resumo e link ficam salvos no painel. Apos salvar, a publicacao leva alguns minutos.
+ *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "imprensa".
  */
@@ -570,15 +643,32 @@ export interface Imprensa {
   createdAt: string;
 }
 /**
+ * Depoimentos de clientes exibidos na home e na pagina de cases.
+ *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "depoimentos".
  */
 export interface Depoimento {
   id: number;
+  /**
+   * Escreva sem aspas; o site ja coloca as aspas.
+   */
   texto: string;
+  /**
+   * Nome da pessoa. Ex.: Lilian Bueno.
+   */
   autor: string;
+  /**
+   * Ex.: Braskem. O site mostra "Autor, Empresa".
+   */
   empresa?: string | null;
+  /**
+   * Opcional. Foto da pessoa.
+   */
   foto?: (number | null) | Media;
+  /**
+   * Menor aparece primeiro.
+   */
   ordem?: number | null;
   ativo?: boolean | null;
   updatedAt: string;
@@ -667,6 +757,8 @@ export interface HeroSlide {
   createdAt: string;
 }
 /**
+ * Contas do portal de revenda. Aprovar (Ativo) libera o login e exige a tabela de preco (nivel) no mesmo passo. Dados com PII: so o admin ve a lista completa.
+ *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "revendedores".
  */
@@ -716,6 +808,8 @@ export interface Revendedore {
   collection: 'revendedores';
 }
 /**
+ * Administradores que entram no painel. Cada um acessa com o proprio e-mail e senha.
+ *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "users".
  */
@@ -850,6 +944,10 @@ export interface PayloadLockedDocument {
         value: number | Tag;
       } | null)
     | ({
+        relationTo: 'depoimentos';
+        value: number | Depoimento;
+      } | null)
+    | ({
         relationTo: 'logos';
         value: number | Logo;
       } | null)
@@ -980,12 +1078,14 @@ export interface ProdutosSelect<T extends boolean = true> {
     | T
     | {
         nome?: T;
+        codigo?: T;
         hex?: T;
         imagem?: T;
         id?: T;
       };
   imagens?: T;
   imagemAmbientada?: T;
+  imagemDimensoes?: T;
   videoUrl?: T;
   logistica?:
     | T
@@ -1002,11 +1102,15 @@ export interface ProdutosSelect<T extends boolean = true> {
   impressao?:
     | T
     | {
-        metodos?: T;
+        metodoTransfer?: T;
         areaTransfer?: T;
+        metodoTampografia?: T;
         areaTampografia?: T;
+        metodoSerigrafia?: T;
         areaSerigrafia?: T;
+        metodoSleeve?: T;
         sleeve?: T;
+        metodos?: T;
       };
   canais?:
     | T
@@ -1018,12 +1122,6 @@ export interface ProdutosSelect<T extends boolean = true> {
   quantidadeMinima?: T;
   faixaPreco?: T;
   destaques?: T;
-  crm?:
-    | T
-    | {
-        preco?: T;
-        estoque?: T;
-      };
   updatedAt?: T;
   createdAt?: T;
 }
@@ -1126,6 +1224,16 @@ export interface ImprensaSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "tags_select".
+ */
+export interface TagsSelect<T extends boolean = true> {
+  nome?: T;
+  slug?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "depoimentos_select".
  */
 export interface DepoimentosSelect<T extends boolean = true> {
@@ -1135,16 +1243,6 @@ export interface DepoimentosSelect<T extends boolean = true> {
   foto?: T;
   ordem?: T;
   ativo?: T;
-  updatedAt?: T;
-  createdAt?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "tags_select".
- */
-export interface TagsSelect<T extends boolean = true> {
-  nome?: T;
-  slug?: T;
   updatedAt?: T;
   createdAt?: T;
 }
@@ -1368,6 +1466,8 @@ export interface PayloadMigrationsSelect<T extends boolean = true> {
   createdAt?: T;
 }
 /**
+ * Dados de contato, redes sociais, texto e selos do rodape do site. Editavel pelo cliente; salvar dispara o rebuild do site.
+ *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "configuracoes".
  */
@@ -1575,6 +1675,18 @@ export interface ConteudoInstitucional {
         }[]
       | null;
   };
+  /**
+   * Marcos da historia do Grupo BB. Aparece completa no Quem somos e, nos itens marcados "Destaque no resumo", no teaser da pagina de produto.
+   */
+  linhaDoTempo?:
+    | {
+        ano: string;
+        titulo: string;
+        texto: string;
+        destaqueResumo?: boolean | null;
+        id?: string | null;
+      }[]
+    | null;
   updatedAt?: string | null;
   createdAt?: string | null;
 }
@@ -1775,6 +1887,15 @@ export interface ConteudoInstitucionalSelect<T extends boolean = true> {
               texto?: T;
               id?: T;
             };
+      };
+  linhaDoTempo?:
+    | T
+    | {
+        ano?: T;
+        titulo?: T;
+        texto?: T;
+        destaqueResumo?: T;
+        id?: T;
       };
   updatedAt?: T;
   createdAt?: T;
