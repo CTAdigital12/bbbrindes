@@ -1,6 +1,7 @@
 import type { CollectionConfig } from 'payload'
 
 import { slugField } from '../fields/slug'
+import { CORES_BB } from '../components/produto/cores-bb'
 
 // Produto do catalogo. Schema alinhado ao modelo validado com o Plinio
 // (docs/modelo-produto.md, secoes 4 e 11) e a planilha real de produtos.
@@ -8,12 +9,16 @@ import { slugField } from '../fields/slug'
 // Bloqueios ainda abertos (docs/modelo-produto.md secao 14), refletidos aqui:
 // 1. Granularidade CL/PB indefinida: `codigoCigam` NAO e unique (233 CL e 233 PB
 //    compartilham o mesmo CIGAM). `codigoSite` (comercial, ja com sufixo) e unique.
-// 2. Cor/variacao sem fonte de dado estruturada: por ora as cores ficam no array
-//    `cores` (cadastro manual). SKU-por-cor e imagem-por-cor entram quando o Plinio
-//    entregar a fonte de cor/tom e a convencao de imagem.
+// 2. Cores (item A da revisao Plinio 10/11): a aba Cores usa a PALETA MESTRA da BB
+//    (uma bolinha por cor, a pessoa so marca as que tem). O seletor (paleta) fica na
+//    friendly view (src/admin/friendly/ProductColors.tsx) e grava no mesmo array
+//    `cores` com um `codigo` opcional (tabela mestra do CRM). O dado segue compativel
+//    com o site (cores[].nome/hex/imagem) e a foto-por-cor e preservada.
 //
-// Preco e estoque vem do CRM (Leads2b) -> ERP; ficam no grupo `crm` como
-// placeholder ate a integracao (S03-09), sem ser fonte da verdade editorial.
+// Comercial / CRM (item E, CRITICO Leads2b): preco e estoque SAIRAM do cadastro (vem
+// do CIGAM/CRM, nunca editados aqui). O que o site comunica ao CRM/ERP a cada
+// orcamento e codigo CIGAM (produto) + codigo da COR; por isso o campo `ui`
+// `codigosPorCor` mostra essa relacao read-only. Ver docs/integracao-leads2b.md.
 export const Produtos: CollectionConfig = {
   slug: 'produtos',
   labels: { singular: 'Produto', plural: 'Produtos' },
@@ -21,10 +26,14 @@ export const Produtos: CollectionConfig = {
     useAsTitle: 'nome',
     group: 'Catalogo',
     defaultColumns: ['nome', 'codigoSite', 'ecologico'],
-    components: { views: {
-      list: { Component: '/admin/friendly/ProductsListView' },
-      edit: { root: { Component: '/admin/friendly/ProductEditView' } },
-    } },
+    components: {
+      // Item O: botao "carregar produtos em lote" + modelo CSV, acima da lista.
+      beforeListTable: ['/components/produto/UploadLoteProdutos'],
+      views: {
+        list: { Component: '/admin/friendly/ProductsListView' },
+        edit: { root: { Component: '/admin/friendly/ProductEditView' } },
+      },
+    },
   },
   access: {
     read: () => true,
@@ -164,15 +173,26 @@ export const Produtos: CollectionConfig = {
       ],
     },
 
-    // Cores/variacoes. Cadastro manual ate a fonte de cor/tom do Plinio chegar.
-    // A imagem por cor (troca ao selecionar) entra quando houver a convencao de
-    // imagem casada ao codigo (ver modelo-produto.md secao 5).
+    // Cores/variacoes (item A). A paleta mestra (bolinha por cor) marca quais cores o
+    // produto tem; cada cor marcada vira uma entrada aqui. `codigo` e o codigo da
+    // tabela mestra do CRM (alimenta o item E, codigos por cor). `nome`/`hex`/`imagem`
+    // seguem como antes, para o site nao regredir e preservar a foto-por-cor.
     {
       name: 'cores',
       type: 'array',
       labels: { singular: 'Cor', plural: 'Cores' },
       fields: [
         { name: 'nome', type: 'text', required: true },
+        {
+          name: 'codigo',
+          type: 'select',
+          label: 'Codigo da cor (CRM)',
+          options: CORES_BB.map((c) => ({ label: `${c.codigo} - ${c.nome}`, value: c.codigo })),
+          admin: {
+            description:
+              'Codigo da cor na tabela mestra do CRM/Leads2b. Preenchido pela paleta; e o que vai no orcamento junto do CIGAM.',
+          },
+        },
         {
           name: 'hex',
           type: 'text',
@@ -204,6 +224,19 @@ export const Produtos: CollectionConfig = {
       label: 'Imagem ambientada (lifestyle)',
       filterOptions: { mimeType: { contains: 'image' } },
     },
+    // Item C: imagem de dimensoes/medidas. O site abre esta imagem no "ver dimensoes"
+    // do produto (botao da PDP). Diferente da ambientada (lifestyle).
+    {
+      name: 'imagemDimensoes',
+      type: 'upload',
+      relationTo: 'media',
+      label: 'Imagem de dimensoes',
+      filterOptions: { mimeType: { contains: 'image' } },
+      admin: {
+        description:
+          'Desenho/foto com as medidas do produto. Exibida no site em "ver dimensoes". Recomendado: imagem com cotas legiveis.',
+      },
+    },
     {
       name: 'videoUrl',
       type: 'text',
@@ -228,17 +261,53 @@ export const Produtos: CollectionConfig = {
       ],
     },
 
-    // Impressao (metodos e areas).
+    // Impressao / personalizacao (item D). Primeiro marca-se o METODO disponivel
+    // (checkbox); o campo de area/tamanho so aparece quando o metodo esta marcado
+    // (admin.condition le o siblingData do grupo). `metodos` fica como texto livre
+    // legado (observacoes), ainda lido pela friendly view.
     {
       name: 'impressao',
       type: 'group',
       label: 'Impressao',
+      admin: {
+        description:
+          'Marque os metodos disponiveis; a area/tamanho de cada um abre so quando o metodo esta marcado.',
+      },
       fields: [
-        { name: 'metodos', type: 'text', label: 'Metodos de impressao' },
-        { name: 'areaTransfer', type: 'text', label: 'Area de impressao (transfer)' },
-        { name: 'areaTampografia', type: 'text', label: 'Area de impressao (tampografia)' },
-        { name: 'areaSerigrafia', type: 'text', label: 'Area de impressao (serigrafia)' },
-        { name: 'sleeve', type: 'text', label: 'Sleeve' },
+        { name: 'metodoTransfer', type: 'checkbox', label: 'Transfer disponivel' },
+        {
+          name: 'areaTransfer',
+          type: 'text',
+          label: 'Area de impressao (transfer)',
+          admin: { condition: (_, siblingData) => Boolean(siblingData?.metodoTransfer) },
+        },
+        { name: 'metodoTampografia', type: 'checkbox', label: 'Tampografia disponivel' },
+        {
+          name: 'areaTampografia',
+          type: 'text',
+          label: 'Area de impressao (tampografia)',
+          admin: { condition: (_, siblingData) => Boolean(siblingData?.metodoTampografia) },
+        },
+        { name: 'metodoSerigrafia', type: 'checkbox', label: 'Serigrafia disponivel' },
+        {
+          name: 'areaSerigrafia',
+          type: 'text',
+          label: 'Area de impressao (serigrafia)',
+          admin: { condition: (_, siblingData) => Boolean(siblingData?.metodoSerigrafia) },
+        },
+        { name: 'metodoSleeve', type: 'checkbox', label: 'Sleeve disponivel' },
+        {
+          name: 'sleeve',
+          type: 'text',
+          label: 'Sleeve (tamanho/area)',
+          admin: { condition: (_, siblingData) => Boolean(siblingData?.metodoSleeve) },
+        },
+        {
+          name: 'metodos',
+          type: 'text',
+          label: 'Metodos (texto livre, legado)',
+          admin: { description: 'Observacoes de impressao em texto livre (compatibilidade).' },
+        },
       ],
     },
 
@@ -293,19 +362,20 @@ export const Produtos: CollectionConfig = {
       admin: { description: 'Faixas da home onde o produto aparece.' },
     },
 
-    // Preco/estoque: origem CRM (Leads2b) -> ERP. Placeholder ate a integracao.
+    // Comercial / integracao CRM (item E, CRITICO Leads2b). Preco e estoque foram
+    // REMOVIDOS do cadastro: vem do CIGAM/CRM, nunca editados aqui. O que o site
+    // comunica ao CRM/ERP a cada orcamento e o codigo CIGAM (produto, na sidebar) +
+    // o codigo da COR. O campo `ui` abaixo exibe essa relacao (read-only), montando
+    // CIGAM + codigo de cada cor marcada. Ver docs/integracao-leads2b.md.
     {
-      name: 'crm',
-      type: 'group',
-      label: 'Dados do CRM/ERP',
+      name: 'codigosPorCor',
+      type: 'ui',
+      label: 'Codigos por cor (CRM / Leads2b)',
       admin: {
-        description:
-          'Origem: CRM (Leads2b) -> ERP. Placeholder ate a integracao (S03-09). Nao editar como fonte da verdade.',
+        components: {
+          Field: '/components/produto/CodigosPorCorField',
+        },
       },
-      fields: [
-        { name: 'preco', type: 'number', admin: { description: 'Preco unitario (BRL). Vem do CRM.' } },
-        { name: 'estoque', type: 'number', admin: { description: 'Saldo em estoque. Vem do CRM.' } },
-      ],
     },
   ],
 }

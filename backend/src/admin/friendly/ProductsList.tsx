@@ -1,9 +1,10 @@
 'use client'
 /* eslint-disable @next/next/no-img-element */
-import React, { useMemo, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import Link from 'next/link'
 import { Icon } from './icons'
 import { requestJSON } from './api'
+import UploadLoteProdutos from '../../components/produto/UploadLoteProdutos'
 import { categoryIDs, missingPhoto, photo, published, SITE_URL, type Product, type Category } from './model'
 
 type Filter = 'todos' | 'publicado' | 'naopublicado' | 'semfoto'
@@ -18,6 +19,9 @@ export function ProductsList({ products: initial, categories, initialFilter = 't
   products: Product[]; categories: Category[]; initialFilter?: string; canCreate?: boolean; canUpdate?: boolean; canDelete?: boolean;
 }) {
   const [products, setProducts] = useState(initial)
+  // Quando os dados do servidor mudam (ex.: apos importar em lote e chamar router.refresh()),
+  // sincroniza a lista com o que o servidor devolveu, sem precisar recarregar na mao.
+  useEffect(() => { setProducts(initial) }, [initial])
   const [filter, setFilter] = useState(filters.some(f => f.key === initialFilter) ? initialFilter : 'todos')
   const [search, setSearch] = useState('')
   const [category, setCategory] = useState('')
@@ -51,7 +55,7 @@ export function ProductsList({ products: initial, categories, initialFilter = 't
     } catch (cause) { setError((cause as Error).message) } finally { setBusy(undefined) }
   }
   return <div className="bb-admin"><section className="bb-page">
-    <div className="ph"><h1>Produtos</h1>{canCreate ? <Link className="btn" href="/admin/collections/produtos/create"><Icon name="plus" />Adicionar produto</Link> : null}</div>
+    <div className="ph"><h1>Produtos</h1>{canCreate ? <UploadLoteProdutos><Link className="btn" href="/admin/collections/produtos/create"><Icon name="plus" />Adicionar produto</Link></UploadLoteProdutos> : null}</div>
     <div className="subsub">{filters.map((item, index) => <React.Fragment key={item.key}>{index ? <span className="sep">|</span> : null}<button type="button" className={item.key === filter ? 'on' : ''} onClick={() => { setFilter(item.key); setPage(1) }}>{item.label} <span className="n">({products.filter(item.match).length})</span></button></React.Fragment>)}</div>
     <div className="toolbar"><select className="sel bb-auto" aria-label="Filtrar por categoria" value={category} onChange={e => { setCategory(e.target.value); setPage(1) }}><option value="">Todas as categorias</option>{categories.map(c => <option key={c.id} value={c.id}>{c.nome}</option>)}</select><span className="sp" /><input className="inp search" type="search" placeholder="Buscar produtos…" aria-label="Buscar produtos" value={search} onChange={e => { setSearch(e.target.value); setPage(1) }} /></div>
     {error ? <p role="alert" className="bb-error">{error}</p> : null}{message ? <p role="status" className="bb-success">{message}</p> : null}
