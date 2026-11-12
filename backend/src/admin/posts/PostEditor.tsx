@@ -55,8 +55,8 @@ export function PostEditor({ initial, canSave = true }: { initial: PostDraft; ca
       <div className="bb-card"><div className="bd">
         <input id="bb-post-titulo" className="ttl" aria-label="Título do post" aria-invalid={error?.field === 'bb-post-titulo'} placeholder="Título do post" value={post.titulo} disabled={disabled} onChange={e => change('titulo', e.target.value)} />
         <div className="row2" style={{ marginTop: 12 }}>
-          <div className="fld"><label htmlFor="bb-post-data">Data</label><input className="inp" id="bb-post-data" type="date" aria-invalid={error?.field === 'bb-post-data'} value={toDateInput(post.data)} disabled={disabled} onChange={e => change('data', e.target.value)} /><span className="help">O blog ordena do mais recente para o mais antigo.</span></div>
           <div className="fld"><label htmlFor="bb-post-autor">Autor</label><input className="inp" id="bb-post-autor" value={post.autor || ''} disabled={disabled} onChange={e => change('autor', e.target.value)} /></div>
+          <div className="fld"><label htmlFor="bb-post-data">Data</label><input className="inp" id="bb-post-data" type="date" aria-invalid={error?.field === 'bb-post-data'} value={toDateInput(post.data)} disabled={disabled} onChange={e => change('data', e.target.value)} /><span className="help">O blog ordena do mais recente para o mais antigo.</span></div>
         </div>
         <div className="fld"><label htmlFor="bb-post-resumo">Resumo</label><textarea id="bb-post-resumo" rows={3} value={post.resumo || ''} disabled={disabled} onChange={e => change('resumo', e.target.value)} /><span className="help">Chamada curta exibida no card do blog.</span></div>
         <HeroImageField label="Capa do post" help="Imagem de capa exibida no card e no topo do artigo." value={post.capa} disabled={disabled} onChange={v => change('capa', v)} />

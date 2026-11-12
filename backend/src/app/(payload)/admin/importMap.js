@@ -57,6 +57,7 @@ import { default as default_users_list_view_8d1 } from '../../../admin/users/Use
 import { default as default_users_edit_view_8d2 } from '../../../admin/users/UserEditView'
 import { default as default_rev_list_view_8d3 } from '../../../admin/revendedores/RevendedorListView'
 import { default as default_rev_edit_view_8d4 } from '../../../admin/revendedores/RevendedorEditView'
+import { default as default_color_gaps_view_8d5 } from '../../../components/ColorPhotoGapsView'
 import { CollectionCards as CollectionCards_f9c02e79a4aed9a3924487c0cd4cafb1 } from '@payloadcms/next/rsc'
 
 /** @type import('payload').ImportMap */
@@ -120,5 +121,6 @@ export const importMap = {
   "/admin/users/UserEditView#default": default_users_edit_view_8d2,
   "/admin/revendedores/RevendedorListView#default": default_rev_list_view_8d3,
   "/admin/revendedores/RevendedorEditView#default": default_rev_edit_view_8d4,
+  "/components/ColorPhotoGapsView#default": default_color_gaps_view_8d5,
   "@payloadcms/next/rsc#CollectionCards": CollectionCards_f9c02e79a4aed9a3924487c0cd4cafb1
 }

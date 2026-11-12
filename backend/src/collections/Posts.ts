@@ -1,5 +1,6 @@
 import type { CollectionConfig } from 'payload'
 
+import { isAdmin, isEditorOrAdmin } from '../access/byRole'
 import { slugField } from '../fields/slug'
 
 // Blog institucional.
@@ -16,16 +17,22 @@ export const Posts: CollectionConfig = {
       edit: { root: { Component: '/admin/posts/PostEditView' } },
     } },
   },
+  // Leitura publica (o site estatico monta o blog pela API). Escrita: admin ou
+  // editor (marketing); remocao so admin. Access reutilizavel: src/access/byRole.ts.
   access: {
     read: () => true,
+    create: isEditorOrAdmin,
+    update: isEditorOrAdmin,
+    delete: isAdmin,
   },
   defaultSort: '-data',
   fields: [
     { name: 'titulo', type: 'text', required: true },
     slugField('titulo'),
     { name: 'resumo', type: 'textarea' },
-    { name: 'data', type: 'date', required: true },
+    // Autor acima de Data (item I da revisao do Plinio).
     { name: 'autor', type: 'text' },
+    { name: 'data', type: 'date', required: true },
     { name: 'capa', type: 'upload', relationTo: 'media' },
     { name: 'conteudo', type: 'richText' },
     {

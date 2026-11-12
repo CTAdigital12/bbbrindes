@@ -721,6 +721,10 @@ export interface Revendedore {
  */
 export interface User {
   id: number;
+  /**
+   * Admin faz tudo. Editor cria e edita conteudo (nao mexe em usuarios nem remove). Visualizador so consulta.
+   */
+  role: 'admin' | 'editor' | 'visualizador';
   updatedAt: string;
   createdAt: string;
   email: string;
@@ -1286,6 +1290,7 @@ export interface MediaSelect<T extends boolean = true> {
  * via the `definition` "users_select".
  */
 export interface UsersSelect<T extends boolean = true> {
+  role?: T;
   updatedAt?: T;
   createdAt?: T;
   email?: T;

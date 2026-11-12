@@ -8,7 +8,7 @@ import type { DashboardData } from './dashboard-data'
 export function Dashboard({ data, name, greeting }: { data: DashboardData; name: string; greeting: string }) {
   const alerts = [
     { count: data.withoutPhoto, tone: 'e', title: 'Produtos sem foto', text: 'Revise as imagens que aparecem no catálogo.', action: 'Ver produtos', href: '/admin/collections/produtos?f=semfoto' },
-    { count: data.productsWithMissingColorPhoto, tone: 'w', title: 'Produtos com cor sem foto', text: 'Produtos onde alguma cor ainda não tem a imagem dela.', action: 'Resolver', href: data.firstMissingColor ? `/admin/collections/produtos/${data.firstMissingColor}` : '/admin/collections/produtos' },
+    { count: data.productsWithMissingColorPhoto, tone: 'w', title: 'Produtos com cor sem foto', text: 'Produtos onde alguma cor ainda não tem a imagem dela.', action: 'Resolver', href: '/admin/produtos-cor-sem-foto' },
     { count: data.bannersWithoutMobile, tone: 'w', title: 'Banners ativos sem versão para celular', text: 'Confira as versões para computador e celular.', action: 'Ver banners', href: '/admin/collections/hero-slides' },
     { count: data.certifications, tone: 'i', title: 'Certificações cadastradas', text: 'Revise as informações exibidas no site.', action: 'Revisar', href: '/admin/globals/configuracoes' },
     { count: data.unpublished, tone: 'i', title: 'Produtos não publicados', text: 'Itens com a opção Publicar no site desmarcada.', action: 'Abrir', href: '/admin/collections/produtos?f=naopublicado' },
