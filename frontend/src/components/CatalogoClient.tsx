@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { categoriasDoProduto, type Produto } from "@/lib/types";
 import { useCategorias, useNomeCategoria } from "@/lib/categorias-context";
-import { aplicacoes, produtos as produtosMock } from "@/data/produtos";
+import { produtos as produtosMock } from "@/data/produtos";
 import { useCart } from "@/lib/cart";
 import { useCartUI } from "@/lib/cart-ui";
 import { imgSrc } from "@/lib/asset";
@@ -18,15 +18,15 @@ import ProductCardJoy from "@/components/ProductCardJoy";
 // .modal#qv. Produtos REAIS vindos de getProdutos (passados pelo page.tsx);
 // filtro e ordenacao 100% client-side. Sem faixa de preco (o site nao mostra
 // preco). A leitura inicial dos filtros vem da querystring (?categoria=, ?q=,
-// ?material=, ?aplicacao=, ?cor=); mudancas na pagina ficam em estado local.
+// ?material=, ?cor=); mudancas na pagina ficam em estado local.
 
-type Grupo = "categoria" | "material" | "aplicacao";
+type Grupo = "categoria" | "material";
 type Facetas = Record<Grupo, string[]>;
 type Ord = "rel" | "novo" | "az";
 
-// Taxonomia fixa dos filtros, igual ao mockup. Material e as 6 aplicacoes de
-// data/produtos.ts. (Filtro de cor removido a pedido do Plinio: "a pessoa nao
-// filtra por cor".)
+// Taxonomia fixa dos filtros, igual ao mockup. (Filtro de cor removido a pedido
+// do Plinio: "a pessoa nao filtra por cor". Filtro de aplicacao removido: o
+// backend nao traz aplicacoes, entao aparecia tudo zerado.)
 const MATERIAIS = ["Fibra natural", "Plastico", "Plastico reciclado"];
 
 const norm = (s: string) =>
@@ -59,7 +59,6 @@ export default function CatalogoClient({ produtos = produtosMock }: { produtos?:
   const [facetas, setFacetas] = useState<Facetas>(() => ({
     categoria: sp.getAll("categoria"),
     material: sp.getAll("material"),
-    aplicacao: sp.getAll("aplicacao"),
   }));
   const [ord, setOrd] = useState<Ord>(() => toOrd(sp.get("ord")));
   const [filtrosAbertos, setFiltrosAbertos] = useState(false);
@@ -80,7 +79,6 @@ export default function CatalogoClient({ produtos = produtosMock }: { produtos?:
     setFacetas({
       categoria: sp.getAll("categoria"),
       material: sp.getAll("material"),
-      aplicacao: sp.getAll("aplicacao"),
     });
     setOrd(toOrd(sp.get("ord")));
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -159,11 +157,6 @@ export default function CatalogoClient({ produtos = produtosMock }: { produtos?:
         return false;
       if (facetas.material.length && !facetas.material.includes(bucketMaterial(p.material)))
         return false;
-      if (
-        facetas.aplicacao.length &&
-        !(p.aplicacoes ?? []).some((a) => facetas.aplicacao.some((fa) => norm(fa) === norm(a)))
-      )
-        return false;
       if (nq) {
         const alvo = norm(`${p.nome} ${nomeCategoria(p.categoria)} ${p.descricao} ${p.material}`);
         if (!alvo.includes(nq)) return false;
@@ -186,11 +179,10 @@ export default function CatalogoClient({ produtos = produtosMock }: { produtos?:
           ? "Lançamentos"
           : "Catálogo";
 
-  // Chips de filtro ativo (removiveis): categoria/material/aplicacao/cor.
+  // Chips de filtro ativo (removiveis): categoria/material.
   const chips: { grupo: Grupo; valor: string; rotulo: string }[] = [
     ...facetas.categoria.map((v) => ({ grupo: "categoria" as const, valor: v, rotulo: nomeCategoria(v) })),
     ...facetas.material.map((v) => ({ grupo: "material" as const, valor: v, rotulo: v })),
-    ...facetas.aplicacao.map((v) => ({ grupo: "aplicacao" as const, valor: v, rotulo: v })),
   ];
 
   // Renderiza um grupo de filtro (grp() do mockup): titulo + checkboxes com .n.
@@ -272,15 +264,6 @@ export default function CatalogoClient({ produtos = produtosMock }: { produtos?:
               valor: m,
               rotulo: m,
               contagem: contar((p) => bucketMaterial(p.material) === m),
-            })),
-          )}
-          {grupo(
-            "Aplicação",
-            "aplicacao",
-            aplicacoes.map((a) => ({
-              valor: a,
-              rotulo: a,
-              contagem: contar((p) => (p.aplicacoes ?? []).some((x) => norm(x) === norm(a))),
             })),
           )}
         </aside>
