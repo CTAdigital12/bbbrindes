@@ -171,21 +171,82 @@ export default function ProdutoView({ produto }: { produto: Produto }) {
         {/* Galeria: coluna de miniaturas + palco com zoom */}
         <div className="gal">
           <div className="thumbs">
-            {imagens.map((src, i) => (
+            {imagens.map((src, i) => {
+              // Pula entradas de imagem vazias/invalidas: nao renderiza a miniatura
+              // vazia (o quadradinho branco que o Plinio marcou no fim da tira).
+              // imgSrc("" / undefined) devolve string vazia.
+              const thumbSrc = imgSrc(src);
+              if (!thumbSrc) return null;
+              return (
+                <button
+                  key={`${src}-${i}`}
+                  type="button"
+                  // Destaca a miniatura cuja foto e a que esta no palco, seja por
+                  // navegacao (imgIdx) ou pela foto da cor (corImg). Quando o backend
+                  // alinhar imagens[]=cores[] e preencher cores[].imagem, clicar numa
+                  // cor destaca a miniatura certa sozinho.
+                  className={thumbSrc === stageSrc ? "on" : ""}
+                  onClick={() => escolherThumb(i)}
+                  aria-label={`Imagem ${i + 1}`}
+                >
+                  <img src={thumbSrc} alt="" />
+                </button>
+              );
+            })}
+
+            {/* Video como miniatura clicavel no fim da tira (item 2 da revisao do
+                Plinio): so aparece quando o produto tem video (embedUrl). Usa a 1a
+                foto do produto como fundo (ou um fundo neutro quando nao ha foto),
+                com um icone de play sobreposto no centro. Clicar abre o mesmo modal
+                de video do botao .vbtn. */}
+            {embedUrl && (
               <button
-                key={`${src}-${i}`}
                 type="button"
-                // Destaca a miniatura cuja foto e a que esta no palco, seja por
-                // navegacao (imgIdx) ou pela foto da cor (corImg). Quando o backend
-                // alinhar imagens[]=cores[] e preencher cores[].imagem, clicar numa
-                // cor destaca a miniatura certa sozinho.
-                className={imgSrc(src) === stageSrc ? "on" : ""}
-                onClick={() => escolherThumb(i)}
-                aria-label={`Imagem ${i + 1}`}
+                onClick={() => setVideoOpen(true)}
+                aria-label="Ver vídeo"
+                style={{ position: "relative", overflow: "hidden" }}
               >
-                <img src={imgSrc(src)} alt="" />
+                {mainSrc ? (
+                  <img src={mainSrc} alt="" />
+                ) : (
+                  <span
+                    style={{
+                      display: "block",
+                      width: "100%",
+                      height: "100%",
+                      background: "var(--g-card)",
+                    }}
+                  />
+                )}
+                <span
+                  style={{
+                    position: "absolute",
+                    inset: 0,
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    background: "rgba(0,30,18,.28)",
+                  }}
+                >
+                  <span
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      width: 30,
+                      height: 30,
+                      fontSize: 15,
+                      borderRadius: "50%",
+                      background: "rgba(255,255,255,.92)",
+                      color: "var(--green)",
+                      boxShadow: "var(--sh-1)",
+                    }}
+                  >
+                    <Icon name="brand-youtube" />
+                  </span>
+                </span>
               </button>
-            ))}
+            )}
           </div>
 
           <div
