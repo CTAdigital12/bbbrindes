@@ -32,6 +32,7 @@ type ProdutoDoc = {
   cores?: { nome: string; hex?: string; imagem?: MediaRef }[];
   imagens?: MediaRef[];
   imagemAmbientada?: MediaRef;
+  imagemDimensoes?: MediaRef;
   videoUrl?: string;
   quantidadeMinima?: number;
   faixaPreco?: Produto["faixaPreco"];
@@ -132,6 +133,7 @@ function mapear(doc: ProdutoDoc): Produto {
     detalhe: montarDetalhe(doc),
     imagens: urlsDasImagens(doc.imagens),
     imagemAmbientada: urlDaImagem(doc.imagemAmbientada),
+    imagemDimensoes: urlDaImagem(doc.imagemDimensoes),
     videoUrl: doc.videoUrl || undefined,
     quantidadeMinima: typeof doc.quantidadeMinima === "number" ? doc.quantidadeMinima : undefined,
     metodosImpressao: doc.impressao?.metodos?.trim() || undefined,
