@@ -27,8 +27,11 @@ export default async function CatalogosPage() {
         <p>{cat.intro}</p>
       </div>
 
-      <div className="flip">
-        <iframe src={cat.flipbookUrl} title={cat.titulo} allowFullScreen loading="lazy" />
+      {/* Modo foco: fundo escuro em volta do flipbook para destacar o catalogo. */}
+      <div className="flipstage">
+        <div className="flip">
+          <iframe src={cat.flipbookUrl} title={cat.titulo} allowFullScreen loading="lazy" />
+        </div>
       </div>
 
       <section className="sec">

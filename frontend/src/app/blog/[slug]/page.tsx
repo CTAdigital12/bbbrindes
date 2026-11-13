@@ -30,6 +30,9 @@ export default async function PostPage({ params }: { params: Params }) {
   if (!post) notFound();
   const idx = Math.max(0, posts.findIndex((p) => p.slug === slug));
   const cover = COVERS[idx % COVERS.length];
+  // Quebra o conteudo em paragrafos (mesmo criterio da campanha): um <p> por
+  // bloco separado por linha em branco. Antes tudo caia em um unico <p>.
+  const paragrafos = post.conteudo ? post.conteudo.split("\n\n").filter(Boolean) : [];
 
   return (
     <article className="wrap">
@@ -71,7 +74,11 @@ export default async function PostPage({ params }: { params: Params }) {
         }}
       >
         <p style={{ fontWeight: 500, color: "var(--ink)", margin: "0 0 14px" }}>{post.resumo}</p>
-        <p style={{ margin: 0 }}>{post.conteudo}</p>
+        {paragrafos.map((par, i) => (
+          <p key={i} style={{ margin: "0 0 14px" }}>
+            {par}
+          </p>
+        ))}
       </div>
 
       <Link className="link" href="/blog" style={{ marginTop: "28px", display: "inline-flex" }}>
