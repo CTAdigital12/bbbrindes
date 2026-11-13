@@ -320,16 +320,19 @@ section.sec{padding:56px 0 8px}
 /* catalogo digital: flipbook (heyzine) + botao .catd no header */
 .flip{position:relative;width:100%;aspect-ratio:16/9;border-radius:var(--r);overflow:hidden;background:var(--deep);box-shadow:var(--sh-1);margin-top:4px}
 .flip iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+/* modo foco: moldura escura em volta do flipbook, com respiro, pra focar o catalogo */
+.flipstage{background:var(--g-deep);border-radius:var(--r);padding:28px;margin-top:18px;box-shadow:var(--sh-2)}
+.flipstage .flip{margin-top:0;box-shadow:none}
 .catd .ic{width:16px;height:16px}
-@media(max-width:900px){.catd{display:none}.flip{aspect-ratio:3/4}}
+@media(max-width:900px){.catd{display:none}.flip{aspect-ratio:3/4}.flipstage{padding:16px}}
 .blog{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
-.post{background:#fff;border-radius:var(--r);overflow:hidden;box-shadow:var(--sh-1);transition:transform .25s}
+.post{background:#fff;border-radius:var(--r);overflow:hidden;box-shadow:var(--sh-1);transition:transform .25s;display:flex;flex-direction:column;height:100%}
 .post:hover{transform:translateY(-4px)}
 .post .ph{aspect-ratio:16/9;overflow:hidden}
 .post .ph img{width:100%;height:100%;object-fit:cover}
-.post .bd{padding:16px 18px 20px;display:flex;flex-direction:column;gap:6px}
-.post h3{margin:0;font-size:15.5px;line-height:1.4;font-weight:600}
-.post p{margin:0;font-size:13px;color:var(--muted)}
+.post .bd{padding:16px 18px 20px;display:flex;flex-direction:column;gap:6px;flex:1}
+.post h3{margin:0;font-size:15.5px;line-height:1.4;font-weight:600;display:-webkit-box;-webkit-line-clamp:2;line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.post p{margin:0;font-size:13px;color:var(--muted);display:-webkit-box;-webkit-line-clamp:3;line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
 
 /* faq */
 .faq{display:grid;grid-template-columns:340px 1fr;gap:40px;align-items:start}
@@ -597,6 +600,7 @@ h2.h{font-size:24px;letter-spacing:-.02em;font-weight:600;margin:0 0 16px}
 @media (max-width:1100px){
   .cgrid{grid-template-columns:repeat(3,1fr)}
   .track{grid-auto-columns:calc((100% - 2*16px)/3)}
+  .blog,.press{grid-template-columns:repeat(2,1fr)}
   .pgrid{grid-template-columns:repeat(3,1fr)}
   .tgrid6{grid-template-columns:repeat(4,1fr)}
   .eco{grid-template-columns:1fr}
