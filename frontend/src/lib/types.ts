@@ -45,6 +45,10 @@ export type Produto = {
   // revela no HOVER (slot .alt full-bleed). Opcional; quando vazia o hover cai no
   // comportamento antigo (2a foto da galeria).
   imagemAmbientada?: string;
+  // Imagem de dimensoes/medidas (Payload: imagemDimensoes). Opcional; quando
+  // presente, a PDP mostra o botao "Ver dimensoes do produto" (abre modal com a
+  // imagem das cotas). Diferente da ambientada (lifestyle).
+  imagemDimensoes?: string;
   // Video da linha do produto (Payload: videoUrl, URL do YouTube). Opcional;
   // quando presente, a PDP mostra o botao "Ver video" (abre modal com o embed).
   videoUrl?: string;

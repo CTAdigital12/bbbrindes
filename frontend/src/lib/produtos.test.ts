@@ -52,6 +52,7 @@ describe("getProdutoBySlug", () => {
           selos: { livreDeBpa: true, usoPermanente: false },
           cores: [{ nome: "Standard" }, { nome: "Azul", hex: "#0000ff" }],
           imagens: [{ url: "http://x/1.webp" }, { url: "http://x/2.webp" }],
+          imagemDimensoes: { url: "http://x/dim.webp" },
           faixaPreco: "4-a-15",
           logistica: { materiaPrima: "PEAD + PEBD" },
         },
@@ -63,6 +64,8 @@ describe("getProdutoBySlug", () => {
     expect(p!.categoria).toBe("squeezes");
     expect(p!.material).toBe("PEAD + PEBD");
     expect(p!.imagens).toEqual(["http://x/1.webp", "http://x/2.webp"]);
+    // Imagem de dimensoes (upload unico) resolve para a URL do Payload.
+    expect(p!.imagemDimensoes).toBe("http://x/dim.webp");
     // Cor sem hex ganha um tom padrao; com hex mantem o informado.
     expect(p!.cores[0]).toEqual({ nome: "Standard", hex: "#e5e7eb" });
     expect(p!.cores[1]).toEqual({ nome: "Azul", hex: "#0000ff" });

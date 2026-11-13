@@ -52,11 +52,16 @@ export default function ProdutoView({ produto }: { produto: Produto }) {
   const [sbOn, setSbOn] = useState(false);
   const [toastMsg, setToastMsg] = useState("");
   const [videoOpen, setVideoOpen] = useState(false);
+  const [dimOpen, setDimOpen] = useState(false);
 
   // Video da linha (YouTube): converte a URL de watch em embed. So aparece o
   // botao "Ver video" quando o produto tem videoUrl.
   const ytId = produto.videoUrl?.match(/[?&]v=([\w-]+)/)?.[1];
   const embedUrl = ytId ? `https://www.youtube.com/embed/${ytId}` : null;
+
+  // Imagem de dimensoes (Payload: imagemDimensoes). So aparece o botao "Ver
+  // dimensoes do produto" quando o produto tem a imagem cadastrada.
+  const dimensoesSrc = imgSrc(produto.imagemDimensoes);
 
   const stageRef = useRef<HTMLDivElement>(null);
   const imgRef = useRef<HTMLImageElement>(null);
@@ -99,15 +104,18 @@ export default function ProdutoView({ produto }: { produto: Produto }) {
     return () => document.body.classList.remove("sb-on");
   }, [sbOn]);
 
-  // Fecha o modal de video com Esc.
+  // Fecha os modais (video / dimensoes) com Esc.
   useEffect(() => {
-    if (!videoOpen) return;
+    if (!videoOpen && !dimOpen) return;
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") setVideoOpen(false);
+      if (e.key === "Escape") {
+        setVideoOpen(false);
+        setDimOpen(false);
+      }
     };
     document.addEventListener("keydown", onKey);
     return () => document.removeEventListener("keydown", onKey);
-  }, [videoOpen]);
+  }, [videoOpen, dimOpen]);
 
   function toast(msg: string) {
     setToastMsg(msg);
@@ -213,6 +221,16 @@ export default function ProdutoView({ produto }: { produto: Produto }) {
             <button type="button" className="vbtn" onClick={() => setVideoOpen(true)}>
               <Icon name="camera" />
               Ver vídeo do produto
+            </button>
+          )}
+
+          {/* Botao "Ver dimensoes do produto" na mesma area de midia, junto da
+              galeria (item C da revisao Plinio). So aparece quando o produto tem a
+              imagem de dimensoes cadastrada; abre um modal com as cotas. */}
+          {dimensoesSrc && (
+            <button type="button" className="vbtn" onClick={() => setDimOpen(true)}>
+              <Icon name="ruler-measure" />
+              Ver dimensões do produto
             </button>
           )}
         </div>
@@ -382,6 +400,52 @@ export default function ProdutoView({ produto }: { produto: Produto }) {
                 title={`Vídeo do produto ${produto.nome}`}
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                 allowFullScreen
+              />
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal de dimensoes (imagem com as cotas do produto). Mesmo padrao visual
+          do modal de video (.vmodal/.vbox/.vclose): fecha no Esc e no clique do
+          fundo. A imagem usa object-fit:contain para caber sem distorcer. */}
+      {dimOpen && dimensoesSrc && (
+        <div
+          className="vmodal"
+          role="dialog"
+          aria-modal="true"
+          aria-label={`Dimensões do produto ${produto.nome}`}
+          onClick={() => setDimOpen(false)}
+        >
+          <div className="vbox" onClick={(e) => e.stopPropagation()}>
+            <button
+              type="button"
+              className="vclose"
+              aria-label="Fechar dimensões"
+              onClick={() => setDimOpen(false)}
+            >
+              <Icon name="x" />
+            </button>
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                background: "#fff",
+                borderRadius: 14,
+                padding: 16,
+                boxShadow: "var(--sh-2)",
+              }}
+            >
+              <img
+                src={dimensoesSrc}
+                alt={`Dimensões do produto ${produto.nome}`}
+                style={{
+                  maxWidth: "100%",
+                  maxHeight: "80vh",
+                  objectFit: "contain",
+                  display: "block",
+                }}
               />
             </div>
           </div>
