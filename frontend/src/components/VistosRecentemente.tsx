@@ -20,6 +20,7 @@ type Recente = {
   nome: string;
   categoria: string;
   imagens: string[];
+  imagemAmbientada?: string;
   cores: { nome: string; hex: string }[];
   tags: string[];
   destaques: Produto["destaques"];
@@ -30,6 +31,7 @@ const compactar = (p: Produto): Recente => ({
   nome: p.nome,
   categoria: p.categoria,
   imagens: (p.imagens ?? []).slice(0, 2),
+  imagemAmbientada: p.imagemAmbientada,
   cores: p.cores ?? [],
   tags: p.tags ?? [],
   destaques: p.destaques ?? [],
@@ -50,6 +52,7 @@ const expandir = (r: Recente): Produto => ({
   destaques: r.destaques ?? [],
   tags: r.tags ?? [],
   imagens: r.imagens ?? [],
+  imagemAmbientada: r.imagemAmbientada,
 });
 
 export default function VistosRecentemente({ produto }: { produto: Produto }) {
