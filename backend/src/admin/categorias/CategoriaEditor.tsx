@@ -1,4 +1,5 @@
 'use client'
+import { useUnsavedGuard } from '../friendly/unsaved-guard'
 import React, { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
@@ -21,6 +22,7 @@ export function CategoriaEditor({ initial, canSave = true, produtosCount }: { in
   const [siblings, setSiblings] = useState<OrdemSibling[]>([])
   const [pendingReorder, setPendingReorder] = useState<OrdemChange[]>([])
   const dirty = JSON.stringify(categoria) !== JSON.stringify(original)
+  useUnsavedGuard(dirty)
   const disabled = !canSave || saving
   const ordemAtual = Number(categoria.ordem ?? 0)
   const ordemMudou = (categoria.ordem ?? 0) !== (original.ordem ?? 0)

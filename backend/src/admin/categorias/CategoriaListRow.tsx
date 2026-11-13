@@ -9,20 +9,26 @@ import { CATEGORIA_PATH, type CategoriaRow } from './categoria-model'
 type Props = {
   categoria: CategoriaRow; canCreate: boolean; canDelete?: boolean
   reorder?: boolean; busy?: boolean; canMoveUp?: boolean; canMoveDown?: boolean; onMove?: (dir: 'up' | 'down') => void; onRemove?: () => void
-  dragging?: boolean; dropTarget?: boolean
+  dragging?: boolean; dropTarget?: boolean; dropAfter?: boolean
   onDragStart?: () => void; onDragOver?: (event: React.DragEvent) => void; onDrop?: () => void; onDragEnd?: () => void
 }
 // Item L: a linha pode ser arrastada (grip) pra reordenar. As setinhas continuam
 // pra quem navega por teclado / nao quer arrastar.
-export function CategoriaListRow({ categoria, canCreate, canDelete = false, reorder = false, busy = false, canMoveUp = false, canMoveDown = false, onMove, onRemove, dragging = false, dropTarget = false, onDragStart, onDragOver, onDrop, onDragEnd }: Props) {
+export function CategoriaListRow({ categoria, canCreate, canDelete = false, reorder = false, busy = false, canMoveUp = false, canMoveDown = false, onMove, onRemove, dragging = false, dropTarget = false, dropAfter = false, onDragStart, onDragOver, onDrop, onDragEnd }: Props) {
   const icone = photo(categoria.icone)
   const eco = categoria.grupo === 'ecologicos'
-  const rowStyle: React.CSSProperties = dragging ? { opacity: 0.4 } : dropTarget ? { boxShadow: 'inset 0 2px 0 0 var(--green, #0a7d4f)' } : {}
+  // Guia verde: embaixo do alvo quando desce (dropAfter), em cima quando sobe.
+  const guia = dropAfter ? 'inset 0 -2px 0 0 var(--green, #0a7d4f)' : 'inset 0 2px 0 0 var(--green, #0a7d4f)'
+  const rowStyle: React.CSSProperties = dragging ? { opacity: 0.4 } : dropTarget ? { boxShadow: guia } : {}
   return <tr
     aria-busy={busy}
     draggable={reorder && !busy}
     style={rowStyle}
-    onDragStart={reorder ? () => onDragStart?.() : undefined}
+    onDragStart={reorder ? (event: React.DragEvent) => {
+      // Firefox so inicia o arrasto se o dragstart escrever algo no dataTransfer.
+      try { event.dataTransfer.effectAllowed = 'move'; event.dataTransfer.setData('text/plain', String(categoria.id)) } catch { /* noop */ }
+      onDragStart?.()
+    } : undefined}
     onDragOver={reorder ? onDragOver : undefined}
     onDrop={reorder ? (event) => { event.preventDefault(); onDrop?.() } : undefined}
     onDragEnd={reorder ? () => onDragEnd?.() : undefined}

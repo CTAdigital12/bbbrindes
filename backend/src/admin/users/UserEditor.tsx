@@ -1,11 +1,12 @@
 'use client'
+import { useUnsavedGuard } from '../friendly/unsaved-guard'
 import React, { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { requestJSON } from '../friendly/api'
 import { Icon } from '../friendly/icons'
 import { userBody, userSaveIssue, validateUser } from './users-data'
-import { USER_PATH, type UserDraft, type UserIssue } from './users-model'
+import { USER_PATH, USER_ROLES, type UserDraft, type UserIssue } from './users-model'
 import { UserPreview } from './UserPreview'
 export function UserEditor({ initial, canSave = true }: { initial: UserDraft; canSave?: boolean }) {
   const router = useRouter()
@@ -16,6 +17,7 @@ export function UserEditor({ initial, canSave = true }: { initial: UserDraft; ca
   const [error, setError] = useState<UserIssue>()
   const [message, setMessage] = useState('')
   const dirty = JSON.stringify(user) !== JSON.stringify(original)
+  useUnsavedGuard(dirty)
   const disabled = !canSave || saving
   useEffect(() => {
     if (!dirty) return
@@ -27,7 +29,7 @@ export function UserEditor({ initial, canSave = true }: { initial: UserDraft; ca
     if (!error?.field) return
     const field = document.getElementById(error.field); field?.focus(); field?.scrollIntoView({ block: 'center' })
   }, [error])
-  function change(field: 'email' | 'password', value: string) { setUser(current => ({ ...current, [field]: value })); setMessage(''); setError(undefined) }
+  function change(field: 'email' | 'password' | 'role', value: string) { setUser(current => ({ ...current, [field]: value }) as UserDraft); setMessage(''); setError(undefined) }
   async function save() {
     const issue = validateUser(user, isNew)
     if (issue) { setError({ ...issue }); return }
@@ -49,6 +51,7 @@ export function UserEditor({ initial, canSave = true }: { initial: UserDraft; ca
       <div className="bb-card"><div className="bd">
         <div className="fld"><label htmlFor="bb-user-email">E-mail de acesso</label><input className="inp" id="bb-user-email" type="email" autoComplete="off" aria-invalid={error?.field === 'bb-user-email'} placeholder="nome@bbbrindes.com.br" value={user.email} disabled={disabled} onChange={e => change('email', e.target.value)} /></div>
         <div className="fld"><label htmlFor="bb-user-senha">{isNew ? 'Senha' : 'Nova senha'}</label><input className="inp" id="bb-user-senha" type="password" autoComplete="new-password" aria-invalid={error?.field === 'bb-user-senha'} placeholder={isNew ? 'Ao menos 8 caracteres' : 'Deixe em branco para manter a atual'} value={user.password || ''} disabled={disabled} onChange={e => change('password', e.target.value)} /><span className="help">{isNew ? 'O usuário entra no painel com este e-mail e senha.' : 'Preencha só se quiser trocar a senha.'}</span></div>
+        <div className="fld"><label htmlFor="bb-user-role">Nível de acesso</label><select className="inp" id="bb-user-role" value={user.role || 'admin'} disabled={disabled} onChange={e => change('role', e.target.value)}>{USER_ROLES.map(r => <option key={r.value} value={r.value}>{r.label}</option>)}</select><span className="help">{USER_ROLES.find(r => r.value === (user.role || 'admin'))?.hint}</span></div>
       </div><div className="pub"><div className="line" style={{ padding: '0 16px 12px' }}>{dirty ? <span className="bb-warning">Alterações ainda não salvas</span> : <span className="help">Tudo salvo.</span>}</div><div className="foot"><Link className="lnk" href={USER_PATH}>Cancelar</Link><button type="button" className="btn pri" disabled={disabled} onClick={() => void save()}>{saving ? 'Salvando…' : 'Salvar usuário'}</button></div></div></div>
     </div>
     <div className="prev"><UserPreview user={user} isNew={isNew} /></div></div>

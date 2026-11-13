@@ -1,6 +1,6 @@
 "use client"
 import React from 'react'
-import type { UserDraft } from './users-model'
+import { roleLabel, type UserDraft } from './users-model'
 // Previa simples: o cartao da conta de administrador. Nao e conteudo do site; so
 // ajuda a confirmar quem tera acesso ao painel.
 export function UserPreview({ user, isNew }: { user: UserDraft; isNew: boolean }) {
@@ -12,7 +12,7 @@ export function UserPreview({ user, isNew }: { user: UserDraft; isNew: boolean }
       <span className="bb-user-ava" aria-hidden>{inicial}</span>
       <div className="bb-user-bd">
         <b>{email || 'e-mail do usuário'}</b>
-        <span className="bb-user-role">Administrador do painel</span>
+        <span className="bb-user-role">{roleLabel(user.role)}</span>
       </div>
     </div>
     <p className="bb-user-note">{isNew ? 'Ao salvar, esta pessoa passa a entrar no painel com o e-mail e a senha definidos.' : 'A senha só muda se você preencher o campo de nova senha.'}</p>

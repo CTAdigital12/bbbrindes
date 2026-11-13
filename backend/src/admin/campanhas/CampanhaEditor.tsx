@@ -1,4 +1,5 @@
 'use client'
+import { useUnsavedGuard } from '../friendly/unsaved-guard'
 import React, { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
@@ -23,6 +24,7 @@ export function CampanhaEditor({ initial, canSave = true }: { initial: CampanhaD
   const [message, setMessage] = useState('')
   const [picker, setPicker] = useState(false)
   const dirty = JSON.stringify(campanha) !== JSON.stringify(original)
+  useUnsavedGuard(dirty)
   const disabled = !canSave || saving
   const [statusKey, statusLabel] = campStatus(campanha)
   const produtos = selectedProducts(campanha)

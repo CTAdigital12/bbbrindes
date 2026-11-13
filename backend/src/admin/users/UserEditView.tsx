@@ -20,5 +20,5 @@ export default async function UserEditView(props: DocumentViewServerProps & { do
 async function initialUser(req: PayloadRequest, id: number | string | undefined): Promise<UserDraft> {
   if (!id) return newUser()
   const user = await req.payload.findByID({ collection: 'users', id, depth: 0, overrideAccess: false, user: req.user }) as unknown as UserDraft
-  return { id: user.id, email: user.email, password: '', updatedAt: user.updatedAt }
+  return { id: user.id, email: user.email, password: '', role: user.role ?? 'admin', updatedAt: user.updatedAt }
 }

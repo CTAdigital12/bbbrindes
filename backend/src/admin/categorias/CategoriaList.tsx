@@ -27,6 +27,9 @@ export function CategoriaList({ initial, canCreate = true, canUpdate = true, can
     .filter(c => c.nome.toLocaleLowerCase('pt-BR').includes(search.toLocaleLowerCase('pt-BR')))), [rows, filter, search])
   // Reordenar so com a lista inteira a vista (sem busca). Mover e dentro do grupo.
   const canReorder = canUpdate && !search.trim()
+  // Indice da linha sendo arrastada (na vista atual): decide se a guia verde vai
+  // em cima (subindo) ou embaixo (descendo) do alvo, batendo com reordenarPorArrasto.
+  const dragIndex = dragId == null ? -1 : visible.findIndex(v => v.id === dragId)
   // Persiste a nova ordem (setinhas E arrasto usam o mesmo caminho). Otimista: pinta
   // a tela na hora e desfaz se a API recusar.
   async function salvarOrdens(nextRows: CategoriaRow[], changes: OrdemChange[]) {
@@ -81,8 +84,9 @@ export function CategoriaList({ initial, canCreate = true, canUpdate = true, can
       onRemove={() => void remove(c)}
       dragging={dragId === c.id}
       dropTarget={overId === c.id && dragId !== null && dragId !== c.id && grupoRank(c.grupo) === grupoRank(visible.find(v => v.id === dragId)?.grupo)}
+      dropAfter={dragIndex >= 0 && dragIndex < index}
       onDragStart={() => setDragId(c.id)}
-      onDragOver={event => { if (dragId !== null && dragId !== c.id) { event.preventDefault(); setOverId(c.id) } }}
+      onDragOver={event => { if (dragId !== null && dragId !== c.id) { event.preventDefault(); try { event.dataTransfer.dropEffect = 'move' } catch { /* noop */ } setOverId(c.id) } }}
       onDrop={() => void soltar(c.id)}
       onDragEnd={() => { setDragId(null); setOverId(null) }}
     />)}{!visible.length ? <tr><td colSpan={canReorder ? 6 : 5} className="empty">Nenhuma categoria neste filtro.</td></tr> : null}</tbody></table></div>

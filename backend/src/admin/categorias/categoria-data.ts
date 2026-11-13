@@ -73,7 +73,10 @@ export function reordenarPorArrasto(rows: CategoriaRow[], draggedId: number, tar
   if (grupoRank(ordered[from].grupo) !== grupoRank(ordered[to].grupo)) return { rows, changes: [] }
   const next = ordered.slice()
   const [moved] = next.splice(from, 1)
-  const insertAt = next.findIndex(r => r.id === targetId)
+  const targetIdx = next.findIndex(r => r.id === targetId)
+  // Arrastando pra BAIXO (from < to): solta DEPOIS do alvo. Pra cima: ANTES do alvo.
+  // Sem isso, descer 1 posicao exigia soltar no item 2 abaixo (insere sempre antes).
+  const insertAt = from < to ? targetIdx + 1 : targetIdx
   next.splice(insertAt, 0, moved)
   const changes: OrdemChange[] = []
   const nextOrdem = new Map<number, number>()

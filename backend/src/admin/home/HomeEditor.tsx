@@ -1,4 +1,5 @@
 'use client'
+import { useUnsavedGuard } from '../friendly/unsaved-guard'
 import React, { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { requestJSON } from '../friendly/api'
@@ -14,6 +15,7 @@ export function HomeEditor({ initial, canSave = true }: { initial: HomeContent; 
   const [error, setError] = useState<HomeIssue>()
   const [message, setMessage] = useState('')
   const dirty = JSON.stringify(home) !== JSON.stringify(original)
+  useUnsavedGuard(dirty)
   const disabled = !canSave || saving
   useEffect(() => {
     if (!dirty) return

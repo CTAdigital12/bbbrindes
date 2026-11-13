@@ -421,7 +421,7 @@ export interface Categoria {
   createdAt: string;
 }
 /**
- * Imagens ate 15 MB. Sao convertidas pra WebP e reduzidas pro maximo de 2400px no lado maior. Dimensoes recomendadas: foto de produto ~1200x1200px, logo de cliente ~600x300px (fundo transparente), banner/hero ~1920x1080px, icone de categoria ~240x240px.
+ * Toda imagem do site passa por aqui. Aceita JPG, PNG ou WebP ate 15 MB; e convertida pra WebP e reduzida pro maximo de 2400px no lado maior. Dimensoes recomendadas por uso: foto de produto ~1200x1200px (quadrada); capa de campanha e banner da home ~1920x1080px (16:9); capa de post do blog ~1200x630px; foto de case ~1200x800px; logo de cliente ~600x300px (fundo transparente); icone de categoria ~240x240px. Use a maior qualidade possivel: o painel reduz sozinho.
  *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "media".
@@ -549,8 +549,8 @@ export interface Post {
    */
   slug: string;
   resumo?: string | null;
-  data: string;
   autor?: string | null;
+  data: string;
   capa?: (number | null) | Media;
   conteudo?: {
     root: {
@@ -1178,8 +1178,8 @@ export interface PostsSelect<T extends boolean = true> {
   titulo?: T;
   slug?: T;
   resumo?: T;
-  data?: T;
   autor?: T;
+  data?: T;
   capa?: T;
   conteudo?: T;
   tags?: T;
