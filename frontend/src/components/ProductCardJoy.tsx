@@ -91,7 +91,24 @@ export default function ProductCardJoy({
           {fotoReal ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img src={fotoReal} alt={produto.nome} loading="lazy" />
-          ) : null}
+          ) : (
+            // Produto sem foto real (gap de cadastro): no lugar do painel vazio,
+            // um placeholder neutro e discreto. Icone de caixa (coerente com
+            // brinde/produto) centralizado no gradiente do .ph, em tom suave
+            // (var(--muted)). Decorativo: o aria-label do Link ja carrega o nome
+            // do produto, entao o Icon fica aria-hidden (padrao do componente).
+            <span
+              className="ph-ph"
+              style={{
+                display: "inline-flex",
+                color: "var(--muted)",
+                fontSize: "46px",
+                opacity: 0.45,
+              }}
+            >
+              <Icon name="package" />
+            </span>
+          )}
           {fotoMockup ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img className="alt" src={fotoMockup} alt="" loading="lazy" />
