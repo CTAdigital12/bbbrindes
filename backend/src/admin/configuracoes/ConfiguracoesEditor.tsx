@@ -1,4 +1,5 @@
 'use client'
+import { useUnsavedGuard } from '../friendly/unsaved-guard'
 import React, { useEffect, useState } from 'react'
 import { requestJSON } from '../friendly/api'
 import { Icon } from '../friendly/icons'
@@ -14,6 +15,7 @@ export function ConfiguracoesEditor({ initial, canSave = true }: { initial: Conf
   const [error, setError] = useState<ConfigIssue>()
   const [message, setMessage] = useState('')
   const dirty = JSON.stringify(config) !== JSON.stringify(original)
+  useUnsavedGuard(dirty)
   const disabled = !canSave || saving
   useEffect(() => {
     if (!dirty) return

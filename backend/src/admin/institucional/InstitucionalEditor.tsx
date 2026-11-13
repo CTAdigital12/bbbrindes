@@ -1,4 +1,5 @@
 'use client'
+import { useUnsavedGuard } from '../friendly/unsaved-guard'
 import React, { useEffect, useState } from 'react'
 import { requestJSON } from '../friendly/api'
 import { Icon } from '../friendly/icons'
@@ -29,6 +30,7 @@ export function InstitucionalEditor({ initial, canSave = true }: { initial: Inst
   const [error, setError] = useState<InstitucionalIssue>()
   const [message, setMessage] = useState('')
   const dirty = JSON.stringify(content) !== JSON.stringify(original)
+  useUnsavedGuard(dirty)
   const disabled = !canSave || saving
   useEffect(() => {
     if (!dirty) return

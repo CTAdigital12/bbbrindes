@@ -2,6 +2,7 @@ import React from 'react'
 import type { ServerProps, VisibleEntities } from 'payload'
 import { AdminNavigation, type NavItem } from './AdminChrome'
 import { NAV_ITEMS, MORE_ITEMS } from './nav'
+import { UnsavedGuardHost } from './unsaved-guard'
 export default async function AdminSidebar(props: ServerProps & { visibleEntities: VisibleEntities }) {
   if (!props.user) return null
   const collectionRights = props.permissions?.collections ?? {}
@@ -18,5 +19,5 @@ export default async function AdminSidebar(props: ServerProps & { visibleEntitie
     const result = await props.payload.count({ collection: 'produtos', where: { imagens: { exists: false } }, overrideAccess: false, user: props.user })
     products.badge = result.totalDocs
   }
-  return <AdminNavigation items={items} more={MORE_ITEMS.filter(allowed)} />
+  return <><AdminNavigation items={items} more={MORE_ITEMS.filter(allowed)} /><UnsavedGuardHost /></>
 }

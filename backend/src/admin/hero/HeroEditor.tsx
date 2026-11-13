@@ -1,4 +1,5 @@
 'use client'
+import { useUnsavedGuard } from '../friendly/unsaved-guard'
 import React, { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
@@ -16,6 +17,7 @@ export function HeroEditor({ initial, canSave = true }: { initial: HeroDraft; ca
   const [error, setError] = useState<HeroIssue>()
   const [message, setMessage] = useState('')
   const dirty = JSON.stringify(banner) !== JSON.stringify(original)
+  useUnsavedGuard(dirty)
   const disabled = !canSave || saving
   const [statusKey, statusLabel] = heroStatus(banner)
   useEffect(() => {

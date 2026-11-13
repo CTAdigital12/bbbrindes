@@ -1,4 +1,5 @@
 'use client'
+import { useUnsavedGuard } from '../friendly/unsaved-guard'
 import React, { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
@@ -17,6 +18,7 @@ export function ImprensaEditor({ initial, canSave = true }: { initial: ImprensaD
   const [message, setMessage] = useState('')
   const [tagPicker, setTagPicker] = useState(false)
   const dirty = JSON.stringify(materia) !== JSON.stringify(original)
+  useUnsavedGuard(dirty)
   const disabled = !canSave || saving
   const tags = materiaTags(materia)
   useEffect(() => {

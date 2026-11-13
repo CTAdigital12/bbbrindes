@@ -1,4 +1,5 @@
 'use client'
+import { useUnsavedGuard } from '../friendly/unsaved-guard'
 import React, { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
@@ -18,6 +19,7 @@ export function CaseEditor({ initial, canSave = true }: { initial: CaseDraft; ca
   const [message, setMessage] = useState('')
   const [tagPicker, setTagPicker] = useState(false)
   const dirty = JSON.stringify(caseItem) !== JSON.stringify(original)
+  useUnsavedGuard(dirty)
   const disabled = !canSave || saving
   const tags = caseTags(caseItem)
   useEffect(() => {

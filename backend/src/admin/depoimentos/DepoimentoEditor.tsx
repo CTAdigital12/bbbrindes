@@ -1,4 +1,5 @@
 'use client'
+import { useUnsavedGuard } from '../friendly/unsaved-guard'
 import React, { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
@@ -16,6 +17,7 @@ export function DepoimentoEditor({ initial, canSave = true }: { initial: Depoime
   const [error, setError] = useState<DepoimentoIssue>()
   const [message, setMessage] = useState('')
   const dirty = JSON.stringify(depoimento) !== JSON.stringify(original)
+  useUnsavedGuard(dirty)
   const disabled = !canSave || saving
   const [statusKey, statusLabel] = depStatus(depoimento)
   useEffect(() => {

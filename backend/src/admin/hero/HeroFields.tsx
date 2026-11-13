@@ -18,10 +18,8 @@ export function HeroContentFields({ banner, change, disabled, errorField }: Hero
       <HeroImageField label="Imagem para computador" help="1656 × 480 px · até 15 MB · sem texto na imagem." value={banner.imagemDesktop} disabled={disabled} onChange={value => change('imagemDesktop', value)} />
       <HeroImageField label="Imagem para celular" help="716 × 480 px · até 15 MB · opcional (sem ela, usa a de computador)." value={banner.imagemMobile} disabled={disabled} onChange={value => change('imagemMobile', value)} />
     </div>
-    <div className="row2">
-      <HeroField banner={banner} change={change} disabled={disabled} field="tag" label="Etiqueta" errorField={errorField} help="Texto pequeno acima do título (ex.: Carnaval)." />
-      <div className="fld"><label htmlFor="bb-hero-icone">Ícone da etiqueta</label><div className="bb-hero-icon-field"><select className="inp" id="bb-hero-icone" value={banner.icone || 'sparkles'} disabled={disabled} onChange={event => change('icone', event.target.value)}>{ICON_OPTIONS.map(([value, label]) => <option key={value} value={value}>{label}</option>)}</select><span className="bb-hero-icon-preview"><HeroIcon name={banner.icone || 'sparkles'} /></span></div></div>
-    </div>
+    <HeroField banner={banner} change={change} disabled={disabled} field="tag" label="Etiqueta" errorField={errorField} help="Texto pequeno acima do título (ex.: Carnaval)." />
+    <div className="fld"><label htmlFor="bb-hero-icone">Ícone da etiqueta</label><div className="bb-hero-icon-field"><select className="inp" id="bb-hero-icone" value={banner.icone || 'sparkles'} disabled={disabled} onChange={event => change('icone', event.target.value)}>{ICON_OPTIONS.map(([value, label]) => <option key={value} value={value}>{label}</option>)}</select><span className="bb-hero-icon-preview"><HeroIcon name={banner.icone || 'sparkles'} /></span></div></div>
     <div className="fld"><span className="lbl">Título sobre a imagem</span>
       <div className="row3 bb-hero-title">
         <input className="inp" aria-label="Início do título" placeholder="Início" value={text(banner, 'tituloAntes')} disabled={disabled} onChange={event => change('tituloAntes', event.target.value)} />

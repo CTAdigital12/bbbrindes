@@ -1,4 +1,5 @@
 'use client'
+import { useUnsavedGuard } from '../friendly/unsaved-guard'
 import React, { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
@@ -7,7 +8,7 @@ import { Icon } from '../friendly/icons'
 import { HeroImageField } from '../hero/HeroImageField'
 import { plainText, richText } from '../friendly/product-data'
 import { campanhaBody, campSaveIssue, campStatus, validateCampanha } from './campanha-data'
-import { CAMPANHA_PATH, MES_OPTIONS, type CampanhaDraft, type CampanhaIssue } from './campanha-model'
+import { CAMPANHA_IMG_HINT, CAMPANHA_PATH, MES_OPTIONS, type CampanhaDraft, type CampanhaIssue } from './campanha-model'
 import { CampanhaPreview } from './CampanhaPreview'
 import { ProductPicker } from './ProductPicker'
 import type { Product } from '../friendly/model'
@@ -23,6 +24,7 @@ export function CampanhaEditor({ initial, canSave = true }: { initial: CampanhaD
   const [message, setMessage] = useState('')
   const [picker, setPicker] = useState(false)
   const dirty = JSON.stringify(campanha) !== JSON.stringify(original)
+  useUnsavedGuard(dirty)
   const disabled = !canSave || saving
   const [statusKey, statusLabel] = campStatus(campanha)
   const produtos = selectedProducts(campanha)
@@ -60,7 +62,7 @@ export function CampanhaEditor({ initial, canSave = true }: { initial: CampanhaD
           <div className="fld"><label htmlFor="bb-camp-mes">Mês / período</label><input className="inp" id="bb-camp-mes" list="bb-camp-meses" placeholder="Ex.: Maio" value={campanha.mes || ''} disabled={disabled} onChange={e => change('mes', e.target.value)} /><datalist id="bb-camp-meses">{MES_OPTIONS.map(m => <option key={m} value={m} />)}</datalist></div>
           <div className="fld"><label htmlFor="bb-camp-chamada">Chamada / subtítulo</label><input className="inp" id="bb-camp-chamada" value={campanha.chamada || ''} disabled={disabled} onChange={e => change('chamada', e.target.value)} /></div>
         </div>
-        <HeroImageField label="Imagem da campanha" help="Aparece no card da home e no topo da página. Vazio usa um fundo verde." value={campanha.imagem} disabled={disabled} onChange={v => change('imagem', v)} />
+        <HeroImageField label="Imagem da campanha" help={CAMPANHA_IMG_HINT} value={campanha.imagem} disabled={disabled} onChange={v => change('imagem', v)} />
         <div className="fld"><label htmlFor="bb-camp-conteudo">Texto da página</label><textarea id="bb-camp-conteudo" rows={6} value={plainText(campanha.conteudo)} disabled={disabled} onChange={e => change('conteudo', richText(e.target.value))} /></div>
         <div className="fld"><span className="lbl">Produtos em destaque <span className="opt">({produtos.length})</span></span>{produtos.length ? <div className="bb-camp-chips">{produtos.map(p => <span className="bb-camp-chip" key={p.id}>{p.nome}<button type="button" aria-label={`Remover ${p.nome}`} disabled={disabled} onClick={() => change('produtos', produtos.filter(x => x.id !== p.id))}>×</button></span>)}</div> : <span className="help">Nenhum produto selecionado.</span>}<button type="button" className="btn sm" disabled={disabled} onClick={() => setPicker(true)}>Gerenciar produtos</button><span className="help">Produtos exibidos na página da campanha.</span></div>
         <label className="bb-check bb-hero-ativo"><input type="checkbox" checked={campanha.ativo !== false} disabled={disabled} onChange={e => change('ativo', e.target.checked)} />Campanha ativa (aparece no site)</label>

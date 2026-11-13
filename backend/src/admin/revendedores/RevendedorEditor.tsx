@@ -1,4 +1,5 @@
 'use client'
+import { useUnsavedGuard } from '../friendly/unsaved-guard'
 import React, { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
@@ -17,6 +18,7 @@ export function RevendedorEditor({ initial, canSave = true }: { initial: Revende
   const [message, setMessage] = useState('')
   const isCreate = !original.id
   const dirty = JSON.stringify(revendedor) !== JSON.stringify(original)
+  useUnsavedGuard(dirty)
   const disabled = !canSave || saving
   const [statusKey, statusLabel] = revStatus(revendedor)
   const needsNivel = revendedor.ativo === true && !revendedor.nivel

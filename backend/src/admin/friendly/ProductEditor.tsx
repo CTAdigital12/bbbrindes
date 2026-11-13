@@ -1,4 +1,5 @@
 'use client'
+import { useUnsavedGuard } from './unsaved-guard'
 /* eslint-disable @next/next/no-img-element */
 import React, { useEffect, useState } from 'react'
 import Link from 'next/link'
@@ -26,6 +27,7 @@ export function ProductEditor({ initial, categories, canSave = true }: { initial
   const [error, setError] = useState<ProductIssue>()
   const [message, setMessage] = useState('')
   const dirty = JSON.stringify(product) !== JSON.stringify(original)
+  useUnsavedGuard(dirty)
   const disabled = !canSave || saving
   useEffect(() => {
     if (!dirty) return

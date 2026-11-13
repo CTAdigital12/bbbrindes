@@ -1,4 +1,5 @@
 'use client'
+import { useUnsavedGuard } from '../friendly/unsaved-guard'
 import React, { useEffect, useState } from 'react'
 import { requestJSON } from '../friendly/api'
 import { Icon } from '../friendly/icons'
@@ -15,6 +16,7 @@ export function CatalogosEditor({ initial, canSave = true }: { initial: Catalogo
   const [error, setError] = useState<CatalogoIssue>()
   const [message, setMessage] = useState('')
   const dirty = JSON.stringify(cat) !== JSON.stringify(original)
+  useUnsavedGuard(dirty)
   const disabled = !canSave || saving
   useEffect(() => {
     if (!dirty) return

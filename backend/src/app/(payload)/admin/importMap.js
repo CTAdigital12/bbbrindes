@@ -58,6 +58,7 @@ import { default as default_82ee5e1b86670bfce7843f3aee455384 } from '../../../ad
 import { default as default_963bbb901cf0bd3cbe95504095aea492 } from '../../../admin/components/BrandIcon'
 import { default as default_2162058de0645498cd641d6b478d2e9c } from '../../../admin/components/BrandLogo'
 import { default as default_ee67e7ec90c35d5f08c13d59f503b648 } from '../../../admin/friendly/DashboardView'
+import { default as default_7d4ba79c37b0865b1c2b2b552d4aaab5 } from '../../../components/ColorPhotoGapsView'
 import { CollectionCards as CollectionCards_f9c02e79a4aed9a3924487c0cd4cafb1 } from '@payloadcms/next/rsc'
 
 /** @type import('payload').ImportMap */
@@ -122,5 +123,6 @@ export const importMap = {
   "/admin/components/BrandIcon#default": default_963bbb901cf0bd3cbe95504095aea492,
   "/admin/components/BrandLogo#default": default_2162058de0645498cd641d6b478d2e9c,
   "/admin/friendly/DashboardView#default": default_ee67e7ec90c35d5f08c13d59f503b648,
+  "/components/ColorPhotoGapsView#default": default_7d4ba79c37b0865b1c2b2b552d4aaab5,
   "@payloadcms/next/rsc#CollectionCards": CollectionCards_f9c02e79a4aed9a3924487c0cd4cafb1
 }

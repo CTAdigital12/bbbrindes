@@ -1,20 +1,23 @@
 import { RequestError } from '../friendly/api-errors'
 import type { UserDraft, UserIssue } from './users-model'
 export function newUser(): UserDraft {
-  return { email: '', password: '' }
+  return { email: '', password: '', role: 'admin' }
 }
-// create: email + senha. edit: email so quando muda; senha so quando preenchida
-// (vazia = mantem a atual). A senha nunca e pre-carregada (a API nao devolve).
+// create: email + senha + papel. edit: email so quando muda; senha so quando preenchida
+// (vazia = mantem a atual); papel so quando muda. A senha nunca e pre-carregada.
+// O campo `role` so e aceito pela API se quem salva for admin (access isAdminField).
 export function userBody(user: UserDraft, original?: UserDraft): Record<string, unknown> {
   const body: Record<string, unknown> = {}
   const email = user.email.trim()
   if (!original) {
     body.email = email
     if (user.password) body.password = user.password
+    body.role = user.role || 'admin'
     return body
   }
   if (email !== (original.email || '').trim()) body.email = email
   if (user.password) body.password = user.password
+  if (user.role && user.role !== original.role) body.role = user.role
   return body
 }
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/

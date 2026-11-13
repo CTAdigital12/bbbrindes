@@ -1,4 +1,5 @@
 'use client'
+import { useUnsavedGuard } from '../friendly/unsaved-guard'
 import React, { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
@@ -15,6 +16,7 @@ export function TagEditor({ initial, canSave = true, usosCount }: { initial: Tag
   const [error, setError] = useState<TagIssue>()
   const [message, setMessage] = useState('')
   const dirty = JSON.stringify(tag) !== JSON.stringify(original)
+  useUnsavedGuard(dirty)
   const disabled = !canSave || saving
   useEffect(() => {
     if (!dirty) return

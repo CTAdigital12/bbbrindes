@@ -1,7 +1,7 @@
 import { mediaID } from '../friendly/model'
 import { RequestError } from '../friendly/api-errors'
 import { grupoRank } from './categoria-model'
-import type { CategoriaDraft, CategoriaIssue, CategoriaRow } from './categoria-model'
+import type { CategoriaDraft, CategoriaIssue, CategoriaRow, GrupoCategoria } from './categoria-model'
 const fields = ['nome', 'grupo', 'ordem', 'icone'] as const
 export function newCategoria(): CategoriaDraft {
   return { nome: '', grupo: 'geral', ordem: 0 }
@@ -57,4 +57,66 @@ export function moverCategoria(rows: CategoriaRow[], id: number, dir: 'up' | 'do
   swapped.forEach((row, index) => { nextOrdem.set(row.id, index); if ((row.ordem ?? 0) !== index) changes.push({ id: row.id, ordem: index }) })
   const updated = rows.map(row => nextOrdem.has(row.id) ? { ...row, ordem: nextOrdem.get(row.id)! } : row)
   return { rows: updated, changes }
+}
+
+// === Item L: reordenar ARRASTANDO ===
+// Move a categoria `draggedId` para a posicao da `targetId` (solta ANTES dela) e
+// renumera a lista inteira (0..n-1, ecologicos primeiro). So reordena DENTRO do
+// mesmo grupo: se o alvo for de outro grupo, nao faz nada (evita cruzar a fronteira
+// ecologicos/geral, igual as setinhas). Devolve so as linhas cuja ordem mudou.
+export function reordenarPorArrasto(rows: CategoriaRow[], draggedId: number, targetId: number): { rows: CategoriaRow[]; changes: OrdemChange[] } {
+  if (draggedId === targetId) return { rows, changes: [] }
+  const ordered = ordenarCategorias(rows)
+  const from = ordered.findIndex(r => r.id === draggedId)
+  const to = ordered.findIndex(r => r.id === targetId)
+  if (from < 0 || to < 0) return { rows, changes: [] }
+  if (grupoRank(ordered[from].grupo) !== grupoRank(ordered[to].grupo)) return { rows, changes: [] }
+  const next = ordered.slice()
+  const [moved] = next.splice(from, 1)
+  const targetIdx = next.findIndex(r => r.id === targetId)
+  // Arrastando pra BAIXO (from < to): solta DEPOIS do alvo. Pra cima: ANTES do alvo.
+  // Sem isso, descer 1 posicao exigia soltar no item 2 abaixo (insere sempre antes).
+  const insertAt = from < to ? targetIdx + 1 : targetIdx
+  next.splice(insertAt, 0, moved)
+  const changes: OrdemChange[] = []
+  const nextOrdem = new Map<number, number>()
+  next.forEach((row, index) => { nextOrdem.set(row.id, index); if ((row.ordem ?? 0) !== index) changes.push({ id: row.id, ordem: index }) })
+  const updated = rows.map(row => nextOrdem.has(row.id) ? { ...row, ordem: nextOrdem.get(row.id)! } : row)
+  return { rows: updated, changes }
+}
+
+// === Item K: conflito de ordem no editor ===
+// Linha minima usada pra detectar/resolver conflito de posicao (lida da API).
+export type OrdemSibling = { id?: number; nome: string; grupo?: GrupoCategoria | null; ordem?: number | null }
+const porOrdemNome = (a: OrdemSibling, b: OrdemSibling) => (a.ordem ?? 0) - (b.ordem ?? 0) || a.nome.localeCompare(b.nome, 'pt-BR')
+// A ordem e global (o site ordena so por `ordem`), entao ordem repetida em QUALQUER
+// categoria e um conflito real (foi o que jogou a categoria "pro fim" quando varias
+// ficaram em 0). Devolve a primeira categoria que ja usa essa ordem.
+export function conflitoOrdem(todas: OrdemSibling[], ordem: number, selfId?: number): OrdemSibling | undefined {
+  return todas.find(c => c.id !== selfId && (c.ordem ?? 0) === ordem)
+}
+// "Substituir": coloca a categoria na posicao desejada (dentro do seu grupo) e
+// renumera tudo 0..n-1 sem duplicatas, mantendo os ecologicos no topo. `alvo` e a
+// ordem global digitada; e encaixada na faixa valida do grupo da categoria.
+export function resolverSubstituir(todas: OrdemSibling[], self: OrdemSibling, grupo: GrupoCategoria | null | undefined, alvo: number): { ordem: number; changes: OrdemChange[] } {
+  const selfRank = grupoRank(grupo)
+  const eco = todas.filter(c => c.id !== self.id && grupoRank(c.grupo) === 0).sort(porOrdemNome)
+  const ger = todas.filter(c => c.id !== self.id && grupoRank(c.grupo) === 1).sort(porOrdemNome)
+  const start = selfRank === 0 ? 0 : eco.length
+  const grupoItens = selfRank === 0 ? eco : ger
+  const idx = Math.max(0, Math.min(alvo - start, grupoItens.length))
+  const item: OrdemSibling = { id: self.id, nome: self.nome, grupo, ordem: self.ordem }
+  const arranged = [...grupoItens.slice(0, idx), item, ...grupoItens.slice(idx)]
+  const full = selfRank === 0 ? [...arranged, ...ger] : [...eco, ...arranged]
+  const changes: OrdemChange[] = []
+  let ordem = start + idx
+  full.forEach((row, i) => {
+    if (row.id === self.id) { ordem = i; return }
+    if ((row.ordem ?? 0) !== i) changes.push({ id: row.id!, ordem: i })
+  })
+  return { ordem, changes }
+}
+// "Mandar pro fim": maior ordem existente + 1 (fica unica, sem baguncar o resto).
+export function ordemFim(todas: OrdemSibling[], selfId?: number): number {
+  return todas.reduce((max, c) => (c.id === selfId ? max : Math.max(max, (c.ordem ?? 0) + 1)), 0)
 }

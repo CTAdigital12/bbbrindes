@@ -1,4 +1,5 @@
 'use client'
+import { useUnsavedGuard } from '../friendly/unsaved-guard'
 /* eslint-disable @next/next/no-img-element */
 import React, { useEffect, useState } from 'react'
 import Link from 'next/link'
@@ -18,6 +19,7 @@ export function LogoEditor({ initial, canSave = true }: { initial: LogoDraft; ca
   const [error, setError] = useState<LogoIssue>()
   const [message, setMessage] = useState('')
   const dirty = file != null || JSON.stringify(logo) !== JSON.stringify(original)
+  useUnsavedGuard(dirty)
   const disabled = !canSave || saving
   const temArquivo = file != null || Boolean(logo.url)
   const shownImg = preview || logo.url || null
