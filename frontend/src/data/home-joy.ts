@@ -115,10 +115,10 @@ export const POSTS: [titulo: string, resumo: string, img: string][] = [
 
 // FAQ (pergunta, resposta). O primeiro item abre por padrao.
 export const FAQ: [pergunta: string, resposta: string][] = [
-  ["Qual é o pedido mínimo?", "A maioria dos produtos é personalizada a partir de 500 unidades. O especialista confirma o mínimo de cada item no orçamento."],
-  ["Com quanto tempo de antecedência preciso fechar?", "Recomendamos fechar com 40 a 60 dias de antecedência. Para o Natal, o ideal é fechar até o fim de outubro, porque a produção de fim de ano é o pico do setor."],
-  ["Como a minha marca é aplicada?", "Por transfer ou serigrafia, conforme o produto. A área de impressão de cada item está na página do produto."],
-  ["Os produtos são atóxicos?", "Os itens com contato com alimento (copos, canecas, squeezes e bowls) têm atoxidade certificada e são livres de BPA."],
+  ["Qual é o pedido mínimo?", "Varia conforme o produto, podendo ser a partir de 25 un para alguns itens ecológicos e normalmente acima de 100 un para os demais. Consulte na página de produto."],
+  ["Com quanto tempo de antecedência preciso fechar?", "20 a 30 dias. Em casos especiais, 7 a 15 dias. Consulte no WhatsApp."],
+  ["Como a minha marca é aplicada?", "Diversos métodos (serigrafia, tampografia, transfer, sleeve), de 1 a 6 cores, inclusive cromo. Área varia por método. Ver página do produto."],
+  ["Os produtos são atóxicos?", "Todos têm toxicidade certificada e níveis de BPA conforme normas da Anvisa para contato com alimento."],
   ["Vocês entregam em todo o Brasil?", "Sim. A BB Brindes, empresa do Grupo BB, fabrica no Brasil e entrega para todo o país."],
 ];
 
