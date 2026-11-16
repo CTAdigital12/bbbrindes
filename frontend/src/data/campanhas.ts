@@ -26,6 +26,20 @@ export const campanhas: Campanha[] = [
   { slug: "natal", nome: "Natal", mes: "Dezembro" },
   { slug: "volta-as-aulas", nome: "Volta às Aulas", mes: "Janeiro" },
   { slug: "ano-novo", nome: "Ano Novo Corporativo", mes: "Janeiro" },
+  // Datas comemorativas adicionais. Sem arte no CAMP_TILE ainda: o seed cria
+  // sem imagem (fundo verde padrao do front) ate subirem o banner no painel.
+  { slug: "dia-do-consumidor", nome: "Dia do Consumidor", mes: "Março" },
+  { slug: "dia-mundial-da-agua", nome: "Dia Mundial da Água", mes: "Março" },
+  { slug: "dia-mundial-da-saude", nome: "Dia Mundial da Saúde", mes: "Abril" },
+  { slug: "dia-do-trabalhador", nome: "Dia do Trabalhador", mes: "Maio" },
+  { slug: "dia-mundial-do-meio-ambiente", nome: "Dia Mundial do Meio Ambiente", mes: "Junho" },
+  { slug: "dia-dos-namorados", nome: "Dia dos Namorados", mes: "Junho" },
+  { slug: "inverno", nome: "Inverno", mes: "Junho" },
+  { slug: "setembro-amarelo", nome: "Setembro Amarelo", mes: "Setembro" },
+  { slug: "dia-do-vendedor", nome: "Dia do Vendedor", mes: "Outubro" },
+  { slug: "novembro-azul", nome: "Novembro Azul", mes: "Novembro" },
+  { slug: "final-de-ano", nome: "Final de Ano", mes: "Dezembro" },
+  { slug: "verao", nome: "Verão", mes: "Dezembro" },
 ];
 
 export function campanhaPorSlug(slug: string): Campanha | undefined {
