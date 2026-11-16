@@ -439,7 +439,7 @@ body.drawer-on .wa-f,body.wa-hide .wa-f{opacity:0;pointer-events:none;transform:
 
 /* produto */
 .pd{display:grid;grid-template-columns:1.05fr .95fr;gap:44px;margin-top:18px;align-items:start}
-.gal{position:sticky;top:140px;display:grid;grid-template-columns:76px 1fr;gap:14px}
+.gal{position:sticky;top:140px;display:grid;grid-template-columns:92px 1fr;gap:14px}
 /* Coluna de miniaturas: altura calibrada pra ~4 slots inteiros (3 fotos + a
    miniatura do video intercalada como 4o item): 4*76 + 3*10 + 8px de folga.
    A folga de 8px absorve a largura da barra de rolagem fina sem cortar a 4a
