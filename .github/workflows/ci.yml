@@ -1,0 +1,96 @@
+name: ci
+
+# Gate de qualidade que roda em todo PR pra master e em todo push na master.
+# Objetivo principal: barrar o bug do "admin em branco" antes do merge.
+#
+# O admin do Payload fica branco em producao quando o importMap.js committado
+# nao tem o handler de upload do S3 (@payloadcms/storage-s3/client). Esse handler
+# so entra no importMap quando o plugin s3Storage esta ativo, e o plugin so ativa
+# quando S3_BUCKET esta setado na hora de gerar o mapa (ver backend/src/payload.config.ts,
+# const hasR2 = Boolean(process.env.S3_BUCKET)). Por isso o job backend roda o
+# generate:importmap com S3_BUCKET setado e falha se o resultado diferir do que
+# esta committado.
+#
+# O deploy continua MANUAL via `railway up` (decisao do cliente). Este CI NAO faz
+# deploy e NAO builda o backend no Railway: ele so valida o codigo. O deploy.yml
+# (publicacao do front no GitHub Pages) segue separado e intocado.
+
+on:
+  pull_request:
+    branches: [master]
+  push:
+    branches: [master]
+
+# Um CI por ref; cancela execucoes antigas da mesma ref quando chega push novo.
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  backend:
+    name: Backend (tsc + importMap + build)
+    runs-on: ubuntu-latest
+    env:
+      # S3_BUCKET ligado pra o generate:importmap incluir o handler do S3, igual
+      # ao ambiente de producao. Os outros dois sao dummies so pra o config montar.
+      S3_BUCKET: ci-dummy-bucket
+      PAYLOAD_SECRET: ci-dummy-secret
+      DATABASE_URI: postgresql://user:pass@localhost:5432/ci
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        # Versao vem do campo packageManager do package.json (fonte unica).
+        uses: pnpm/action-setup@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+
+      - name: Install
+        run: pnpm install --frozen-lockfile
+
+      - name: Typecheck
+        run: pnpm --filter backend typecheck
+
+      - name: Gera o importMap
+        run: pnpm --filter backend generate:importmap
+
+      - name: Falha se o importMap committado estiver defasado
+        run: |
+          if ! git diff --exit-code -- 'backend/src/app/(payload)/admin/importMap.js'; then
+            echo "::error::importMap.js defasado. Rode 'pnpm --filter backend generate:importmap' com S3_BUCKET setado e commite o resultado."
+            exit 1
+          fi
+
+      - name: Build
+        run: pnpm --filter backend build
+
+  frontend:
+    name: Frontend (lint + build)
+    runs-on: ubuntu-latest
+    env:
+      PAGES_BASE_PATH: /bbbrindes
+      NEXT_PUBLIC_BACKEND_URL: https://heartfelt-courtesy-production-3747.up.railway.app
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+
+      - name: Install
+        run: pnpm install --frozen-lockfile
+
+      - name: Lint
+        run: pnpm --filter frontend lint
+
+      - name: Build
+        run: pnpm --filter frontend build
