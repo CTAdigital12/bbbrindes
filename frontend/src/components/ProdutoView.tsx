@@ -165,88 +165,100 @@ export default function ProdutoView({ produto }: { produto: Produto }) {
     toast("Adicionado ao orçamento");
   }
 
+  // Tira unificada de miniaturas: as fotos validas (pulando entradas vazias, o
+  // quadradinho branco que o Plinio marcou) com o VIDEO intercalado como 4o item
+  // (indice 3), logo apos as 3 primeiras fotos, pra ele cair dentro dos ~4 slots
+  // visiveis. Com menos de 3 fotos, o video entra logo apos as que existem. Sem
+  // video (embedUrl nulo), a tira fica so com as fotos, sem mudar nada.
+  type MiniFoto = { tipo: "foto"; src: string; idx: number };
+  type MiniVideo = { tipo: "video" };
+  const miniFotos: MiniFoto[] = imagens
+    .map((src, idx) => ({ tipo: "foto" as const, src: imgSrc(src), idx }))
+    .filter((f) => f.src);
+  const miniaturas: (MiniFoto | MiniVideo)[] = [...miniFotos];
+  if (embedUrl) {
+    miniaturas.splice(Math.min(3, miniaturas.length), 0, { tipo: "video" as const });
+  }
+
   return (
     <>
       <div className="pd">
         {/* Galeria: coluna de miniaturas + palco com zoom */}
         <div className="gal">
           <div className="thumbs">
-            {imagens.map((src, i) => {
-              // Pula entradas de imagem vazias/invalidas: nao renderiza a miniatura
-              // vazia (o quadradinho branco que o Plinio marcou no fim da tira).
-              // imgSrc("" / undefined) devolve string vazia.
-              const thumbSrc = imgSrc(src);
-              if (!thumbSrc) return null;
+            {miniaturas.map((item) => {
+              // Video como miniatura clicavel, agora intercalado como 4o item da
+              // tira (3 fotos + 1 video; item 2 da revisao do Plinio). Usa a 1a
+              // foto do produto como fundo (ou um fundo neutro quando nao ha foto),
+              // com um icone de play sobreposto no centro. Clicar abre o mesmo modal
+              // de video do botao .vbtn.
+              if (item.tipo === "video") {
+                return (
+                  <button
+                    key="video-thumb"
+                    type="button"
+                    onClick={() => setVideoOpen(true)}
+                    aria-label="Ver vídeo"
+                    style={{ position: "relative", overflow: "hidden" }}
+                  >
+                    {mainSrc ? (
+                      <img src={mainSrc} alt="" />
+                    ) : (
+                      <span
+                        style={{
+                          display: "block",
+                          width: "100%",
+                          height: "100%",
+                          background: "var(--g-card)",
+                        }}
+                      />
+                    )}
+                    <span
+                      style={{
+                        position: "absolute",
+                        inset: 0,
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        background: "rgba(0,30,18,.28)",
+                      }}
+                    >
+                      <span
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          width: 30,
+                          height: 30,
+                          fontSize: 15,
+                          borderRadius: "50%",
+                          background: "rgba(255,255,255,.92)",
+                          color: "var(--green)",
+                          boxShadow: "var(--sh-1)",
+                        }}
+                      >
+                        <Icon name="brand-youtube" />
+                      </span>
+                    </span>
+                  </button>
+                );
+              }
+              // Miniatura de foto. Destaca a que esta no palco, seja por navegacao
+              // (imgIdx) ou pela foto da cor (corImg). Quando o backend alinhar
+              // imagens[]=cores[] e preencher cores[].imagem, clicar numa cor
+              // destaca a miniatura certa sozinho.
               return (
                 <button
-                  key={`${src}-${i}`}
+                  key={`${item.src}-${item.idx}`}
                   type="button"
-                  // Destaca a miniatura cuja foto e a que esta no palco, seja por
-                  // navegacao (imgIdx) ou pela foto da cor (corImg). Quando o backend
-                  // alinhar imagens[]=cores[] e preencher cores[].imagem, clicar numa
-                  // cor destaca a miniatura certa sozinho.
-                  className={thumbSrc === stageSrc ? "on" : ""}
-                  onClick={() => escolherThumb(i)}
-                  aria-label={`Imagem ${i + 1}`}
+                  className={item.src === stageSrc ? "on" : ""}
+                  onClick={() => escolherThumb(item.idx)}
+                  aria-label={`Imagem ${item.idx + 1}`}
                 >
-                  <img src={thumbSrc} alt="" />
+                  <img src={item.src} alt="" />
                 </button>
               );
             })}
-
-            {/* Video como miniatura clicavel no fim da tira (item 2 da revisao do
-                Plinio): so aparece quando o produto tem video (embedUrl). Usa a 1a
-                foto do produto como fundo (ou um fundo neutro quando nao ha foto),
-                com um icone de play sobreposto no centro. Clicar abre o mesmo modal
-                de video do botao .vbtn. */}
-            {embedUrl && (
-              <button
-                type="button"
-                onClick={() => setVideoOpen(true)}
-                aria-label="Ver vídeo"
-                style={{ position: "relative", overflow: "hidden" }}
-              >
-                {mainSrc ? (
-                  <img src={mainSrc} alt="" />
-                ) : (
-                  <span
-                    style={{
-                      display: "block",
-                      width: "100%",
-                      height: "100%",
-                      background: "var(--g-card)",
-                    }}
-                  />
-                )}
-                <span
-                  style={{
-                    position: "absolute",
-                    inset: 0,
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    background: "rgba(0,30,18,.28)",
-                  }}
-                >
-                  <span
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      width: 30,
-                      height: 30,
-                      fontSize: 15,
-                      borderRadius: "50%",
-                      background: "rgba(255,255,255,.92)",
-                      color: "var(--green)",
-                      boxShadow: "var(--sh-1)",
-                    }}
-                  >
-                    <Icon name="brand-youtube" />
-                  </span>
-                </span>
-              </button>
-            )}
           </div>
 
           <div
