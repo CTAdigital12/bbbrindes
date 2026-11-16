@@ -444,7 +444,7 @@ body.drawer-on .wa-f,body.wa-hide .wa-f{opacity:0;pointer-events:none;transform:
    pra nunca cortar uma imagem no meio. Produtos com muitas fotos (ex.: squeezes
    com ate 15) rolam; a barra de rolagem fina aparece so quando ha mais itens
    (indicador), e o scroll-snap encaixa sempre numa thumb inteira. */
-.thumbs{display:grid;gap:10px;align-content:start;max-height:calc(6 * 76px + 5 * 10px);overflow-y:auto;scroll-snap-type:y proximity;scrollbar-width:thin;scrollbar-color:var(--line) transparent}
+.thumbs{display:grid;gap:10px;align-content:start;max-height:calc(4 * 76px + 3 * 10px);overflow-y:auto;scroll-snap-type:y proximity;scrollbar-width:thin;scrollbar-color:var(--line) transparent}
 .thumbs::-webkit-scrollbar{width:5px}
 .thumbs::-webkit-scrollbar-thumb{background:var(--line);border-radius:5px}
 .thumbs::-webkit-scrollbar-track{background:transparent}
