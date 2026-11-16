@@ -440,11 +440,13 @@ body.drawer-on .wa-f,body.wa-hide .wa-f{opacity:0;pointer-events:none;transform:
 /* produto */
 .pd{display:grid;grid-template-columns:1.05fr .95fr;gap:44px;margin-top:18px;align-items:start}
 .gal{position:sticky;top:140px;display:grid;grid-template-columns:76px 1fr;gap:14px}
-/* Coluna de miniaturas: altura travada em 6 thumbs inteiras (6*76 + 5*10 = 506px)
-   pra nunca cortar uma imagem no meio. Produtos com muitas fotos (ex.: squeezes
-   com ate 15) rolam; a barra de rolagem fina aparece so quando ha mais itens
-   (indicador), e o scroll-snap encaixa sempre numa thumb inteira. */
-.thumbs{display:grid;gap:10px;align-content:start;max-height:calc(4 * 76px + 3 * 10px);overflow-y:auto;scroll-snap-type:y proximity;scrollbar-width:thin;scrollbar-color:var(--line) transparent}
+/* Coluna de miniaturas: altura calibrada pra ~4 slots inteiros (3 fotos + a
+   miniatura do video intercalada como 4o item): 4*76 + 3*10 + 8px de folga.
+   A folga de 8px absorve a largura da barra de rolagem fina sem cortar a 4a
+   miniatura. overflow-x:hidden mata a barra horizontal que o scroll vertical
+   provocava (o botao de 76px transbordava na largura util). Produtos com mais
+   fotos rolam so na vertical; o scroll-snap encaixa sempre numa thumb inteira. */
+.thumbs{display:grid;gap:10px;align-content:start;max-height:calc(4 * 76px + 3 * 10px + 8px);overflow-y:auto;overflow-x:hidden;scroll-snap-type:y proximity;scrollbar-width:thin;scrollbar-color:var(--line) transparent}
 .thumbs::-webkit-scrollbar{width:5px}
 .thumbs::-webkit-scrollbar-thumb{background:var(--line);border-radius:5px}
 .thumbs::-webkit-scrollbar-track{background:transparent}
