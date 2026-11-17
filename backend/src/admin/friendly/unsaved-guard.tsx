@@ -1,6 +1,7 @@
 'use client'
 import React, { useEffect, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { ConfirmLeave } from './ConfirmLeave'
 
 // Guarda GLOBAL de "alterações não salvas".
 // - Cada editor chama useUnsavedGuard(dirty) e reporta se tem edição pendente.
@@ -69,23 +70,16 @@ export function UnsavedGuardHost() {
   }
   if (!pending) return null
   return (
-    <div
-      data-unsaved-guard
-      role="alertdialog"
-      aria-labelledby="bb-unsaved-title"
-      onClick={(e) => { if (e.target === e.currentTarget) ficar() }}
-      style={{ position: 'fixed', inset: 0, zIndex: 9999, background: 'rgba(18,26,22,.45)', display: 'grid', placeItems: 'center', padding: 24 }}
+    <ConfirmLeave
+      title="Alterações não salvas"
+      titleId="bb-unsaved-title"
+      guardMarker
+      onStay={ficar}
+      onDiscard={sair}
     >
-      <div style={{ background: '#fff', color: '#1a221d', maxWidth: 440, width: '100%', borderRadius: 12, padding: 20, boxShadow: '0 12px 44px rgba(0,0,0,.28)' }}>
-        <h3 id="bb-unsaved-title" style={{ margin: '0 0 8px', fontSize: 18 }}>Alterações não salvas</h3>
-        <p style={{ margin: '0 0 16px', color: '#5b6a61', lineHeight: 1.5 }}>
-          Você tem alterações que ainda não foram salvas nesta edição. Se sair agora, vai perder o que não foi salvo.
-        </p>
-        <div style={{ display: 'flex', gap: 8, justifyContent: 'flex-end' }}>
-          <button type="button" className="btn pri" onClick={ficar}>Ficar e continuar</button>
-          <button type="button" className="btn ghost" style={{ color: '#c0392b', borderColor: '#e2b4ad' }} onClick={sair}>Sair sem salvar</button>
-        </div>
-      </div>
-    </div>
+      <p style={{ margin: 0 }}>
+        Você tem alterações que ainda não foram salvas nesta edição. Se sair agora, vai perder o que não foi salvo.
+      </p>
+    </ConfirmLeave>
   )
 }

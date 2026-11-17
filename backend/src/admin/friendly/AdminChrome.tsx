@@ -18,6 +18,7 @@ export function AdminBar({ name }: { name: string }) {
     <a href={SITE_URL} target="_blank" rel="noopener noreferrer">↗ Ver site</a>
     <Link href="/admin/collections/produtos/create">+ Novo</Link><span className="sp" />
     <Link className="user" href="/admin/account"><span className="av">{name.slice(0, 2).toUpperCase()}</span>Olá, {name}</Link>
+    <Link className="bb-logout-top" href="/admin/logout" aria-label="Sair do painel"><Icon name="logout" />Sair</Link>
   </header></div>
 }
 export function AdminNavigation({ items, more = [] }: { items: NavItem[]; more?: NavItem[] }) {

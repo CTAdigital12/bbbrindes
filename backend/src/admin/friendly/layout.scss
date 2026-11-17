@@ -18,7 +18,10 @@ body:has(.bb-admin) .app-header, body:has(.bb-admin) .template-default__nav-togg
 .bb-admin .bb-success { padding:12px 16px; border:1px solid #b3d9b8; background:#e3f4e8; color:#1f7a45; border-radius:8px; }
 .bb-admin .bb-warning { color:#9a5b00; font-size:12px; }
 .bb-admin .bb-photo-col { width:76px; }
-.bb-admin .bb-table-scroll { overflow-x:auto; }
+/* Todas as listas rolam na horizontal no celular: o wrapper rola e a tabela
+   mantem largura minima pra as colunas nao espremerem (nada fica escondido). */
+.bb-admin .bb-table-scroll { overflow-x:auto; -webkit-overflow-scrolling:touch; }
+.bb-admin .bb-table-scroll > table.list { min-width:600px; }
 .bb-admin .bb-pagination { display:flex; gap:12px; align-items:center; flex-wrap:wrap; padding:16px 0; font-size:13px; color:var(--muted); }
 .bb-admin .bb-pagination label { display:flex; gap:6px; align-items:center; }
 .bb-admin .bb-pagination select { border:1px solid var(--line); border-radius:5px; padding:3px; background:#fff; }
@@ -39,6 +42,9 @@ body:has(.bb-admin) .app-header, body:has(.bb-admin) .template-default__nav-togg
 .bb-admin .bb-product-preview { grid-template-rows:auto minmax(0,1fr); }
 .bb-admin .bb-product-preview .pv-prod { overflow:auto; }
 .bb-admin .bar .user { color:#dfe9e2; text-decoration:none; }
+.bb-admin .bar .bb-logout-top { display:inline-flex; align-items:center; gap:6px; margin-left:12px; padding:5px 10px; border:1px solid rgba(255,255,255,.35); border-radius:6px; color:#dfe9e2; text-decoration:none; font-size:13px; }
+.bb-admin .bar .bb-logout-top:hover { background:rgba(255,255,255,.12); border-color:rgba(255,255,255,.6); }
+.bb-admin .bar .bb-logout-top svg { width:15px; height:15px; fill:none; stroke:currentColor; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; }
 .bb-admin .bar .brand img { max-width:100px; object-fit:contain; }
 .bb-admin .bb-menu-toggle { display:none; background:none; color:#fff; border:0; font-size:22px; cursor:pointer; }
 .bb-admin .bb-more { margin:20px 0 0; border-top:1px solid #294337; padding-top:10px; }

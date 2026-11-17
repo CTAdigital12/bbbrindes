@@ -3,6 +3,7 @@
 import React, { useEffect, useMemo, useState } from 'react'
 import { requestJSON } from '../friendly/api'
 import { useDialog } from '../friendly/useDialog'
+import { ConfirmLeave } from '../friendly/ConfirmLeave'
 import { photo, type Product } from '../friendly/model'
 // Seletor de produtos da campanha: busca em /api/produtos (paginado) e devolve a
 // selecao completa (objetos com id/nome) para o editor. Padrao do MediaPicker.
@@ -50,18 +51,18 @@ export function ProductPicker({ initial, onApply, onClose }: { initial: Product[
       <span className="bb-prod-nm">{p.nome}</span><span className="bb-prod-cod">{p.codigoSite}</span>
     </button>)}</div></div>
     <div className="mf"><button type="button" className="btn sm ghost" disabled={page <= 1} onClick={() => setPage(page - 1)}>Anterior</button><span>{page} de {Math.max(1, pages)}</span><button type="button" className="btn sm ghost" disabled={page >= pages} onClick={() => setPage(page + 1)}>Próxima</button><span className="sp" /><button type="button" className="btn pri" onClick={() => { onApply(selected); onClose() }}>Usar {selected.length} produto(s)</button></div>
-    {confirmClose ? <div role="alertdialog" aria-labelledby="bb-prod-confirm-title" style={{ position: 'absolute', inset: 0, background: 'rgba(255,255,255,.94)', display: 'grid', placeItems: 'center', padding: 24, zIndex: 5, borderRadius: 'inherit' }}>
-      <div style={{ maxWidth: 460 }}>
-        <h3 id="bb-prod-confirm-title" style={{ margin: '0 0 8px' }}>Sair sem aplicar?</h3>
-        <p className="help" style={{ marginTop: 0 }}>Você ainda não clicou em “Usar”. Se sair agora, estas alterações serão perdidas:</p>
-        {added.length ? <p className="help" style={{ margin: '4px 0' }}><b>Vai perder as inclusões:</b> {nomesLista(added)}.</p> : null}
-        {removed.length ? <p className="help" style={{ margin: '4px 0' }}><b>Vai perder as remoções:</b> {nomesLista(removed)}.</p> : null}
-        <div style={{ display: 'flex', gap: 8, justifyContent: 'flex-end', marginTop: 14 }}>
-          <button type="button" className="btn" onClick={() => setConfirmClose(false)}>Ficar</button>
-          <button type="button" className="btn pri" onClick={() => { onApply(selected); onClose() }}>Aplicar e sair</button>
-          <button type="button" className="btn ghost" style={{ color: '#c0392b', borderColor: '#e2b4ad' }} onClick={onClose}>Sair sem salvar</button>
-        </div>
-      </div>
-    </div> : null}
+    {confirmClose ? <ConfirmLeave
+      inset
+      title="Sair sem aplicar?"
+      titleId="bb-prod-confirm-title"
+      onStay={() => setConfirmClose(false)}
+      confirmLabel="Aplicar e sair"
+      onConfirm={() => { onApply(selected); onClose() }}
+      onDiscard={onClose}
+    >
+      <p className="help" style={{ marginTop: 0 }}>Você ainda não clicou em “Usar”. Se sair agora, estas alterações serão perdidas:</p>
+      {added.length ? <p className="help" style={{ margin: '4px 0' }}><b>Vai perder as inclusões:</b> {nomesLista(added)}.</p> : null}
+      {removed.length ? <p className="help" style={{ margin: '4px 0' }}><b>Vai perder as remoções:</b> {nomesLista(removed)}.</p> : null}
+    </ConfirmLeave> : null}
   </div></div>
 }
