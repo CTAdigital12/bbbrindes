@@ -13,6 +13,7 @@
     "start:railway": "pnpm --filter backend start:railway",
     "start:frontend": "pnpm --filter frontend start",
     "lint": "pnpm --filter frontend lint",
+    "deploy:prod": "railway up && node backend/scripts/wait-healthy.mjs && pnpm --filter backend smoke:admin",
     "trello:sync": "node --env-file=.env scripts/trello-sync.mjs"
   },
   "packageManager": "pnpm@9.12.0",
