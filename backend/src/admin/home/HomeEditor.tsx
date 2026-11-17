@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { requestJSON } from '../friendly/api'
 import { Icon } from '../friendly/icons'
+import { ReadOnlyNotice } from '../friendly/ReadOnlyNotice'
 import { HomeSelosBlock, HomeDiferenciaisBlock, HomeUrgenciaBlock, HomeEcoBannerBlock, HomeEcoLeadBlock, HomeDepoimentosBlock, HomeFaqBlock, HomeCtaFinalBlock } from './HomeBlocks'
 import { HomePreview } from './HomePreview'
 import { homeBody, homeSaveIssue, validateHome, type HomeIssue } from './home-data'
@@ -35,6 +36,7 @@ export function HomeEditor({ initial, canSave = true }: { initial: HomeContent; 
     } catch (cause) { setError(homeSaveIssue(cause)) } finally { setSaving(false) }
   }
   return <div className="bb-admin"><section className="bb-page">
+    <ReadOnlyNotice show={!canSave} />
     <div className="ph"><h1>Página inicial</h1>{dirty ? <span className="pill-draft">Alterações não salvas</span> : null}<span className="sp" /><button type="button" className="btn pri" disabled={disabled} onClick={() => void save()}><Icon name="up" />{saving ? 'Salvando…' : 'Salvar alterações'}</button></div>
     <p className="sub">Edite os blocos da home. Nada vai para o site até salvar, e o site reconstrói em alguns minutos.</p>
     {error ? <p id="bb-home-error" className="bb-error" role="alert">{error.message}</p> : null}{message ? <p className="bb-success" role="status">{message}</p> : null}

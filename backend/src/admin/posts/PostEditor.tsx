@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { requestJSON } from '../friendly/api'
 import { Icon } from '../friendly/icons'
+import { ReadOnlyNotice } from '../friendly/ReadOnlyNotice'
 import { HeroImageField } from '../hero/HeroImageField'
 import { TagPicker } from '../friendly/TagPicker'
 import { plainText, richText } from '../friendly/product-data'
@@ -51,6 +52,7 @@ export function PostEditor({ initial, canSave = true }: { initial: PostDraft; ca
     } catch (cause) { setError(postSaveIssue(cause)) } finally { setSaving(false) }
   }
   return <div className="bb-admin"><section className="bb-page">
+    <ReadOnlyNotice show={!canSave} />
     <div className="ph"><h1>{original.id ? 'Editar post' : 'Adicionar post'}</h1>{original.id ? <Link className="btn" href={`${POST_PATH}/create`}><Icon name="plus" />Adicionar post</Link> : null}<span className="sp" /><Link className="lnk" href={POST_PATH}>Voltar para o Blog</Link></div>
     {error ? <p id="bb-post-error" className="bb-error" role="alert">{error.message}</p> : null}{message ? <p className="bb-success" role="status">{message}</p> : null}
     <div className="prev-wrap"><div className="bb-stack">

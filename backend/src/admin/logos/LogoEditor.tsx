@@ -6,6 +6,7 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { requestJSON } from '../friendly/api'
 import { Icon } from '../friendly/icons'
+import { ReadOnlyNotice } from '../friendly/ReadOnlyNotice'
 import { logoBody, logoSaveIssue, validateLogo } from './logo-data'
 import { LOGO_ACCEPT, LOGO_PATH, type LogoDraft, type LogoIssue } from './logo-model'
 import { LogoPreview } from './LogoPreview'
@@ -67,6 +68,7 @@ export function LogoEditor({ initial, canSave = true }: { initial: LogoDraft; ca
     } catch (cause) { setError(logoSaveIssue(cause)) } finally { setSaving(false) }
   }
   return <div className="bb-admin"><section className="bb-page">
+    <ReadOnlyNotice show={!canSave} />
     <div className="ph"><h1>{original.id ? 'Editar logo' : 'Adicionar logo'}</h1>{original.id ? <Link className="btn" href={`${LOGO_PATH}/create`}><Icon name="plus" />Adicionar logo</Link> : null}<span className="sp" /><Link className="lnk" href={LOGO_PATH}>Voltar para Logos</Link></div>
     {error ? <p id="bb-logo-error" className="bb-error" role="alert">{error.message}</p> : null}{message ? <p className="bb-success" role="status">{message}</p> : null}
     <div className="prev-wrap"><div className="bb-stack">

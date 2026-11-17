@@ -3,6 +3,7 @@ import { useUnsavedGuard } from '../friendly/unsaved-guard'
 import React, { useEffect, useState } from 'react'
 import { requestJSON } from '../friendly/api'
 import { Icon } from '../friendly/icons'
+import { ReadOnlyNotice } from '../friendly/ReadOnlyNotice'
 import { ConfiguracoesPreview } from './ConfiguracoesPreview'
 import { configBody, configSaveIssue, validateConfig, type ConfigIssue } from './configuracoes-data'
 import { CONTATO_FIELDS, REDE_FIELDS, type ConfigContent } from './configuracoes-model'
@@ -43,6 +44,7 @@ export function ConfiguracoesEditor({ initial, canSave = true }: { initial: Conf
     } catch (cause) { setError(configSaveIssue(cause)) } finally { setSaving(false) }
   }
   return <div className="bb-admin"><section className="bb-page">
+    <ReadOnlyNotice show={!canSave} />
     <div className="ph"><h1>Configurações</h1>{dirty ? <span className="pill-draft">Alterações não salvas</span> : null}<span className="sp" /><button type="button" className="btn pri" disabled={disabled} onClick={() => void save()}><Icon name="up" />{saving ? 'Salvando…' : 'Salvar alterações'}</button></div>
     <p className="sub">Dados de contato, redes sociais, texto e selos do rodapé. Nada vai para o site até salvar, e o site reconstrói em alguns minutos.</p>
     {error ? <p id="bb-cfg-error" className="bb-error" role="alert">{error.message}</p> : null}{message ? <p className="bb-success" role="status">{message}</p> : null}

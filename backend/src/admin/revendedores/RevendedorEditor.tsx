@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { requestJSON } from '../friendly/api'
 import { Icon } from '../friendly/icons'
+import { ReadOnlyNotice } from '../friendly/ReadOnlyNotice'
 import { revendedorBody, revSaveIssue, revStatus, validateRevendedor } from './revendedores-data'
 import { NIVEL_OPTIONS, REVENDEDOR_PATH, type NivelRevendedor, type RevendedorDraft, type RevendedorIssue } from './revendedores-model'
 import { RevendedorPreview } from './RevendedorPreview'
@@ -54,6 +55,7 @@ export function RevendedorEditor({ initial, canSave = true }: { initial: Revende
   }
   const endereco = revendedor.enderecoEntrega ?? {}
   return <div className="bb-admin"><section className="bb-page">
+    <ReadOnlyNotice show={!canSave} />
     <div className="ph"><h1>{isCreate ? 'Adicionar revendedor' : 'Editar revendedor'}</h1>{!isCreate ? <Link className="btn" href={`${REVENDEDOR_PATH}/create`}><Icon name="plus" />Adicionar revendedor</Link> : null}<span className="sp" /><Link className="lnk" href={REVENDEDOR_PATH}>Voltar para Revendedores</Link></div>
     {error ? <p id="bb-rev-error" className="bb-error" role="alert">{error.message}</p> : null}{message ? <p className="bb-success" role="status">{message}</p> : null}
     <div className="prev-wrap"><div className="bb-stack">

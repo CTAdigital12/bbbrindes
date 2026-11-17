@@ -1,5 +1,7 @@
 import type { CollectionConfig } from 'payload'
 
+import { isAdmin, isEditorOrAdmin } from '../access/byRole'
+
 // Depoimentos de clientes (FB-6, conectividade front<->admin). Antes fixos no
 // front (QUOTES em home-joy.ts); agora editaveis no /admin. Aparecem na home e na
 // pagina de cases. O front le com fallback no mock enquanto a collection estiver
@@ -19,6 +21,9 @@ export const Depoimentos: CollectionConfig = {
   },
   access: {
     read: () => true,
+    create: isEditorOrAdmin,
+    update: isEditorOrAdmin,
+    delete: isAdmin,
   },
   fields: [
     {

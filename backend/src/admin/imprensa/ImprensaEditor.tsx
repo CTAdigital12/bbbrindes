@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { requestJSON } from '../friendly/api'
 import { Icon } from '../friendly/icons'
+import { ReadOnlyNotice } from '../friendly/ReadOnlyNotice'
 import { TagPicker } from '../friendly/TagPicker'
 import { dateInputValue, imprensaBody, imprensaSaveIssue, materiaTags, validateImprensa } from './imprensa-data'
 import { IMPRENSA_PATH, type ImprensaDraft, type ImprensaIssue } from './imprensa-model'
@@ -46,6 +47,7 @@ export function ImprensaEditor({ initial, canSave = true }: { initial: ImprensaD
     } catch (cause) { setError(imprensaSaveIssue(cause)) } finally { setSaving(false) }
   }
   return <div className="bb-admin"><section className="bb-page">
+    <ReadOnlyNotice show={!canSave} />
     <div className="ph"><h1>{original.id ? 'Editar matéria' : 'Adicionar matéria'}</h1>{original.id ? <Link className="btn" href={`${IMPRENSA_PATH}/create`}><Icon name="plus" />Adicionar matéria</Link> : null}<span className="sp" /><Link className="lnk" href={IMPRENSA_PATH}>Voltar para Imprensa</Link></div>
     {error ? <p id="bb-imp-error" className="bb-error" role="alert">{error.message}</p> : null}{message ? <p className="bb-success" role="status">{message}</p> : null}
     <div className="prev-wrap"><div className="bb-stack">

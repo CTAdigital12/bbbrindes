@@ -1,6 +1,8 @@
 import type { Access, CollectionConfig, FieldAccess } from 'payload'
 import { APIError } from 'payload'
 
+import { roleOf } from '../access/byRole'
+
 // Revendedor: colecao de AUTH (S03-03). Acesso UNICO por empresa, sem
 // sub-usuarios na v1 (golden path secao 2). O login real do portal usa esta
 // colecao; o painel /admin continua sendo so dos Users (admin.user no config),
@@ -19,7 +21,7 @@ import { APIError } from 'payload'
 const isAdmin = (user: { collection?: string } | null | undefined): boolean =>
   user?.collection === 'users'
 
-const adminOnly: Access = ({ req: { user } }) => isAdmin(user)
+const adminOnly: Access = ({ req: { user } }) => isAdmin(user) && roleOf(user) === 'admin'
 
 // Leitura: admin ve tudo; revendedor logado ve so o proprio doc; publico nada.
 const readOwnOrAdmin: Access = ({ req: { user } }) => {

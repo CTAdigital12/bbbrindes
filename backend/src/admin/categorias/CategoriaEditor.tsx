@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { requestJSON } from '../friendly/api'
 import { Icon } from '../friendly/icons'
+import { ReadOnlyNotice } from '../friendly/ReadOnlyNotice'
 import { HeroImageField } from '../hero/HeroImageField'
 import { categoriaBody, catSaveIssue, conflitoOrdem, ordemFim, resolverSubstituir, validateCategoria } from './categoria-data'
 import type { OrdemChange, OrdemSibling } from './categoria-data'
@@ -78,6 +79,7 @@ export function CategoriaEditor({ initial, canSave = true, produtosCount }: { in
     } catch (cause) { setError(catSaveIssue(cause)) } finally { setSaving(false) }
   }
   return <div className="bb-admin"><section className="bb-page">
+    <ReadOnlyNotice show={!canSave} />
     <div className="ph"><h1>{original.id ? 'Editar categoria' : 'Adicionar categoria'}</h1>{original.id ? <Link className="btn" href={`${CATEGORIA_PATH}/create`}><Icon name="plus" />Adicionar categoria</Link> : null}<span className="sp" /><Link className="lnk" href={CATEGORIA_PATH}>Voltar para Categorias</Link></div>
     {error ? <p id="bb-cat-error" className="bb-error" role="alert">{error.message}</p> : null}{message ? <p className="bb-success" role="status">{message}</p> : null}
     <div className="prev-wrap"><div className="bb-stack">

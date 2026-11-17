@@ -6,6 +6,7 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { requestJSON } from './api'
 import { Icon } from './icons'
+import { ReadOnlyNotice } from './ReadOnlyNotice'
 import { ProductFields, PRODUCT_TABS } from './ProductFields'
 import { ProductPreview } from './ProductPreview'
 import { categoryIDs, photo, type Category, type Product } from './model'
@@ -62,6 +63,7 @@ export function ProductEditor({ initial, categories, canSave = true }: { initial
     } catch (cause) { showIssue(productSaveIssue(cause)) } finally { setSaving(false) }
   }
   return <div className="bb-admin"><section className="bb-page">
+    <ReadOnlyNotice show={!canSave} />
     <div className="ph"><h1>{original.id ? 'Editar produto' : 'Adicionar produto'}</h1>{original.id ? <Link className="btn" href="/admin/collections/produtos/create"><Icon name="plus" />Adicionar produto</Link> : null}<span className="sp" /><Link className="lnk" href="/admin/collections/produtos">Voltar para Produtos</Link></div>
     {error ? <p id="bb-product-error" className="bb-error" role="alert">{error.message}</p> : null}{message ? <p className="bb-success" role="status">{message}</p> : null}
     <div className="edit"><div>

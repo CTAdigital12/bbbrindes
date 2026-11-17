@@ -1,5 +1,6 @@
 import type { GlobalConfig } from 'payload'
 
+import { isEditorOrAdmin } from '../access/byRole'
 import { rebuildGlobalAfterChange } from '../hooks/triggerDeploy'
 
 // Global "Catalogo digital" (FB-6 midia). Torna editavel a pagina /catalogos, hoje
@@ -21,6 +22,7 @@ export const Catalogos: GlobalConfig = {
   },
   access: {
     read: () => true,
+    update: isEditorOrAdmin,
   },
   hooks: {
     afterChange: [rebuildGlobalAfterChange],

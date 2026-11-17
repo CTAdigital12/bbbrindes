@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { requestJSON } from '../friendly/api'
 import { Icon } from '../friendly/icons'
+import { ReadOnlyNotice } from '../friendly/ReadOnlyNotice'
 import { HeroImageField } from '../hero/HeroImageField'
 import { TagPicker } from '../friendly/TagPicker'
 import { caseBody, caseSaveIssue, caseTags, validateCase } from './cases-data'
@@ -48,6 +49,7 @@ export function CaseEditor({ initial, canSave = true }: { initial: CaseDraft; ca
     } catch (cause) { setError(caseSaveIssue(cause)) } finally { setSaving(false) }
   }
   return <div className="bb-admin"><section className="bb-page">
+    <ReadOnlyNotice show={!canSave} />
     <div className="ph"><h1>{original.id ? 'Editar case' : 'Adicionar case'}</h1>{original.id ? <Link className="btn" href={`${CASE_PATH}/create`}><Icon name="plus" />Adicionar case</Link> : null}<span className="sp" /><Link className="lnk" href={CASE_PATH}>Voltar para Cases</Link></div>
     {error ? <p id="bb-cases-error" className="bb-error" role="alert">{error.message}</p> : null}{message ? <p className="bb-success" role="status">{message}</p> : null}
     <div className="prev-wrap"><div className="bb-stack">

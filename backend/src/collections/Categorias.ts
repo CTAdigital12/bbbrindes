@@ -1,5 +1,6 @@
 import type { CollectionConfig } from 'payload'
 
+import { isAdmin, isEditorOrAdmin } from '../access/byRole'
 import { slugField } from '../fields/slug'
 
 // As 14 categorias validadas (revisao Plinio). Green Plasticaria, Green Fibras e
@@ -20,6 +21,9 @@ export const Categorias: CollectionConfig = {
   },
   access: {
     read: () => true,
+    create: isEditorOrAdmin,
+    update: isEditorOrAdmin,
+    delete: isAdmin,
   },
   defaultSort: 'ordem',
   fields: [
