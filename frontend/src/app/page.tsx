@@ -197,6 +197,17 @@ export default async function HomePage() {
         </div>
       </div>
 
+      {/* Selo SMETA em destaque (G3, reuniao 29/10): realca como badge a
+          certificacao que hoje aparece so em texto na faixa de confianca e nos
+          diferenciais. Pill discreto reusando .chip, logo apos a prova social
+          das marcas. */}
+      <div className="wrap" style={{ display: "flex", justifyContent: "center", marginTop: 6 }}>
+        <span className="chip chip-deep">
+          <Icon name="certificate" />
+          Auditada no padrão SMETA 4 Pilares
+        </span>
+      </div>
+
       {/* Lancamentos (dado REAL: getProdutos). Vem ACIMA de Categorias (pedido do
           Plinio, D1): a 1a dobra do scroll ja mostra a vitrine de produto, nao so
           a grade de categorias. */}
