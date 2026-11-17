@@ -1,7 +1,7 @@
 import type { Access, CollectionConfig, FieldAccess } from 'payload'
 import { APIError } from 'payload'
 
-import { roleOf } from '../access/byRole'
+import { isPanelUser, roleOf } from '../access/byRole'
 
 // Revendedor: colecao de AUTH (S03-03). Acesso UNICO por empresa, sem
 // sub-usuarios na v1 (golden path secao 2). O login real do portal usa esta
@@ -16,23 +16,25 @@ import { roleOf } from '../access/byRole'
 // entra vendo preco errado ou nenhum. A validacao do campo `ativo` garante
 // isso no create e no update.
 
-// Admin = usuario da colecao `users`. req.user.collection existe no servidor
-// (confirmado em payload/auth/types) e distingue admin de revendedor.
-const isAdmin = (user: { collection?: string } | null | undefined): boolean =>
-  user?.collection === 'users'
+// Distingue o usuario do painel (colecao `users`) do revendedor (esta colecao,
+// que tambem tem `auth`). Reusa isPanelUser do byRole (antes era um `isAdmin`
+// local com o mesmo collection check, nome confuso: ele nao olhava papel).
+// Escrita de revendedor (PII/auth/tabela de preco) e so do admin do painel:
+// isPanelUser garante a colecao `users` e roleOf exige o papel admin. O
+// revendedor logado nao passa no isPanelUser, entao nunca gerencia contas.
+const adminOnly: Access = ({ req: { user } }) => isPanelUser(user) && roleOf(user) === 'admin'
 
-const adminOnly: Access = ({ req: { user } }) => isAdmin(user) && roleOf(user) === 'admin'
-
-// Leitura: admin ve tudo; revendedor logado ve so o proprio doc; publico nada.
+// Leitura: usuario do painel ve tudo; revendedor logado ve so o proprio doc;
+// publico nada.
 const readOwnOrAdmin: Access = ({ req: { user } }) => {
   if (!user) return false
-  if (isAdmin(user)) return true
+  if (isPanelUser(user)) return true
   return { id: { equals: user.id } }
 }
 
-// Campos de controle (nivel, ativo) so o admin altera; o revendedor nunca
-// muda a propria tabela de preco.
-const adminFieldOnly: FieldAccess = ({ req: { user } }) => isAdmin(user)
+// Campos de controle (nivel, ativo): so quem atualiza o doc (adminOnly, ou seja
+// admin do painel) chega aqui. O revendedor nunca muda a propria tabela de preco.
+const adminFieldOnly: FieldAccess = ({ req: { user } }) => isPanelUser(user)
 
 export const Revendedores: CollectionConfig = {
   slug: 'revendedores',
@@ -66,7 +68,7 @@ export const Revendedores: CollectionConfig = {
     delete: adminOnly,
     // Nenhum revendedor acessa o painel /admin (reforco explicito; o
     // admin.user do config ja e a colecao users).
-    admin: ({ req: { user } }) => isAdmin(user),
+    admin: ({ req: { user } }) => isPanelUser(user),
   },
   hooks: {
     // Bloqueio server-side: revendedor so loga se estiver aprovado (ativo).
