@@ -132,7 +132,6 @@ export default async function QuemSomosPage() {
                   alt={i >= quemSomos.galeria.length ? "" : g.legenda}
                   loading="lazy"
                 />
-                <figcaption>{g.legenda}</figcaption>
               </figure>
             ))}
           </div>
