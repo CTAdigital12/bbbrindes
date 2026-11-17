@@ -22,7 +22,8 @@ const paths: Record<string, string> = {
   "list": "<path d=\"M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01\"/>",
   "lock": "<rect x=\"5\" y=\"11\" width=\"14\" height=\"10\" rx=\"2\"/><path d=\"M8 11V7a4 4 0 0 1 8 0v4\"/>",
   "chevron-up": "<path d=\"M6 15l6-6 6 6\"/>",
-  "chevron-down": "<path d=\"M6 9l6 6 6-6\"/>"
+  "chevron-down": "<path d=\"M6 9l6 6 6-6\"/>",
+  "logout": "<path d=\"M9 4H6a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h3\"/><path d=\"M14 16l4-4-4-4M18 12H9\"/>"
 }
 
 export function Icon({ name }: { name: string }) {
