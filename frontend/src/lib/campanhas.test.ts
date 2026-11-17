@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach, vi } from "vitest";
 import { getCampanhas, getCampanhaBySlug, getCampanhaSlugs } from "./campanhas";
-import { bannerCampanhaPublicado, imagemCampanha, ordenarCampanhas } from "./campanhas-vitrine";
+import { bannerCampanhaPublicado, imagemCampanha, ordenarCampanhas, produtosDaCampanha } from "./campanhas-vitrine";
 import { payloadFind } from "./payload";
 
 vi.mock("./payload", async (original) => ({
@@ -60,5 +60,24 @@ describe("publicacao de campanhas do painel", () => {
     ];
     expect(ordenarCampanhas(campanhas, 11).map(c => c.slug)).toEqual(["dez", "jan", "mar"]);
     expect(campanhas[0].slug).toBe("jan");
+  });
+});
+
+describe("filtro de campanha no catalogo (produtosDaCampanha)", () => {
+  const campanhas = [
+    { slug: "natal", nome: "Natal", mes: "Dezembro", produtos: ["copo", "squeeze"] },
+    { slug: "black-friday", nome: "Black Friday", mes: "Novembro", produtos: [] },
+  ];
+  it("devolve os slugs de produto da campanha pedida", () => {
+    const set = produtosDaCampanha(campanhas, "natal");
+    expect([...set].sort()).toEqual(["copo", "squeeze"]);
+    expect(set.has("copo")).toBe(true);
+    expect(set.has("outro")).toBe(false);
+  });
+  it("slug inexistente devolve conjunto vazio", () => {
+    expect(produtosDaCampanha(campanhas, "pascoa").size).toBe(0);
+  });
+  it("slug nulo devolve conjunto vazio (sem campanha, nao filtra)", () => {
+    expect(produtosDaCampanha(campanhas, null).size).toBe(0);
   });
 });

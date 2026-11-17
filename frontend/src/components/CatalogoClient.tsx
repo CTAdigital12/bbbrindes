@@ -5,6 +5,8 @@ import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { categoriasDoProduto, type Produto } from "@/lib/types";
 import { useCategorias, useNomeCategoria } from "@/lib/categorias-context";
+import type { Campanha } from "@/data/campanhas";
+import { produtosDaCampanha } from "@/lib/campanhas-vitrine";
 import { produtos as produtosMock } from "@/data/produtos";
 import { useCart } from "@/lib/cart";
 import { useCartUI } from "@/lib/cart-ui";
@@ -46,7 +48,13 @@ const bucketMaterial = (material: string): string => {
   return "Plastico";
 };
 
-export default function CatalogoClient({ produtos = produtosMock }: { produtos?: Produto[] }) {
+export default function CatalogoClient({
+  produtos = produtosMock,
+  campanhas = [],
+}: {
+  produtos?: Produto[];
+  campanhas?: Campanha[];
+}) {
   const sp = useSearchParams();
   const spKey = sp.toString();
 
@@ -69,6 +77,13 @@ export default function CatalogoClient({ produtos = produtosMock }: { produtos?:
   // definem o titulo. Busca mora no header; "Lancamentos" vem de ?novo=1.
   const q = sp.get("q") ?? "";
   const novo = sp.get("novo");
+  // Filtro por campanha: URL-only (?campanha=slug), acionado pelo link da landing
+  // da campanha ("Ver todos os produtos"). Nao vira checkbox/faceta na sidebar.
+  const campanhaSlug = sp.get("campanha");
+  const campanhaProdutos = useMemo(
+    () => produtosDaCampanha(campanhas, campanhaSlug),
+    [campanhas, campanhaSlug],
+  );
 
   const { adicionar } = useCart();
   const { abrir } = useCartUI();
@@ -150,6 +165,7 @@ export default function CatalogoClient({ produtos = produtosMock }: { produtos?:
   const resultados = useMemo(() => {
     const nq = norm(q);
     const lista = produtos.filter((p) => {
+      if (campanhaSlug && !campanhaProdutos.has(p.slug)) return false;
       if (
         facetas.categoria.length &&
         !categoriasDoProduto(p).some((c) => facetas.categoria.includes(c))
@@ -167,11 +183,16 @@ export default function CatalogoClient({ produtos = produtosMock }: { produtos?:
     if (ord === "az") return [...lista].sort((a, b) => a.nome.localeCompare(b.nome));
     if (ord === "novo") return [...lista].sort((a, b) => Number(ehNovo(b)) - Number(ehNovo(a)));
     return lista;
-  }, [produtos, facetas, q, novo, ord, nomeCategoria]);
+  }, [produtos, facetas, q, novo, ord, nomeCategoria, campanhaSlug, campanhaProdutos]);
 
-  // Titulo dinamico da .ptitle (mesma regra do mockup).
-  const titulo =
-    facetas.categoria.length === 1
+  // Titulo dinamico da .ptitle (mesma regra do mockup). Com ?campanha=, usa o nome
+  // da campanha (fallback pro proprio slug quando ela nao esta publicada).
+  const campanhaNome = campanhaSlug
+    ? (campanhas.find((c) => c.slug === campanhaSlug)?.nome ?? campanhaSlug)
+    : "";
+  const titulo = campanhaSlug
+    ? campanhaNome
+    : facetas.categoria.length === 1
       ? nomeCategoria(facetas.categoria[0])
       : q
         ? `Resultados para “${q}”`
