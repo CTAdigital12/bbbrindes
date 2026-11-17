@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { requestJSON } from '../friendly/api'
 import { Icon } from '../friendly/icons'
+import { ReadOnlyNotice } from '../friendly/ReadOnlyNotice'
 import { HeroContentFields, HeroExhibitionFields } from './HeroFields'
 import { HeroPreview } from './HeroPreview'
 import { heroBody, heroSaveIssue, heroStatus, validateHero } from './hero-data'
@@ -46,6 +47,7 @@ export function HeroEditor({ initial, canSave = true }: { initial: HeroDraft; ca
     } catch (cause) { setError(heroSaveIssue(cause)) } finally { setSaving(false) }
   }
   return <div className="bb-admin"><section className="bb-page">
+    <ReadOnlyNotice show={!canSave} />
     <div className="ph"><h1>{original.id ? 'Editar banner' : 'Adicionar banner'}</h1>{original.id ? <Link className="btn" href={`${HERO_PATH}/create`}><Icon name="plus" />Adicionar banner</Link> : null}<span className="sp" /><Link className="lnk" href={HERO_PATH}>Voltar para Banners</Link></div>
     {error ? <p id="bb-hero-error" className="bb-error" role="alert">{error.message}</p> : null}{message ? <p className="bb-success" role="status">{message}</p> : null}
     <div className="prev-wrap"><div className="bb-stack">

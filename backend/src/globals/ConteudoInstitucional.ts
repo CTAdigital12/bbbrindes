@@ -1,5 +1,6 @@
 import type { GlobalConfig } from 'payload'
 
+import { isEditorOrAdmin } from '../access/byRole'
 import { rebuildGlobalAfterChange } from '../hooks/triggerDeploy'
 
 // Global "Conteudo institucional" (FB-6, Fase 6). Torna editavel no /admin a copy
@@ -22,6 +23,7 @@ export const ConteudoInstitucional: GlobalConfig = {
   },
   access: {
     read: () => true,
+    update: isEditorOrAdmin,
   },
   hooks: {
     afterChange: [rebuildGlobalAfterChange],

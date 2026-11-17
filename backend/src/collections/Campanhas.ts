@@ -1,5 +1,6 @@
 import type { CollectionConfig } from 'payload'
 
+import { isAdmin, isEditorOrAdmin } from '../access/byRole'
 import { slugField } from '../fields/slug'
 
 // Campanhas sazonais e datas comemorativas. Cada uma e destino de landing page
@@ -19,6 +20,9 @@ export const Campanhas: CollectionConfig = {
   },
   access: {
     read: () => true,
+    create: isEditorOrAdmin,
+    update: isEditorOrAdmin,
+    delete: isAdmin,
   },
   fields: [
     { name: 'nome', type: 'text', required: true },

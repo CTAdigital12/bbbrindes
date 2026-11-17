@@ -1,5 +1,7 @@
 import type { CollectionConfig } from 'payload'
 
+import { isAdmin, isEditorOrAdmin } from '../access/byRole'
+
 // Materias de imprensa / clipping: veiculo, data, resumo e link externo.
 export const Imprensa: CollectionConfig = {
   slug: 'imprensa',
@@ -16,6 +18,9 @@ export const Imprensa: CollectionConfig = {
   },
   access: {
     read: () => true,
+    create: isEditorOrAdmin,
+    update: isEditorOrAdmin,
+    delete: isAdmin,
   },
   defaultSort: '-data',
   fields: [

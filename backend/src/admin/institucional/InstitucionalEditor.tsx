@@ -3,6 +3,7 @@ import { useUnsavedGuard } from '../friendly/unsaved-guard'
 import React, { useEffect, useState } from 'react'
 import { requestJSON } from '../friendly/api'
 import { Icon } from '../friendly/icons'
+import { ReadOnlyNotice } from '../friendly/ReadOnlyNotice'
 import { HeroImageField } from '../hero/HeroImageField'
 import { InstitucionalPreview } from './InstitucionalPreview'
 import { institucionalBody, institucionalSaveIssue, validateInstitucional } from './institucional-data'
@@ -62,6 +63,7 @@ export function InstitucionalEditor({ initial, canSave = true }: { initial: Inst
     } catch (cause) { setError(institucionalSaveIssue(cause)) } finally { setSaving(false) }
   }
   return <div className="bb-admin"><section className="bb-page">
+    <ReadOnlyNotice show={!canSave} />
     <div className="ph"><h1>Institucional</h1>{dirty ? <span className="pill-draft">Alteracoes nao salvas</span> : null}<span className="sp" /><button type="button" className="btn pri" disabled={disabled} onClick={() => void save()}><Icon name="up" />{saving ? 'Salvando…' : 'Salvar alteracoes'}</button></div>
     <p className="sub">Edite os textos das paginas Quem somos e SAC e a linha do tempo. Nada vai para o site ate salvar, e o site reconstroi em alguns minutos.</p>
     {error ? <p id="bb-inst-error" className="bb-error" role="alert">{error.message}</p> : null}{message ? <p className="bb-success" role="status">{message}</p> : null}

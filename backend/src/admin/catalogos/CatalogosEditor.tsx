@@ -3,6 +3,7 @@ import { useUnsavedGuard } from '../friendly/unsaved-guard'
 import React, { useEffect, useState } from 'react'
 import { requestJSON } from '../friendly/api'
 import { Icon } from '../friendly/icons'
+import { ReadOnlyNotice } from '../friendly/ReadOnlyNotice'
 import { CatalogosPreview } from './CatalogosPreview'
 import { catalogosBody, catalogosSaveIssue, validateCatalogos, type CatalogoIssue } from './catalogos-data'
 import type { CatalogoContent, CatalogoItem } from './catalogos-model'
@@ -41,6 +42,7 @@ export function CatalogosEditor({ initial, canSave = true }: { initial: Catalogo
     } catch (cause) { setError(catalogosSaveIssue(cause)) } finally { setSaving(false) }
   }
   return <div className="bb-admin"><section className="bb-page">
+    <ReadOnlyNotice show={!canSave} />
     <div className="ph"><h1>Catálogo digital</h1>{dirty ? <span className="pill-draft">Alterações não salvas</span> : null}<span className="sp" /><button type="button" className="btn pri" disabled={disabled} onClick={() => void save()}><Icon name="up" />{saving ? 'Salvando…' : 'Salvar alterações'}</button></div>
     <p className="sub">Página /catálogos: título, chamada, o flipbook (heyzine) e os cards de atalho. Nada vai para o site até salvar, e o site reconstrói em alguns minutos.</p>
     {error ? <p id="bb-cat-dig-error" className="bb-error" role="alert">{error.message}</p> : null}{message ? <p className="bb-success" role="status">{message}</p> : null}

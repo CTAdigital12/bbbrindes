@@ -1,5 +1,7 @@
 import type { CollectionConfig } from 'payload'
 
+import { isAdmin, isEditorOrAdmin } from '../access/byRole'
+
 // Collection dos banners do carrossel principal da home (FB-6 midia). Substitui o
 // hardcode de frontend/src/data/home-joy.ts (MESES + FIXOS + orderedHeroSlides).
 //
@@ -25,6 +27,9 @@ export const HeroSlides: CollectionConfig = {
   },
   access: {
     read: () => true,
+    create: isEditorOrAdmin,
+    update: isEditorOrAdmin,
+    delete: isAdmin,
   },
   defaultSort: 'ordem',
   fields: [

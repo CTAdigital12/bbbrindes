@@ -1,5 +1,6 @@
 import type { GlobalConfig } from 'payload'
 
+import { isEditorOrAdmin } from '../access/byRole'
 import { rebuildGlobalAfterChange } from '../hooks/triggerDeploy'
 
 // Global "Conteudo da home" (FB-6, Fase 5). Torna editavel no /admin a COPY dos
@@ -25,6 +26,7 @@ export const ConteudoHome: GlobalConfig = {
   },
   access: {
     read: () => true,
+    update: isEditorOrAdmin,
   },
   // Editar a home no admin dispara rebuild do site estatico (FB-6: editavel tem
   // que refletir sem dev). Mesmo hook do global `configuracoes`.

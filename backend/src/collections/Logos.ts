@@ -1,5 +1,7 @@
 import type { CollectionConfig } from 'payload'
 
+import { isAdmin, isEditorOrAdmin } from '../access/byRole'
+
 // Collection de Logos das marcas (FB-6, marquee da home). Upload PROPRIO (nao a
 // Media) porque os logos sao SVG e nao podem passar pela conversao webp da Media
 // (rasterizaria o vetor). Sem formatOptions/imageSizes: preserva o arquivo original.
@@ -20,6 +22,9 @@ export const Logos: CollectionConfig = {
   },
   access: {
     read: () => true,
+    create: isEditorOrAdmin,
+    update: isEditorOrAdmin,
+    delete: isAdmin,
   },
   fields: [
     { name: 'nome', type: 'text', required: true },

@@ -8,6 +8,12 @@ describe('contrato de gravacao', () => {
   await expect(requestJSON('/api/produtos/1', { method: 'PATCH' })).rejects.toThrow('Codigo duplicado')
   expect(fetch).toHaveBeenCalledWith('/api/produtos/1', expect.objectContaining({ credentials: 'same-origin', method: 'PATCH' }))
  })
+ it('trata 403 (acesso negado) como erro de permissao, nunca como sucesso', async () => {
+  const fetch = vi.fn(async () => new Response(JSON.stringify({ errors: [{ message: 'You are not allowed to perform this action.' }] }), { status: 403 }))
+  vi.stubGlobal('fetch', fetch)
+  await expect(requestJSON('/api/produtos/1', { method: 'PATCH' })).rejects.toMatchObject({ status: 403 })
+  await expect(requestJSON('/api/produtos/1', { method: 'PATCH' })).rejects.toThrow(/somente de leitura/i)
+ })
  it('rejeita arquivos fora do contrato antes de enviar', async () => {
   const fetch = vi.fn(); vi.stubGlobal('fetch', fetch)
   await expect(uploadImage(new File(['texto'], 'arquivo.pdf', { type: 'application/pdf' }))).rejects.toThrow('imagem')

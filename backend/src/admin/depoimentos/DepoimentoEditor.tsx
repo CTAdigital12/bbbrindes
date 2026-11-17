@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { requestJSON } from '../friendly/api'
 import { Icon } from '../friendly/icons'
+import { ReadOnlyNotice } from '../friendly/ReadOnlyNotice'
 import { HeroImageField } from '../hero/HeroImageField'
 import { depoimentoBody, depSaveIssue, depStatus, validateDepoimento } from './depoimento-data'
 import { DEPOIMENTO_PATH, type DepoimentoDraft, type DepoimentoIssue } from './depoimento-model'
@@ -45,6 +46,7 @@ export function DepoimentoEditor({ initial, canSave = true }: { initial: Depoime
     } catch (cause) { setError(depSaveIssue(cause)) } finally { setSaving(false) }
   }
   return <div className="bb-admin"><section className="bb-page">
+    <ReadOnlyNotice show={!canSave} />
     <div className="ph"><h1>{original.id ? 'Editar depoimento' : 'Adicionar depoimento'}</h1>{original.id ? <Link className="btn" href={`${DEPOIMENTO_PATH}/create`}><Icon name="plus" />Adicionar depoimento</Link> : null}<span className="sp" /><Link className="lnk" href={DEPOIMENTO_PATH}>Voltar para Depoimentos</Link></div>
     {error ? <p id="bb-dep-error" className="bb-error" role="alert">{error.message}</p> : null}{message ? <p className="bb-success" role="status">{message}</p> : null}
     <div className="prev-wrap"><div className="bb-stack">

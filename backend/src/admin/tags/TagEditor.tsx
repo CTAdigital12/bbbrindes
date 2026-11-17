@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { requestJSON } from '../friendly/api'
 import { Icon } from '../friendly/icons'
+import { ReadOnlyNotice } from '../friendly/ReadOnlyNotice'
 import { tagBody, tagSaveIssue, validateTag } from './tags-data'
 import { TAG_PATH, type TagDraft, type TagIssue } from './tags-model'
 import { TagPreview } from './TagPreview'
@@ -43,6 +44,7 @@ export function TagEditor({ initial, canSave = true, usosCount }: { initial: Tag
     } catch (cause) { setError(tagSaveIssue(cause)) } finally { setSaving(false) }
   }
   return <div className="bb-admin"><section className="bb-page">
+    <ReadOnlyNotice show={!canSave} />
     <div className="ph"><h1>{original.id ? 'Editar tag' : 'Adicionar tag'}</h1>{original.id ? <Link className="btn" href={`${TAG_PATH}/create`}><Icon name="plus" />Adicionar tag</Link> : null}<span className="sp" /><Link className="lnk" href={TAG_PATH}>Voltar para Tags</Link></div>
     {error ? <p id="bb-tag-error" className="bb-error" role="alert">{error.message}</p> : null}{message ? <p className="bb-success" role="status">{message}</p> : null}
     <div className="prev-wrap"><div className="bb-stack">

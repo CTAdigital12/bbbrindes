@@ -18,11 +18,20 @@ function apiMessage(body: ApiBody) {
   if (messages.length) return messages.join(' ')
   return typeof body.message === 'string' && body.message ? body.message : 'Não foi possível concluir. Tente novamente.'
 }
+// Mensagem clara para falha de permissao/sessao. Sem isso, um 403 do Payload
+// chegaria em ingles ("You are not allowed to perform this action"). Como o gate
+// de escrita (byRole) bloqueia o visualizador no servidor, um PATCH/POST negado
+// volta 403: tem que aparecer como erro claro de permissao, nunca como sucesso.
+function messageForStatus(status: number, body: ApiBody) {
+  if (status === 403) return 'Seu acesso é somente de leitura. Peça a um administrador para salvar esta alteração.'
+  if (status === 401) return 'Sua sessão expirou. Entre novamente para salvar.'
+  return apiMessage(body)
+}
 export class RequestError extends Error {
   readonly fields: ValidationField[]
   constructor(readonly status: number, result: unknown) {
     const body: ApiBody = result && typeof result === 'object' ? result : {}
-    super(apiMessage(body))
+    super(messageForStatus(status, body))
     this.name = 'RequestError'
     this.fields = fieldErrors(body)
   }

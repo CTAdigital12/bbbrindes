@@ -17,6 +17,7 @@ body:has(.bb-admin) .app-header, body:has(.bb-admin) .template-default__nav-togg
 .bb-admin .bb-error { padding:12px 16px; border:1px solid #f6b4ad; background:#fdecea; color:#b42318; border-radius:8px; }
 .bb-admin .bb-success { padding:12px 16px; border:1px solid #b3d9b8; background:#e3f4e8; color:#1f7a45; border-radius:8px; }
 .bb-admin .bb-warning { color:#9a5b00; font-size:12px; }
+.bb-admin .bb-readonly { padding:12px 16px; border:1px solid #c7d2e0; background:#eef2f7; color:#334155; border-radius:8px; }
 .bb-admin .bb-photo-col { width:76px; }
 /* Todas as listas rolam na horizontal no celular: o wrapper rola e a tabela
    mantem largura minima pra as colunas nao espremerem (nada fica escondido). */

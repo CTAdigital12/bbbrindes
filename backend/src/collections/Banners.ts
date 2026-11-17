@@ -1,5 +1,7 @@
 import type { CollectionConfig } from 'payload'
 
+import { isAdmin, isEditorOrAdmin } from '../access/byRole'
+
 // Collection LEGADA. O hero do site le a collection `hero-slides` ("Banners do
 // hero"), NAO esta; e nenhuma pagina do front usa getBanners. Fica escondida do
 // admin (admin.hidden) pra nao confundir com "Banners do hero": o cliente tentava
@@ -15,6 +17,9 @@ export const Banners: CollectionConfig = {
   },
   access: {
     read: () => true,
+    create: isEditorOrAdmin,
+    update: isEditorOrAdmin,
+    delete: isAdmin,
   },
   defaultSort: 'ordem',
   fields: [

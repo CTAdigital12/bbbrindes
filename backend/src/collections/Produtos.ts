@@ -1,5 +1,6 @@
 import type { CollectionConfig } from 'payload'
 
+import { isAdmin, isEditorOrAdmin } from '../access/byRole'
 import { slugField } from '../fields/slug'
 import { CORES_BB } from '../components/produto/cores-bb'
 
@@ -37,6 +38,9 @@ export const Produtos: CollectionConfig = {
   },
   access: {
     read: () => true,
+    create: isEditorOrAdmin,
+    update: isEditorOrAdmin,
+    delete: isAdmin,
   },
   fields: [
     // Identificacao (sidebar). Dois codigos: comercial (site) e integrador (CIGAM).

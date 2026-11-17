@@ -1,5 +1,6 @@
 import type { CollectionConfig } from 'payload'
 
+import { isAdmin, isEditorOrAdmin } from '../access/byRole'
 import { slugField } from '../fields/slug'
 
 // Cases / prova social: cliente, segmento e depoimento opcional.
@@ -18,6 +19,9 @@ export const Cases: CollectionConfig = {
   },
   access: {
     read: () => true,
+    create: isEditorOrAdmin,
+    update: isEditorOrAdmin,
+    delete: isAdmin,
   },
   fields: [
     { name: 'cliente', type: 'text', required: true },

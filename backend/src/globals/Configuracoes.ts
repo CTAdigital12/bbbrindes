@@ -1,5 +1,6 @@
 import type { GlobalConfig } from 'payload'
 
+import { isEditorOrAdmin } from '../access/byRole'
 import { rebuildGlobalAfterChange } from '../hooks/triggerDeploy'
 
 // Configuracoes gerais do site (singleton). Reune o que hoje esta hardcoded no
@@ -20,6 +21,7 @@ export const Configuracoes: GlobalConfig = {
   },
   access: {
     read: () => true,
+    update: isEditorOrAdmin,
   },
   hooks: {
     // Toda edicao salva no admin dispara o rebuild do site estatico (FB-6).

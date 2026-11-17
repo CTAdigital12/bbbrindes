@@ -1,5 +1,7 @@
 import type { CollectionConfig } from 'payload'
 
+import { isAdmin } from '../access/byRole'
+
 // Log de entrega dos orcamentos (FB-7, PART 0). Requisito do cliente (Julien,
 // docs/integracao-leads2b.md secao 3): "nao preciso ARMAZENAR, desde que tenha um
 // LOG DE ENTREGA". Logo, esta collection NAO e um banco de leads: guarda so a
@@ -27,7 +29,7 @@ export const LogsEntrega: CollectionConfig = {
     read: ({ req }) => Boolean(req.user),
     create: () => false,
     update: () => false,
-    delete: ({ req }) => Boolean(req.user),
+    delete: isAdmin,
   },
   fields: [
     {
