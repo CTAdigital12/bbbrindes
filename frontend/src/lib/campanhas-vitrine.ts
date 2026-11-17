@@ -25,3 +25,11 @@ export function bannerCampanhaPublicado(href: string, campanhas: Campanha[]): bo
   const slug = /^\/campanha\/([^/?#]+)/.exec(href)?.[1];
   return !slug || campanhas.some((campanha) => campanha.slug === slug);
 }
+
+// Conjunto de slugs de produto de uma campanha, pelo slug. Base do filtro
+// ?campanha= do catalogo (client-side). Slug nulo ou inexistente devolve conjunto
+// vazio; quem chama decide o que fazer com isso (sem campanha = nao filtra).
+export function produtosDaCampanha(campanhas: Campanha[], slug: string | null): Set<string> {
+  if (!slug) return new Set();
+  return new Set(campanhas.find((campanha) => campanha.slug === slug)?.produtos ?? []);
+}
