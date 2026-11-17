@@ -37,7 +37,7 @@ p{text-wrap:pretty}
 .btn-ghost:hover{background:var(--deep);color:#fff}
 .btn-ghost-w{background:rgba(255,255,255,.08);color:#fff;box-shadow:inset 0 0 0 1.5px rgba(255,255,255,.55);backdrop-filter:blur(6px)}
 .btn-ghost-w:hover{background:#fff;color:var(--deep)}
-.btn-wa{background:#004431;color:#fff}
+.btn-wa{background:#25d366;color:#fff}
 .btn-sm{height:38px;padding:0 16px;font-size:13.5px}
 .btn-lg{height:56px;padding:0 30px;font-size:16px}
 .btn-block{width:100%}
@@ -366,13 +366,13 @@ footer a:hover{color:var(--lime)}
 .fbot{border-top:1px solid rgba(255,255,255,.1);margin-top:32px;padding-top:18px;display:flex;justify-content:space-between;font-size:12.5px;color:#9bb6a0;gap:16px;flex-wrap:wrap}
 
 /* flutuantes */
-.wa-f{position:fixed;right:22px;bottom:22px;z-index:44;width:54px;height:54px;transition:bottom .35s cubic-bezier(.2,.8,.2,1),opacity .2s;border-radius:50%;background:#004431;color:#fff;display:grid;place-items:center;box-shadow:0 10px 26px rgba(0,68,49,.45)}
+.wa-f{position:fixed;right:22px;bottom:22px;z-index:44;width:54px;height:54px;transition:bottom .35s cubic-bezier(.2,.8,.2,1),opacity .2s;border-radius:50%;background:#25d366;color:#fff;display:grid;place-items:center;box-shadow:0 10px 26px rgba(37,211,102,.45)}
 .wa-f .ic{width:28px;height:28px}
 body.sb-on .wa-f{bottom:96px}
 body.drawer-on .wa-f,body.wa-hide .wa-f{opacity:0;pointer-events:none;transform:translateY(20px) scale(.9)}
 .wa-f{transition:bottom .35s cubic-bezier(.2,.8,.2,1),opacity .25s,transform .25s}
-.wa-f:after{content:"";position:absolute;inset:0;border-radius:50%;box-shadow:0 0 0 0 rgba(0,68,49,.5);animation:ring 2.4s infinite}
-@keyframes ring{70%{box-shadow:0 0 0 16px rgba(0,68,49,0)}100%{box-shadow:0 0 0 0 rgba(0,68,49,0)}}
+.wa-f:after{content:"";position:absolute;inset:0;border-radius:50%;box-shadow:0 0 0 0 rgba(37,211,102,.5);animation:ring 2.4s infinite}
+@keyframes ring{70%{box-shadow:0 0 0 16px rgba(37,211,102,0)}100%{box-shadow:0 0 0 0 rgba(37,211,102,0)}}
 /* Hover: botao redondo expande numa pilula pra esquerda (ancorado a direita)
    revelando a mensagem de urgencia; o texto colapsa sozinho (max-width:0) pra
    nao cortar o anel pulsante. */
