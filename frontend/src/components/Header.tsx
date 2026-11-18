@@ -21,7 +21,7 @@ const CATS: { label: string; href: string; hot?: boolean; eco?: boolean }[] = [
   { label: "Squeezes", href: "/catalogo?categoria=squeezes" },
   { label: "To go", href: "/catalogo?categoria=to-go-viagem" },
   { label: "Infantil", href: "/catalogo?categoria=infantil" },
-  { label: "Lancamentos", href: "/catalogo" },
+  { label: "Lançamentos", href: "/catalogo" },
 ];
 
 const INST: { label: string; href: string }[] = [

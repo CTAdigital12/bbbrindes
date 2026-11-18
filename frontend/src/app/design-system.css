@@ -617,7 +617,8 @@ h2.h{font-size:24px;letter-spacing:-.02em;font-weight:600;margin:0 0 16px}
   .search{display:none}
   .hact .rev{display:none}
   .menu-m,.menu-m.xbtn{display:grid}
-  nav.cats .wrap{padding:0 10px}
+  /* Mobile: barra de categorias quebra em 2 linhas (sem arrastar lateral) */
+  nav.cats .wrap{flex-wrap:wrap;overflow-x:visible;height:auto;row-gap:6px;padding:8px 10px}
   .hgrid{grid-template-columns:1fr}
   .slider{aspect-ratio:716/480}
   .slide .ov{left:5.6%;top:10%;width:56%;gap:3.4cqw}
