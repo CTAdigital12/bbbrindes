@@ -53,8 +53,9 @@ export default async function QuemSomosPage() {
       </section>
 
       {/* Intro em texto (sem a foto unica de antes: o carrossel acima ja faz esse
-          papel). maxWidth mantem a leitura confortavel em telas largas. */}
-      <div style={{ maxWidth: "820px", marginTop: "8px" }}>
+          papel). maxWidth mantem a leitura confortavel em telas largas. marginTop
+          da um respiro entre o carrossel e a intro. */}
+      <div style={{ maxWidth: "820px", marginTop: "28px" }}>
         <span className="eyebrow">{quemSomos.eyebrow}</span>
         <h1
           style={{
@@ -81,7 +82,9 @@ export default async function QuemSomosPage() {
         </div>
       </div>
 
-      <div className="nums">
+      {/* Respiro extra acima (da intro pros numeros) e abaixo (dos numeros pra
+          faixa da linha do tempo), pedido na revisao. */}
+      <div className="nums" style={{ marginTop: "48px", marginBottom: "24px" }}>
         {quemSomos.numeros.map((n) => (
           <div className="num" key={n.rotulo}>
             <b>{n.valor}</b>
