@@ -758,7 +758,7 @@ h2.h{font-size:24px;letter-spacing:-.02em;font-weight:600;margin:0 0 16px}
 /* troca literal: a imagem assume o lugar do ano gigante (coluna da direita),
    em tamanho moderado. Imagens nativas sao pequenas (~476px); nao ampliar
    alem disso pra nao pixelar, por isso o teto de 320px. */
-.hphoto{grid-column:2;justify-self:end;align-self:center;margin-right:clamp(20px,5vw,72px);position:relative;width:min(100%,clamp(220px,24vw,320px));aspect-ratio:4/3;border-radius:18px;overflow:hidden;border:3px solid var(--lime);box-shadow:0 22px 50px rgba(0,0,0,.42);background:var(--deep);z-index:2}
+.hphoto{position:absolute;right:clamp(20px,5vw,72px);top:50%;transform:translateY(-50%);width:min(100%,clamp(220px,24vw,320px));aspect-ratio:4/3;border-radius:18px;overflow:hidden;border:3px solid var(--lime);box-shadow:0 22px 50px rgba(0,0,0,.42);background:var(--deep);z-index:2}
 .hphoto img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transform:scale(1.06);transition:opacity .5s,transform .8s}
 .hphoto img.on{opacity:1;transform:none}
 .hcount{position:absolute;top:28px;left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:14px;font-size:13px;color:rgba(238,245,234,.7);font-variant-numeric:tabular-nums}
@@ -789,7 +789,7 @@ h2.h{font-size:24px;letter-spacing:-.02em;font-weight:600;margin:0 0 16px}
  .hline{display:none}
  .hcount{top:16px;left:20px;transform:none}
  .htitle{top:12px;right:20px}.htitle small{display:none}
- .hphoto{grid-column:1;grid-row:1;justify-self:center;align-self:center;margin:0 20px;width:min(100%,300px)}
+ .hphoto{position:static;transform:none;top:auto;right:auto;grid-column:1;grid-row:1;justify-self:center;align-self:center;margin:0 20px;width:min(100%,300px)}
  .hyear{left:auto;right:24px;top:58px;transform:none}
  .hyear span{font-size:clamp(30px,8vw,44px)}
  .htext{grid-column:1;grid-row:2;width:auto;max-width:none;margin:0 20px;min-height:200px}
