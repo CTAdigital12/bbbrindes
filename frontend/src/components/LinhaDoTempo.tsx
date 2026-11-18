@@ -89,7 +89,30 @@ export default function LinhaDoTempo() {
           </svg>
         </div>
 
-        <div className="hline" aria-hidden="true" />
+        <div className="hcount">
+          <span>{String(k + 1).padStart(2, "0")}</span>
+          <i />
+          <span>{String(n).padStart(2, "0")}</span>
+        </div>
+
+        <div className="htitle">
+          <b>Nossa história</b>
+          <small>Desde 2000 · Grupo BB</small>
+        </div>
+
+        <div className="hcol">
+          <div className="hyear in" key={k}>
+            {HIST_STEPS[k].ano}
+          </div>
+          <div className="htext">
+            {HIST_STEPS.map((h, i) => (
+              <div key={h.ano} className={`ht${i === k ? " on" : ""}`}>
+                <h3>{h.titulo}</h3>
+                <p>{h.texto}</p>
+              </div>
+            ))}
+          </div>
+        </div>
 
         <div className="hphoto" aria-hidden="true">
           {HIST_STEPS.map((h, i) => (
@@ -102,30 +125,6 @@ export default function LinhaDoTempo() {
               className={i === k ? "on" : undefined}
             />
           ))}
-        </div>
-
-        <div className="hcount">
-          <span>{String(k + 1).padStart(2, "0")}</span>
-          <i />
-          <span>{String(n).padStart(2, "0")}</span>
-        </div>
-
-        <div className="htitle">
-          <b>Nossa história</b>
-          <small>Desde 2000 · Grupo BB</small>
-        </div>
-
-        <div className="htext">
-          {HIST_STEPS.map((h, i) => (
-            <div key={h.ano} className={`ht${i === k ? " on" : ""}`}>
-              <h3>{h.titulo}</h3>
-              <p>{h.texto}</p>
-            </div>
-          ))}
-        </div>
-
-        <div className="hyear in" key={k}>
-          {HIST_STEPS[k].ano}
         </div>
 
         <div className="hhint">
