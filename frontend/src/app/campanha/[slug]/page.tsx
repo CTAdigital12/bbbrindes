@@ -149,7 +149,7 @@ export default async function CampanhaPage({ params }: { params: Params }) {
               confirma o prazo na proposta.
             </span>
           </div>
-          <Link className="btn btn-cta" href="/orcamento">
+          <Link className="btn btn-cta" href="/catalogo">
             Montar orçamento
             <Icon name="arrow-right" />
           </Link>
