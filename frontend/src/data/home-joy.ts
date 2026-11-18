@@ -50,7 +50,7 @@ export const MESES: HeroSlide[] = [
 // Banners fixos (2), intercalados entre o banner do mes.
 export const FIXOS: HeroSlide[] = [
   { key: "fixo-1-fabrica-propria", theme: "dark", tag: "Fábrica própria", icon: "building-factory-2", title: 'Somos <span class="hl">fábrica,</span> não&nbsp;revenda', sub: "Mais de 25 anos fabricando brindes personalizados no Brasil, com homologação Nestlé e Coca-Cola.", cta: "Conheça a BB", href: "/quem-somos" },
-  { key: "fixo-2-linha-ecologica", theme: "cream", tag: "Linha ecológica", icon: "leaf", title: 'Brindes que <span class="hl">duram,</span> não&nbsp;descartáveis', sub: "Produtos reutilizáveis, recicláveis e livres de BPA, fabricados no Brasil.", cta: "Ver linha ecológica", href: "/catalogo?categoria=green-fibras" },
+  { key: "fixo-2-linha-ecologica", theme: "cream", tag: "Linha ecológica", icon: "leaf", title: 'Brindes que <span class="hl">duram,</span> não&nbsp;descartáveis', sub: "Produtos reutilizáveis, recicláveis e livres de BPA, fabricados no Brasil.", cta: "Ver linha ecológica", href: "/catalogo?categoria=green-plasticaria&categoria=green-fibras&categoria=medalhas-trofeus" },
 ];
 
 // Ordem dos slides do mockup: banner do mes + 2 fixos, depois os demais meses em
