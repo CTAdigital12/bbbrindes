@@ -82,7 +82,7 @@ export default async function ContatoPage() {
               {config.horario}
             </span>
           </span>
-          <Link className="btn btn-cta" href="/orcamento">
+          <Link className="btn btn-cta" href="/catalogo">
             Solicitar orçamento
             <Icon name="arrow-right" />
           </Link>

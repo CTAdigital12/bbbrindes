@@ -31,6 +31,12 @@ type Ord = "rel" | "novo" | "az";
 // backend nao traz aplicacoes, entao aparecia tudo zerado.)
 const MATERIAIS = ["Fibra natural", "Plastico", "Plastico reciclado"];
 
+// A familia "Ecologicos" agrupa 3 categorias (ver data/categorias.ts). O link
+// "Ecologicos" do menu filtra pela UNIAO das 3 (3 params ?categoria=). Quando o
+// filtro ativo e exatamente essa familia, o titulo mostra "Ecologicos" no lugar
+// do generico "Catalogo", pra deixar claro que a vitrine esta na linha ecologica.
+const FAMILIA_ECO = ["green-plasticaria", "green-fibras", "medalhas-trofeus"];
+
 const norm = (s: string) =>
   s.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase();
 const toOrd = (v: string | null): Ord => (v === "novo" || v === "az" ? v : "rel");
@@ -190,15 +196,21 @@ export default function CatalogoClient({
   const campanhaNome = campanhaSlug
     ? (campanhas.find((c) => c.slug === campanhaSlug)?.nome ?? campanhaSlug)
     : "";
+  // Filtro ativo e exatamente a familia Ecologicos (as 3 categorias green)?
+  const ehFamiliaEco =
+    facetas.categoria.length === FAMILIA_ECO.length &&
+    FAMILIA_ECO.every((s) => facetas.categoria.includes(s));
   const titulo = campanhaSlug
     ? campanhaNome
-    : facetas.categoria.length === 1
-      ? nomeCategoria(facetas.categoria[0])
-      : q
-        ? `Resultados para “${q}”`
-        : novo
-          ? "Lançamentos"
-          : "Catálogo";
+    : ehFamiliaEco
+      ? "Ecológicos"
+      : facetas.categoria.length === 1
+        ? nomeCategoria(facetas.categoria[0])
+        : q
+          ? `Resultados para “${q}”`
+          : novo
+            ? "Lançamentos"
+            : "Catálogo";
 
   // Chips de filtro ativo (removiveis): categoria/material.
   const chips: { grupo: Grupo; valor: string; rotulo: string }[] = [

@@ -297,7 +297,7 @@ export default async function HomePage() {
       <section className="sec reveal">
         <div className="wrap">
           {/* Eco banner (Linha Green) - mockup 28/10 */}
-          <Link className="eco-bn" href="/catalogo?categoria=green-fibras">
+          <Link className="eco-bn" href="/catalogo?categoria=green-plasticaria&categoria=green-fibras&categoria=medalhas-trofeus">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src={imgSrc(conteudo.ecoBanner.imagem)}
@@ -328,7 +328,7 @@ export default async function HomePage() {
                   <span key={l}>{l}</span>
                 ))}
               </div>
-              <Link className="btn btn-lime" href="/catalogo?categoria=green-fibras">
+              <Link className="btn btn-lime" href="/catalogo?categoria=green-plasticaria&categoria=green-fibras&categoria=medalhas-trofeus">
                 {conteudo.ecoLead.ctaLabel}
                 <Icon name="arrow-right" />
               </Link>
