@@ -125,7 +125,7 @@ export default function LinhaDoTempo() {
         </div>
 
         <div className="hyear in" key={k}>
-          {HIST_STEPS[k].ano}
+          <span>{HIST_STEPS[k].ano}</span>
         </div>
 
         <div className="hhint">

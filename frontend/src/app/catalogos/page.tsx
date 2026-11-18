@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import Icon from "@/components/Icon";
 import CompartilharCatalogo from "@/components/CompartilharCatalogo";
-import HistMini from "@/components/HistMini";
 import { getCatalogos } from "@/lib/content";
 import { pageUrl } from "@/lib/site";
 
@@ -27,11 +26,6 @@ export default async function CatalogosPage() {
         <h1>{cat.titulo}</h1>
         <p>{cat.intro}</p>
       </div>
-
-      {/* Timeline compacta (G3, reuniao 29/10): teaser da historia do Grupo BB
-          logo antes do flipbook. Reusa o HistMini (mesmo da pagina de produto);
-          e uma secao propria da pagina, fora do iframe externo do catalogo. */}
-      <HistMini />
 
       {/* Modo foco: fundo escuro em volta do flipbook para destacar o catalogo. */}
       <div className="flipstage">
