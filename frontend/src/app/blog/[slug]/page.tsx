@@ -3,8 +3,9 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getPostBySlug, getPosts } from "@/lib/content";
 import { img } from "@/lib/asset";
+import { pageUrl } from "@/lib/site";
 import Icon from "@/components/Icon";
-import { POSTS } from "@/data/home-joy";
+import { nb, POSTS } from "@/data/home-joy";
 
 type Params = Promise<{ slug: string }>;
 
@@ -20,71 +21,148 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
   return { title: post.titulo, description: post.resumo };
 }
 
-// Capas ilustrativas (mockup POSTS), consistentes com o index do blog.
+// Capas ilustrativas (mockup POSTS), consistentes com o index do blog. O Post
+// ainda nao tem campo de imagem no wireframe; ciclamos as capas por indice.
 const COVERS = POSTS.map(([, , imagem]) => imagem);
+
+// Data por extenso em pt-BR (ex.: "20 de maio de 2026"), padrao de blog.
+function dataLonga(iso: string): string {
+  return new Date(iso).toLocaleDateString("pt-BR", {
+    day: "2-digit",
+    month: "long",
+    year: "numeric",
+    timeZone: "UTC",
+  });
+}
+
+// Tempo de leitura estimado a 200 palavras/min (minimo de 1 min).
+function tempoLeitura(texto: string): number {
+  const palavras = texto.trim().split(/\s+/).filter(Boolean).length;
+  return Math.max(1, Math.round(palavras / 200));
+}
 
 export default async function PostPage({ params }: { params: Params }) {
   const { slug } = await params;
   const posts = await getPosts();
-  const post = posts.find((p) => p.slug === slug);
-  if (!post) notFound();
-  const idx = Math.max(0, posts.findIndex((p) => p.slug === slug));
+  const idx = posts.findIndex((p) => p.slug === slug);
+  if (idx === -1) notFound();
+  const post = posts[idx];
   const cover = COVERS[idx % COVERS.length];
   // Quebra o conteudo em paragrafos (mesmo criterio da campanha): um <p> por
   // bloco separado por linha em branco. Antes tudo caia em um unico <p>.
   const paragrafos = post.conteudo ? post.conteudo.split("\n\n").filter(Boolean) : [];
+  const minutos = tempoLeitura(post.conteudo || post.resumo || "");
+
+  // Continue lendo: ate 3 outros posts, em ordem, pulando o atual.
+  const relacionados = posts.filter((p) => p.slug !== slug).slice(0, 3);
+
+  // Links de compartilhamento (sem JS, funcionam no export estatico). A URL
+  // absoluta vem de pageUrl (origin + basePath), a mesma base do SEO/canonical.
+  const url = pageUrl(`/blog/${slug}`);
+  const share = {
+    facebook: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`,
+    linkedin: `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`,
+    whatsapp: `https://wa.me/?text=${encodeURIComponent(`${post.titulo} ${url}`)}`,
+  };
 
   return (
-    <article className="wrap">
+    <div className="wrap">
       <div className="crumb">
         <Link href="/">Início</Link>/<Link href="/blog">Blog</Link>/<span>{post.titulo}</span>
       </div>
-      <div className="ptitle">
-        <h1>{post.titulo}</h1>
-        <p style={{ margin: "8px 0 0", color: "var(--muted)", fontSize: "13px" }}>
-          {new Date(post.data).toLocaleDateString("pt-BR")}
-        </p>
+
+      <article className="article">
+        <div className="ptitle">
+          <span className="chip chip-sage" style={{ marginBottom: "12px" }}>
+            Artigo
+          </span>
+          <h1>{nb(post.titulo)}</h1>
+          <div className="article-meta">
+            <span className="mi">
+              <Icon name="calendar-event" />
+              {dataLonga(post.data)}
+            </span>
+            <span className="mi">
+              <Icon name="clock" />
+              {minutos} min de leitura
+            </span>
+          </div>
+        </div>
+
+        <div className="article-cover">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src={img(cover)} alt="" loading="eager" />
+        </div>
+
+        {post.resumo ? <p className="article-lead">{nb(post.resumo)}</p> : null}
+
+        <div className="article-body">
+          {paragrafos.map((par, i) => (
+            <p key={i}>{par}</p>
+          ))}
+        </div>
+      </article>
+
+      <div className="article-foot">
+        <Link className="link" href="/blog">
+          <Icon name="chevron-left" />
+          Voltar ao blog
+        </Link>
+        <div className="share">
+          <span>Compartilhar:</span>
+          <a href={share.facebook} target="_blank" rel="noopener noreferrer" aria-label="Compartilhar no Facebook">
+            <Icon name="brand-facebook" />
+          </a>
+          <a href={share.linkedin} target="_blank" rel="noopener noreferrer" aria-label="Compartilhar no LinkedIn">
+            <Icon name="brand-linkedin" />
+          </a>
+          <a href={share.whatsapp} target="_blank" rel="noopener noreferrer" aria-label="Compartilhar no WhatsApp">
+            <Icon name="brand-whatsapp" />
+          </a>
+        </div>
       </div>
 
-      <div
-        style={{
-          borderRadius: "var(--r)",
-          overflow: "hidden",
-          aspectRatio: "16 / 7",
-          marginTop: "18px",
-          background: "var(--g-card)",
-        }}
-      >
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src={img(cover)}
-          alt=""
-          loading="lazy"
-          style={{ width: "100%", height: "100%", objectFit: "cover" }}
-        />
-      </div>
-
-      <div
-        style={{
-          maxWidth: "72ch",
-          marginTop: "24px",
-          color: "#33473e",
-          fontSize: "15px",
-          lineHeight: 1.7,
-        }}
-      >
-        <p style={{ fontWeight: 500, color: "var(--ink)", margin: "0 0 14px" }}>{post.resumo}</p>
-        {paragrafos.map((par, i) => (
-          <p key={i} style={{ margin: "0 0 14px" }}>
-            {par}
-          </p>
-        ))}
-      </div>
-
-      <Link className="link" href="/blog" style={{ marginTop: "28px", display: "inline-flex" }}>
-        <Icon name="chevron-left" />
-        Voltar ao blog
-      </Link>
-    </article>
+      {relacionados.length > 0 ? (
+        <section className="sec">
+          <div className="shead">
+            <div>
+              <h2>Continue lendo</h2>
+            </div>
+            <Link className="link" href="/blog">
+              Ver todos os posts
+              <Icon name="arrow-right" />
+            </Link>
+          </div>
+          <div className="blog">
+            {relacionados.map((p) => {
+              const ci = posts.findIndex((x) => x.slug === p.slug);
+              return (
+                <Link className="post" href={`/blog/${p.slug}`} key={p.slug}>
+                  <div className="ph">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src={img(COVERS[ci % COVERS.length])} alt="" loading="lazy" />
+                  </div>
+                  <div className="bd">
+                    <span className="chip chip-sage" style={{ alignSelf: "flex-start" }}>
+                      Artigo
+                    </span>
+                    <h3>{nb(p.titulo)}</h3>
+                    <p>{p.resumo}</p>
+                    <span className="meta">
+                      <Icon name="calendar-event" />
+                      {dataLonga(p.data)}
+                    </span>
+                    <span className="more">
+                      Ler mais
+                      <Icon name="arrow-right" />
+                    </span>
+                  </div>
+                </Link>
+              );
+            })}
+          </div>
+        </section>
+      ) : null}
+    </div>
   );
 }
