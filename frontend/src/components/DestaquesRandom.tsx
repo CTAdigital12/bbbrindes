@@ -27,7 +27,7 @@ export default function DestaquesRandom({ produtos }: { produtos: Produto[] }) {
   return (
     <section className="wf-container py-6">
       <div className="mb-3 flex items-center justify-between">
-        <h2 className="text-lg font-semibold text-wf-ink">Lancamentos</h2>
+        <h2 className="text-lg font-semibold text-wf-ink">Lançamentos</h2>
         <Link href="/catalogo" className="text-sm text-wf-accent hover:underline">
           Ver todos
         </Link>
