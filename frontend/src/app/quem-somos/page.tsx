@@ -25,37 +25,59 @@ export default async function QuemSomosPage() {
         <Link href="/">Início</Link>/<span>Quem somos</span>
       </div>
 
-      <div className="split">
-        <div>
-          <span className="eyebrow">{quemSomos.eyebrow}</span>
-          <h1
-            style={{
-              margin: "0 0 14px",
-              fontSize: "40px",
-              lineHeight: 1.1,
-              letterSpacing: "-.03em",
-              fontWeight: 600,
-            }}
-          >
-            {nb(quemSomos.titulo)}
-          </h1>
-          <p>{quemSomos.paragrafo1}</p>
-          <p>{quemSomos.paragrafo2}</p>
-          <div style={{ display: "flex", gap: "10px", flexWrap: "wrap", marginTop: "18px" }}>
-            <Link className="btn btn-cta" href="/catalogo">
-              Ver todos os produtos
-              <Icon name="arrow-right" />
-            </Link>
-            <a className="btn btn-ghost" href={WA} target="_blank" rel="noopener">
-              <Icon name="brand-whatsapp" />
-              Falar com o comercial
-            </a>
+      {/* Carrossel da fabrica no TOPO (acima da intro). Full-bleed (.fmq) lendo a
+          galeria editavel no painel (conteudo-institucional > quemSomos.galeria):
+          da pra adicionar, remover e reordenar fotos la, sem mexer no codigo.
+          Lista duplicada pro loop infinito; a 2a metade e decorativa (aria-hidden).
+          Pausa no hover; para em prefers-reduced-motion. */}
+      <section className="sec" style={{ padding: "22px 0 4px" }} aria-label="Nossa fábrica">
+        <div className="fmq" aria-label="Fotos da fábrica">
+          <div className="fmq-t">
+            {[...quemSomos.galeria, ...quemSomos.galeria].map((g, i) => (
+              <figure
+                className="fab"
+                key={`${g.imagem}-${i}`}
+                aria-hidden={i >= quemSomos.galeria.length ? "true" : undefined}
+              >
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={imgSrc(g.imagem)}
+                  alt={i >= quemSomos.galeria.length ? "" : g.legenda}
+                  loading="lazy"
+                />
+                <figcaption>{g.legenda}</figcaption>
+              </figure>
+            ))}
           </div>
         </div>
-        {/* Foto da fabrica: upload do painel (fotoFabrica) ou a padrao do site. */}
-        <div className="ph">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={imgSrc(quemSomos.fotoFabrica)} alt="Fábrica própria da BB Brindes" />
+      </section>
+
+      {/* Intro em texto (sem a foto unica de antes: o carrossel acima ja faz esse
+          papel). maxWidth mantem a leitura confortavel em telas largas. */}
+      <div style={{ maxWidth: "820px", marginTop: "8px" }}>
+        <span className="eyebrow">{quemSomos.eyebrow}</span>
+        <h1
+          style={{
+            margin: "0 0 14px",
+            fontSize: "40px",
+            lineHeight: 1.1,
+            letterSpacing: "-.03em",
+            fontWeight: 600,
+          }}
+        >
+          {nb(quemSomos.titulo)}
+        </h1>
+        <p>{quemSomos.paragrafo1}</p>
+        <p>{quemSomos.paragrafo2}</p>
+        <div style={{ display: "flex", gap: "10px", flexWrap: "wrap", marginTop: "18px" }}>
+          <Link className="btn btn-cta" href="/catalogo">
+            Ver todos os produtos
+            <Icon name="arrow-right" />
+          </Link>
+          <a className="btn btn-ghost" href={WA} target="_blank" rel="noopener">
+            <Icon name="brand-whatsapp" />
+            Falar com o comercial
+          </a>
         </div>
       </div>
 
@@ -106,36 +128,6 @@ export default async function QuemSomosPage() {
               </div>
             </div>
           ))}
-        </div>
-      </section>
-
-      <section className="sec">
-        <div className="shead">
-          <div>
-            <h2>Nossa fábrica</h2>
-            <p>Produção própria em Lauro de Freitas (BA).</p>
-          </div>
-        </div>
-        {/* Carrossel infinito: lista duplicada, anima ate -50% (a 2a metade e
-            decorativa, aria-hidden). Pausa no hover; para em prefers-reduced-motion. */}
-        <div className="fmq" aria-label="Fotos da fábrica">
-          <div className="fmq-t">
-            {[...quemSomos.galeria, ...quemSomos.galeria].map((g, i) => (
-              <figure
-                className="fab"
-                key={`${g.imagem}-${i}`}
-                aria-hidden={i >= quemSomos.galeria.length ? "true" : undefined}
-              >
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={imgSrc(g.imagem)}
-                  alt={i >= quemSomos.galeria.length ? "" : g.legenda}
-                  loading="lazy"
-                />
-                <figcaption>{g.legenda}</figcaption>
-              </figure>
-            ))}
-          </div>
         </div>
       </section>
 
