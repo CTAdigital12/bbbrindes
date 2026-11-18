@@ -581,7 +581,7 @@ h2.h{font-size:24px;letter-spacing:-.02em;font-weight:600;margin:0 0 16px}
 .num b{display:block;font-size:30px;font-weight:600;letter-spacing:-.03em;color:var(--deep)}
 .num span{font-size:13px;color:var(--muted)}
 .cbox{background:#fff;border-radius:var(--r);padding:26px;box-shadow:var(--sh-1);display:grid;gap:14px}
-.cbox a,.cbox span{display:flex;gap:12px;align-items:center;font-size:15px}
+.cbox>a,.cbox>span{display:flex;gap:12px;align-items:center;font-size:15px}
 .cbox .ib{width:42px;height:42px;border-radius:50%;background:#e8f0da;color:var(--deep);display:grid;place-items:center;flex:none}
 .map{border-radius:var(--r);overflow:hidden;aspect-ratio:16/9;background:linear-gradient(135deg,#dfe7cf,#cbd8b8);display:grid;place-items:center;color:var(--deep);gap:8px;font-weight:600}
 
