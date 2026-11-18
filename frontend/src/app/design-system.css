@@ -752,37 +752,46 @@ h2.h{font-size:24px;letter-spacing:-.02em;font-weight:600;margin:0 0 16px}
 .hdial .ring2{fill:none;stroke:rgba(180,201,148,.12);stroke-width:1}
 #hrot{transition:transform .9s cubic-bezier(.2,.8,.2,1)}
 .hdial .ticks line{stroke:rgba(180,201,148,.38);stroke-width:2}
-.hyrs{display:none}
-.hphoto{grid-column:2;justify-self:center;align-self:center;position:relative;width:min(100%,clamp(300px,38vw,520px));aspect-ratio:4/5;margin:0;border-radius:28px;overflow:hidden;border:3px solid var(--lime);box-shadow:0 30px 70px rgba(0,0,0,.45);background:var(--deep);z-index:2}
-.hphoto img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transform:scale(1.06);transition:opacity .6s,transform .9s}
+.hyrs text{fill:rgba(238,245,234,.45);font:600 22px Poppins,sans-serif;letter-spacing:.06em;text-anchor:middle;transition:fill .4s}
+.hyrs text.on{fill:transparent}
+.hline{position:absolute;left:calc(var(--X) + 66px);top:50%;width:clamp(50px,7vw,130px);height:2px;background:var(--lime);transform:translateY(-1px)}
+/* troca literal: a imagem assume o lugar do ano gigante (coluna da direita),
+   em tamanho moderado. Imagens nativas sao pequenas (~476px); nao ampliar
+   alem disso pra nao pixelar, por isso o teto de 320px. */
+.hphoto{grid-column:2;justify-self:end;align-self:center;margin-right:clamp(20px,5vw,72px);position:relative;width:min(100%,clamp(220px,24vw,320px));aspect-ratio:4/3;border-radius:18px;overflow:hidden;border:3px solid var(--lime);box-shadow:0 22px 50px rgba(0,0,0,.42);background:var(--deep);z-index:2}
+.hphoto img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transform:scale(1.06);transition:opacity .5s,transform .8s}
 .hphoto img.on{opacity:1;transform:none}
 .hcount{position:absolute;top:28px;left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:14px;font-size:13px;color:rgba(238,245,234,.7);font-variant-numeric:tabular-nums}
 .hcount i{display:block;width:70px;height:1px;background:rgba(238,245,234,.5)}
 .htitle{position:absolute;top:24px;right:clamp(20px,5vw,72px);text-align:right}
 .htitle b{display:block;font-size:clamp(24px,2.4vw,34px);font-weight:500;letter-spacing:-.02em}
 .htitle small{font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--sage)}
-.hcol{grid-column:1;position:relative;margin-left:clamp(20px,6vw,96px);max-width:440px;z-index:2}
-.htext{position:relative;width:auto;max-width:420px;min-height:240px}
+.htext{position:relative;grid-column:1;margin-left:clamp(20px,6vw,96px);width:calc(var(--X) - var(--D) * .047 - clamp(20px,6vw,96px) - 40px);max-width:380px;min-height:240px;z-index:2}
 .ht{position:absolute;inset:0 0 auto 0;opacity:0;transform:translateY(16px);transition:opacity .45s,transform .45s;pointer-events:none}
 .ht.on{opacity:1;transform:none;pointer-events:auto}
 .ht h3{margin:0 0 12px;font-size:clamp(24px,2.3vw,32px);font-weight:500;letter-spacing:-.02em;line-height:1.15}
 .ht p{margin:0;color:rgba(238,245,234,.78);font-size:15.5px;line-height:1.65}
-.hyear{display:block;margin:0 0 16px;font-size:clamp(40px,5.5vw,72px);font-weight:600;line-height:1;letter-spacing:-.02em;color:var(--lime);font-variant-numeric:tabular-nums}
-.hyear.in{animation:hyIn .6s cubic-bezier(.2,.8,.2,1)}
+/* troca literal: o ano vira um rotulo pequeno, no ponto onde ficava a foto
+   (borda do mostrador, ligado pela .hline ao elemento grande da direita). */
+.hyear{position:absolute;left:var(--X);top:50%;transform:translate(-50%,-50%);z-index:3;font-variant-numeric:tabular-nums}
+.hyear span{display:block;font-size:clamp(34px,4.2vw,56px);font-weight:600;line-height:1;letter-spacing:-.02em;color:#f4f8ef;text-shadow:0 2px 12px rgba(0,0,0,.55)}
+.hyear.in span{animation:hyIn .6s cubic-bezier(.2,.8,.2,1)}
 @keyframes hyIn{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:none}}
 .hhint{position:absolute;bottom:22px;left:50%;transform:translateX(-50%);font-size:12.5px;color:rgba(238,245,234,.6);display:flex;gap:6px;align-items:center;transition:opacity .3s}
 .hhint .ic{width:16px;height:16px;animation:hint 1.6s ease-in-out infinite}
 @keyframes hint{50%{transform:translateY(4px)}}
 .hscroll.fim .hhint{opacity:0}
 @media(max-width:900px){
- .hstage{grid-template-columns:1fr;grid-template-rows:auto auto;align-content:center;gap:18px}
+ .hstage{grid-template-columns:1fr;grid-template-rows:auto auto;align-content:center;gap:16px}
  .hstage{--D:150vw;--X:40vw}
- .hdial{opacity:.22}
+ .hdial{opacity:.3}
+ .hyrs{display:none}
+ .hline{display:none}
  .hcount{top:16px;left:20px;transform:none}
  .htitle{top:12px;right:20px}.htitle small{display:none}
- .hphoto{grid-column:1;grid-row:1;width:min(100%,360px);aspect-ratio:4/3;margin:0 20px;justify-self:center}
- .hcol{grid-column:1;grid-row:2;margin:0 20px;max-width:none}
- .htext{width:auto;max-width:none;min-height:200px}
- .hyear{font-size:clamp(32px,9vw,52px)}
+ .hphoto{grid-column:1;grid-row:1;justify-self:center;align-self:center;margin:0 20px;width:min(100%,300px)}
+ .hyear{left:auto;right:24px;top:58px;transform:none}
+ .hyear span{font-size:clamp(30px,8vw,44px)}
+ .htext{grid-column:1;grid-row:2;width:auto;max-width:none;margin:0 20px;min-height:200px}
 }
-@media(prefers-reduced-motion:reduce){#hrot,.ht,.hphoto img{transition:none}.hyear.in{animation:none}}
+@media(prefers-reduced-motion:reduce){#hrot,.ht,.hphoto img{transition:none}.hyear.in span{animation:none}}
