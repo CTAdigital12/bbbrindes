@@ -33,3 +33,10 @@ backend/build/
 # Artefatos da previa local do admin
 backend/preview/.build/
 _docker-test/
+
+# Playwright (smoke E2E do admin)
+# .auth guarda o storageState com o cookie de sessao: NUNCA commitar.
+playwright/.auth/
+**/playwright-report/
+**/test-results/
+**/playwright/.cache/

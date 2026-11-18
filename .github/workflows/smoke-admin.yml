@@ -1,0 +1,47 @@
+name: smoke-admin
+
+# Camada 3 da rotina de deploy: smoke E2E (Playwright) do admin em producao.
+# Pega o caso classico de SPA que fica com a tela BRANCA (ex.: importMap sem o
+# handler do S3), que o build/typecheck do CI nao enxerga porque so aparece no
+# render do navegador, autenticado.
+#
+# Gatilho MANUAL apenas (workflow_dispatch). NAO roda em push nem em PR:
+#   - para nao expor secret em PR de fork / contribuicao externa;
+#   - porque o deploy do backend e MANUAL (railway up), nao sai do push no GitHub,
+#     entao so faz sentido rodar o smoke quando o Fabio dispara, depois do deploy.
+
+on:
+  workflow_dispatch:
+
+jobs:
+  smoke:
+    name: Smoke admin (Playwright)
+    runs-on: ubuntu-latest
+    env:
+      SMOKE_BASE_URL: ${{ secrets.SMOKE_BASE_URL }}
+      SMOKE_ADMIN_EMAIL: ${{ secrets.SMOKE_ADMIN_EMAIL }}
+      SMOKE_ADMIN_PASSWORD: ${{ secrets.SMOKE_ADMIN_PASSWORD }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        # Versao vem do campo packageManager do package.json (fonte unica).
+        uses: pnpm/action-setup@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+
+      - name: Install
+        run: pnpm install --frozen-lockfile
+
+      - name: Instala o navegador do Playwright
+        run: pnpm --filter backend exec playwright install --with-deps chromium
+
+      - name: Aguarda o admin responder
+        run: node backend/scripts/wait-healthy.mjs
+
+      - name: Smoke do admin
+        run: pnpm --filter backend smoke:admin

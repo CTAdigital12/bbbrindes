@@ -18,7 +18,8 @@
     "seed:post-teste": "cross-env NODE_OPTIONS=--no-deprecation payload run src/seed/post-teste.ts",
     "reset:produtos": "cross-env NODE_OPTIONS=--no-deprecation PAYLOAD_DB_PUSH=false payload run src/scripts/reset-produtos.ts",
     "seed:squeeze": "cross-env NODE_OPTIONS=--no-deprecation PAYLOAD_DB_PUSH=false payload run src/seed/produto-squeeze.ts",
-    "seed:catalogo": "cross-env NODE_OPTIONS=--no-deprecation PAYLOAD_DB_PUSH=false payload run src/seed/catalogo.ts"
+    "seed:catalogo": "cross-env NODE_OPTIONS=--no-deprecation PAYLOAD_DB_PUSH=false payload run src/seed/catalogo.ts",
+    "smoke:admin": "playwright test"
   },
   "dependencies": {
     "@payloadcms/db-postgres": "3.86.0",
@@ -35,9 +36,11 @@
     "sharp": "0.34.2"
   },
   "devDependencies": {
+    "@playwright/test": "^1.65.1",
     "@types/node": "22.19.9",
     "@types/react": "19.2.14",
     "@types/react-dom": "19.2.3",
+    "dotenv": "^18.0.10",
     "eslint": "^9.16.0",
     "eslint-config-next": "15.4.11",
     "typescript": "5.7.3"
