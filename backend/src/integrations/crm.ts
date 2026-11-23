@@ -18,12 +18,32 @@ export type ItemLead = {
   nome: string
   cor?: string
   quantidade: number
+  // Enriquecimento para o CRM/Leads2b (FB-7, Frente 2). Derivados do cadastro do
+  // produto quando possivel; best-effort (podem faltar se o produto/cor nao casar).
+  // codigoCigam = chave de integracao do produto; codigoCor = codigo da cor na
+  // tabela mestra; refCrm = `${codigoCigam}-${codigoCor}` (so com os dois);
+  // categorias = slugs (ou nomes) das categorias do produto.
+  codigoCigam?: string
+  codigoCor?: string
+  refCrm?: string
+  categorias?: string[]
+}
+
+// Parametros de campanha (UTM) em camelCase, sem o prefixo "utm_". Todos opcionais;
+// o front pode omitir ou mandar {} (ver docs/integracao-leads2b.md, contrato com o front).
+export type UtmLead = {
+  source?: string
+  medium?: string
+  campaign?: string
+  term?: string
+  content?: string
 }
 
 export type LeadOrcamento = {
   solicitante: SolicitanteLead
   itens: ItemLead[]
   total: number
+  utm?: UtmLead
 }
 
 export type ResultadoEntrega =
@@ -72,6 +92,7 @@ export async function entregarLead(
         solicitante: lead.solicitante,
         itens: lead.itens,
         total: lead.total,
+        ...(lead.utm ? { utm: lead.utm } : {}),
       }),
       signal: controller.signal,
     })

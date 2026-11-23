@@ -1,7 +1,8 @@
 import { randomUUID } from 'crypto'
 import type { Endpoint, PayloadRequest } from 'payload'
 
-import { entregarLead, type ItemLead, type LeadOrcamento } from '../integrations/crm'
+import { entregarLead, type ItemLead, type LeadOrcamento, type UtmLead } from '../integrations/crm'
+import { codigoDaCor, corPorNome, normalizarNome } from '../components/produto/cores-bb'
 
 // Endpoint publico que recebe o pedido de orcamento do site (FB-7, PART 0).
 // Fluxo: form de /orcamento -> POST /api/orcamento -> adapter do Leads2b (stub por
@@ -43,6 +44,118 @@ function json(corpo: unknown, status: number): Response {
   // O Payload reembrulha a resposta com os headers de CORS (ver handleEndpoints);
   // aqui so devolvemos o JSON com o status certo.
   return Response.json(corpo, { status })
+}
+
+// --- UTM --------------------------------------------------------------------
+// Contrato com o front: campo opcional `utm` com chaves camelCase (sem prefixo
+// "utm_"), todas strings opcionais. O front pode omitir ou mandar {}. Aqui saneamos:
+// so strings, trim, teto de 200 chars, descartando vazios. Nunca quebra se vier
+// ausente ou malformado (retorna undefined).
+const CHAVES_UTM = ['source', 'medium', 'campaign', 'term', 'content'] as const
+const LIMITE_UTM = 200
+
+function limparUtm(bruto: unknown): UtmLead | undefined {
+  if (!bruto || typeof bruto !== 'object' || Array.isArray(bruto)) return undefined
+  const entrada = bruto as Record<string, unknown>
+  const utm: UtmLead = {}
+  for (const chave of CHAVES_UTM) {
+    const valor = entrada[chave]
+    if (typeof valor !== 'string') continue
+    const limpo = valor.trim().slice(0, LIMITE_UTM)
+    if (limpo) utm[chave] = limpo
+  }
+  return Object.keys(utm).length > 0 ? utm : undefined
+}
+
+// --- Enriquecimento do item -------------------------------------------------
+// Para cada item (produtoSlug + cor), busca o produto no cadastro e deriva os
+// campos que o CRM/Leads2b precisa: codigoCigam, codigoCor, refCrm e categorias.
+// Tudo best-effort: produto nao achado ou dado faltando NAO quebra o orcamento,
+// so deixa de preencher aquele campo.
+
+type RegistroSolto = Record<string, unknown>
+
+// Casa o NOME da cor escolhida no item com cores[].nome do produto e devolve o
+// codigo da tabela mestra (mesma logica do CodigosPorCorView via codigoDaCor).
+// Se nao casar nenhuma cor do produto, tenta casar direto na paleta mestra pelo
+// nome que veio (fallback), senao undefined.
+function resolverCodigoCor(cores: unknown, corItem?: string): string | undefined {
+  if (!corItem) return undefined
+  const alvo = normalizarNome(corItem)
+  if (Array.isArray(cores)) {
+    for (const entrada of cores) {
+      if (!entrada || typeof entrada !== 'object') continue
+      const nome = (entrada as RegistroSolto).nome
+      if (typeof nome === 'string' && normalizarNome(nome) === alvo) {
+        const codigo = codigoDaCor(entrada as { nome?: string | null; codigo?: string | null })
+        if (codigo) return codigo
+      }
+    }
+  }
+  return corPorNome(corItem)?.codigo
+}
+
+// Extrai os slugs (ou nomes) das categorias do produto. Com depth >= 1 as
+// categorias vem populadas como objeto; se vierem so como id, ignora.
+function extrairCategorias(cats: unknown): string[] {
+  if (!Array.isArray(cats)) return []
+  const out: string[] = []
+  for (const cat of cats) {
+    if (!cat || typeof cat !== 'object') continue
+    const registro = cat as RegistroSolto
+    const slug = registro.slug
+    const nome = registro.nome
+    if (typeof slug === 'string' && slug.trim()) out.push(slug.trim())
+    else if (typeof nome === 'string' && nome.trim()) out.push(nome.trim())
+  }
+  return out
+}
+
+async function enriquecerItens(
+  payload: PayloadRequest['payload'],
+  itens: ItemLead[],
+): Promise<ItemLead[]> {
+  const slugs = Array.from(new Set(itens.map((i) => i.produtoSlug).filter(Boolean)))
+  if (slugs.length === 0) return itens
+
+  const produtosPorSlug = new Map<string, RegistroSolto>()
+  try {
+    const res = await payload.find({
+      collection: 'produtos',
+      where: { slug: { in: slugs } },
+      depth: 1,
+      limit: slugs.length,
+      pagination: false,
+    })
+    for (const doc of res.docs as unknown as RegistroSolto[]) {
+      if (typeof doc.slug === 'string') produtosPorSlug.set(doc.slug, doc)
+    }
+  } catch (e) {
+    // Best-effort: se a consulta falhar, segue com os itens crus (orcamento nao para).
+    payload.logger.error(
+      `[orcamento] falha ao enriquecer itens: ${e instanceof Error ? e.message : String(e)}`,
+    )
+    return itens
+  }
+
+  return itens.map((item) => {
+    const produto = item.produtoSlug ? produtosPorSlug.get(item.produtoSlug) : undefined
+    if (!produto) return item
+
+    const cigamBruto = produto.codigoCigam
+    const codigoCigam = typeof cigamBruto === 'string' && cigamBruto.trim() ? cigamBruto.trim() : undefined
+    const codigoCor = resolverCodigoCor(produto.cores, item.cor)
+    const refCrm = codigoCigam && codigoCor ? `${codigoCigam}-${codigoCor}` : undefined
+    const categorias = extrairCategorias(produto.categorias)
+
+    return {
+      ...item,
+      ...(codigoCigam ? { codigoCigam } : {}),
+      ...(codigoCor ? { codigoCor } : {}),
+      ...(refCrm ? { refCrm } : {}),
+      ...(categorias.length > 0 ? { categorias } : {}),
+    }
+  })
 }
 
 export const orcamentoEndpoint: Endpoint = {
@@ -105,6 +218,16 @@ export const orcamentoEndpoint: Endpoint = {
     const totalUnidades = itens.reduce((acc, i) => acc + i.quantidade, 0)
     const requisicaoId = randomUUID()
 
+    // Enriquece os itens com os dados do CRM (cigam/cor/refCrm/categorias) e saneia
+    // o UTM. Enriquecimento e best-effort: nunca derruba o orcamento.
+    const itensEnriquecidos = await enriquecerItens(req.payload, itens)
+    const utm = limparUtm(corpo.utm)
+
+    // Categorias agregadas (unicas) pro log de auditoria. Nao e PII.
+    const categoriasAgregadas = Array.from(
+      new Set(itensEnriquecidos.flatMap((i) => i.categorias ?? [])),
+    )
+
     const lead: LeadOrcamento = {
       solicitante: {
         nome: String(solicitante.nome),
@@ -112,8 +235,9 @@ export const orcamentoEndpoint: Endpoint = {
         telefone: String(solicitante.telefone),
         email: String(solicitante.email),
       },
-      itens,
+      itens: itensEnriquecidos,
       total: totalUnidades,
+      ...(utm ? { utm } : {}),
     }
 
     const resultado = await entregarLead(lead, requisicaoId)
@@ -141,6 +265,8 @@ export const orcamentoEndpoint: Endpoint = {
           qtdItens: itens.length,
           totalUnidades,
           consentimento,
+          categorias: categoriasAgregadas.length > 0 ? categoriasAgregadas : undefined,
+          utm: utm ?? undefined,
         },
       })
     } catch (e) {

@@ -101,5 +101,27 @@ export const LogsEntrega: CollectionConfig = {
       type: 'textarea',
       admin: { description: 'Mensagem de erro quando a entrega falhou.' },
     },
+
+    // Metadados nao-PII do pedido (FB-7, Frente 2). Ajudam o comercial a ler a
+    // origem sem precisar do CRM; podem ficar em claro (nao sao dados pessoais).
+    {
+      name: 'categorias',
+      type: 'text',
+      hasMany: true,
+      admin: { description: 'Categorias agregadas dos produtos do pedido (nao e PII).' },
+    },
+    {
+      name: 'utm',
+      type: 'group',
+      label: 'Origem (UTM)',
+      admin: { description: 'Parametros de campanha, quando o site enviou (nao e PII).' },
+      fields: [
+        { name: 'source', type: 'text' },
+        { name: 'medium', type: 'text' },
+        { name: 'campaign', type: 'text' },
+        { name: 'term', type: 'text' },
+        { name: 'content', type: 'text' },
+      ],
+    },
   ],
 }
