@@ -9,6 +9,7 @@ import { useCart } from "@/lib/cart";
 import { imgSrc } from "@/lib/asset";
 import { WA } from "@/data/home-joy";
 import { mascaraTelefone } from "@/lib/mask";
+import { lerUtm } from "@/lib/utm";
 import Icon from "@/components/Icon";
 
 // Pagina de orcamento espelhando a funcao orcamento() do mockup funcional da
@@ -80,7 +81,9 @@ export default function OrcamentoPage() {
     setErroEnvio(null);
     // Manda os itens do carrinho como estao: o backend recalcula o total e
     // ignora campos extras do item (ex.: imagem). "website" e o honeypot.
-    const corpo = { solicitante: form, itens, consentimento: true, website };
+    // "utm" vem dos UTMs persistidos (ou {} se nao houver); o backend trata a
+    // ausencia, entao mandar vazio e ok.
+    const corpo = { solicitante: form, itens, consentimento: true, website, utm: lerUtm() };
 
     try {
       const res = await fetch(`${BACKEND}/api/orcamento`, {
