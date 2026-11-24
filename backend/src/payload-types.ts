@@ -332,6 +332,30 @@ export interface Produto {
         id?: string | null;
       }[]
     | null;
+  variacao?: {
+    baseRotulo?: string | null;
+    baseNaoPreencher?: boolean | null;
+    acessorioRotulo?: string | null;
+    acessorioNaoPreencher?: boolean | null;
+    coresAcessorio?:
+      | {
+          nome: string;
+          /**
+           * Codigo da cor na tabela mestra do CRM/Leads2b (texto livre: nao acopla nas options estaticas de CORES_BB).
+           */
+          codigo?: string | null;
+          /**
+           * Cor em hexadecimal, ex.: #1a2b3c (opcional).
+           */
+          hex?: string | null;
+          /**
+           * Foto na cor.
+           */
+          imagem?: (number | null) | Media;
+          id?: string | null;
+        }[]
+      | null;
+  };
   /**
    * Galeria do produto. A primeira e a principal. Suba ou escolha da Media.
    */
@@ -1082,6 +1106,23 @@ export interface ProdutosSelect<T extends boolean = true> {
         hex?: T;
         imagem?: T;
         id?: T;
+      };
+  variacao?:
+    | T
+    | {
+        baseRotulo?: T;
+        baseNaoPreencher?: T;
+        acessorioRotulo?: T;
+        acessorioNaoPreencher?: T;
+        coresAcessorio?:
+          | T
+          | {
+              nome?: T;
+              codigo?: T;
+              hex?: T;
+              imagem?: T;
+              id?: T;
+            };
       };
   imagens?: T;
   imagemAmbientada?: T;
