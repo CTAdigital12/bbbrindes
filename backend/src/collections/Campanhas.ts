@@ -29,6 +29,12 @@ export const Campanhas: CollectionConfig = {
     slugField('nome'),
     { name: 'mes', type: 'text', admin: { description: 'Mes ou periodo, ex.: Maio.' } },
     { name: 'chamada', type: 'text', label: 'Chamada / subtitulo' },
+    {
+      name: 'tituloPagina',
+      type: 'text',
+      label: 'Titulo da pagina',
+      admin: { description: 'Titulo exibido no topo da pagina da campanha. Vazio usa o automatico "Brindes para <nome>".' },
+    },
     { name: 'imagem', type: 'upload', relationTo: 'media' },
     {
       name: 'conteudo',

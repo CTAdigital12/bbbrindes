@@ -5,6 +5,7 @@ export type Campanha = {
   // Campos ricos vindos do Payload (collection Campanhas). Opcionais: o mock so
   // registra slug/nome/mes; os campos ricos sao preenchidos pelo painel.
   chamada?: string; // subtitulo do hero
+  tituloPagina?: string; // titulo do topo da pagina (vazio = "Brindes para <nome>")
   imagem?: string; // URL da media (hero da campanha)
   conteudo?: string; // texto da landing (richText achatado em texto)
   produtos?: string[]; // slugs dos produtos em destaque

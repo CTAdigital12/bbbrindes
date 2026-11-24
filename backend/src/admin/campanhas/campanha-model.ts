@@ -3,7 +3,7 @@ import type { MediaRef, Product } from '../friendly/model'
 // leitor do front (lib/campanhas.ts). conteudo e richText (lexical); na tela e
 // editado como texto e convertido no salvar (igual a descricao do produto).
 export type CampanhaDraft = {
-  id?: number; nome: string; slug?: string; mes?: string | null; chamada?: string | null;
+  id?: number; nome: string; slug?: string; mes?: string | null; chamada?: string | null; tituloPagina?: string | null;
   imagem?: MediaRef; conteudo?: unknown; produtos?: (Product | number)[]; ativo?: boolean | null; updatedAt?: string;
 }
 export type CampanhaRow = CampanhaDraft & { id: number }
