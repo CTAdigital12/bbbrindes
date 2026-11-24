@@ -6,6 +6,7 @@ type CampanhaDoc = {
   nome: string;
   mes?: string;
   chamada?: string;
+  tituloPagina?: string;
   imagem?: { url?: string } | number | null;
   conteudo?: unknown;
   produtos?: ({ slug?: string } | number)[];
@@ -18,6 +19,7 @@ function mapear(doc: CampanhaDoc): Campanha {
     nome: doc.nome,
     mes: doc.mes ?? "",
     chamada: doc.chamada || undefined,
+    tituloPagina: doc.tituloPagina || undefined,
     imagem: doc.imagem && typeof doc.imagem === "object" ? doc.imagem.url : undefined,
     conteudo: lexicalToPlainText(doc.conteudo) || undefined,
     produtos: (doc.produtos ?? [])

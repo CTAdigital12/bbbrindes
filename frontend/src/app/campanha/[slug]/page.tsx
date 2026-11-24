@@ -126,7 +126,7 @@ export default async function CampanhaPage({ params }: { params: Params }) {
             <Icon name="alarm" />
             Campanha · {c.mes}
           </span>
-          <h1>Brindes para {c.nome}</h1>
+          <h1>{c.tituloPagina || `Brindes para ${c.nome}`}</h1>
           <p>
             {c.chamada ||
               "Brindes selecionados para a data, com a sua marca aplicada. Monte seu orçamento."}

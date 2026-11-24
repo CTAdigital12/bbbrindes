@@ -1,7 +1,7 @@
 import { mediaID } from '../friendly/model'
 import { RequestError } from '../friendly/api-errors'
 import type { CampanhaDraft, CampanhaIssue } from './campanha-model'
-const fields = ['nome', 'mes', 'chamada', 'imagem', 'conteudo', 'produtos', 'ativo'] as const
+const fields = ['nome', 'mes', 'chamada', 'tituloPagina', 'imagem', 'conteudo', 'produtos', 'ativo'] as const
 export const activeCampanha = (c: CampanhaDraft) => c.ativo !== false
 export const campStatus = (c: CampanhaDraft): [key: 'ok' | 'off', label: string] => activeCampanha(c) ? ['ok', 'No ar'] : ['off', 'Inativo']
 export const produtoIDs = (c: CampanhaDraft) => (c.produtos ?? []).map(p => (typeof p === 'number' ? p : p.id)).filter((id): id is number => typeof id === 'number')

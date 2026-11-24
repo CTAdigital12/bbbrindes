@@ -505,6 +505,10 @@ export interface Campanha {
    */
   mes?: string | null;
   chamada?: string | null;
+  /**
+   * Titulo exibido no topo da pagina da campanha. Vazio usa o automatico "Brindes para <nome>".
+   */
+  tituloPagina?: string | null;
   imagem?: (number | null) | Media;
   /**
    * Conteudo da landing page da campanha.
@@ -1163,6 +1167,7 @@ export interface CampanhasSelect<T extends boolean = true> {
   slug?: T;
   mes?: T;
   chamada?: T;
+  tituloPagina?: T;
   imagem?: T;
   conteudo?: T;
   produtos?: T;
