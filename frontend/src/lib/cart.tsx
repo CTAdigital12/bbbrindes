@@ -15,7 +15,12 @@ export type ItemOrcamento = {
 
 type CartContextValue = {
   itens: ItemOrcamento[];
+  // Soma das unidades de todos os itens (quantidade acumulada).
   totalItens: number;
+  // Numero de produtos distintos no orcamento (uma entrada por produto+cor).
+  // E o que o selo do botao "Orcamento" mostra: com 1 produto, mostra 1,
+  // independente de quantas unidades esse produto tenha.
+  totalProdutos: number;
   adicionar: (item: ItemOrcamento) => void;
   alterarQuantidade: (index: number, quantidade: number) => void;
   remover: (index: number) => void;
@@ -76,10 +81,11 @@ export function CartProvider({ children }: { children: ReactNode }) {
   }
 
   const totalItens = itens.reduce((acc, it) => acc + it.quantidade, 0);
+  const totalProdutos = itens.length;
 
   return (
     <CartContext.Provider
-      value={{ itens, totalItens, adicionar, alterarQuantidade, remover, limpar }}
+      value={{ itens, totalItens, totalProdutos, adicionar, alterarQuantidade, remover, limpar }}
     >
       {children}
     </CartContext.Provider>
