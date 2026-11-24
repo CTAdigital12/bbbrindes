@@ -41,6 +41,8 @@
     "node_modules",
     "src/scripts",
     "tests",
-    "preview"
+    "preview",
+    "**/*.test.ts",
+    "**/*.test.tsx"
   ]
 }
