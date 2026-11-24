@@ -10,11 +10,25 @@ export type Categoria = {
 
 export type VariacaoCor = {
   nome: string;
+  // Codigo da cor na paleta BB (Payload: cores[].codigo e variacao.coresAcessorio[].codigo).
+  // 2 digitos (ex. "02"); opcional (legado texto livre + cor especial 99 sem codigo fixo).
+  // Antes o mapper descartava; agora preservado pra montar o refCrm (CIGAMbbaa, item 5).
+  codigo?: string;
   hex: string;
   // Foto do produto NESTA cor (Payload: cores[].imagem, upload). Opcional e hoje
   // vazia em todo o catalogo (o importador nao casa foto<->cor). Quando preenchida,
   // clicar na cor na PDP troca a foto principal; enquanto nula, a bolinha e so swatch.
   imagem?: string;
+};
+
+// Bloco de cor (base ou acessorio) do modelo cor BASE x ACESSORIO (item 5, task 9910008).
+// rotulo = texto livre digitado no admin (ex. "Garrafa" / "Tampa"); vazio cai num label
+// neutro na PDP. naoPreencher = bloco desligado (cor unica): a PDP mostra so o outro
+// seletor. cores = a lista de cores daquele bloco (mesmo shape dos dois lados).
+export type BlocoCor = {
+  rotulo?: string;
+  naoPreencher: boolean;
+  cores: VariacaoCor[];
 };
 
 export type Produto = {
@@ -26,10 +40,20 @@ export type Produto = {
   // Green Plasticaria e precisa aparecer nos dois. Opcional (o mock so preenche
   // `categoria`); leia sempre via categoriasDoProduto().
   categorias?: string[];
+  // Codigo do produto no site (Payload: codigoSite, chave unica). Opcional (o mock nao
+  // preenche). Item 6 do Julien: exibir entre a categoria e o nome na PDP (a POSICAO
+  // visual sai com o layout da Joy; aqui so o dado chega ao front).
+  codigoSite?: string;
   descricao: string;
   material: string;
   aplicacoes: string[];
   cores: VariacaoCor[];
+  // Modelo cor BASE x ACESSORIO (item 5, task 9910008). base = o MESMO dado de `cores`
+  // (o bloco base nao migra); acessorio = variacao.coresAcessorio do backend. ADITIVO e
+  // opcional: o seletor de 1 cor atual segue lendo `cores`; os 2 seletores da PDP
+  // (rodada pos-Joy) leem daqui. Produto antigo sem `variacao` no backend nasce base-only
+  // (acessorio.naoPreencher = true). Os rotulos/flags vem de variacao.* do Payload.
+  variacao?: { base: BlocoCor; acessorio: BlocoCor };
   personalizavel: boolean;
   faixaPreco: "ate-3-99" | "4-a-15" | "acima-de-15";
   destaques: ("destaque" | "mais-vendido" | "lancamento")[];

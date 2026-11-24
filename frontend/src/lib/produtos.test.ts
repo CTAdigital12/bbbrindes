@@ -75,6 +75,54 @@ describe("getProdutoBySlug", () => {
     expect(p!.detalhe?.descricaoCompleta).toEqual(["Paragrafo unico."]);
   });
 
+  it("preserva codigo e monta os blocos base x acessorio (modelo cor, item 5)", async () => {
+    mockFetchJson({
+      docs: [
+        {
+          slug: "squeeze-duas-cores",
+          nome: "Squeeze Duas Cores",
+          codigoSite: "233CL",
+          cores: [{ nome: "Preto", codigo: "02", hex: "#000000" }],
+          variacao: {
+            baseRotulo: "Garrafa",
+            acessorioRotulo: "Tampa",
+            baseNaoPreencher: false,
+            acessorioNaoPreencher: false,
+            coresAcessorio: [{ nome: "Creme", codigo: "07", hex: "#f5f5dc" }],
+          },
+        },
+      ],
+    });
+
+    const p = await getProdutoBySlug("squeeze-duas-cores");
+    expect(p).toBeDefined();
+    // codigoSite chega ao front (posicao visual pos-Joy).
+    expect(p!.codigoSite).toBe("233CL");
+    // `codigo` da cor nao e mais descartado.
+    expect(p!.cores[0].codigo).toBe("02");
+    // base = o mesmo dado de `cores`; acessorio = variacao.coresAcessorio.
+    expect(p!.variacao?.base).toEqual({
+      rotulo: "Garrafa",
+      naoPreencher: false,
+      cores: [{ nome: "Preto", codigo: "02", hex: "#000000" }],
+    });
+    expect(p!.variacao?.acessorio).toEqual({
+      rotulo: "Tampa",
+      naoPreencher: false,
+      cores: [{ nome: "Creme", codigo: "07", hex: "#f5f5dc" }],
+    });
+  });
+
+  it("produto sem variacao nasce base-only (acessorio nao preencher)", async () => {
+    mockFetchJson({
+      docs: [{ slug: "legado-cor-unica", nome: "Legado", cores: [{ nome: "Azul", hex: "#0000ff" }] }],
+    });
+    const p = await getProdutoBySlug("legado-cor-unica");
+    expect(p!.variacao?.base.naoPreencher).toBe(false);
+    expect(p!.variacao?.acessorio.naoPreencher).toBe(true);
+    expect(p!.variacao?.acessorio.cores).toEqual([]);
+  });
+
   it("cai no mock quando a API falha", async () => {
     mockFetchError();
     const p = await getProdutoBySlug("squeeze-300ml-personalizado");
