@@ -22,8 +22,9 @@ export function CodigosPorCorView({
     return {
       nome: cor.nome || '(sem nome)',
       codigoCor,
-      // Identificador comunicado ao CRM: CIGAM + codigo de cor (ex.: MV01109-02).
-      ref: cigam && codigoCor ? `${cigam}-${codigoCor}` : null,
+      // Identificador comunicado ao CRM: CIGAM + codigo de cor (2) + acessorio (2).
+      // Produto hoje tem cor unica, entao o acessorio e sempre "00" (ex.: MV014440200).
+      ref: cigam && codigoCor ? `${cigam}${codigoCor}00` : null,
     }
   })
 
