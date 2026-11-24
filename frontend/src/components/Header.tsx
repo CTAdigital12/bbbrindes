@@ -41,7 +41,7 @@ const PROMESSAS: { icon: string; texto: string }[] = [
 ];
 
 export default function Header({ config, campanhas }: { config: SiteConfig; campanhas: Campanha[] }) {
-  const { totalItens } = useCart();
+  const { totalProdutos } = useCart();
   const { abrir } = useCartUI();
   const router = useRouter();
   const pathname = usePathname();
@@ -141,7 +141,7 @@ export default function Header({ config, campanhas }: { config: SiteConfig; camp
             >
               <Icon name="shopping-bag" />
               <span className="lbl-c">Orçamento</span>
-              <span className="badge">{totalItens}</span>
+              <span className="badge">{totalProdutos}</span>
             </button>
           </div>
         </div>
