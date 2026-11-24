@@ -212,6 +212,63 @@ export const Produtos: CollectionConfig = {
       ],
     },
 
+    // Cor: base x acessorio (item 5 da task 9910008, Opcao A da spec). O array
+    // `cores` ACIMA e o bloco BASE (zero migracao: continua sendo lido pelo site,
+    // seed e mapper como hoje). Este group `variacao` carrega so os rotulos, as
+    // flags "Nao preencher" dos dois blocos e a lista de cores do ACESSORIO. A
+    // friendly view (ProductColors) unifica base + acessorio visualmente; o
+    // usuario nao ve a separacao de namespace. `coresAcessorio` usa o MESMO shape
+    // de `cores`, mas `codigo` e `text` (nao `select`): o acessorio nao se acopla
+    // as options estaticas de CORES_BB; a paleta real vem da friendly/collection.
+    {
+      name: 'variacao',
+      type: 'group',
+      label: 'Cor: base e acessorio',
+      fields: [
+        {
+          name: 'baseRotulo',
+          type: 'text',
+          label: 'Rotulo do bloco base (ex. Garrafa)',
+        },
+        { name: 'baseNaoPreencher', type: 'checkbox', defaultValue: false },
+        {
+          name: 'acessorioRotulo',
+          type: 'text',
+          label: 'Rotulo do bloco acessorio (ex. Tampa)',
+        },
+        { name: 'acessorioNaoPreencher', type: 'checkbox', defaultValue: true },
+        {
+          name: 'coresAcessorio',
+          type: 'array',
+          labels: { singular: 'Cor (acessorio)', plural: 'Cores (acessorio)' },
+          fields: [
+            { name: 'nome', type: 'text', required: true },
+            {
+              name: 'codigo',
+              type: 'text',
+              label: 'Codigo da cor (CRM)',
+              admin: {
+                description:
+                  'Codigo da cor na tabela mestra do CRM/Leads2b (texto livre: nao acopla nas options estaticas de CORES_BB).',
+              },
+            },
+            {
+              name: 'hex',
+              type: 'text',
+              admin: { description: 'Cor em hexadecimal, ex.: #1a2b3c (opcional).' },
+            },
+            {
+              name: 'imagem',
+              type: 'upload',
+              relationTo: 'media',
+              filterOptions: { mimeType: { contains: 'image' } },
+              admin: { description: 'Foto na cor.' },
+            },
+          ],
+        },
+      ],
+    },
+
     // Midia. `imagens` e a galeria; `imagemAmbientada` e a foto lifestyle fixa.
     {
       name: 'imagens',
