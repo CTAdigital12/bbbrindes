@@ -14,10 +14,16 @@ import { lexicalToPlainText, payloadFind } from "@/lib/payload";
 type CategoriaRef = { slug?: string; nome?: string } | number;
 type MediaRef = { url?: string } | number;
 
+// Shape de uma cor vinda do Payload (igual nos dois blocos: base `cores` e
+// `variacao.coresAcessorio`). `codigo` = codigo da paleta BB (2 digitos), opcional.
+type CorDoc = { nome: string; codigo?: string; hex?: string; imagem?: MediaRef };
+
 type ProdutoDoc = {
   canais?: { site?: boolean | null };
   slug: string;
   nome: string;
+  // Chave unica do produto no site (Payload: codigoSite).
+  codigoSite?: string;
   subtitulo?: string;
   headline?: string;
   descricaoCurta?: string;
@@ -29,7 +35,18 @@ type ProdutoDoc = {
   categorias?: CategoriaRef[];
   ecologico?: boolean;
   selos?: Record<string, boolean>;
-  cores?: { nome: string; hex?: string; imagem?: MediaRef }[];
+  // Bloco BASE: array `cores` do topo (inalterado no schema). Agora traz tambem `codigo`.
+  cores?: CorDoc[];
+  // Bloco ACESSORIO + rotulos/flags dos dois blocos (modelo cor base x acessorio, item 5).
+  // Ausente em produto antigo = base-only (o mapper assume acessorioNaoPreencher = true).
+  // Os nomes de campo seguem o contrato da track de schema do Payload.
+  variacao?: {
+    baseRotulo?: string;
+    acessorioRotulo?: string;
+    baseNaoPreencher?: boolean;
+    acessorioNaoPreencher?: boolean;
+    coresAcessorio?: CorDoc[];
+  };
   imagens?: MediaRef[];
   imagemAmbientada?: MediaRef;
   imagemDimensoes?: MediaRef;
@@ -110,22 +127,48 @@ function montarDetalhe(doc: ProdutoDoc): ProdutoDetalhe {
   };
 }
 
-function mapear(doc: ProdutoDoc): Produto {
-  const cores: VariacaoCor[] = (doc.cores ?? []).map((c) => ({
+// Mapeia uma cor do Payload pro tipo do front, PRESERVANDO o `codigo` (antes
+// descartado). `codigo` so entra quando o backend mandou um nao-vazio.
+function mapearCor(c: CorDoc): VariacaoCor {
+  return {
     nome: c.nome,
+    codigo: c.codigo || undefined,
     hex: hexDaCor(c.nome, c.hex),
     imagem: urlDaImagem(c.imagem),
-  }));
+  };
+}
+
+function mapear(doc: ProdutoDoc): Produto {
+  const cores: VariacaoCor[] = (doc.cores ?? []).map(mapearCor);
+  const coresAcessorio: VariacaoCor[] = (doc.variacao?.coresAcessorio ?? []).map(mapearCor);
+
+  // Dois blocos (base x acessorio). Defaults seguros p/ produto antigo sem `variacao`:
+  // base-only (base.naoPreencher = false; acessorio.naoPreencher = true). ADITIVO: `cores`
+  // (= base.cores) segue existindo pro seletor de 1 cor atual.
+  const variacao: Produto["variacao"] = {
+    base: {
+      rotulo: doc.variacao?.baseRotulo || undefined,
+      naoPreencher: doc.variacao?.baseNaoPreencher ?? false,
+      cores,
+    },
+    acessorio: {
+      rotulo: doc.variacao?.acessorioRotulo || undefined,
+      naoPreencher: doc.variacao?.acessorioNaoPreencher ?? true,
+      cores: coresAcessorio,
+    },
+  };
 
   return {
     slug: doc.slug,
     nome: doc.nome,
     categoria: categoriaPrincipal(doc.categorias),
     categorias: categoriasSlugs(doc.categorias),
+    codigoSite: doc.codigoSite || undefined,
     descricao: doc.descricaoCurta ?? "",
     material: doc.logistica?.materiaPrima ?? "",
     aplicacoes: doc.idealPara ?? [],
     cores,
+    variacao,
     personalizavel: true,
     faixaPreco: doc.faixaPreco ?? "4-a-15",
     destaques: doc.destaques ?? [],
