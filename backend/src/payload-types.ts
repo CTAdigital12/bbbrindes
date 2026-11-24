@@ -70,6 +70,7 @@ export interface Config {
   collections: {
     produtos: Produto;
     categorias: Categoria;
+    'cores-bb': CoresBb;
     banners: Banner;
     campanhas: Campanha;
     posts: Post;
@@ -92,6 +93,7 @@ export interface Config {
   collectionsSelect: {
     produtos: ProdutosSelect<false> | ProdutosSelect<true>;
     categorias: CategoriasSelect<false> | CategoriasSelect<true>;
+    'cores-bb': CoresBbSelect<false> | CoresBbSelect<true>;
     banners: BannersSelect<false> | BannersSelect<true>;
     campanhas: CampanhasSelect<false> | CampanhasSelect<true>;
     posts: PostsSelect<false> | PostsSelect<true>;
@@ -469,6 +471,30 @@ export interface Media {
       filename?: string | null;
     };
   };
+}
+/**
+ * Paleta mestra de cores (tabela codigo -> nome do CRM/Leads2b). O hex e so a bolinha do seletor; o site resolve o tom pelo nome.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "cores-bb".
+ */
+export interface CoresBb {
+  id: number;
+  /**
+   * Dois digitos, ex. 02. Chave da tabela mestra do CRM/Leads2b. 00 e 99 sao reservados.
+   */
+  codigo: string;
+  nome: string;
+  /**
+   * Cor em #rrggbb para a bolinha do seletor (opcional). Vazio = render especial/auto.
+   */
+  hex?: string | null;
+  /**
+   * Grupo da paleta. A aba Cores secciona a paleta por grupo.
+   */
+  grupo: 'Padrao' | 'Cristal' | 'Green Fibras' | 'Green Plasticaria' | 'Especial';
+  updatedAt: string;
+  createdAt: string;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -924,6 +950,10 @@ export interface PayloadLockedDocument {
         value: number | Categoria;
       } | null)
     | ({
+        relationTo: 'cores-bb';
+        value: number | CoresBb;
+      } | null)
+    | ({
         relationTo: 'banners';
         value: number | Banner;
       } | null)
@@ -1139,6 +1169,18 @@ export interface CategoriasSelect<T extends boolean = true> {
   grupo?: T;
   ordem?: T;
   icone?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "cores-bb_select".
+ */
+export interface CoresBbSelect<T extends boolean = true> {
+  codigo?: T;
+  nome?: T;
+  hex?: T;
+  grupo?: T;
   updatedAt?: T;
   createdAt?: T;
 }

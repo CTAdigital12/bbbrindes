@@ -13,6 +13,7 @@ import { HeroSlides } from './collections/HeroSlides'
 import { Logos } from './collections/Logos'
 import { Categorias } from './collections/Categorias'
 import { Produtos } from './collections/Produtos'
+import { CoresBB } from './collections/CoresBB'
 import { Banners } from './collections/Banners'
 import { Campanhas } from './collections/Campanhas'
 import { Posts } from './collections/Posts'
@@ -136,6 +137,8 @@ export default buildConfig({
     // Catalogo
     Produtos,
     Categorias,
+    // Paleta de cores editavel (item 5: fundacao, antes era a constante cores-bb.ts).
+    CoresBB,
     // Conteudo
     Banners,
     Campanhas,
