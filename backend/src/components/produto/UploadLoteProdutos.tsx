@@ -13,6 +13,8 @@ import { corPorCodigo } from './cores-bb'
 // criacao sao reportados por linha. Dedupe por codigoSite.
 
 // Colunas do modelo. Uma linha por produto. Listas (categorias, cores) separadas por "|".
+// Estas sao as colunas OBRIGATORIAS (o cabecalho precisa conter todas; a validacao de
+// "colunas faltando" so olha para esta lista).
 const COLUNAS = [
   'codigoSite',
   'codigoCigam',
@@ -24,7 +26,44 @@ const COLUNAS = [
   'ecologico', // sim / nao
   'quantidadeMinima', // numero (ex.: 500)
   'faixaPreco', // ate-3-99 | 4-a-15 | acima-de-15
-  'cores', // codigos da paleta separados por | (ex.: 02|03|12)
+  'cores', // codigos da paleta separados por | (ex.: 02|03|12). Bloco BASE.
+] as const
+
+// Item 5 (cores base x acessorio, group `variacao`). Colunas OPCIONAIS: CSV antigo sem
+// elas continua funcionando (a validacao nao as cobra) e a variacao fica com os defaults
+// do schema (baseNaoPreencher=false, acessorioNaoPreencher=true, sem coresAcessorio). O
+// bloco acessorio segue o MESMO padrao das cores base: codigos da paleta separados por
+// "|", resolvidos contra CORES_BB (corPorCodigo) para { nome, codigo }.
+const COLUNAS_VARIACAO = [
+  'baseRotulo', // rotulo do bloco base (ex.: Garrafa)
+  'baseNaoPreencher', // sim / nao (default nao)
+  'acessorioRotulo', // rotulo do bloco acessorio (ex.: Tampa)
+  'acessorioNaoPreencher', // sim / nao (default sim)
+  'coresAcessorio', // codigos da paleta separados por | (ex.: 02|14). Bloco ACESSORIO.
+] as const
+
+// Cabecalho completo do modelo (obrigatorias + variacao, nesta ordem).
+const COLUNAS_MODELO = [...COLUNAS, ...COLUNAS_VARIACAO] as const
+
+// Linha de exemplo do modelo (mesma ordem de COLUNAS_MODELO). codigoSite com prefixo
+// EXEMPLO para ficar obvio que e placeholder (o usuario troca pelos produtos reais).
+const EXEMPLO_MODELO = [
+  'EXEMPLO-001', // codigoSite
+  '12345', // codigoCigam
+  'Squeeze Wave 500ml', // nome
+  'squeezes', // categorias
+  'Hidratacao com estilo', // headline
+  'Squeeze de parede dupla', // subtitulo
+  'Squeeze de 500ml para o dia a dia', // descricaoCurta
+  'nao', // ecologico
+  '500', // quantidadeMinima
+  '4-a-15', // faixaPreco
+  '02|03|11', // cores (base)
+  'Garrafa', // baseRotulo
+  'nao', // baseNaoPreencher
+  'Tampa', // acessorioRotulo
+  'nao', // acessorioNaoPreencher
+  '02|14', // coresAcessorio
 ] as const
 
 type Linha = Record<string, string>
@@ -75,7 +114,7 @@ function parseCSV(texto: string): string[][] {
 }
 
 function baixarModelo() {
-  const conteudo = COLUNAS.join(',') + '\n'
+  const conteudo = COLUNAS_MODELO.join(',') + '\n' + EXEMPLO_MODELO.join(',') + '\n'
   const blob = new Blob(['﻿' + conteudo], { type: 'text/csv;charset=utf-8;' })
   const url = URL.createObjectURL(blob)
   const a = document.createElement('a')
@@ -149,6 +188,17 @@ export default function UploadLoteProdutos({ children }: { children?: React.Reac
         return c ? { nome: c.nome, codigo: c.codigo } : null
       })
       .filter((v): v is { nome: string; codigo: string } => v !== null)
+    // Item 5: cores do acessorio. Mesmo padrao do bloco base (cores acima): codigos da
+    // paleta separados por "|", resolvidos contra CORES_BB para { nome, codigo }.
+    const coresAcessorio = (r.coresAcessorio || '')
+      .split('|')
+      .map((s) => s.trim())
+      .filter(Boolean)
+      .map((codigo) => {
+        const c = corPorCodigo(codigo)
+        return c ? { nome: c.nome, codigo: c.codigo } : null
+      })
+      .filter((v): v is { nome: string; codigo: string } => v !== null)
     const corpo: Record<string, unknown> = {
       codigoSite: r.codigoSite,
       nome: r.nome,
@@ -163,6 +213,16 @@ export default function UploadLoteProdutos({ children }: { children?: React.Reac
     if (r.quantidadeMinima && !Number.isNaN(Number(r.quantidadeMinima)))
       corpo.quantidadeMinima = Number(r.quantidadeMinima)
     if (r.faixaPreco) corpo.faixaPreco = r.faixaPreco
+    // Group `variacao` (item 5). So monta as chaves que vieram preenchidas; as demais
+    // caem no defaultValue do schema no create. Se nada veio, nao envia `variacao`
+    // (retrocompat: CSV antigo nao conhece essas colunas e segue com os defaults).
+    const variacao: Record<string, unknown> = {}
+    if (r.baseRotulo) variacao.baseRotulo = r.baseRotulo
+    if (r.baseNaoPreencher) variacao.baseNaoPreencher = /^sim$/i.test(r.baseNaoPreencher)
+    if (r.acessorioRotulo) variacao.acessorioRotulo = r.acessorioRotulo
+    if (r.acessorioNaoPreencher) variacao.acessorioNaoPreencher = /^sim$/i.test(r.acessorioNaoPreencher)
+    if (coresAcessorio.length > 0) variacao.coresAcessorio = coresAcessorio
+    if (Object.keys(variacao).length > 0) corpo.variacao = variacao
     return corpo
   }
 
@@ -254,9 +314,10 @@ export default function UploadLoteProdutos({ children }: { children?: React.Reac
         >
           <p className="sub" style={{ marginTop: 0 }}>
             1. Baixe o modelo, preencha uma linha por produto (listas separadas por barra,
-            ex.: cores <code>02|03|12</code>). 2. Escolha o arquivo preenchido para
-            pre-visualizar e validar. 3. Importar cria os novos e pula os que ja existem
-            (pelo codigo do site).
+            ex.: cores <code>02|03|12</code>). As colunas de variacao (base e acessorio)
+            sao opcionais: <code>coresAcessorio</code> usa os mesmos codigos de cor da base.
+            2. Escolha o arquivo preenchido para pre-visualizar e validar. 3. Importar cria
+            os novos e pula os que ja existem (pelo codigo do site).
           </p>
           <input ref={inputRef} type="file" accept=".csv,text/csv" onChange={aoEscolherArquivo} disabled={importando} />
           {erros.length > 0 ? (
@@ -276,6 +337,7 @@ export default function UploadLoteProdutos({ children }: { children?: React.Reac
                   <li key={i}>
                     {l.codigoSite} - {l.nome || '(sem nome)'}
                     {l.cores ? ` (cores: ${l.cores})` : ''}
+                    {l.coresAcessorio ? ` (acessorio: ${l.coresAcessorio})` : ''}
                   </li>
                 ))}
               </ul>
