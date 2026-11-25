@@ -88,6 +88,7 @@ nav.cats a.eco .ic{width:16px;height:16px;color:var(--lime)}
 nav.cats a.eco:hover,nav.cats a.eco.on{background:var(--deep-3);color:#fff}
 nav.cats .ddb{padding:7px 14px;border-radius:var(--pill);font-size:13.5px;font-weight:600;white-space:nowrap;color:#b35a00;display:inline-flex;gap:.35em;align-items:center}
 nav.cats .ddb:hover,nav.cats .ddb.on{background:#fff1e1}
+nav.cats .inst{margin-left:auto;display:inline-flex;align-items:center;gap:4px;padding-left:6px;border-left:1px solid var(--line)}
 .ddp{position:absolute;left:0;right:0;top:100%;background:#fff;box-shadow:0 20px 40px rgba(0,30,20,.14);border-top:1px solid var(--line);padding:22px 0 26px;opacity:0;pointer-events:none;transform:translateY(-6px);transition:.2s;z-index:41}
 .ddp.on{opacity:1;pointer-events:auto;transform:none}
 .ddh{display:flex;gap:14px;align-items:baseline;margin-bottom:14px}.ddh b{font-size:17px;font-weight:600}.ddh span{color:var(--muted);font-size:13.5px}
