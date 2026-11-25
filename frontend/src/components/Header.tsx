@@ -172,8 +172,13 @@ export default function Header({ config, campanhas }: { config: SiteConfig; camp
             {campanhas.some((c) => c.slug === "natal") ? <Link href="/campanha/natal" className="hot">
               {campanhas.find((c) => c.slug === "natal")?.nome}
             </Link> : null}
-            <Link href="/quem-somos">Quem somos</Link>
-            <Link href="/cases">Cases</Link>
+            <span className="inst">
+              {INST.filter((i) => ["/quem-somos", "/cases", "/blog"].includes(i.href)).map((i) => (
+                <Link key={i.href} href={i.href} className={pathname === i.href ? "on" : undefined}>
+                  {i.label}
+                </Link>
+              ))}
+            </span>
           </div>
 
         </nav>
