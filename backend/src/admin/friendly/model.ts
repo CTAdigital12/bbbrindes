@@ -5,12 +5,21 @@ export type Category = { id: number; nome: string; slug?: string; icone?: MediaR
 // Plinio). Opcional: entradas antigas (texto livre) podem nao ter, e o site resolve
 // pelo nome. A paleta (ProductColors) preenche o codigo ao marcar a cor.
 export type ProductColor = { id?: string; nome: string; hex?: string | null; imagem?: MediaRef; codigo?: string | null }
+// Item 5 (cores base x acessorio, group `variacao` do schema #181). O bloco base
+// reusa o array `cores` do produto; o acessorio tem a propria lista `coresAcessorio`
+// (mesma forma de ProductColor). Cada bloco tem rotulo (ex. "Garrafa"/"Tampa") e a
+// flag "nao preencher" (bloco sem cor -> codigo ...00 naquela metade).
+export type Variacao = {
+  baseRotulo?: string | null; baseNaoPreencher?: boolean | null;
+  acessorioRotulo?: string | null; acessorioNaoPreencher?: boolean | null;
+  coresAcessorio?: ProductColor[];
+}
 export type Product = {
   id?: number; nome: string; slug?: string; codigoSite: string; codigoCigam?: string;
   subtitulo?: string; headline?: string; descricaoCurta?: string; descricaoCompleta?: unknown;
   beneficios?: string[]; idealPara?: string[]; diferenciais?: string[];
   categorias?: (Category | number)[]; ecologico?: boolean; quantidadeMinima?: number | null;
-  imagens?: MediaRef[]; imagemAmbientada?: MediaRef; imagemDimensoes?: MediaRef; cores?: ProductColor[]; videoUrl?: string;
+  imagens?: MediaRef[]; imagemAmbientada?: MediaRef; imagemDimensoes?: MediaRef; cores?: ProductColor[]; variacao?: Variacao; videoUrl?: string;
   selos?: Record<string, boolean | null>; seo?: Record<string, unknown>;
   especificacoes?: { id?: string; rotulo: string; valor: string }[];
   logistica?: Record<string, unknown>; impressao?: Record<string, unknown>;
