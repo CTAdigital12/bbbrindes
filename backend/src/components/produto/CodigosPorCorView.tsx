@@ -63,29 +63,31 @@ export function CodigosPorCorView({
         Somente leitura (as cores sao editadas na aba Cores, o CIGAM na identificacao).
       </p>
       <div className="bb-codigos-cor-head">
-        <span>CIGAM do produto:</span> <strong>{cigam || 'sem codigo CIGAM'}</strong>
+        <span>CIGAM do produto:</span> <code className="bb-crm-chip">{cigam || 'sem codigo CIGAM'}</code>
       </div>
       {linhas.length === 0 ? (
         <p className="help">Nenhuma cor cadastrada ainda.</p>
       ) : (
-        <table className="bb-codigos-cor-tabela">
-          <thead>
-            <tr>
-              <th>{temAcessorio ? 'Cor (base x acessorio)' : 'Cor'}</th>
-              <th>{temAcessorio ? 'Codigo (base x acessorio)' : 'Codigo da cor'}</th>
-              <th>Referencia CRM</th>
-            </tr>
-          </thead>
-          <tbody>
-            {linhas.map((linha, index) => (
-              <tr key={index}>
-                <td>{linha.nome}</td>
-                <td>{linha.codigo ?? <span className="bb-warning">sem codigo</span>}</td>
-                <td>{linha.ref ?? <span className="help">incompleto</span>}</td>
+        <div className="bb-table-scroll">
+          <table className="bb-codigos-cor-tabela">
+            <thead>
+              <tr>
+                <th>{temAcessorio ? 'Cor (base x acessorio)' : 'Cor'}</th>
+                <th>{temAcessorio ? 'Codigo (base x acessorio)' : 'Codigo da cor'}</th>
+                <th>Referencia CRM</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {linhas.map((linha, index) => (
+                <tr key={index}>
+                  <td>{linha.nome}</td>
+                  <td>{linha.codigo ? <code>{linha.codigo}</code> : <span className="bb-warning">sem codigo</span>}</td>
+                  <td>{linha.ref ? <code className="bb-crm-ref">{linha.ref}</code> : <span className="help">incompleto</span>}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       )}
     </div>
   )
