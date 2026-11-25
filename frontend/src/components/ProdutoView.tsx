@@ -2,7 +2,7 @@
 
 /* eslint-disable @next/next/no-img-element */
 
-import { type MouseEvent, useEffect, useMemo, useRef, useState } from "react";
+import { type CSSProperties, type MouseEvent, useEffect, useMemo, useRef, useState } from "react";
 import type { Produto } from "@/lib/types";
 import { useCart } from "@/lib/cart";
 import { useCartUI } from "@/lib/cart-ui";
@@ -23,6 +23,10 @@ import Link from "next/link";
 // e carrossel sem modal (dimensoes e video viram slides da mesma galeria).
 
 const fmt = (n: number) => n.toLocaleString("pt-BR");
+
+// Colunas da grade compacta de swatches (espelha o calculo do mock: ate ~13 por
+// linha, equilibrando as linhas quando ha muitas cores).
+const gridCols = (n: number) => (n > 9 ? Math.ceil(n / Math.ceil(n / 13)) : n);
 
 // Slide do carrossel da PDP. A galeria entra nesta ordem: fotos (das cores)
 // primeiro, depois ambientada, depois dimensoes, depois o video por ultimo.
@@ -140,6 +144,16 @@ export default function ProdutoView({ produto }: { produto: Produto }) {
     qtdsNum[0] < minQtd || qtdsNum.slice(1).some((n) => n > 0 && n < minQtd);
 
   const slideAtual = slides[slideIdx];
+  // Classe do palco por tipo de slide (espelha o data-t do mock).
+  const stageTipoClass =
+    slideAtual?.tipo === "video"
+      ? " vid"
+      : slideAtual?.tipo === "ambientada"
+        ? " amb"
+        : slideAtual?.tipo === "dimensoes"
+          ? " dim"
+          : "";
+  const seloAtual = slideAtual ? SELO_SLIDE[slideAtual.tipo] : undefined;
 
   // Flags da estante (.fl): Novo (lancamento), Livre de BPA (selo/atoxidade),
   // Uso permanente e Reciclavel. Espelha o bloco .fl do produto() do mockup.
@@ -182,7 +196,8 @@ export default function ProdutoView({ produto }: { produto: Produto }) {
   // Zoom no mousemove sobre a .stage (scale 1.6 com origem no cursor), igual ao
   // mockup. Nao aplica em slide de video. Mexe direto no style do <img> via ref.
   function aoMover(e: MouseEvent<HTMLDivElement>) {
-    if (slideAtual?.tipo === "video") return;
+    // Zoom so nas fotos de produto (ambientada/dimensoes/video nao ampliam, como no mock).
+    if (slideAtual?.tipo !== "foto") return;
     const st = stageRef.current;
     const im = imgRef.current;
     if (!st || !im) return;
@@ -201,6 +216,12 @@ export default function ProdutoView({ produto }: { produto: Produto }) {
     if (idx < 0) return;
     setSlideIdx(idx);
     stageRef.current?.scrollIntoView({ behavior: "smooth", block: "nearest" });
+  }
+
+  // Setas do carrossel: anda um slide para tras/frente (circular), como no mock.
+  function passoSlide(d: number) {
+    if (slides.length < 2) return;
+    setSlideIdx((i) => (i + d + slides.length) % slides.length);
   }
 
   function escolherCorBase(i: number) {
@@ -301,7 +322,7 @@ export default function ProdutoView({ produto }: { produto: Produto }) {
           </div>
 
           <div
-            className={`stage${slideAtual?.tipo === "video" ? " vid" : ""}`}
+            className={`stage${stageTipoClass}`}
             id="stage"
             ref={stageRef}
             onMouseMove={aoMover}
@@ -326,6 +347,33 @@ export default function ProdutoView({ produto }: { produto: Produto }) {
               <span className="chip chip-sage">Uso permanente</span>
               <span className="chip chip-sage">Reciclável</span>
             </div>
+
+            {/* Setas + contador do carrossel (sobre o palco, aparecem no hover). */}
+            {slides.length > 1 && (
+              <>
+                <button
+                  type="button"
+                  className="gar l"
+                  onClick={() => passoSlide(-1)}
+                  aria-label="Imagem anterior"
+                >
+                  <Icon name="chevron-left" />
+                </button>
+                <button
+                  type="button"
+                  className="gar r"
+                  onClick={() => passoSlide(1)}
+                  aria-label="Próxima imagem"
+                >
+                  <Icon name="chevron-right" />
+                </button>
+                <span className="gcnt">
+                  {slideIdx + 1}/{slides.length}
+                </span>
+              </>
+            )}
+            {/* Legenda do slide (Ambiente/Medidas/Vídeo); vazia nas fotos. */}
+            {seloAtual && <span className="gcap">{seloAtual}</span>}
           </div>
 
           {/* Nome da cor base em destaque, logo abaixo da foto (E2). */}
@@ -381,10 +429,20 @@ export default function ProdutoView({ produto }: { produto: Produto }) {
             {baseCores.length > 0 && !baseNaoPreencher && (
               <div>
                 <div className="lbl">
-                  {rotuloBase}
-                  {corBaseNome && <span>{corBaseNome.toLowerCase()}</span>}
+                  <span className="cn">
+                    {rotuloBase}
+                    {corBaseNome ? (
+                      <>
+                        : <b>{corBaseNome}</b>
+                      </>
+                    ) : null}
+                  </span>
+                  {baseCores.length > 1 && <span>{baseCores.length} cores</span>}
                 </div>
-                <div className={`colors${baseCores.length > 9 ? " sm" : ""}`}>
+                <div
+                  className={`colors${baseCores.length > 9 ? " sm" : ""}`}
+                  style={{ "--cols": gridCols(baseCores.length) } as CSSProperties}
+                >
                   {baseCores.map((c, i) => (
                     <button
                       key={c.nome}
@@ -404,10 +462,20 @@ export default function ProdutoView({ produto }: { produto: Produto }) {
             {temAcessorio && (
               <div>
                 <div className="lbl">
-                  {rotuloAcessorio}
-                  {corAcessorioNome && <span>{corAcessorioNome.toLowerCase()}</span>}
+                  <span className="cn">
+                    {rotuloAcessorio}
+                    {corAcessorioNome ? (
+                      <>
+                        : <b>{corAcessorioNome}</b>
+                      </>
+                    ) : null}
+                  </span>
+                  {acessorioCores.length > 1 && <span>{acessorioCores.length} cores</span>}
                 </div>
-                <div className={`colors${acessorioCores.length > 9 ? " sm" : ""}`}>
+                <div
+                  className={`colors${acessorioCores.length > 9 ? " sm" : ""}`}
+                  style={{ "--cols": gridCols(acessorioCores.length) } as CSSProperties}
+                >
                   {acessorioCores.map((c) => (
                     <button
                       key={c.nome}

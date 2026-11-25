@@ -707,6 +707,8 @@ h2.h{font-size:24px;letter-spacing:-.02em;font-weight:600;margin:0 0 16px}
   .corcap{grid-column:1}
   .gal .vbtn{grid-column:1}
   .thumbs{grid-auto-flow:column;order:2;overflow-x:auto;overflow-y:visible;max-height:none;scroll-snap-type:x proximity}
+  .stage .gar{opacity:1;width:36px;height:36px;margin-top:-18px}
+  .lbl{flex-wrap:wrap;gap:2px 12px}
   .specs{grid-template-columns:1fr;gap:28px}
   .seg{grid-template-columns:repeat(2,1fr)}
   .sticky-buy .wrap{height:auto;padding:10px 16px}
@@ -844,21 +846,25 @@ h2.h{font-size:24px;letter-spacing:-.02em;font-weight:600;margin:0 0 16px}
 
 /* Cabecalho da PDP: categoria -> codigo do site -> nome, empilhados. */
 .ptop{display:flex;flex-direction:column;align-items:flex-start;gap:3px}
-.pcod{font-size:12.5px;color:var(--muted);font-variant-numeric:tabular-nums;letter-spacing:.01em}
+.pcod{font-size:12.5px;font-weight:500;color:var(--muted);font-variant-numeric:tabular-nums;letter-spacing:.02em}
 
 /* Variante compacta do seletor de cor quando ha muitas cores (>9): swatches
    menores (~28px) para caber uma paleta grande (ex. 17x17) sem estourar. */
-.colors.sm{gap:7px}
+.colors.sm{display:grid;grid-template-columns:repeat(var(--cols),28px);gap:8px;margin-top:9px}
 .colors.sm button{width:28px;height:28px}
 .colors.sm button.on:after{inset:-4px}
 
+/* Rotulo do seletor: "Cor: <b>Nome</b>" a esquerda + contagem a direita (mock). */
+.lbl .cn{color:var(--ink);font-weight:600}
+.lbl .cn b{font-weight:600;color:var(--deep)}
+
 /* Tres campos de quantidade (1 obrigatorio + 2 opcionais) no lugar dos presets
-   + stepper. Mesma linguagem visual do .seg (caixa branca, foco verde). */
+   + stepper. Mesma linguagem do mock (.qi): caixa preenchida clara, foco verde. */
 .qtys{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px}
-.qtys input{width:100%;height:46px;border:0;border-radius:12px;box-shadow:inset 0 0 0 1.5px var(--line);background:#fff;font-size:15px;font-weight:600;text-align:center;color:var(--deep);outline:none;padding:0 8px;font-variant-numeric:tabular-nums}
-.qtys input:focus{box-shadow:inset 0 0 0 2px var(--deep)}
-.qtys input.err{box-shadow:inset 0 0 0 2px #c0532b}
-.qtys input::placeholder{color:var(--muted);font-weight:400}
+.qtys input{width:100%;height:48px;border:0;border-radius:12px;box-shadow:inset 0 0 0 1px transparent;background:#f3f5ec;font-size:16px;font-weight:600;text-align:center;color:var(--deep);outline:none;padding:0 14px;font-variant-numeric:tabular-nums;transition:.15s}
+.qtys input:focus{background:#fff;box-shadow:inset 0 0 0 1.5px var(--green)}
+.qtys input.err{background:#fff;box-shadow:inset 0 0 0 1.5px #c9473f}
+.qtys input::placeholder{color:#8b978f;font-weight:400}
 
 /* Chips de quantidade na gaveta ("500 unidades"). */
 .qchips{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
@@ -868,6 +874,24 @@ h2.h{font-size:24px;letter-spacing:-.02em;font-weight:600;margin:0 0 16px}
 .stage.vid{cursor:default}
 .stage .stage-video{position:absolute;width:86%;aspect-ratio:16/9;border-radius:16px;overflow:hidden;background:#000;box-shadow:var(--sh-2);z-index:2}
 .stage .stage-video iframe{width:100%;height:100%;border:0;display:block}
+
+/* Setas (prev/next), contador (i/N) e legenda do slide, sobre o palco (mock). */
+.stage .gar{position:absolute;top:50%;width:42px;height:42px;margin-top:-21px;border-radius:50%;background:rgba(255,255,255,.94);box-shadow:var(--sh-1);display:grid;place-items:center;color:var(--deep);opacity:0;transition:opacity .2s,transform .15s;z-index:4}
+.stage .gar:hover{transform:scale(1.06)}
+.stage .gar.l{left:14px}.stage .gar.r{right:14px}
+.stage:hover .gar,.stage .gar:focus-visible{opacity:1}
+.gcnt,.gcap{position:absolute;bottom:14px;z-index:4;font-size:12px;font-weight:600;border-radius:var(--pill);padding:4px 11px;font-variant-numeric:tabular-nums}
+.gcnt{right:16px;background:rgba(255,255,255,.92);color:var(--deep)}
+.gcap{left:16px;background:var(--deep);color:#fff}.gcap:empty{display:none}
+
+/* Tratamento por tipo de slide (mock): ambientada ocupa o palco (cover),
+   dimensoes em fundo branco maior, sem halo; flags escondem no video. */
+.stage.amb img{top:0;left:0;width:100%;height:100%;object-fit:cover;filter:none}
+.stage.dim{background:#fff}
+.stage.dim img{top:5%;left:5%;width:90%;height:90%;filter:none}
+.stage.amb .halo,.stage.dim .halo,.stage.vid .halo{display:none}
+.stage.amb,.stage.dim{cursor:default}
+.stage.vid .fl{display:none}
 
 /* Miniaturas: selo (amb/medidas/video) e play sobre a miniatura de video. */
 .thumbs button{position:relative}
