@@ -294,7 +294,11 @@ export default async function HomePage() {
       {/* Eco: lead escuro + pgrid de produtos ecologicos (dado REAL). Troca de lugar
           com Campanhas (pedido do Plinio, D2): Eco sobe pra ca e Campanhas desce pra
           logo antes de "Por que a BB Brindes". */}
-      <section className="sec reveal">
+      {/* data-wa="light": daqui pra baixo e a zona clara/sage da home, onde o botao
+          flutuante vira verde-zap (o turquesa default fica reservado pro topo). A
+          <section> e full-bleed (largura de viewport), entao o rect alcanca o canto
+          inferior-direito e dispara tambem no desktop, nao so no mobile. */}
+      <section className="sec reveal" data-wa="light">
         <div className="wrap">
           {/* Eco banner (Linha Green) - mockup 28/10 */}
           <Link className="eco-bn" href="/catalogo?categoria=green-plasticaria&categoria=green-fibras&categoria=medalhas-trofeus">
@@ -355,7 +359,7 @@ export default async function HomePage() {
       <CampanhasHome campanhas={campanhas} monthIdx={monthIdx} />
 
       {/* Por que a BB Brindes (diferenciais do mockup) */}
-      <section className="sec reveal">
+      <section className="sec reveal" data-wa="light">
         <div className="wrap">
           <SectionHead
             title="Por que a BB Brindes"
@@ -377,7 +381,7 @@ export default async function HomePage() {
       </section>
 
       {/* Cases e prova social (REAIS: getCases) + depoimentos */}
-      <section className="sec reveal">
+      <section className="sec reveal" data-wa="light">
         <div className="wrap">
           <SectionHead
             title="Cases e prova social"
@@ -403,7 +407,7 @@ export default async function HomePage() {
       </section>
 
       {/* Na imprensa (REAL: getMaterias) */}
-      <section className="sec reveal">
+      <section className="sec reveal" data-wa="light">
         <div className="wrap">
           <SectionHead title="Na imprensa" link="/imprensa" linkText="Ver imprensa" />
           <div className="press">
@@ -418,7 +422,7 @@ export default async function HomePage() {
       </section>
 
       {/* Do blog (REAL: getPosts; capa ilustrativa ciclada, igual a /blog) */}
-      <section className="sec reveal">
+      <section className="sec reveal" data-wa="light">
         <div className="wrap">
           <SectionHead
             title="Do blog"
@@ -447,7 +451,7 @@ export default async function HomePage() {
       </section>
 
       {/* FAQ */}
-      <section className="sec reveal">
+      <section className="sec reveal" data-wa="light">
         <div className="wrap faq">
           <div>
             <span className="eyebrow">Dúvidas frequentes</span>
