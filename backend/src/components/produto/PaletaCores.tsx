@@ -8,6 +8,13 @@ import { CORES_BB, GRUPOS_CORES, normalizarNome, type CorBB } from './cores-bb'
 // cada cor marcada vira uma entrada { nome, codigo }. O `codigo` (tabela mestra do CRM)
 // alimenta o item E (codigos por cor). A foto-por-cor ja ligada e preservada: o seletor
 // so adiciona/remove entradas, nunca mexe na imagem/hex das que continuam marcadas.
+//
+// Fonte da paleta (track 1b): a lista de cores vem agora da collection editavel cores-bb
+// via REST (GET /api/cores-bb?limit=0&depth=0), e nao mais da constante CORES_BB. Como
+// isto e um client component, a leitura e feita com fetch no useEffect (getPaleta e so
+// server). FALLBACK: se o fetch falhar ou vier vazio, usamos CORES_BB/GRUPOS_CORES, que
+// seguem existindo como seed e rede de seguranca (o build nao pode quebrar com a
+// collection vazia). A API publica do componente e o formato gravado nao mudam.
 
 // Tipo frouxo de propósito: serve a friendly view e a nativa sem acoplar ao model.
 export type CorMarcada = {
@@ -60,6 +67,35 @@ export function PaletaCores({
 }) {
   const atuais = value ?? []
 
+  // Paleta lida da collection cores-bb. Comeca com a constante (fallback/seed) para o
+  // primeiro render nunca ficar vazio; o fetch substitui pela lista da collection.
+  const [cores, setCores] = React.useState<CorBB[]>(CORES_BB)
+
+  React.useEffect(() => {
+    let ativo = true
+    ;(async () => {
+      try {
+        const resp = await fetch('/api/cores-bb?limit=0&depth=0', { credentials: 'include' })
+        if (!resp.ok) return
+        const data = (await resp.json()) as { docs?: Array<Record<string, unknown>> }
+        const docs = Array.isArray(data?.docs) ? data.docs : []
+        if (docs.length === 0) return // vazio: mantem o fallback CORES_BB
+        const lista: CorBB[] = docs.map((d) => ({
+          codigo: String(d?.codigo ?? ''),
+          nome: String(d?.nome ?? ''),
+          grupo: String(d?.grupo ?? ''),
+          hex: d?.hex ? String(d.hex) : '',
+        }))
+        if (ativo) setCores(lista)
+      } catch {
+        // falha de rede: mantem o fallback CORES_BB ja no estado.
+      }
+    })()
+    return () => {
+      ativo = false
+    }
+  }, [])
+
   function alternar(cor: CorBB) {
     if (disabled) return
     const idx = estaMarcada(cor, atuais)
@@ -78,7 +114,7 @@ export function PaletaCores({
         na lista abaixo.
       </p>
       {GRUPOS_CORES.map((grupo) => {
-        const doGrupo = CORES_BB.filter((c) => c.grupo === grupo)
+        const doGrupo = cores.filter((c) => c.grupo === grupo)
         if (doGrupo.length === 0) return null
         return (
           <div key={grupo} style={{ marginBottom: 12 }}>

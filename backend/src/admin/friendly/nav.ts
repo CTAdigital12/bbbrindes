@@ -5,6 +5,7 @@ export const NAV_ITEMS: NavItem[] = [
   { group: 'Site', label: 'Banners', href: '/admin/collections/hero-slides', icon: 'banner' },
   { group: 'Catálogo', label: 'Produtos', href: '/admin/collections/produtos', icon: 'prod' },
   { group: 'Catálogo', label: 'Categorias', href: '/admin/collections/categorias', icon: 'cat' },
+  { group: 'Catálogo', label: 'Paleta de cores', href: '/admin/collections/cores-bb', icon: 'cat' },
   { group: 'Marketing', label: 'Campanhas', href: '/admin/collections/campanhas', icon: 'camp' },
   { group: 'Marketing', label: 'Orçamentos', href: '/admin/collections/logs-entrega', icon: 'orc' },
   { group: 'Conteúdo', label: 'Cases', href: '/admin/collections/cases', icon: 'cases' },
