@@ -1,3 +1,6 @@
+"use client";
+
+import { useEffect, useRef } from "react";
 import Link from "next/link";
 import Icon from "@/components/Icon";
 import type { SiteConfig } from "@/lib/types";
@@ -8,6 +11,47 @@ import type { SiteConfig } from "@/lib/types";
 // layout), editaveis no admin (FB-6). Links apontam pras rotas reais.
 export default function Footer({ config }: { config: SiteConfig }) {
   const wa = `https://wa.me/${config.whatsapp}`;
+
+  // Inversao de cor do botao flutuante (.wa-f): quando o botao sobrepoe uma secao
+  // de fundo escuro (marcada com data-wa="dark"), liga a classe .wa-over-dark (CSS
+  // troca --wa-c de verde-zap pra turquesa da BB). Mesma ideia do IntersectionObserver
+  // da PDP (ProdutoView), mas aqui o teste e geometrico por frame: o botao e fixed e
+  // seu Y muda com body.sb-on, entao preciso do rect vivo do botao a cada scroll.
+  // NAO interfere no sb-on/drawer-on/wa-hide (esses continuam no CSS, so mexem em
+  // bottom/opacity). Se nenhuma secao estiver marcada, o botao fica no verde default.
+  const waRef = useRef<HTMLAnchorElement>(null);
+  useEffect(() => {
+    const btn = waRef.current;
+    if (!btn) return;
+    let raf = 0;
+    const update = () => {
+      raf = 0;
+      const r = btn.getBoundingClientRect();
+      const x = r.left + r.width / 2;
+      const y = r.top + r.height / 2;
+      let overDark = false;
+      const marks = document.querySelectorAll<HTMLElement>('[data-wa="dark"]');
+      for (let i = 0; i < marks.length; i++) {
+        const b = marks[i].getBoundingClientRect();
+        if (y >= b.top && y <= b.bottom && x >= b.left && x <= b.right) {
+          overDark = true;
+          break;
+        }
+      }
+      btn.classList.toggle("wa-over-dark", overDark);
+    };
+    const onScroll = () => {
+      if (!raf) raf = requestAnimationFrame(update);
+    };
+    update();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll, { passive: true });
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
+      if (raf) cancelAnimationFrame(raf);
+    };
+  }, []);
 
   // Redes sociais: so entram as que tem URL cadastrada (vazia = icone escondido).
   const redes: { url: string; icon: string; label: string }[] = [
@@ -100,6 +144,7 @@ export default function Footer({ config }: { config: SiteConfig }) {
       </footer>
 
       <a
+        ref={waRef}
         className="wa-f"
         href={wa}
         target="_blank"
