@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import Icon from "@/components/Icon";
-import { useCart } from "@/lib/cart";
+import { useCart, coresDoItem } from "@/lib/cart";
 import { WA } from "@/data/home-joy";
 
 // Popup de saida (exit-intent) + orcamento abandonado. Espelha o mockup da Joy
@@ -72,7 +72,11 @@ export default function ExitPopup() {
     encodeURIComponent(
       "Olá! Quero fechar este orçamento:\n" +
         itens
-          .map((it) => `• ${it.nome} — ${fmt(it.quantidade)} un. (${it.cor})`)
+          .map((it) => {
+            const cores = coresDoItem(it);
+            const qs = it.qtds.filter((n) => n > 0).map(fmt).join(" / ");
+            return `• ${it.nome}: ${qs} un.${cores ? ` (${cores})` : ""}`;
+          })
           .join("\n"),
     );
 

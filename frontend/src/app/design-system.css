@@ -834,3 +834,52 @@ h2.h{font-size:24px;letter-spacing:-.02em;font-weight:600;margin:0 0 16px}
  .htext{grid-column:1;grid-row:2;width:auto;max-width:none;margin:0 20px;min-height:200px}
 }
 @media(prefers-reduced-motion:reduce){#hrot,.ht,.hphoto img{transition:none}.hyear.in span{animation:none}}
+
+/* =========================================================================
+   NUCLEO front - reuniao Joy 25/11 (task 9910008): cabecalho com codigo do
+   site, 2 seletores de cor (base x acessorio), 3 campos de quantidade, e o
+   carrossel sem modal (dimensoes e video viram slides). Bloco ADITIVO: so
+   regras novas, sem renomear classes existentes nem tocar no .wa-f.
+   ========================================================================= */
+
+/* Cabecalho da PDP: categoria -> codigo do site -> nome, empilhados. */
+.ptop{display:flex;flex-direction:column;align-items:flex-start;gap:3px}
+.pcod{font-size:12.5px;color:var(--muted);font-variant-numeric:tabular-nums;letter-spacing:.01em}
+
+/* Variante compacta do seletor de cor quando ha muitas cores (>9): swatches
+   menores (~28px) para caber uma paleta grande (ex. 17x17) sem estourar. */
+.colors.sm{gap:7px}
+.colors.sm button{width:28px;height:28px}
+.colors.sm button.on:after{inset:-4px}
+
+/* Tres campos de quantidade (1 obrigatorio + 2 opcionais) no lugar dos presets
+   + stepper. Mesma linguagem visual do .seg (caixa branca, foco verde). */
+.qtys{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px}
+.qtys input{width:100%;height:46px;border:0;border-radius:12px;box-shadow:inset 0 0 0 1.5px var(--line);background:#fff;font-size:15px;font-weight:600;text-align:center;color:var(--deep);outline:none;padding:0 8px;font-variant-numeric:tabular-nums}
+.qtys input:focus{box-shadow:inset 0 0 0 2px var(--deep)}
+.qtys input.err{box-shadow:inset 0 0 0 2px #c0532b}
+.qtys input::placeholder{color:var(--muted);font-weight:400}
+
+/* Chips de quantidade na gaveta ("500 unidades"). */
+.qchips{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+.qchip{font-size:11.5px;font-weight:600;color:var(--deep);background:#f1f6e8;border-radius:var(--pill);padding:3px 10px;white-space:nowrap}
+
+/* Carrossel: video como SLIDE do palco (sem modal). 16:9 centrado no .stage. */
+.stage.vid{cursor:default}
+.stage .stage-video{position:absolute;width:86%;aspect-ratio:16/9;border-radius:16px;overflow:hidden;background:#000;box-shadow:var(--sh-2);z-index:2}
+.stage .stage-video iframe{width:100%;height:100%;border:0;display:block}
+
+/* Miniaturas: selo (amb/medidas/video) e play sobre a miniatura de video. */
+.thumbs button{position:relative}
+.thsel{position:absolute;left:4px;bottom:4px;font-size:9.5px;font-weight:600;line-height:1;padding:3px 6px;border-radius:8px;background:rgba(0,30,18,.72);color:#fff;letter-spacing:.02em}
+.thplay{position:absolute;inset:0;display:grid;place-items:center;pointer-events:none}
+.thplay .ic{width:26px;height:26px;color:#fff;background:rgba(0,30,18,.55);border-radius:50%;padding:5px}
+
+/* Quantidades editaveis no item da pagina de orcamento: 3 campos compactos. */
+.oi .qtys{grid-template-columns:repeat(3,minmax(0,72px));margin-top:0}
+.oi .qtys input{height:42px;font-size:14.5px}
+
+@media(max-width:760px){
+ .oi .qtys{grid-template-columns:repeat(3,minmax(0,64px));gap:6px}
+ .oi .qtys input{height:40px}
+}

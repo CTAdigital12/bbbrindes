@@ -2,7 +2,7 @@
 
 /* eslint-disable @next/next/no-img-element */
 
-import { type MouseEvent, useEffect, useRef, useState } from "react";
+import { type MouseEvent, useEffect, useMemo, useRef, useState } from "react";
 import type { Produto } from "@/lib/types";
 import { useCart } from "@/lib/cart";
 import { useCartUI } from "@/lib/cart-ui";
@@ -14,62 +14,132 @@ import Link from "next/link";
 
 // PDP (galeria + configurador + barra de compra fixa) espelhando a funcao
 // produto() do mockup funcional da Joy, com as classes verbatim do design-system.css
-// (.pd, .gal, .thumbs, .stage, .ring, .fl, .pinfo, .sub, .blk, .colors,
-// .seg, .step, .warn, .buy#buyrow, .assure, .sticky-buy#sbuy). Dado REAL do
-// Payload (getProdutoBySlug); cores e imagens de produto.cores / produto.imagens.
+// (.pd, .gal, .thumbs, .stage, .ring, .fl, .pinfo, .sub, .blk, .colors, .step,
+// .warn, .buy#buyrow, .assure, .sticky-buy#sbuy). Dado REAL do Payload
+// (getProdutoBySlug); cores e imagens de produto.cores / produto.imagens.
+//
+// Reuniao Joy 25/11 (task 9910008): cabecalho com codigo do site, DOIS seletores
+// de cor (base x acessorio), TRES campos de quantidade, sem personalizacao publica,
+// e carrossel sem modal (dimensoes e video viram slides da mesma galeria).
 
-const PASSO = 100;
 const fmt = (n: number) => n.toLocaleString("pt-BR");
+
+// Slide do carrossel da PDP. A galeria entra nesta ordem: fotos (das cores)
+// primeiro, depois ambientada, depois dimensoes, depois o video por ultimo.
+type Slide =
+  | { tipo: "foto"; src: string }
+  | { tipo: "ambientada"; src: string }
+  | { tipo: "dimensoes"; src: string }
+  | { tipo: "video"; embedUrl: string; posterSrc: string };
+
+const SELO_SLIDE: Partial<Record<Slide["tipo"], string>> = {
+  ambientada: "Ambiente",
+  dimensoes: "Medidas",
+  video: "Vídeo",
+};
 
 export default function ProdutoView({ produto }: { produto: Produto }) {
   const { adicionar } = useCart();
   const { abrir } = useCartUI();
   const nomeCategoria = useNomeCategoria();
 
-  const cores = produto.cores ?? [];
-  const imagens = produto.imagens ?? [];
-  // Seletor de cor DESACOPLADO da foto: a bolinha e um swatch (nome/hex) e so troca
-  // a foto principal quando aquela cor tem foto propria (cores[i].imagem). Hoje esse
-  // campo e nulo em todo o catalogo (o importador nao casa foto<->cor: as fotos tem
-  // nome generico), entao clicar numa cor so muda o nome, sem trocar a imagem. Isso
-  // mata o bug de "clica numa cor, aparece outra" (os dois arrays vinham em ordens
-  // diferentes e o pareamento por indice era coincidencia). Quando o backend popular
-  // cores[].imagem, a troca "acende" sozinha. A galeria de miniaturas segue sendo a
-  // navegacao por todas as fotos do produto.
+  const imagens = useMemo(() => produto.imagens ?? [], [produto.imagens]);
+
+  // Bloco BASE = produto.cores (nao migra). Bloco ACESSORIO = variacao.acessorio
+  // do backend; so aparece quando esta ligado (naoPreencher = false) E tem cores.
+  // Em PROD a maioria vem sem acessorio (o editor de 2 blocos ainda nao mergeou):
+  // nesse caso a PDP mostra 1 seletor.
+  const baseCores = useMemo(() => produto.cores ?? [], [produto.cores]);
+  const baseNaoPreencher = produto.variacao?.base?.naoPreencher ?? false;
+  const rotuloBase = produto.variacao?.base?.rotulo || "Cor";
+  const acessorioBloco = produto.variacao?.acessorio;
+  const acessorioCores = acessorioBloco?.cores ?? [];
+  const temAcessorio = !!acessorioBloco && !acessorioBloco.naoPreencher && acessorioCores.length > 0;
+  const rotuloAcessorio = acessorioBloco?.rotulo || "Cor";
 
   // Quantidade minima do pedido: vem do Payload por produto (quantidadeMinima),
-  // com fallback em 500 (minimo padrao da fabrica) para produtos sem o campo. Os
-  // presets derivam dela, mantendo a escada proporcional (500 -> 500/1k/3k/5k).
+  // com fallback em 500 (minimo padrao da fabrica) para produtos sem o campo.
   const minQtd = produto.quantidadeMinima ?? 500;
-  const presets = [minQtd, minQtd * 2, minQtd * 6, minQtd * 10];
 
-  const [corNome, setCorNome] = useState(cores[0]?.nome ?? "");
-  const [imgIdx, setImgIdx] = useState(0);
-  // Foto da cor selecionada, quando a cor tem foto propria (cores[i].imagem); null
-  // = a bolinha e so swatch e o palco segue a galeria (imgIdx).
-  const [corImg, setCorImg] = useState<string | null>(cores[0]?.imagem ?? null);
-  const [qtd, setQtd] = useState(minQtd);
-  const [sbOn, setSbOn] = useState(false);
-  const [toastMsg, setToastMsg] = useState("");
-  const [videoOpen, setVideoOpen] = useState(false);
-  const [dimOpen, setDimOpen] = useState(false);
-
-  // Video da linha (YouTube): converte a URL de watch em embed. So aparece o
-  // botao "Ver video" quando o produto tem videoUrl.
+  // Video da linha (YouTube): converte a URL de watch em embed.
   const ytId = produto.videoUrl?.match(/[?&]v=([\w-]+)/)?.[1];
   const embedUrl = ytId ? `https://www.youtube.com/embed/${ytId}` : null;
 
-  // Imagem de dimensoes (Payload: imagemDimensoes). So aparece o botao "Ver
-  // dimensoes do produto" quando o produto tem a imagem cadastrada.
-  const dimensoesSrc = imgSrc(produto.imagemDimensoes);
+  // Monta o carrossel unico (ordem da Joy): fotos das cores primeiro, depois as
+  // demais fotos da galeria, depois ambientada, dimensoes e o video por ultimo.
+  // Tudo deduplicado por src. As fotos de cor (cores[].imagem) vem de um upload
+  // diferente de `imagens`, por isso entram explicitamente (e preservam a troca
+  // de foto ao clicar na cor: cada cor com foto vira um slide do carrossel).
+  const slides = useMemo<Slide[]>(() => {
+    const out: Slide[] = [];
+    const vistos = new Set<string>();
+    const addFoto = (raw?: string) => {
+      const r = imgSrc(raw);
+      if (r && !vistos.has(r)) {
+        vistos.add(r);
+        out.push({ tipo: "foto", src: r });
+      }
+    };
+    for (const c of baseCores) addFoto(c.imagem);
+    for (const src of imagens) addFoto(src);
+    const amb = imgSrc(produto.imagemAmbientada);
+    if (amb && !vistos.has(amb)) {
+      vistos.add(amb);
+      out.push({ tipo: "ambientada", src: amb });
+    }
+    const dim = imgSrc(produto.imagemDimensoes);
+    if (dim && !vistos.has(dim)) {
+      vistos.add(dim);
+      out.push({ tipo: "dimensoes", src: dim });
+    }
+    const primeiraFoto = out.find((s) => s.tipo === "foto");
+    if (embedUrl) {
+      out.push({
+        tipo: "video",
+        embedUrl,
+        posterSrc: primeiraFoto && primeiraFoto.tipo === "foto" ? primeiraFoto.src : "",
+      });
+    }
+    return out;
+  }, [baseCores, imagens, produto.imagemAmbientada, produto.imagemDimensoes, embedUrl]);
+
+  // Mapa src-da-foto -> nome da cor base, para clicar numa cor navegar ate o
+  // slide daquela cor (quando a cor tem foto propria em cores[].imagem).
+  const slideDaCorBase = useMemo(() => {
+    const m = new Map<string, number>();
+    baseCores.forEach((c) => {
+      const cs = imgSrc(c.imagem);
+      if (!cs) return;
+      const idx = slides.findIndex((s) => s.tipo === "foto" && s.src === cs);
+      if (idx >= 0) m.set(c.nome, idx);
+    });
+    return m;
+  }, [baseCores, slides]);
+
+  const [corBaseNome, setCorBaseNome] = useState(baseCores[0]?.nome ?? "");
+  const [corAcessorioNome, setCorAcessorioNome] = useState(acessorioCores[0]?.nome ?? "");
+  const [slideIdx, setSlideIdx] = useState(0);
+  // Quantidades como strings para suportar campos opcionais vazios e a formatacao
+  // de milhar ao sair do campo. A 1a inicia com o minimo; as outras vazias.
+  const [qtdsStr, setQtdsStr] = useState<string[]>([fmt(minQtd), "", ""]);
+  const [erroQtd, setErroQtd] = useState<boolean[]>([false, false, false]);
+  const [sbOn, setSbOn] = useState(false);
+  const [toastMsg, setToastMsg] = useState("");
 
   const stageRef = useRef<HTMLDivElement>(null);
   const imgRef = useRef<HTMLImageElement>(null);
   const buyRef = useRef<HTMLDivElement>(null);
-  const qinRef = useRef<HTMLInputElement>(null);
+  const qinRefs = useRef<(HTMLInputElement | null)[]>([]);
   const toastTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const abaixoDoMinimo = qtd < minQtd;
+  // Quantidades numericas derivadas das strings (digitos apenas).
+  const qtdsNum = qtdsStr.map((s) => parseInt(s.replace(/\D/g, ""), 10) || 0);
+  // Avisa quando a 1a esta abaixo do minimo, ou quando alguma opcional preenchida
+  // ficou abaixo do minimo.
+  const abaixoDoMinimo =
+    qtdsNum[0] < minQtd || qtdsNum.slice(1).some((n) => n > 0 && n < minQtd);
+
+  const slideAtual = slides[slideIdx];
 
   // Flags da estante (.fl): Novo (lancamento), Livre de BPA (selo/atoxidade),
   // Uso permanente e Reciclavel. Espelha o bloco .fl do produto() do mockup.
@@ -78,12 +148,11 @@ export default function ProdutoView({ produto }: { produto: Produto }) {
     (produto.detalhe?.selos ?? []).some((s) => /bpa/i.test(s)) ||
     (produto.tags ?? []).some((t) => /bpa/i.test(t));
 
-  const stageSrc = imgSrc(corImg ?? imagens[imgIdx]);
-  const mainSrc = imgSrc(imagens[0]);
-  // Hex da cor selecionada, para a bolinha do rotulo de cor que fica embaixo da
-  // foto (.corcap). Deriva do nome (o state guarda o nome); cai na 1a cor se nao casar.
-  const corHex = (cores.find((c) => c.nome === corNome) ?? cores[0])?.hex;
+  const mainSrc = slides.find((s) => s.tipo === "foto")?.src ?? "";
+  const corHex = (baseCores.find((c) => c.nome === corBaseNome) ?? baseCores[0])?.hex;
   const waText = `${WA}?text=${encodeURIComponent("Olá! Quero um orçamento de " + produto.nome)}`;
+
+  const temDimensoes = slides.some((s) => s.tipo === "dimensoes");
 
   // Barra de compra fixa: aparece quando o #buyrow sai da viewport por cima
   // (IntersectionObserver), como o after()/sbObs do mockup. body.sb-on sobe o
@@ -104,19 +173,6 @@ export default function ProdutoView({ produto }: { produto: Produto }) {
     return () => document.body.classList.remove("sb-on");
   }, [sbOn]);
 
-  // Fecha os modais (video / dimensoes) com Esc.
-  useEffect(() => {
-    if (!videoOpen && !dimOpen) return;
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") {
-        setVideoOpen(false);
-        setDimOpen(false);
-      }
-    };
-    document.addEventListener("keydown", onKey);
-    return () => document.removeEventListener("keydown", onKey);
-  }, [videoOpen, dimOpen]);
-
   function toast(msg: string) {
     setToastMsg(msg);
     if (toastTimer.current) clearTimeout(toastTimer.current);
@@ -124,8 +180,9 @@ export default function ProdutoView({ produto }: { produto: Produto }) {
   }
 
   // Zoom no mousemove sobre a .stage (scale 1.6 com origem no cursor), igual ao
-  // mockup. Mexe direto no style do <img> via ref para nao re-renderizar.
+  // mockup. Nao aplica em slide de video. Mexe direto no style do <img> via ref.
   function aoMover(e: MouseEvent<HTMLDivElement>) {
+    if (slideAtual?.tipo === "video") return;
     const st = stageRef.current;
     const im = imgRef.current;
     if (!st || !im) return;
@@ -137,127 +194,132 @@ export default function ProdutoView({ produto }: { produto: Produto }) {
     if (imgRef.current) imgRef.current.style.transform = "";
   }
 
-  function escolherThumb(i: number) {
-    setImgIdx(i);
-    setCorImg(null); // navegou na galeria: descarta a foto-de-cor e volta pra galeria
+  // Navega ate um slide (dimensoes/video) no mesmo carrossel; no mobile leva o
+  // palco a vista. Substitui os modais antigos.
+  function irParaSlide(pred: (s: Slide) => boolean) {
+    const idx = slides.findIndex(pred);
+    if (idx < 0) return;
+    setSlideIdx(idx);
+    stageRef.current?.scrollIntoView({ behavior: "smooth", block: "nearest" });
   }
-  function escolherCor(i: number) {
-    setCorNome(cores[i].nome);
-    // So troca o palco quando a cor tem foto propria. Cor sem foto (ex. "Cristal"
-    // transparente) so muda o nome e MANTEM o palco como esta (nao reseta pra foto 0).
-    if (cores[i].imagem) setCorImg(cores[i].imagem);
+
+  function escolherCorBase(i: number) {
+    const nome = baseCores[i].nome;
+    setCorBaseNome(nome);
+    // Clicar numa cor com foto propria navega ate o slide daquela cor no carrossel.
+    const idx = slideDaCorBase.get(nome);
+    if (typeof idx === "number") setSlideIdx(idx);
+  }
+
+  function setSlotDigitos(slot: number, v: string) {
+    setQtdsStr((a) => a.map((x, i) => (i === slot ? v.replace(/\D/g, "") : x)));
+  }
+  function aoFocarSlot(slot: number) {
+    // Tira a formatacao enquanto edita (so digitos).
+    setQtdsStr((a) => a.map((x, i) => (i === slot ? x.replace(/\D/g, "") : x)));
+  }
+  function aoSairSlot(slot: number) {
+    // Formata o milhar ao sair do campo.
+    setQtdsStr((a) =>
+      a.map((x, i) => {
+        if (i !== slot) return x;
+        const n = parseInt(x.replace(/\D/g, ""), 10);
+        return Number.isFinite(n) && n > 0 ? fmt(n) : "";
+      }),
+    );
   }
 
   function aoAdicionar() {
-    if (abaixoDoMinimo) {
-      qinRef.current?.focus();
+    // 1o obrigatorio e >= minimo; 2o/3o opcionais mas, se preenchidos, >= minimo.
+    const erros = qtdsNum.map((n, i) =>
+      i === 0 ? n < minQtd : n > 0 && n < minQtd,
+    );
+    if (erros.some(Boolean)) {
+      setErroQtd(erros);
+      const primeiro = erros.findIndex(Boolean);
+      qinRefs.current[primeiro]?.focus();
       toast(`O pedido mínimo é de ${fmt(minQtd)} unidades`);
       return;
     }
+    setErroQtd([false, false, false]);
+
+    const qtds = qtdsNum.filter((n) => n >= minQtd);
+    const corSel = baseCores.find((c) => c.nome === corBaseNome);
     adicionar({
       produtoSlug: produto.slug,
       nome: produto.nome,
-      cor: corNome,
-      quantidade: qtd,
-      imagem: corImg ?? imagens[imgIdx] ?? imagens[0],
+      corBase: corBaseNome || undefined,
+      corAcessorio: temAcessorio ? corAcessorioNome || undefined : undefined,
+      rotuloBase: produto.variacao?.base?.rotulo || undefined,
+      rotuloAcessorio: temAcessorio ? acessorioBloco?.rotulo || undefined : undefined,
+      qtds,
+      // imagem crua (o display resolve via imgSrc): foto da cor escolhida ou a 1a.
+      imagem: corSel?.imagem || imagens[0],
+      codigoSite: produto.codigoSite,
     });
     abrir();
     toast("Adicionado ao orçamento");
   }
 
+  // Resumo de cor para a barra fixa (base + acessorio).
+  const corSticky = [corBaseNome, temAcessorio ? corAcessorioNome : ""].filter(Boolean).join(" · ");
+  const qtdSticky = qtdsNum[0] || minQtd;
+
   return (
     <>
       <div className="pd">
-        {/* Galeria: coluna de miniaturas + palco com zoom */}
+        {/* Galeria: coluna de miniaturas + palco com zoom (carrossel unico) */}
         <div className="gal">
           <div className="thumbs">
-            {imagens.map((src, i) => {
-              // Pula entradas de imagem vazias/invalidas: nao renderiza a miniatura
-              // vazia (o quadradinho branco que o Plinio marcou no fim da tira).
-              // imgSrc("" / undefined) devolve string vazia.
-              const thumbSrc = imgSrc(src);
-              if (!thumbSrc) return null;
+            {slides.map((s, i) => {
+              const thumbSrc = s.tipo === "video" ? s.posterSrc : s.src;
+              const selo = SELO_SLIDE[s.tipo];
               return (
                 <button
-                  key={`${src}-${i}`}
+                  key={`${s.tipo}-${i}`}
                   type="button"
-                  // Destaca a miniatura cuja foto e a que esta no palco, seja por
-                  // navegacao (imgIdx) ou pela foto da cor (corImg). Quando o backend
-                  // alinhar imagens[]=cores[] e preencher cores[].imagem, clicar numa
-                  // cor destaca a miniatura certa sozinho.
-                  className={thumbSrc === stageSrc ? "on" : ""}
-                  onClick={() => escolherThumb(i)}
-                  aria-label={`Imagem ${i + 1}`}
+                  className={i === slideIdx ? "on" : ""}
+                  onClick={() => setSlideIdx(i)}
+                  aria-label={selo ? `${selo} (slide ${i + 1})` : `Imagem ${i + 1}`}
                 >
-                  <img src={thumbSrc} alt="" />
+                  {thumbSrc ? (
+                    <img src={thumbSrc} alt="" />
+                  ) : (
+                    <span
+                      style={{ display: "block", width: "100%", height: "100%", background: "var(--g-card)" }}
+                    />
+                  )}
+                  {s.tipo === "video" && (
+                    <span className="thplay" aria-hidden="true">
+                      <Icon name="video" />
+                    </span>
+                  )}
+                  {selo && <span className="thsel">{selo}</span>}
                 </button>
               );
             })}
-
-            {/* Video como miniatura clicavel no fim da tira (item 2 da revisao do
-                Plinio): so aparece quando o produto tem video (embedUrl). Usa a 1a
-                foto do produto como fundo (ou um fundo neutro quando nao ha foto),
-                com um icone de play sobreposto no centro. Clicar abre o mesmo modal
-                de video do botao .vbtn. */}
-            {embedUrl && (
-              <button
-                type="button"
-                onClick={() => setVideoOpen(true)}
-                aria-label="Ver vídeo"
-                style={{ position: "relative", overflow: "hidden" }}
-              >
-                {mainSrc ? (
-                  <img src={mainSrc} alt="" />
-                ) : (
-                  <span
-                    style={{
-                      display: "block",
-                      width: "100%",
-                      height: "100%",
-                      background: "var(--g-card)",
-                    }}
-                  />
-                )}
-                <span
-                  style={{
-                    position: "absolute",
-                    inset: 0,
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    background: "rgba(0,30,18,.28)",
-                  }}
-                >
-                  <span
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      width: 30,
-                      height: 30,
-                      fontSize: 15,
-                      borderRadius: "50%",
-                      background: "rgba(255,255,255,.92)",
-                      color: "var(--green)",
-                      boxShadow: "var(--sh-1)",
-                    }}
-                  >
-                    <Icon name="brand-youtube" />
-                  </span>
-                </span>
-              </button>
-            )}
           </div>
 
           <div
-            className="stage"
+            className={`stage${slideAtual?.tipo === "video" ? " vid" : ""}`}
             id="stage"
             ref={stageRef}
             onMouseMove={aoMover}
             onMouseLeave={aoSair}
           >
             <span className="halo" />
-            {stageSrc ? <img id="mimg" ref={imgRef} src={stageSrc} alt={produto.nome} /> : null}
+            {slideAtual?.tipo === "video" ? (
+              <div className="stage-video">
+                <iframe
+                  src={`${slideAtual.embedUrl}?rel=0`}
+                  title={`Vídeo do produto ${produto.nome}`}
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                />
+              </div>
+            ) : slideAtual ? (
+              <img id="mimg" ref={imgRef} src={slideAtual.src} alt={produto.nome} />
+            ) : null}
             <div className="fl">
               {novo && <span className="chip chip-orange">Novo</span>}
               {livreBpa && <span className="chip chip-sage">Livre de BPA</span>}
@@ -266,42 +328,46 @@ export default function ProdutoView({ produto }: { produto: Produto }) {
             </div>
           </div>
 
-          {/* Nome da cor em destaque, logo abaixo da foto (E2). Antes ficava so
-              no rotulo pequeno do configurador, no canto; agora acompanha a imagem. */}
-          {cores.length > 0 && (
+          {/* Nome da cor base em destaque, logo abaixo da foto (E2). */}
+          {baseCores.length > 0 && (
             <div className="corcap" aria-live="polite">
               <span className="dot" style={{ background: corHex }} />
-              <span className="k">Cor</span>
-              <span className="v">{corNome}</span>
+              <span className="k">{rotuloBase}</span>
+              <span className="v">{corBaseNome}</span>
             </div>
           )}
 
-          {/* Botao "Ver video" na area de midia, a esquerda, junto da galeria (E3,
-              benchmark Amazon). Antes ficava espremido no configurador, a direita. */}
-          {embedUrl && (
-            <button type="button" className="vbtn" onClick={() => setVideoOpen(true)}>
-              <Icon name="camera" />
-              Ver vídeo do produto
-            </button>
-          )}
-
-          {/* Botao "Ver dimensoes do produto" na mesma area de midia, junto da
-              galeria (item C da revisao Plinio). So aparece quando o produto tem a
-              imagem de dimensoes cadastrada; abre um modal com as cotas. */}
-          {dimensoesSrc && (
-            <button type="button" className="vbtn" onClick={() => setDimOpen(true)}>
+          {/* Botoes de midia: navegam ate o slide certo no MESMO carrossel (sem modal). */}
+          {temDimensoes && (
+            <button
+              type="button"
+              className="vbtn"
+              onClick={() => irParaSlide((s) => s.tipo === "dimensoes")}
+            >
               <Icon name="ruler-measure" />
               Ver dimensões do produto
+            </button>
+          )}
+          {embedUrl && (
+            <button
+              type="button"
+              className="vbtn"
+              onClick={() => irParaSlide((s) => s.tipo === "video")}
+            >
+              <Icon name="video" />
+              Ver vídeo do produto
             </button>
           )}
         </div>
 
         {/* Informacoes + configurador */}
         <div className="pinfo">
-          <div>
+          {/* Cabecalho: categoria -> codigo do site -> nome (grid vertical .ptop). */}
+          <div className="ptop">
             <Link className="cat" href={`/catalogo?categoria=${produto.categoria}`}>
               {nomeCategoria(produto.categoria)}
             </Link>
+            {produto.codigoSite && <span className="pcod">Cód. {produto.codigoSite}</span>}
             <h1>{nb(produto.nome)}</h1>
           </div>
           <p className="sub">
@@ -311,62 +377,76 @@ export default function ProdutoView({ produto }: { produto: Produto }) {
           </p>
 
           <div className="blk">
-            {cores.length > 0 && (
+            {/* Seletor de cor BASE */}
+            {baseCores.length > 0 && !baseNaoPreencher && (
               <div>
-                <div className="lbl">Cor</div>
-                <div className="colors">
-                  {cores.map((c, i) => (
+                <div className="lbl">
+                  {rotuloBase}
+                  {corBaseNome && <span>{corBaseNome.toLowerCase()}</span>}
+                </div>
+                <div className={`colors${baseCores.length > 9 ? " sm" : ""}`}>
+                  {baseCores.map((c, i) => (
                     <button
                       key={c.nome}
                       type="button"
-                      className={c.nome === corNome ? "on" : ""}
+                      className={c.nome === corBaseNome ? "on" : ""}
                       style={{ background: c.hex }}
-                      onClick={() => escolherCor(i)}
+                      onClick={() => escolherCorBase(i)}
                       aria-label={c.nome}
+                      aria-pressed={c.nome === corBaseNome}
                     />
                   ))}
                 </div>
               </div>
             )}
 
+            {/* Seletor de cor ACESSORIO (so quando ligado e com cores) */}
+            {temAcessorio && (
+              <div>
+                <div className="lbl">
+                  {rotuloAcessorio}
+                  {corAcessorioNome && <span>{corAcessorioNome.toLowerCase()}</span>}
+                </div>
+                <div className={`colors${acessorioCores.length > 9 ? " sm" : ""}`}>
+                  {acessorioCores.map((c) => (
+                    <button
+                      key={c.nome}
+                      type="button"
+                      className={c.nome === corAcessorioNome ? "on" : ""}
+                      style={{ background: c.hex }}
+                      onClick={() => setCorAcessorioNome(c.nome)}
+                      aria-label={c.nome}
+                      aria-pressed={c.nome === corAcessorioNome}
+                    />
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Quantidade: 3 campos (1 obrigatorio + 2 opcionais), cada >= minimo. */}
             <div>
               <div className="lbl">
                 Quantidade <span>mínimo {fmt(minQtd)} unidades</span>
               </div>
-              <div className="seg">
-                {presets.map((n) => (
-                  <button
-                    key={n}
-                    type="button"
-                    className={qtd === n ? "on" : ""}
-                    onClick={() => setQtd(n)}
-                  >
-                    {fmt(n)}
-                  </button>
-                ))}
-              </div>
-              <div className="qty">
-                <div className="step">
-                  <button
-                    type="button"
-                    onClick={() => setQtd((q) => Math.max(PASSO, q - PASSO))}
-                    aria-label="Menos"
-                  >
-                    <Icon name="minus" />
-                  </button>
+              <div className="qtys">
+                {[0, 1, 2].map((slot) => (
                   <input
-                    id="qin"
-                    ref={qinRef}
+                    key={slot}
+                    ref={(el) => {
+                      qinRefs.current[slot] = el;
+                    }}
+                    className={erroQtd[slot] ? "err" : undefined}
                     inputMode="numeric"
-                    value={qtd}
-                    onChange={(e) => setQtd(parseInt(e.target.value.replace(/\D/g, ""), 10) || 0)}
-                    aria-label="Quantidade"
+                    value={qtdsStr[slot]}
+                    placeholder={slot === 0 ? fmt(minQtd) : "Opcional"}
+                    onChange={(e) => setSlotDigitos(slot, e.target.value)}
+                    onFocus={() => aoFocarSlot(slot)}
+                    onBlur={() => aoSairSlot(slot)}
+                    aria-label={
+                      slot === 0 ? "Quantidade (obrigatória)" : `Quantidade opcional ${slot + 1}`
+                    }
                   />
-                  <button type="button" onClick={() => setQtd((q) => q + PASSO)} aria-label="Mais">
-                    <Icon name="plus" />
-                  </button>
-                </div>
-                <small>ou digite a quantidade exata</small>
+                ))}
               </div>
               <div className={`warn${abaixoDoMinimo ? " on" : ""}`} id="qw">
                 O pedido mínimo é de {fmt(minQtd)} unidades. Para volumes menores, fale com o
@@ -421,7 +501,7 @@ export default function ProdutoView({ produto }: { produto: Produto }) {
           <div className="info">
             <b>{produto.nome}</b>
             <small id="sbinfo">
-              {fmt(qtd)} unidades{corNome ? ` · ${corNome}` : ""}
+              {fmt(qtdSticky)} unidades{corSticky ? ` · ${corSticky}` : ""}
             </small>
           </div>
           <div className="r">
@@ -436,82 +516,6 @@ export default function ProdutoView({ produto }: { produto: Produto }) {
           </div>
         </div>
       </div>
-
-      {/* Modal de video (YouTube embed) */}
-      {videoOpen && embedUrl && (
-        <div
-          className="vmodal"
-          role="dialog"
-          aria-modal="true"
-          aria-label={`Vídeo: ${produto.nome}`}
-          onClick={() => setVideoOpen(false)}
-        >
-          <div className="vbox" onClick={(e) => e.stopPropagation()}>
-            <button
-              type="button"
-              className="vclose"
-              aria-label="Fechar vídeo"
-              onClick={() => setVideoOpen(false)}
-            >
-              <Icon name="x" />
-            </button>
-            <div className="vframe">
-              <iframe
-                src={`${embedUrl}?autoplay=1&rel=0`}
-                title={`Vídeo do produto ${produto.nome}`}
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowFullScreen
-              />
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Modal de dimensoes (imagem com as cotas do produto). Mesmo padrao visual
-          do modal de video (.vmodal/.vbox/.vclose): fecha no Esc e no clique do
-          fundo. A imagem usa object-fit:contain para caber sem distorcer. */}
-      {dimOpen && dimensoesSrc && (
-        <div
-          className="vmodal"
-          role="dialog"
-          aria-modal="true"
-          aria-label={`Dimensões do produto ${produto.nome}`}
-          onClick={() => setDimOpen(false)}
-        >
-          <div className="vbox" onClick={(e) => e.stopPropagation()}>
-            <button
-              type="button"
-              className="vclose"
-              aria-label="Fechar dimensões"
-              onClick={() => setDimOpen(false)}
-            >
-              <Icon name="x" />
-            </button>
-            <div
-              style={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                background: "#fff",
-                borderRadius: 14,
-                padding: 16,
-                boxShadow: "var(--sh-2)",
-              }}
-            >
-              <img
-                src={dimensoesSrc}
-                alt={`Dimensões do produto ${produto.nome}`}
-                style={{
-                  maxWidth: "100%",
-                  maxHeight: "80vh",
-                  objectFit: "contain",
-                  display: "block",
-                }}
-              />
-            </div>
-          </div>
-        </div>
-      )}
 
       {/* Toast de confirmacao (espelha o toast() do mockup) */}
       <div className={`toast${toastMsg ? " on" : ""}`} role="status" aria-live="polite">
