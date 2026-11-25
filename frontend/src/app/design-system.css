@@ -404,13 +404,14 @@ footer a:hover{color:var(--lime)}
 .fbot{border-top:1px solid rgba(255,255,255,.1);margin-top:32px;padding-top:18px;display:flex;justify-content:space-between;font-size:12.5px;color:#9bb6a0;gap:16px;flex-wrap:wrap}
 
 /* flutuantes */
-/* Inversao de cor por secao (pedido Joy): o botao morfa entre o verde-zap
-   (--wa-c default) sobre fundo claro e o turquesa da BB (--deep) sobre secoes
-   escuras. O efeito no Footer.tsx liga/desliga a classe .wa-over-dark medindo
-   quando o botao sobrepoe uma secao marcada data-wa="dark". Pra INVERTER a
-   direcao das cores basta trocar os dois valores de --wa-c (base x .wa-over-dark). */
-.wa-f{position:fixed;right:22px;bottom:22px;z-index:44;width:54px;height:54px;transition:bottom .35s cubic-bezier(.2,.8,.2,1),opacity .2s;border-radius:50%;--wa-c:#25d366;--wa-glow:rgba(37,211,102,.5);--wa-glow0:rgba(37,211,102,0);background:var(--wa-c);color:#fff;display:grid;place-items:center;box-shadow:0 10px 26px var(--wa-glow)}
-.wa-f.wa-over-dark{--wa-c:var(--deep);--wa-glow:rgba(0,68,49,.5);--wa-glow0:rgba(0,68,49,0)}
+/* Inversao de cor por secao (pedido Joy): o botao morfa entre o turquesa da BB
+   (--deep, cor DEFAULT da marca) e o verde-zap (#25d366) sobre as secoes claras
+   / sage da parte de baixo da pagina (Plinio nao gostou de turquesa sobre o
+   verde-bebe). O efeito no Footer.tsx liga/desliga a classe .wa-over-light medindo
+   quando o botao sobrepoe uma secao marcada data-wa="light". Pra INVERTER a
+   direcao das cores basta trocar os dois valores de --wa-c (base x .wa-over-light). */
+.wa-f{position:fixed;right:22px;bottom:22px;z-index:44;width:54px;height:54px;transition:bottom .35s cubic-bezier(.2,.8,.2,1),opacity .2s;border-radius:50%;--wa-c:var(--deep);--wa-glow:rgba(0,68,49,.5);--wa-glow0:rgba(0,68,49,0);background:var(--wa-c);color:#fff;display:grid;place-items:center;box-shadow:0 10px 26px var(--wa-glow)}
+.wa-f.wa-over-light{--wa-c:#25d366;--wa-glow:rgba(37,211,102,.5);--wa-glow0:rgba(37,211,102,0)}
 .wa-f .ic{width:28px;height:28px}
 body.sb-on .wa-f{bottom:96px}
 body.drawer-on .wa-f,body.wa-hide .wa-f{opacity:0;pointer-events:none;transform:translateY(20px) scale(.9)}

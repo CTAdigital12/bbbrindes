@@ -13,12 +13,13 @@ export default function Footer({ config }: { config: SiteConfig }) {
   const wa = `https://wa.me/${config.whatsapp}`;
 
   // Inversao de cor do botao flutuante (.wa-f): quando o botao sobrepoe uma secao
-  // de fundo escuro (marcada com data-wa="dark"), liga a classe .wa-over-dark (CSS
-  // troca --wa-c de verde-zap pra turquesa da BB). Mesma ideia do IntersectionObserver
-  // da PDP (ProdutoView), mas aqui o teste e geometrico por frame: o botao e fixed e
-  // seu Y muda com body.sb-on, entao preciso do rect vivo do botao a cada scroll.
-  // NAO interfere no sb-on/drawer-on/wa-hide (esses continuam no CSS, so mexem em
-  // bottom/opacity). Se nenhuma secao estiver marcada, o botao fica no verde default.
+  // clara / sage (marcada com data-wa="light"), liga a classe .wa-over-light (CSS
+  // troca --wa-c do turquesa da BB default pro verde-zap). Mesma ideia do
+  // IntersectionObserver da PDP (ProdutoView), mas aqui o teste e geometrico por
+  // frame: o botao e fixed e seu Y muda com body.sb-on, entao preciso do rect vivo
+  // do botao a cada scroll. NAO interfere no sb-on/drawer-on/wa-hide (esses continuam
+  // no CSS, so mexem em bottom/opacity). Se nenhuma secao estiver marcada, o botao
+  // fica no turquesa default.
   const waRef = useRef<HTMLAnchorElement>(null);
   useEffect(() => {
     const btn = waRef.current;
@@ -29,16 +30,16 @@ export default function Footer({ config }: { config: SiteConfig }) {
       const r = btn.getBoundingClientRect();
       const x = r.left + r.width / 2;
       const y = r.top + r.height / 2;
-      let overDark = false;
-      const marks = document.querySelectorAll<HTMLElement>('[data-wa="dark"]');
+      let overLight = false;
+      const marks = document.querySelectorAll<HTMLElement>('[data-wa="light"]');
       for (let i = 0; i < marks.length; i++) {
         const b = marks[i].getBoundingClientRect();
         if (y >= b.top && y <= b.bottom && x >= b.left && x <= b.right) {
-          overDark = true;
+          overLight = true;
           break;
         }
       }
-      btn.classList.toggle("wa-over-dark", overDark);
+      btn.classList.toggle("wa-over-light", overLight);
     };
     const onScroll = () => {
       if (!raf) raf = requestAnimationFrame(update);
