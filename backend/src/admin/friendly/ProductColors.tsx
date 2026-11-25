@@ -365,7 +365,7 @@ export function ProductColors({ product, change, disabled, errorField }: FieldPr
                 </div>
                 <div className="dots">
                   {b.cores.map((c, j) => (
-                    <i key={j} className={j === 0 ? 'on' : undefined} style={fundoCor(tomExibicao(c))} title={c.nome} />
+                    <span key={j} className={j === 0 ? 'bb-dotpv bb-dotpv-on' : 'bb-dotpv'} style={fundoCor(tomExibicao(c))} title={c.nome} />
                   ))}
                 </div>
               </div>

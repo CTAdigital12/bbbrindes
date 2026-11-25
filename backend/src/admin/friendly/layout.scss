@@ -170,15 +170,15 @@ body:has(.bb-admin) .app-header, body:has(.bb-admin) .template-default__nav-togg
 .bb-admin .cerr { margin:8px 0 0; color:var(--err); font-size:12.5px; font-weight:600; }
 .bb-admin .cpf { display:flex; justify-content:flex-end; }
 /* Previa "Como aparece no site" + resumo "Codigo para o CRM" */
-.bb-admin .cfim { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+.bb-admin .cfim { display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:12px; }
 .bb-admin .cprev, .bb-admin .crm { border:1px solid var(--line); border-radius:var(--r); padding:14px 16px; background:#fff; }
 .bb-admin .cprev .lbl, .bb-admin .crm .lbl { font-weight:600; font-size:13px; display:block; margin-bottom:8px; }
 .bb-admin .cpv { font-size:13px; margin-bottom:10px; }
 .bb-admin .cpv:last-child { margin-bottom:0; }
 .bb-admin .cpv b { color:var(--deep); }
-.bb-admin .cpv .dots { display:grid; grid-template-columns:repeat(9,18px); gap:5px; margin-top:6px; }
-.bb-admin .cpv .dots i { width:18px; height:18px; border-radius:50%; border:1px solid rgba(0,0,0,.12); display:block; }
-.bb-admin .cpv .dots i.on { box-shadow:0 0 0 2px #fff,0 0 0 3.5px var(--deep); }
+.bb-admin .cpv .dots { display:flex; flex-wrap:wrap; align-items:center; gap:5px; margin-top:6px; min-width:0; background:transparent; border-radius:0; padding:0; }
+.bb-admin .cpv .dots .bb-dotpv { width:18px; height:18px; aspect-ratio:1; flex:0 0 auto; box-sizing:border-box; border-radius:50%; border:1px solid rgba(0,0,0,.12); display:block; outline:none; box-shadow:none; background-clip:padding-box; }
+.bb-admin .cpv .dots .bb-dotpv.bb-dotpv-on { box-shadow:0 0 0 2px #fff,0 0 0 3px var(--deep); }
 .bb-admin .crmx { display:flex; flex-wrap:wrap; align-items:center; gap:6px; font-size:14px; }
 .bb-admin .crmx code { background:#eef1e9; border-radius:6px; padding:3px 8px; color:var(--deep); font-weight:600; }
 .bb-admin .crmx code.res { background:var(--deep); color:#fff; }
