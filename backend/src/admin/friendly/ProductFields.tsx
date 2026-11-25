@@ -82,7 +82,7 @@ function Commercial(props: FieldProps) {
   const cores = (props.product.cores ?? []).map(cor => ({ nome: cor.nome, codigo: cor.codigo }))
   return <><div className="lock"><span>Informações internas do cadastro. Preço e estoque têm origem no CRM e não são editados aqui.</span></div>
     <div className="fld" style={{ maxWidth: 320 }}><ProductField {...props} field="codigoCigam" label="Código CIGAM" help="Chave do produto no CRM/ERP." /></div>
-    <CodigosPorCorView cigam={props.product.codigoCigam} cores={cores} />
+    <CodigosPorCorView cigam={props.product.codigoCigam} cores={cores} coresAcessorio={(props.product.variacao?.coresAcessorio ?? []).map(cor => ({ nome: cor.nome, codigo: cor.codigo }))} />
     <ProductField {...props} field="argumentoComercial" label="Argumento comercial" multiline /><ProductChannels {...props} /></>
 }
 export const PRODUCT_TABS = [ ['geral', 'Geral'], ['fotos', 'Fotos e vídeo'], ['cores', 'Cores'], ['pers', 'Personalização'], ['ficha', 'Ficha técnica'], ['seo', 'SEO'], ['com', 'Comercial'] ] as const
