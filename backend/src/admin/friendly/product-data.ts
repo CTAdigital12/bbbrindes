@@ -1,6 +1,6 @@
 import { getProductIssue } from './product-validation'
 import { mediaID, type Product } from './model'
-const editable = ['nome', 'codigoSite', 'codigoCigam', 'subtitulo', 'headline', 'descricaoCurta', 'descricaoCompleta', 'beneficios', 'idealPara', 'diferenciais', 'categorias', 'ecologico', 'quantidadeMinima', 'imagens', 'imagemAmbientada', 'imagemDimensoes', 'cores', 'videoUrl', 'selos', 'seo', 'especificacoes', 'logistica', 'impressao', 'canais', 'argumentoComercial', 'faixaPreco', 'destaques'] as const
+const editable = ['nome', 'codigoSite', 'codigoCigam', 'subtitulo', 'headline', 'descricaoCurta', 'descricaoCompleta', 'beneficios', 'idealPara', 'diferenciais', 'categorias', 'ecologico', 'quantidadeMinima', 'imagens', 'imagemAmbientada', 'imagemDimensoes', 'cores', 'variacao', 'videoUrl', 'selos', 'seo', 'especificacoes', 'logistica', 'impressao', 'canais', 'argumentoComercial', 'faixaPreco', 'destaques'] as const
 export function plainText(value: unknown): string {
   if (typeof value === 'string') return value
   const node = value as { text?: string; root?: { children?: unknown[] }; children?: unknown[] } | null
@@ -26,12 +26,17 @@ function relationshipBody(body: Record<string, unknown>, product: Product) {
   if ('imagemAmbientada' in body) body.imagemAmbientada = mediaID(product.imagemAmbientada) ?? null
   if ('imagemDimensoes' in body) body.imagemDimensoes = mediaID(product.imagemDimensoes) ?? null
   if ('cores' in body) body.cores = (product.cores ?? []).map(color => ({ ...color, imagem: mediaID(color.imagem) ?? null }))
+  if ('variacao' in body) {
+    const v = product.variacao ?? {}
+    body.variacao = { ...v, coresAcessorio: (v.coresAcessorio ?? []).map(color => ({ ...color, imagem: mediaID(color.imagem) ?? null })) }
+  }
   return body
 }
 
 export function copyProduct(product: Product): Product {
   const copy = { ...product, id: undefined, nome: `${product.nome} (cópia)`, codigoSite: '', slug: undefined, updatedAt: undefined, canais: { ...product.canais, site: false } }
   copy.cores = product.cores?.map(({ id: _id, ...color }) => color)
+  if (product.variacao?.coresAcessorio) copy.variacao = { ...product.variacao, coresAcessorio: product.variacao.coresAcessorio.map(({ id: _id, ...color }) => color) }
   copy.especificacoes = product.especificacoes?.map(({ id: _id, ...item }) => item)
   return copy
 }

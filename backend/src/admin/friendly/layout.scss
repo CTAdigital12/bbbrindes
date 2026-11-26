@@ -101,3 +101,98 @@ body:has(.bb-admin) .app-header, body:has(.bb-admin) .template-default__nav-togg
 .bb-admin [aria-invalid='true']:focus { border-color:#b42318; box-shadow:0 0 0 1px #b42318; }
 
 .bb-admin .bb-publication-help { flex-basis:100%; }
+
+/* ============================================================================
+   Editor de CORES (aba Cores) = visual do mock da Joy (feat/admin-cores-visual).
+   Classes portadas do HTML aprovado: .cblk (card por bloco), .cc (chip de cor),
+   .cpick/.cpc (biblioteca), .cnew/.cnr (cor nova), .cfim/.cprev/.crm (previa +
+   resumo do CRM). Tudo escopado em .bb-admin; as variaveis (--deep/--line/etc.)
+   vem de mockup.scss. Classes bb-cc-* sao ajustes meus (swatch editavel/foto).
+   ========================================================================== */
+/* Card de cada bloco (Base / Acessorio) */
+.bb-admin .cblk { border:1px solid var(--line); border-radius:var(--r); padding:14px 16px; margin-bottom:12px; background:#fff; display:grid; gap:12px; }
+.bb-admin .cblk header { display:flex; align-items:flex-start; justify-content:space-between; gap:12px; }
+.bb-admin .cblk header b { display:block; font-size:14.5px; }
+.bb-admin .cblk header span { font-size:12.5px; color:var(--muted); }
+.bb-admin .cblk.off { background:#f8f9f5; }
+.bb-admin .cblk .fld { margin-bottom:0; }
+.bb-admin .cblk > .btn { justify-self:start; }
+.bb-admin .np { display:flex; gap:8px; align-items:center; font-size:13px; white-space:nowrap; cursor:pointer; }
+.bb-admin .cnp { margin:0; font-size:13px; color:var(--muted); }
+.bb-admin .cnp code, .bb-admin .crmx code, .bb-admin .cc code, .bb-admin .cpc code { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; }
+/* Linha "Cores disponiveis" + contagem */
+.bb-admin .clh { display:flex; justify-content:space-between; align-items:baseline; gap:10px; margin-bottom:-4px; }
+.bb-admin .clh .lbl { font-weight:600; font-size:13px; }
+/* Grade de chips de cor marcada */
+.bb-admin .clist { display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:6px; }
+.bb-admin .cc { display:grid; grid-template-columns:auto 1fr auto auto auto; gap:8px; align-items:center; padding:5px 6px 5px 8px; border:1px solid var(--line-2); border-radius:8px; background:#fff; font-size:13px; }
+.bb-admin .cc .swatch { width:20px; height:20px; }
+.bb-admin .cc .cn { white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.bb-admin .cc code { font-size:11.5px; background:#eef1e9; border-radius:5px; padding:1px 5px; color:var(--deep); }
+.bb-admin .cc code.miss { background:var(--warn-bg); color:var(--warn); }
+.bb-admin .cc .x { border:0; background:none; color:var(--muted); font-size:17px; cursor:pointer; padding:0 3px; line-height:1; }
+.bb-admin .cc .x:hover { color:var(--err); }
+/* Bolinha editavel (tonalidade opcional) + reset para automatico */
+.bb-admin .bb-cc-sw { display:inline-flex; align-items:center; gap:4px; }
+.bb-admin .bb-cc-swi { width:20px; height:20px; padding:0; border:1px solid rgba(0,0,0,.12); border-radius:50%; background:none; cursor:pointer; -webkit-appearance:none; appearance:none; }
+.bb-admin .bb-cc-swi::-webkit-color-swatch-wrapper { padding:0; }
+.bb-admin .bb-cc-swi::-webkit-color-swatch { border:none; border-radius:50%; }
+.bb-admin .bb-cc-swi::-moz-color-swatch { border:none; border-radius:50%; }
+.bb-admin .bb-cc-auto { border:0; background:none; padding:0; color:var(--blue); cursor:pointer; font-size:10px; line-height:1; text-decoration:underline; }
+/* Nome editavel da cor especial dentro do chip */
+.bb-admin .cc .bb-cc-name { min-height:0; padding:3px 7px; font-size:12.5px; }
+/* Foto da cor (miniatura/"+") + remover foto no canto */
+.bb-admin .cft { width:30px; height:30px; border-radius:6px; border:1px solid var(--line-2); background:#f6f7f2; padding:0; cursor:pointer; display:grid; place-items:center; overflow:hidden; }
+.bb-admin .cft img { width:100%; height:100%; object-fit:contain; }
+.bb-admin .cft.emp { border:1.5px dashed #b9c3ad; color:var(--deep); font-size:15px; background:#fbfcf8; }
+.bb-admin .bb-cft-wrap { position:relative; width:30px; height:30px; }
+.bb-admin .bb-cft-rm { position:absolute; top:-6px; right:-6px; width:16px; height:16px; border-radius:50%; border:1px solid var(--line); background:#fff; color:var(--muted); font-size:12px; line-height:1; cursor:pointer; display:grid; place-items:center; padding:0; }
+.bb-admin .bb-cft-rm:hover { color:var(--err); border-color:var(--err); }
+/* Biblioteca de cores (picker) */
+.bb-admin .cpick { border:1px solid var(--line); border-radius:9px; background:#fbfcf8; padding:12px 14px; display:grid; gap:8px; }
+.bb-admin .cph { display:flex; gap:10px; align-items:baseline; flex-wrap:wrap; }
+.bb-admin .cph span { font-size:12.5px; color:var(--muted); }
+.bb-admin .cpgh { display:flex; gap:10px; align-items:baseline; }
+.bb-admin .cpgh h5, .bb-admin .cnew h5 { margin:4px 0 0; font-size:12px; text-transform:uppercase; letter-spacing:.06em; color:var(--muted); }
+.bb-admin .cpg { display:flex; flex-wrap:wrap; gap:6px; }
+.bb-admin .cpc { display:inline-flex; align-items:center; gap:6px; height:30px; padding:0 9px 0 6px; border-radius:999px; border:1px solid var(--line); background:#fff; font-size:12.5px; cursor:pointer; color:var(--ink); }
+.bb-admin .cpc .swatch { width:18px; height:18px; }
+.bb-admin .cpc code { font-size:11px; color:var(--muted); }
+.bb-admin .cpc.on { border-color:var(--deep); background:#e8f1ea; box-shadow:inset 0 0 0 1px var(--deep); }
+.bb-admin .cpc.on code { color:var(--deep); }
+/* Form "Cor nova" inline */
+.bb-admin .cnew { border-top:1px solid var(--line-2); padding-top:8px; margin-top:4px; }
+.bb-admin .cnr { display:grid; grid-template-columns:1.4fr 1fr .6fr 1fr auto; gap:8px; align-items:end; margin-top:6px; }
+.bb-admin .cnr .fld { margin-bottom:0; }
+.bb-admin .cnhex { display:flex; gap:8px; align-items:center; height:34px; }
+.bb-admin .cnhex input { width:38px; height:32px; border:1px solid var(--line); border-radius:7px; padding:2px; background:#fff; cursor:pointer; }
+.bb-admin .cnhex code { font-size:12px; color:var(--muted); font-family:ui-monospace,SFMono-Regular,Menlo,monospace; }
+.bb-admin .cerr { margin:8px 0 0; color:var(--err); font-size:12.5px; font-weight:600; }
+.bb-admin .cpf { display:flex; justify-content:flex-end; }
+/* Previa "Como aparece no site" + resumo "Codigo para o CRM" */
+.bb-admin .cfim { display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:12px; }
+.bb-admin .cprev, .bb-admin .crm { border:1px solid var(--line); border-radius:var(--r); padding:14px 16px; background:#fff; }
+.bb-admin .cprev .lbl, .bb-admin .crm .lbl { font-weight:600; font-size:13px; display:block; margin-bottom:8px; }
+.bb-admin .cpv { font-size:13px; margin-bottom:10px; }
+.bb-admin .cpv:last-child { margin-bottom:0; }
+.bb-admin .cpv b { color:var(--deep); }
+.bb-admin .cpv .dots { display:flex; flex-wrap:wrap; align-items:center; gap:5px; margin-top:6px; min-width:0; background:transparent; border-radius:0; padding:0; }
+.bb-admin .cpv .dots .bb-dotpv { width:18px; height:18px; aspect-ratio:1; flex:0 0 auto; box-sizing:border-box; border-radius:50%; border:1px solid rgba(0,0,0,.12); display:block; outline:none; box-shadow:none; background-clip:padding-box; }
+.bb-admin .cpv .dots .bb-dotpv.bb-dotpv-on { box-shadow:0 0 0 2px #fff,0 0 0 3px var(--deep); }
+.bb-admin .crmx { display:flex; flex-wrap:wrap; align-items:center; gap:6px; font-size:14px; }
+.bb-admin .crmx code { background:#eef1e9; border-radius:6px; padding:3px 8px; color:var(--deep); font-weight:600; }
+.bb-admin .crmx code.res { background:var(--deep); color:#fff; }
+.bb-admin .crmx i { font-style:normal; color:var(--muted); }
+/* Tabela "Codigos por cor" (read-only, aba Comercial) com cara de CRM */
+.bb-admin .bb-codigos-cor { display:grid; gap:10px; }
+.bb-admin .bb-codigos-cor-head { font-size:13px; color:var(--muted); }
+.bb-admin .bb-crm-chip { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; background:#eef1e9; border-radius:6px; padding:2px 8px; color:var(--deep); font-weight:600; }
+.bb-admin .bb-codigos-cor-tabela { width:100%; min-width:460px; border-collapse:collapse; font-size:13px; background:#fff; border:1px solid var(--line); border-radius:var(--r); overflow:hidden; }
+.bb-admin .bb-codigos-cor-tabela th { text-align:left; font-size:11.5px; text-transform:uppercase; letter-spacing:.04em; color:var(--muted); background:#f6f7f2; padding:8px 10px; border-bottom:1px solid var(--line); }
+.bb-admin .bb-codigos-cor-tabela td { padding:8px 10px; border-bottom:1px solid var(--line-2); }
+.bb-admin .bb-codigos-cor-tabela tr:last-child td { border-bottom:0; }
+.bb-admin .bb-codigos-cor-tabela td code { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:12px; background:#eef1e9; border-radius:5px; padding:1px 6px; color:var(--deep); }
+.bb-admin .bb-codigos-cor-tabela td code.bb-crm-ref { background:var(--deep); color:#fff; font-weight:600; }
+@media(max-width:900px) {
+  .bb-admin .cfim, .bb-admin .cnr { grid-template-columns:1fr; }
+}
