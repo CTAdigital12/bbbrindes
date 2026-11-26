@@ -30,16 +30,18 @@ export default function Footer({ config }: { config: SiteConfig }) {
       const r = btn.getBoundingClientRect();
       const x = r.left + r.width / 2;
       const y = r.top + r.height / 2;
-      let overLight = false;
-      const marks = document.querySelectorAll<HTMLElement>('[data-wa="light"]');
+      let overDark = false;
+      // Secoes de fundo VERDE-ESCURO do site (--g-deep/--deep/--deep-2). Quando o botao
+      // sobrepoe uma delas vira verde-zap; no resto (fundo claro) fica turquesa default.
+      const marks = document.querySelectorAll<HTMLElement>('.topbar, .slider, .logos, .sla, .urg, .eco .lead, .flipstage, .final, footer.site');
       for (let i = 0; i < marks.length; i++) {
         const b = marks[i].getBoundingClientRect();
         if (y >= b.top && y <= b.bottom && x >= b.left && x <= b.right) {
-          overLight = true;
+          overDark = true;
           break;
         }
       }
-      btn.classList.toggle("wa-over-light", overLight);
+      btn.classList.toggle("wa-over-dark", overDark);
     };
     const onScroll = () => {
       if (!raf) raf = requestAnimationFrame(update);

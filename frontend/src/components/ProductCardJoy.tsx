@@ -120,16 +120,10 @@ export default function ProductCardJoy({
           ) : null}
         </Link>
 
-        {(novo || eco || temVideo) && (
+        {(novo || eco) && (
           <div className="tags">
             {novo && <span className="chip chip-orange">Novo</span>}
             {eco && <span className="chip chip-sage">Ecológico</span>}
-            {temVideo && (
-              <span className="chip chip-sage">
-                <Icon name="video" />
-                Vídeo
-              </span>
-            )}
           </div>
         )}
 
@@ -163,7 +157,14 @@ export default function ProductCardJoy({
               </small>
             )}
           </div>
-          <span className="min">mín. 500 un.</span>
+          <span className="mnv">
+            {temVideo && (
+              <Link href={href} className="cam" aria-label="Ver vídeo do produto" title="Ver vídeo">
+                <Icon name="video" />
+              </Link>
+            )}
+            <span className="min">mín. 500 un.</span>
+          </span>
         </div>
       </div>
     </article>
