@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { WA } from "@/data/home-joy";
+import { normalizarItem, coresDoItem, somaQtds, type ItemOrcamento } from "@/lib/cart";
 import Icon from "@/components/Icon";
 
 // Confirmacao de orcamento ("Cotacao recebida") espelhando a funcao done() do
@@ -12,11 +13,14 @@ import Icon from "@/components/Icon";
 
 type Resumo = {
   solicitante: { nome: string; empresa: string; telefone: string; email: string };
-  itens: { nome: string; cor: string; quantidade: number }[];
+  itens: ItemOrcamento[];
   total: number;
 };
 
 const fmt = (n: number) => n.toLocaleString("pt-BR");
+// Lista de quantidades de um item ("500 / 1.000"); vazia quando nao ha nenhuma.
+const qtdsTexto = (it: ItemOrcamento) =>
+  it.qtds.filter((n) => n > 0).map(fmt).join(" / ");
 
 export default function SucessoPage() {
   const [resumo, setResumo] = useState<Resumo | null>(null);
@@ -24,7 +28,26 @@ export default function SucessoPage() {
   useEffect(() => {
     try {
       const raw = window.localStorage.getItem("bbbrindes:ultimo-pedido");
-      if (raw) setResumo(JSON.parse(raw) as Resumo);
+      if (!raw) return;
+      // Migra o snapshot: itens no formato antigo ({cor, quantidade}) viram o novo
+      // ({corBase, qtds}). Nunca quebra um snapshot ja salvo.
+      const bruto = JSON.parse(raw) as {
+        solicitante?: Resumo["solicitante"];
+        itens?: unknown[];
+        total?: number;
+      };
+      const itens = Array.isArray(bruto.itens)
+        ? bruto.itens.map((i) => normalizarItem(i as Parameters<typeof normalizarItem>[0]))
+        : [];
+      const total =
+        typeof bruto.total === "number"
+          ? bruto.total
+          : itens.reduce((a, i) => a + somaQtds(i.qtds), 0);
+      setResumo({
+        solicitante: bruto.solicitante ?? { nome: "", empresa: "", telefone: "", email: "" },
+        itens,
+        total,
+      });
     } catch {
       // ignora snapshot corrompido
     }
@@ -42,9 +65,10 @@ export default function SucessoPage() {
           resumo.solicitante.empresa ? `Empresa: ${resumo.solicitante.empresa}` : "",
           "",
           "Itens:",
-          ...resumo.itens.map(
-            (i) => `• ${i.nome}${i.cor ? ` (${i.cor})` : ""}: ${fmt(i.quantidade)} un.`,
-          ),
+          ...resumo.itens.map((i) => {
+            const cores = coresDoItem(i);
+            return `• ${i.nome}${cores ? ` (${cores})` : ""}: ${qtdsTexto(i)} un.`;
+          }),
         ]
           .filter(Boolean)
           .join("\n"),
@@ -102,9 +126,11 @@ export default function SucessoPage() {
                 >
                   <span>
                     {i.nome}
-                    {i.cor ? <span style={{ color: "var(--muted)" }}> · {i.cor}</span> : null}
+                    {coresDoItem(i) ? (
+                      <span style={{ color: "var(--muted)" }}> · {coresDoItem(i)}</span>
+                    ) : null}
                   </span>
-                  <span style={{ whiteSpace: "nowrap" }}>{fmt(i.quantidade)} un.</span>
+                  <span style={{ whiteSpace: "nowrap" }}>{qtdsTexto(i)} un.</span>
                 </li>
               ))}
             </ul>

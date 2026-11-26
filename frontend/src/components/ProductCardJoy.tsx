@@ -19,15 +19,18 @@ const MIN_QTD = 500;
 function QuickAdd({ produto }: { produto: Produto }) {
   const { adicionar } = useCart();
   const { abrir } = useCartUI();
-  // Adiciona a 1a cor, 500 un., e abre a gaveta de orcamento (comportamento do
-  // addToCart() do mockup). O badge do header ja incrementa pelo CartProvider.
+  // Adiciona a 1a cor base + 1a quantidade = minimo do produto (500 por padrao),
+  // e abre a gaveta de orcamento (comportamento do addToCart() do mockup). O badge
+  // do header ja incrementa pelo CartProvider.
   const adicionarAoOrcamento = () => {
     adicionar({
       produtoSlug: produto.slug,
       nome: produto.nome,
-      cor: produto.cores?.[0]?.nome ?? "",
-      quantidade: MIN_QTD,
+      corBase: produto.cores?.[0]?.nome || undefined,
+      rotuloBase: produto.variacao?.base?.rotulo || undefined,
+      qtds: [produto.quantidadeMinima ?? MIN_QTD],
       imagem: produto.imagens?.[0],
+      codigoSite: produto.codigoSite,
     });
     abrir();
   };
@@ -81,6 +84,8 @@ export default function ProductCardJoy({
   const categoria = produto.categoria ? nomeCategoria(produto.categoria) : "";
   const eco = (produto.tags ?? []).includes("ecologico");
   const novo = (produto.destaques ?? []).includes("lancamento");
+  // Produto com video da linha: o card sinaliza com um selo de filmadora (item 8).
+  const temVideo = !!produto.videoUrl;
   const cores = produto.cores ?? [];
   const href = `/produto/${produto.slug}`;
 
@@ -152,7 +157,14 @@ export default function ProductCardJoy({
               </small>
             )}
           </div>
-          <span className="min">mín. 500 un.</span>
+          <span className="mnv">
+            {temVideo && (
+              <Link href={href} className="cam" aria-label="Ver vídeo do produto" title="Ver vídeo">
+                <Icon name="video" />
+              </Link>
+            )}
+            <span className="min">mín. 500 un.</span>
+          </span>
         </div>
       </div>
     </article>

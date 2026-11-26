@@ -5,7 +5,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { useCart } from "@/lib/cart";
+import { useCart, somaQtds, coresDoItem } from "@/lib/cart";
 import { imgSrc } from "@/lib/asset";
 import { WA } from "@/data/home-joy";
 import { mascaraTelefone } from "@/lib/mask";
@@ -21,7 +21,6 @@ import Icon from "@/components/Icon";
 // o WhatsApp, para nao perder o lead.
 
 const MIN_QTD = 500;
-const PASSO = 100;
 const fmt = (n: number) => n.toLocaleString("pt-BR");
 
 // Base do backend (mesmo padrao de lib/payload.ts): em producao a var e inlinada
@@ -52,7 +51,7 @@ export default function OrcamentoPage() {
   const [enviando, setEnviando] = useState(false);
   const [erroEnvio, setErroEnvio] = useState<string | null>(null);
 
-  const total = itens.reduce((a, i) => a + i.quantidade, 0);
+  const total = itens.reduce((a, i) => a + somaQtds(i.qtds), 0);
 
   function setCampo<K extends keyof Form>(k: K, v: string) {
     setForm((f) => ({ ...f, [k]: v }));
@@ -78,9 +77,25 @@ export default function OrcamentoPage() {
 
     setEnviando(true);
     setErroEnvio(null);
-    // Manda os itens do carrinho como estao: o backend recalcula o total e
-    // ignora campos extras do item (ex.: imagem). "website" e o honeypot.
-    const corpo = { solicitante: form, itens, consentimento: true, website };
+    // O endpoint /api/orcamento (backend) espera cada item como { nome, cor,
+    // quantidade } e descarta o que nao tiver quantidade numerica. Com o novo
+    // modelo (cores base x acessorio + ate 3 faixas de quantidade), mapeamos cada
+    // item para UMA linha por faixa, com `cor` = texto das cores ("Garrafa preto -
+    // Tampa creme"). Assim o lead continua valido e sem perder as faixas (o total
+    // do backend soma todas). "website" e o honeypot.
+    const itensLead = itens.flatMap((it) => {
+      const cor = coresDoItem(it) || undefined;
+      const faixas = it.qtds.filter((n) => n > 0);
+      const lista = faixas.length > 0 ? faixas : [0];
+      return lista.map((q) => ({
+        produtoSlug: it.produtoSlug,
+        nome: it.nome,
+        cor,
+        quantidade: q,
+        codigoSite: it.codigoSite,
+      }));
+    });
+    const corpo = { solicitante: form, itens: itensLead, consentimento: true, website };
 
     try {
       const res = await fetch(`${BACKEND}/api/orcamento`, {
@@ -167,8 +182,16 @@ export default function OrcamentoPage() {
           <div className="list">
             {itens.map((it, k) => {
               const src = imgSrc(it.imagem);
+              const cores = coresDoItem(it);
+              // Mesma regra de minimo das 3 faixas: a 1a (obrigatoria) e qualquer
+              // opcional preenchida precisam ser >= MIN_QTD.
+              const q0 = it.qtds[0] ?? 0;
+              const abaixo = q0 < MIN_QTD || it.qtds.slice(1).some((n) => n > 0 && n < MIN_QTD);
               return (
-                <div className="oi" key={`${it.produtoSlug}-${it.cor}`}>
+                <div
+                  className="oi"
+                  key={`${it.produtoSlug}-${it.corBase ?? ""}-${it.corAcessorio ?? ""}-${k}`}
+                >
                   <Link href={`/produto/${it.produtoSlug}`} aria-label={it.nome}>
                     {src ? (
                       <img src={src} alt="" />
@@ -187,36 +210,37 @@ export default function OrcamentoPage() {
                   <div>
                     <b>{it.nome}</b>
                     <small>
-                      {it.cor ? `Cor: ${it.cor} · ` : ""}personalização na proposta
+                      {it.codigoSite ? `Cód. ${it.codigoSite} · ` : ""}
+                      {cores ? `${cores} · ` : ""}personalização na proposta
                     </small>
-                    {it.quantidade < MIN_QTD && (
-                      <div className="warn on">Abaixo do mínimo de 500 unidades.</div>
+                    {abaixo && (
+                      <div className="warn on">
+                        Cada quantidade deve ser no mínimo {fmt(MIN_QTD)} unidades.
+                      </div>
                     )}
                   </div>
                   <div className="r">
-                    <div className="step">
-                      <button
-                        type="button"
-                        onClick={() => alterarQuantidade(k, Math.max(PASSO, it.quantidade - PASSO))}
-                        aria-label="Menos"
-                      >
-                        <Icon name="minus" />
-                      </button>
-                      <input
-                        value={it.quantidade}
-                        inputMode="numeric"
-                        onChange={(e) =>
-                          alterarQuantidade(k, parseInt(e.target.value.replace(/\D/g, ""), 10) || 0)
-                        }
-                        aria-label="Quantidade"
-                      />
-                      <button
-                        type="button"
-                        onClick={() => alterarQuantidade(k, it.quantidade + PASSO)}
-                        aria-label="Mais"
-                      >
-                        <Icon name="plus" />
-                      </button>
+                    <div className="qtys">
+                      {[0, 1, 2].map((slot) => (
+                        <input
+                          key={slot}
+                          inputMode="numeric"
+                          value={it.qtds[slot] ? it.qtds[slot] : ""}
+                          placeholder={slot === 0 ? fmt(MIN_QTD) : "Opcional"}
+                          onChange={(e) =>
+                            alterarQuantidade(
+                              k,
+                              slot,
+                              parseInt(e.target.value.replace(/\D/g, ""), 10) || 0,
+                            )
+                          }
+                          aria-label={
+                            slot === 0
+                              ? `${it.nome}: quantidade obrigatória`
+                              : `${it.nome}: quantidade opcional ${slot + 1}`
+                          }
+                        />
+                      ))}
                     </div>
                     <button
                       type="button"

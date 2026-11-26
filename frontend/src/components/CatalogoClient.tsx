@@ -155,9 +155,11 @@ export default function CatalogoClient({
     adicionar({
       produtoSlug: p.slug,
       nome: p.nome,
-      cor: p.cores?.[0]?.nome ?? "",
-      quantidade: 500,
+      corBase: p.cores?.[0]?.nome || undefined,
+      rotuloBase: p.variacao?.base?.rotulo || undefined,
+      qtds: [p.quantidadeMinima ?? 500],
       imagem: p.imagens?.[0],
+      codigoSite: p.codigoSite,
     });
     // Fecha o quickview e abre a gaveta de orcamento (como o addToCart do mockup).
     setQvProduto(null);

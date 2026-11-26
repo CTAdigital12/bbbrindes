@@ -5,7 +5,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect } from "react";
-import { useCart } from "@/lib/cart";
+import { useCart, coresDoItem } from "@/lib/cart";
 import { useCartUI } from "@/lib/cart-ui";
 import { imgSrc } from "@/lib/asset";
 import Icon from "@/components/Icon";
@@ -76,8 +76,10 @@ export default function CartDrawer() {
           ) : (
             itens.map((it, k) => {
               const src = imgSrc(it.imagem);
+              const cores = coresDoItem(it);
+              const qtds = it.qtds.filter((n) => n > 0);
               return (
-                <div className="ci" key={`${it.produtoSlug}-${it.cor}`}>
+                <div className="ci" key={`${it.produtoSlug}-${it.corBase ?? ""}-${it.corAcessorio ?? ""}-${k}`}>
                   {src ? (
                     <img src={src} alt="" />
                   ) : (
@@ -94,8 +96,17 @@ export default function CartDrawer() {
                   <div>
                     <b>{it.nome}</b>
                     <small>
-                      {fmt(it.quantidade)} un.{it.cor ? ` · ${it.cor}` : ""}
+                      {it.codigoSite ? `Cód. ${it.codigoSite}` : ""}
+                      {it.codigoSite && cores ? " · " : ""}
+                      {cores}
                     </small>
+                    <div className="qchips">
+                      {qtds.map((n, qi) => (
+                        <span className="qchip" key={qi}>
+                          {fmt(n)} unidades
+                        </span>
+                      ))}
+                    </div>
                   </div>
                   <button
                     type="button"
