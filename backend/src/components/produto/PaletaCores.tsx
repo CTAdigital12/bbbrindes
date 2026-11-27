@@ -5,7 +5,7 @@ import { CORES_BB, GRUPOS_CORES, normalizarNome, type CorBB } from './cores-bb'
 // Item A (revisao Plinio 10/11): a aba Cores deixa de ser texto livre. Mostramos a
 // paleta com TODAS as cores da BB (uma bolinha por cor) e a pessoa so MARCA as que o
 // produto tem. O dado gravado continua compativel com o site (cores[].nome/hex/imagem):
-// cada cor marcada vira uma entrada { nome, codigo }. O `codigo` (tabela mestra do CRM)
+// cada cor marcada leva nome, codigo e tonalidade. O `codigo` (tabela mestra do CRM)
 // alimenta o item E (codigos por cor). A foto-por-cor ja ligada e preservada: o seletor
 // so adiciona/remove entradas, nunca mexe na imagem/hex das que continuam marcadas.
 //
@@ -14,7 +14,7 @@ import { CORES_BB, GRUPOS_CORES, normalizarNome, type CorBB } from './cores-bb'
 // isto e um client component, a leitura e feita com fetch no useEffect (getPaleta e so
 // server). FALLBACK: se o fetch falhar ou vier vazio, usamos CORES_BB/GRUPOS_CORES, que
 // seguem existindo como seed e rede de seguranca (o build nao pode quebrar com a
-// collection vazia). A API publica do componente e o formato gravado nao mudam.
+// collection vazia).
 //
 // VISUAL (feat/admin-cores-visual): este componente agora e a "Biblioteca de cores"
 // (.cpick do mock da Joy): grupos com "Incluir todas", chips .cpc e o form "Cor nova"
@@ -36,6 +36,10 @@ function estaMarcada(cor: CorBB, atuais: CorMarcada[]): number {
       (c.codigo && String(c.codigo).padStart(2, '0') === cor.codigo) ||
       normalizarNome(c.nome) === normalizarNome(cor.nome),
   )
+}
+
+function paraCorMarcada({ nome, codigo, hex }: CorBB): CorMarcada {
+  return { nome, codigo, hex: hex || undefined }
 }
 
 // Fundo da bolinha: hex solido, ou leque multicor para cromia / mix / especial (hex vazio).
@@ -105,7 +109,7 @@ export function PaletaCores({
     if (idx >= 0) {
       onChange(atuais.filter((_, i) => i !== idx))
     } else {
-      onChange([...atuais, { nome: cor.nome, codigo: cor.codigo }])
+      onChange([...atuais, paraCorMarcada(cor)])
     }
   }
 
@@ -114,7 +118,7 @@ export function PaletaCores({
     if (disabled) return
     const faltando = cores.filter((c) => c.grupo === grupo && estaMarcada(c, atuais) < 0)
     if (faltando.length === 0) return
-    onChange([...atuais, ...faltando.map((c) => ({ nome: c.nome, codigo: c.codigo }))])
+    onChange([...atuais, ...faltando.map(paraCorMarcada)])
   }
 
   // "Criar e incluir": valida na UI (00/99 reservados, codigo/nome duplicado), faz
@@ -143,12 +147,13 @@ export function PaletaCores({
     }
     setErro('')
     setCriando(true)
+    const novaCor = { ...nova, nome, codigo: cod }
     try {
       const resp = await fetch('/api/cores-bb', {
         method: 'POST',
         credentials: 'include',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ codigo: cod, nome, hex: nova.hex, grupo: nova.grupo }),
+        body: JSON.stringify(novaCor),
       })
       if (!resp.ok) {
         let detalhe = ''
@@ -166,8 +171,7 @@ export function PaletaCores({
         )
         return
       }
-      // Sucesso: ja inclui no bloco (formato gravado = { nome, codigo }) e recarrega a lista.
-      onChange([...atuais, { nome, codigo: cod }])
+      onChange([...atuais, paraCorMarcada(novaCor)])
       setNova({ ...NOVA_VAZIA, grupo: nova.grupo })
       const lista = await carregar()
       if (lista) setCores(lista)

@@ -272,57 +272,7 @@ export interface Produto {
         /**
          * Codigo da cor na tabela mestra do CRM/Leads2b. Preenchido pela paleta; e o que vai no orcamento junto do CIGAM.
          */
-        codigo?:
-          | (
-              | '01'
-              | '02'
-              | '03'
-              | '04'
-              | '05'
-              | '06'
-              | '07'
-              | '08'
-              | '09'
-              | '10'
-              | '11'
-              | '12'
-              | '13'
-              | '14'
-              | '15'
-              | '16'
-              | '17'
-              | '18'
-              | '30'
-              | '31'
-              | '32'
-              | '33'
-              | '34'
-              | '35'
-              | '36'
-              | '37'
-              | '38'
-              | '50'
-              | '51'
-              | '52'
-              | '53'
-              | '54'
-              | '55'
-              | '56'
-              | '57'
-              | '70'
-              | '71'
-              | '72'
-              | '73'
-              | '74'
-              | '75'
-              | '76'
-              | '77'
-              | '78'
-              | '79'
-              | '80'
-              | '99'
-            )
-          | null;
+        codigo?: string | null;
         /**
          * Cor em hexadecimal, ex.: #1a2b3c (opcional).
          */
