@@ -1,8 +1,8 @@
-import type { CollectionConfig } from 'payload'
+import type { CollectionConfig, TextFieldSingleValidation } from 'payload'
 
 import { isAdmin, isEditorOrAdmin } from '../access/byRole'
 import { slugField } from '../fields/slug'
-import { CORES_BB } from '../components/produto/cores-bb'
+import { corPorCodigo } from '../components/produto/cores-bb'
 
 // Produto do catalogo. Schema alinhado ao modelo validado com o Plinio
 // (docs/modelo-produto.md, secoes 4 e 11) e a planilha real de produtos.
@@ -189,9 +189,20 @@ export const Produtos: CollectionConfig = {
         { name: 'nome', type: 'text', required: true },
         {
           name: 'codigo',
-          type: 'select',
+          type: 'text',
           label: 'Codigo da cor (CRM)',
-          options: CORES_BB.map((c) => ({ label: `${c.codigo} - ${c.nome}`, value: c.codigo })),
+          validate: (async (value, { req }) => {
+            if (!value) return true
+            if (!/^\d{2}$/.test(value) || value === '00') return 'Use um codigo de cor de 2 digitos diferente de 00.'
+            if (corPorCodigo(value)) return true
+
+            const { totalDocs } = await req.payload.count({
+              collection: 'cores-bb',
+              where: { codigo: { equals: value } },
+              req,
+            })
+            return totalDocs > 0 || 'Cadastre este codigo na paleta de cores.'
+          }) satisfies TextFieldSingleValidation,
           admin: {
             description:
               'Codigo da cor na tabela mestra do CRM/Leads2b. Preenchido pela paleta; e o que vai no orcamento junto do CIGAM.',
@@ -213,13 +224,12 @@ export const Produtos: CollectionConfig = {
     },
 
     // Cor: base x acessorio (item 5 da task 9910008, Opcao A da spec). O array
-    // `cores` ACIMA e o bloco BASE (zero migracao: continua sendo lido pelo site,
+    // `cores` ACIMA e o bloco BASE (continua sendo lido pelo site,
     // seed e mapper como hoje). Este group `variacao` carrega so os rotulos, as
     // flags "Nao preencher" dos dois blocos e a lista de cores do ACESSORIO. A
     // friendly view (ProductColors) unifica base + acessorio visualmente; o
-    // usuario nao ve a separacao de namespace. `coresAcessorio` usa o MESMO shape
-    // de `cores`, mas `codigo` e `text` (nao `select`): o acessorio nao se acopla
-    // as options estaticas de CORES_BB; a paleta real vem da friendly/collection.
+    // usuario nao ve a separacao de namespace. Os dois blocos armazenam o codigo
+    // como texto para aceitar cores da paleta editavel.
     {
       name: 'variacao',
       type: 'group',
